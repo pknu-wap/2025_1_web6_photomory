@@ -1,4 +1,4 @@
-package com.example.photomory;
+package com.example.Photomory;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package com.example.photomory;
+package com.example.Photomory;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
