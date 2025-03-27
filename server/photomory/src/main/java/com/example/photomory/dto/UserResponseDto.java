@@ -29,5 +29,4 @@ public class UserResponseDto {
         this.equipment = equipment;
         this.introduction = introduction;
     }
-
 }
