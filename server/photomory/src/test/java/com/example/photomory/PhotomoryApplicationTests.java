@@ -1,10 +1,10 @@
-package com.example.Photomory;
+package com.example.photomory;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PhotomoryApplicationTests {
+class photomoryApplicationTests {
 
 	@Test
 	void contextLoads() {

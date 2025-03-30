@@ -1,13 +1,13 @@
-package com.example.Photomory;
+package com.example.photomory;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PhotomoryApplication {
+public class photomoryApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PhotomoryApplication.class, args);
+		SpringApplication.run(photomoryApplication.class, args);
 	}
 
 }
