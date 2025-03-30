@@ -2,11 +2,14 @@ package com.example.photomory.service;
 
 import com.example.photomory.dto.UserRequestDto;
 import com.example.photomory.dto.UserResponseDto;
+import com.example.photomory.repository.UserRepository;
 
 public class UserService {
 
     public UserResponseDto register(UserRequestDto userRequestDto) {
         if (userRequestDto.getUser_password().length() > 10) {
+            UserRepository
+            return new UserResponseDto(
                     userRequestDto.getUser_id(),
                     userRequestDto.getUser_email(),
                     userRequestDto.getUser_password(),
