@@ -1,7 +1,11 @@
+import MainPage from "./page/mainPage";
 
 function App() {
   return (
-    <h1>초기 프로젝트 생성</h1>
+    // 라우트 부탁드립니다 진오형!!
+    <> 
+      <MainPage></MainPage>
+    </>
   );
 }
 

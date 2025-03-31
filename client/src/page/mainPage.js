@@ -1,6 +1,9 @@
+import Header from "../component/Header";
+
 function MainPage(){
     return(
         <>
+            <Header></Header>
         </>
     )
 }
