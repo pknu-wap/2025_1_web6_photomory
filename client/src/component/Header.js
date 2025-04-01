@@ -1,27 +1,37 @@
-import './Header.css'
+import styles from './Header.module.css'
 
 function Header(){
     return(
-        <Header>
-            <div className="headerContainer">
-                <div className="headerTop">
-                    <div className="logo">
-                        icon
+        <div className={styles.headerContainer}>
+            <div className={styles.headerContainerLeft}>
+                <div className={styles.headerTopLogo}>
+                    icon
+                </div>
+                <div className={styles.home}>
+                    home
+                </div>
+                <div className={styles.memoryContainer}>
+                    <div className={styles.myMemory}>
+                        myMemory
                     </div>
-                    <div className="home">
-                        home
+                    <div className={styles.ourMemory}>
+                        ourMemory
                     </div>
-                    <div className="memorise">
-                        memories
-                    </div>
-                    <div className="space">여백</div>
-                    <div className="signUpIn">
-                        signUpIn
+                    <div className={styles.everyMemory}>
+                        everyMemory
                     </div>
                 </div>
             </div>
-        </Header>
+            <div className={styles.headerContainerRight}>
+                <div className={styles.signUp}>
+                    signUp
+                </div>
+                <div className={styles.signIn}>
+                    signIn
+                </div>
+            </div>
+        </div>
     );
-};
+}
 
 export default Header;
