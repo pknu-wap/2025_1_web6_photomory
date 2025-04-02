@@ -2,60 +2,158 @@
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-columns: repeat(2, 2fr);
-    grid-template-rows: 6fr, 6.8fr, 2.5fr, 11fr, 8fr, 1fr;
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+    grid-template-rows: minmax(150px, 200px) minmax(250px, 300px) minmax(80px, 100px) minmax(250px, 300px) minmax(250px, 300px) minmax(50px, 60px);
+    gap: 20px;
+    padding: 20px;
 }
 
-.MainLogo{
+.MainLogoContainer{
     grid-column: 1/3;
-    margin: 64px 10px 32px 10px;
     border: 1px solid black;
     border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.myMemory{
+.myMemoryContainer{
+    padding: 10px;
     border: 1px solid black; 
     border-radius: 6px;
-    margin: 10px 16px 10px 10px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.ourMemory{
-    border: 1px solid black; /* 보더는 나중에 없앨 예정*/
+.myMemoryText{
+    margin: 5px;
+    font-size: clamp(16px, 18px, 20px);
+}
+
+.myMemoryExplain{
+    margin: 5px;
+    font-size: clamp(12px, 14px, 16px);
+}
+
+.myMemoryImageContainer{
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+    gap: 10px;
+    border: 1px solid black;
+    border-radius: 7px;
+}
+
+.icon{
+    font-size: clamp(30px, 35px, 40px);
+}
+
+.ourMemoryContainer{
+    padding: 10px;
+    border: 1px solid black;
     border-radius: 6px;
-    margin: 10px 10px 10px 16px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center
 }
 
-.everyMemoryTitle{
+.ourMemoryText{
+    margin: 5px;
+    font-size: clamp(16px, 18px, 20px);
+}
+
+.ourMemoryExplain{
+    margin: 5px;
+    font-size: clamp(12px, 14px, 16px);
+}
+
+.ourMemoryImageContainer{
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+    gap: 10px;
+    border: 1px solid black;
+    border-radius: 7px;
+}
+
+.weeklyMemoryTitleContainer{
+    padding: 10px;
     grid-column: 1/3;
-    margin: 32px 10px 10px 10px;
     border: 1px solid black;
     border-radius: 6px;
 }
 
-.everyMemory1{
-    grid-column: 1/3;
-    margin: 12px 10px 12px 10px;
-    border: 1px solid black;
-    border-radius: 6px;
+.weeklyMemoryTitleBox{
+    margin: 5px;
+    background-color: black;
+    color: white;
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: clamp(16px, 18px, 20px);
 }
 
-.everyMemory2{
-    grid-column: 1/3;
-    margin: 12px 10px 12px 10px;
-    border: 1px solid black;
-    border-radius: 6px;
+.weeklyMemoryTitleText{
+    font-size: clamp(25px, 27px, 29px);
 }
 
-.everyMemory3{
+.weeklyMemoryContainer1{
     grid-column: 1/3;
-    margin: 12px 10px 12px 12px;
     border: 1px solid black;
     border-radius: 6px;
+    display: grid;
+    grid-template-rows: 3.5fr 1fr;
+    grid-template-columns: 1fr;
+    
+}
+
+.weeklyMemoryContainer2{
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 6px;
+    display: grid;
+    grid-template-rows: 5.5fr 1fr;
+}
+
+.weeklyMemoryContainer3{
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 6px;
+    display: grid;
+    grid-template-rows: 5.5fr 1fr;
+}
+
+.weeklyMemoryImage1,
+.weeklyMemoryImage2,
+.weeklyMemoryImage3{
+    border: 1px solid black;
+    border-radius: 7px;
+    margin-bottom: 5px;
+}
+
+.weeklyMemoryImageText1,
+.weeklyMemoryImageText2,
+.weeklyMemoryImageText3{
+    font-size: clamp();
 }
 
 .morePicture{
+    padding: 7px;
     grid-column: 1/3;
-    margin: 20px 10px 10px 10px;
     border: 1px solid black;
     border-radius: 6px;
 }

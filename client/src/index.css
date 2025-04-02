@@ -1,9 +1,15 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100vh;
+  height: 100%;
   overflow-x: hidden;
-  overflow-y: auto;
+}
+
+*{
+  font-family:"Winky Sans";
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: bold;
 }
 
 body {
