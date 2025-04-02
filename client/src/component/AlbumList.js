@@ -1,18 +1,22 @@
 function AlbumList({ albumTitles }) {
-  if (albumTitles.length === 0) {
-    return <p>아직 추가된 앨범이 없습니다.</p>;
-  }
-
   return (
-    <ul style={{ listStyleType: "none", paddingLeft: 0 }}>
-      {" "}
+    <>
+      <h2>앨범 목록</h2>
       {/* 점 없애기, 기본 들여쓰기 제거 */}
-      {albumTitles.map((albumTitle, index) => (
-        <li key={index}>
-          <p>{`#${albumTitle}`}</p>
-        </li>
-      ))}
-    </ul>
+      <ul style={{ listStyleType: "none", paddingLeft: 0 }}>
+        {" "}
+        {albumTitles.map(
+          (
+            albumTitle,
+            index //앨범 제목들 하나씩 렌더링링
+          ) => (
+            <li key={index}>
+              <p>{`#${albumTitle}`}</p>
+            </li>
+          )
+        )}
+      </ul>
+    </>
   );
 }
 

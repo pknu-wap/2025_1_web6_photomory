@@ -5,7 +5,7 @@ function AddAlbum() {
   const [newAlbumData, setNewAlbumData] = useState({
     title: "", //제목
     description: "", //설명
-  }); // 앨범 생성 폼의 입력값(제목, 설명)을 저장하는 상태
+  }); // 앨범 생성 폼의 입력값(제목, 설명)을 저장하는 객체
   const [AlbumTitles, setAlbumTitles] = useState([]); // 앨범 이름 목록 리스트트
 
   //앨범 내용 사용자 입력 상태 업데이트
@@ -23,7 +23,7 @@ function AddAlbum() {
     console.log("앨범 생성:", newAlbumData);
 
     if (newAlbumData.title && newAlbumData.description) {
-      setAlbumTitles((prev) => [...prev, newAlbumData.title]); // 앨범이름리스트에 추가
+      setAlbumTitles((prev) => [...prev, newAlbumData.title]); // 입력 내용이 있을 때 앨범이름리스트에 추가
     }
     // 입력초기화
     setNewAlbumData({
@@ -60,6 +60,7 @@ function AddAlbum() {
           앨범 생성
         </button>
       </form>
+      {/*앨범 목록 컴포넌트*/}
       <AlbumList albumTitles={AlbumTitles} />
     </div>
   );
