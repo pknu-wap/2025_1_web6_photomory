@@ -21,6 +21,11 @@ function App() {
     }
   }, []);
 
+  // 새로운 그룹 추가 핸들러 (AddGroupButton에서 사용할 예정)
+  const handleAddGroup = (newGroup) => {
+    setGroupList((prev) => [...prev, newGroup]);
+  };
+
   return (
     <div
       style={{
@@ -65,6 +70,7 @@ function App() {
               }}
               groupList={groupList} // 모든 그룹 리스트
               setSelectedGroupId={setSelectedGroupId} //선택된 그룹 ID 세터
+              onAddGroup={handleAddGroup}
             />
             {/*그룹 목록을 보여주는 컴포넌트*/}
             <Groups

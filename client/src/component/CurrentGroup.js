@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddGroupButton from "./AddGroupButton";
 
-function CurrentGroup({ groupList, setSelectedGroupId }) {
+function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
   const [selectedGroup, setSelectedGroup] = useState({
     id: "",
     groupName: "",
@@ -63,7 +63,7 @@ function CurrentGroup({ groupList, setSelectedGroupId }) {
         ))}
       </select>
       {/*그룹추가버튼 컴포넌트*/}
-      <AddGroupButton />
+      <AddGroupButton onAddGroup={onAddGroup} />
     </div>
   );
 }

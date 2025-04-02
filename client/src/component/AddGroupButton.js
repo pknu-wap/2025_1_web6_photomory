@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function AddGroupButton() {
+function AddGroupButton({ onAddGroup }) {
   const [showModal, setShowModal] = useState(false); // 모달 표시 여부
   const [groupName, setGroupName] = useState(""); // 입력한 그룹 이름
 
@@ -14,10 +14,19 @@ function AddGroupButton() {
   const handleInputChange = (e) => {
     setGroupName(e.target.value); // 입력값 상태 업데이트
   };
-  //그룹명 전송 헨들러
+
+  // 그룹명 제출 핸들러
   const handleSubmit = () => {
     if (groupName.trim() === "") return alert("그룹명을 입력해주세요.");
-    console.log("입력된 그룹명:", groupName); // 실제 로직에서는 상위로 전달하거나 API 요청 가능
+
+    // 그룹 객체 생성 (멤버는 나중에 추가한다고 가정)
+    const newGroup = {
+      id: `group${Date.now()}`, // 고유 ID 생성
+      groupName: groupName.trim(),
+      members: [],
+    };
+
+    onAddGroup(newGroup); // 상위 컴포넌트로 전달
     handleCloseModal(); // 모달 닫기
   };
   return (
