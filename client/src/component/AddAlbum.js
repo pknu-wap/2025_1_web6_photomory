@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import AlbumList from "./AlbumList";
+import AlbumTitleList from "./AlbumTitleList";
 //앨범 추가 컴포넌트
 function AddAlbum() {
   const [newAlbumData, setNewAlbumData] = useState({
@@ -61,7 +61,7 @@ function AddAlbum() {
         </button>
       </form>
       {/*앨범 목록 컴포넌트*/}
-      <AlbumList albumTitles={AlbumTitles} />
+      <AlbumTitleList albumTitles={AlbumTitles} />
     </div>
   );
 }

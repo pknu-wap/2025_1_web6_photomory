@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddGroupButton from "./AddGroupButton";
 
-function Group({ groupList }) {
+function CurrentGroup({ groupList, setSelectedGroupId }) {
   const [selectedGroup, setSelectedGroup] = useState({
     id: "",
     groupName: "",
@@ -20,6 +20,7 @@ function Group({ groupList }) {
   const handleChange = (e) => {
     const name = e.target.value; // 선택된 <option>의 value 값 (즉, 그룹 이름)을 가져옴
     const group = groupList.find((g) => g.groupName === name);
+    setSelectedGroupId(group.id);
     setSelectedGroup((prev) => ({
       ...prev,
       id: group.id,
@@ -34,7 +35,15 @@ function Group({ groupList }) {
         <>
           {/*그룹명*/}
           <h4>👥 {selectedGroup.groupName}</h4>
-          <ul>
+          <ul
+            style={{
+              listStyleType: "none", // 리스트 점 없애기
+              display: "flex", // 가로로 나열
+              gap: "8px", // 항목 사이 간격
+              padding: 0, // 기본 들여쓰기 제거
+              margin: 0, // 기본 마진 제거
+            }}
+          >
             {/*그룹멤버*/}
             {selectedGroup.members.map((member, index) => (
               <li key={index}>{member}</li>
@@ -42,7 +51,7 @@ function Group({ groupList }) {
           </ul>
         </>
       )}
-      {/* 그룹선택 옵션션*/}
+      {/* 그룹선택 옵션*/}
       <select value={"그룹 선택"} onChange={handleChange}>
         <option disabled value={"그룹 선택"}>
           그룹 선택
@@ -59,4 +68,4 @@ function Group({ groupList }) {
   );
 }
 
-export default Group;
+export default CurrentGroup;

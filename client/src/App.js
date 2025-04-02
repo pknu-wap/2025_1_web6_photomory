@@ -4,14 +4,21 @@ import Calender from "./component/Calender";
 import AddAlbum from "./component/AddAlbum";
 import CurrentGroup from "./component/CurrentGroup";
 import Groups from "./component/Groups";
+import AlbumList from "./component/AlbumList";
 import getGroup from "../src/api/getGroup";
 
 function App() {
   const [groupList, setGroupList] = useState([]); // 그룹명과 해당 그룹 멤버들의 리스트
+  const [selectedGroupId, setSelectedGroupId] = useState(""); // 선택된 그룹 ID를 App에서 관리
 
   useEffect(() => {
-    const groups = getGroup(); // 그룹 이름 + 멤버만
+    const groups = getGroup(); // 그룹 데이터 불러오기
     setGroupList(groups);
+
+    // 초기 렌더링 시 첫 번째 그룹 선택, setGroupList는 비동기함수 이므로 groups값 사용용
+    if (groups.length > 0) {
+      setSelectedGroupId(groups[0].id);
+    }
   }, []);
 
   return (
@@ -56,10 +63,14 @@ function App() {
                 borderRadius: "8px",
                 marginBottom: "16px",
               }}
-              groupList={groupList}
+              groupList={groupList} // 모든 그룹 리스트
+              setSelectedGroupId={setSelectedGroupId} //선택된 그룹 ID 세터
             />
             {/*그룹 목록을 보여주는 컴포넌트*/}
-            <Groups />
+            <Groups
+              groupList={groupList} // 모든 그룹 리스트
+              selectedGroupId={selectedGroupId} // 그룹 강조에 사용
+            />
             <div
               style={{
                 backgroundColor: "#f9f9f9",
@@ -67,12 +78,7 @@ function App() {
                 borderRadius: "8px",
               }}
             >
-              <h4>최근 앨범</h4>
-              <ul>
-                <li>가을 여행</li>
-                <li>생일 파티</li>
-                <li>2025 새해</li>
-              </ul>
+              <AlbumList />
             </div>
           </div>
         </div>
