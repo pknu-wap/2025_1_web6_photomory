@@ -1,34 +1,52 @@
 import styles from './Header.module.css'
+import { useNavigate } from 'react-router-dom';
 
 function Header(){
+    const nav = useNavigate();
+    const onclickHandle = (event) => {
+        nav(event.target.value);
+    };
+
     return(
         <div className={styles.headerContainer}>
             <div className={styles.headerContainerLeft}>
                 <div className={styles.headerTopLogo}>
-                    icon
+                    logo
                 </div>
-                <div className={styles.home}>
+                <button className={styles.home}
+                onClick={onclickHandle}
+                value='/'>
                     home
-                </div>
+                </button>
                 <div className={styles.memoryContainer}>
-                    <div className={styles.myMemory}>
-                        myMemory
-                    </div>
-                    <div className={styles.ourMemory}>
-                        ourMemory
-                    </div>
-                    <div className={styles.everyMemory}>
-                        everyMemory
-                    </div>
+                    <button className={styles.myMemory}
+                    onClick={onclickHandle}
+                    value='/myMemory'>
+                        my memory
+                    </button>
+                    <button className={styles.ourMemory}
+                    onClick={onclickHandle}
+                    value='/ourMemory'>
+                        our memory
+                    </button>
+                    <button className={styles.weeklyMemory}
+                    onClick={onclickHandle}
+                    value='/weeklyMemory'>
+                        every memory
+                    </button>
                 </div>
             </div>
             <div className={styles.headerContainerRight}>
-                <div className={styles.signUp}>
-                    signUp
-                </div>
-                <div className={styles.signIn}>
-                    signIn
-                </div>
+                <button className={styles.signIn}
+                onClick={onclickHandle}
+                value='/signIn'>
+                    sign in
+                </button>
+                <button className={styles.signUp}
+                onClick={onclickHandle}
+                value='/signUp'>
+                    sign up
+                </button>
             </div>
         </div>
     );
