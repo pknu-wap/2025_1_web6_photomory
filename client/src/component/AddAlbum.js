@@ -33,7 +33,7 @@ function AddAlbum() {
   };
 
   return (
-    <div>
+    <div style={{ width: "256px", height: "435px" }}>
       <h3>앨범 추가</h3>
       <form onSubmit={handleSubmit}>
         <label htmlFor="albumTitle">앨범 제목</label>
