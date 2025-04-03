@@ -12,6 +12,7 @@ function App() {
   const [groupList, setGroupList] = useState([]); // 그룹명과 해당 그룹 멤버들의 리스트
   const [selectedGroupId, setSelectedGroupId] = useState(""); // 선택된 그룹 ID를 App에서 관리
   const [groupAlbums, setGroupAlbums] = useState([]); // 그룹별 앨범 리스트
+  const [albumTitlesByGroup, setAlbumTitlesByGroup] = useState({});
 
   //초기 그룹 정보, 앨범 가져오기
   useEffect(() => {
@@ -19,11 +20,22 @@ function App() {
     setGroupList(groups);
 
     if (groups.length > 0) {
-      setSelectedGroupId(groups[0].id); // 초기 렌더링 시 첫 번째 그룹 선택
-      setGroupAlbums(getGroupAlbums(groups[0].id)); //초기 앨범 설정
+      const firstGroup = groups[0]; //항상 첫번째 그룹 선택
+      const firstGroupAlbums = getGroupAlbums(firstGroup.id); //항상 첫번째 그룹의 앨범 선택
+
+      setSelectedGroupId(firstGroup.id); // 선택된 그룹 ID
+      setGroupAlbums(firstGroupAlbums); // 선택된 그룹의 앨범 전체 데이터
+      const initTitlesByGroup = {};
+      groups.forEach((group) => {
+        //처음부터 모든 그룹의 앨범 제목 목록을 한 번에 저장
+        const albums = getGroupAlbums(group.id);
+        initTitlesByGroup[group.id] = albums.map((album) => album.title);
+      });
+      setAlbumTitlesByGroup(initTitlesByGroup);
     }
   }, []);
-  //그룹id가 바뀔 대마다 그룹 앨범 가져오기기
+
+  //그룹id가 바뀔 대마다 그룹 앨범 가져오기
   useEffect(() => {
     if (selectedGroupId) {
       const albums = getGroupAlbums(selectedGroupId); // 그룹 ID로 앨범 가져오기
@@ -35,6 +47,11 @@ function App() {
   const handleAddGroup = (newGroup) => {
     setGroupList((prev) => [...prev, newGroup]);
   };
+
+  //선택된 그룹의 앨범명들(AddGroupButton에서 사용할 예정)
+  const selectedAlbumTitles = groupAlbums.map((ga) => {
+    return ga.title;
+  });
 
   return (
     <div
@@ -66,7 +83,12 @@ function App() {
         {/* 앨범 추가 오른쪽 영역을 가로 배치 */}
         <div style={{ display: "flex", gap: "24px", marginTop: "32px" }}>
           {/* 왼쪽: 앨범 추가 영역 */}
-          <AddAlbum />
+          <AddAlbum
+            existingAlbumTitles={selectedAlbumTitles} //기존의 앨범제목
+            selectedGroupId={selectedGroupId} //해당그룹의 ID
+            albumTitlesByGroup={albumTitlesByGroup} // 앨범 제목 목록 객체
+            setAlbumTitlesByGroup={setAlbumTitlesByGroup} // 앨범 제목 목록 객체 세터 함수
+          />
 
           {/* 오른쪽 영역 */}
           <div style={{ flex: 1 }}>

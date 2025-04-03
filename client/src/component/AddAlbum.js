@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import AlbumTitleList from "./AlbumTitleList";
 //앨범 추가 컴포넌트
-function AddAlbum() {
+function AddAlbum({
+  selectedGroupId,
+  albumTitlesByGroup,
+  setAlbumTitlesByGroup,
+}) {
   const [newAlbumData, setNewAlbumData] = useState({
     title: "", //제목
     description: "", //설명
   }); // 앨범 생성 폼의 입력값(제목, 설명)을 저장하는 객체
-  const [AlbumTitles, setAlbumTitles] = useState([]); // 앨범 이름 목록 리스트트
 
+  // 현재 그룹에 해당하는 기존 앨범 제목 배열 (없으면 빈 배열)
+  const currentAlbumTitles = albumTitlesByGroup[selectedGroupId] || [];
+  console.log(currentAlbumTitles);
   //앨범 내용 사용자 입력 상태 업데이트
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,15 +23,24 @@ function AddAlbum() {
       [name]: value,
     }));
   };
-
+  // 앨범 생성 처리
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("앨범 생성:", newAlbumData);
 
-    if (newAlbumData.title && newAlbumData.description) {
-      setAlbumTitles((prev) => [...prev, newAlbumData.title]); // 입력 내용이 있을 때 앨범이름리스트에 추가
+    const { title, description } = newAlbumData;
+
+    // 입력값이 모두 있을 때만 실행
+    if (title && description) {
+      const updatedTitles = [...currentAlbumTitles, title];
+
+      // 그룹별 앨범 제목 객체 업데이트
+      setAlbumTitlesByGroup((prev) => ({
+        ...prev,
+        [selectedGroupId]: updatedTitles,
+      }));
     }
-    // 입력초기화
+
+    // 입력값 초기화
     setNewAlbumData({
       title: "",
       description: "",
@@ -60,8 +75,8 @@ function AddAlbum() {
           앨범 생성
         </button>
       </form>
-      {/*앨범 목록 컴포넌트*/}
-      <AlbumTitleList albumTitles={AlbumTitles} />
+      {/*앨범 제목 목록 컴포넌트*/}
+      <AlbumTitleList albumTitles={currentAlbumTitles} />
     </div>
   );
 }
