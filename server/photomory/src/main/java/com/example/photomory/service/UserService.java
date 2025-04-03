@@ -8,7 +8,6 @@ public class UserService {
 
     public UserResponseDto register(UserRequestDto userRequestDto) {
         if (userRequestDto.getUser_password().length() > 10) {
-            UserRepository
             return new UserResponseDto(
                     userRequestDto.getUser_id(),
                     userRequestDto.getUser_email(),
