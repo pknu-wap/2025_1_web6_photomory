@@ -6,7 +6,12 @@ function Groups({ groupList, selectedGroupId }) {
     .map((_, i) => groupList[i] || null);
 
   return (
-    <div>
+    <div
+      style={{
+        borderRadius: "8px",
+        background: `linear-gradient(0deg, rgba(0, 0, 0, 0.001), rgba(0, 0, 0, 0.001)), #FFFFFF`,
+      }}
+    >
       <h3 style={{ marginBottom: "16px" }}>그룹 목록</h3>
 
       {/* 고정 2행 2열 그리드 */}

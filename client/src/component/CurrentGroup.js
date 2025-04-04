@@ -30,7 +30,13 @@ function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        background: `linear-gradient(0deg, rgba(0, 0, 0, 0.001), rgba(0, 0, 0, 0.001)), #FFFFFF`,
+        borderRadius: "8px",
+        marginBottom: "39px",
+      }}
+    >
       {selectedGroup && (
         <>
           {/*그룹명*/}

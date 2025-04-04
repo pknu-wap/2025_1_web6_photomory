@@ -47,7 +47,14 @@ function AddAlbum({
   };
 
   return (
-    <div style={{ width: "256px", height: "435px" }}>
+    <div
+      style={{
+        width: "256px",
+        height: "435px",
+        borderRadius: "8px",
+        background: `linear-gradient(0deg, rgba(0, 0, 0, 0.001), rgba(0, 0, 0, 0.001)), #FFFFFF`,
+      }}
+    >
       <h3>앨범 추가</h3>
       <form onSubmit={handleSubmit}>
         <label htmlFor="albumTitle">앨범 제목</label>
@@ -70,12 +77,12 @@ function AddAlbum({
           rows="4"
           style={{ width: "100%", padding: "8px", marginBottom: "12px" }}
         />
+        {/*앨범 제목 목록 컴포넌트*/}
+        <AlbumTitleList albumTitles={currentAlbumTitles} />
         <button type="submit" style={{ padding: "8px 16px" }}>
           앨범 생성
         </button>
       </form>
-      {/*앨범 제목 목록 컴포넌트*/}
-      <AlbumTitleList albumTitles={currentAlbumTitles} />
     </div>
   );
 }

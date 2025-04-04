@@ -109,7 +109,6 @@ function App() {
             />
             <div
               style={{
-                backgroundColor: "#f9f9f9",
                 padding: "16px",
                 borderRadius: "8px",
               }}

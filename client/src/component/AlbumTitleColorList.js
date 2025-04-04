@@ -1,4 +1,8 @@
-function AlbumTitleColorList({ selectedAlbumTitles = [], albumColors }) {
+function AlbumTitleColorList({
+  selectedAlbumTitles = [],
+  albumColorsMap,
+  albumDotColorsMap,
+}) {
   return (
     <div style={{ marginTop: "16px" }}>
       <ul
@@ -15,7 +19,7 @@ function AlbumTitleColorList({ selectedAlbumTitles = [], albumColors }) {
           <li
             key={i}
             style={{
-              backgroundColor: albumColors[i % albumColors.length],
+              backgroundColor: albumColorsMap[title],
               borderRadius: "20px",
               padding: "6px 12px",
               fontSize: "14px",
@@ -28,7 +32,7 @@ function AlbumTitleColorList({ selectedAlbumTitles = [], albumColors }) {
               style={{
                 width: "10px",
                 height: "10px",
-                backgroundColor: "#555", // 점 색상은 검정/짙은 색
+                backgroundColor: albumDotColorsMap[title], //매핑된 진한
                 borderRadius: "50%",
                 display: "inline-block",
               }}

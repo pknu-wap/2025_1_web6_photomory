@@ -1,5 +1,8 @@
 import React, { useState } from "react";
-import { albumColors, getAlbumColorMap } from "../utils/albumColors.js";
+import {
+  getAlbumColorMap,
+  getAlbumDotColorsMap,
+} from "../utils/albumColors.js";
 import dayjs from "dayjs";
 import "./Calender.css";
 import DayCell from "./DayCell.js";
@@ -17,7 +20,9 @@ function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
 
   // 앨범명 => 색상 매핑 객체 생성
   const albumColorsMap = getAlbumColorMap(selectedAlbumTitles);
-  console.log(albumColorsMap);
+  // 앨범명 점 =>색상 매핑 객체 생성
+  const albumDotColorsMap = getAlbumDotColorsMap(selectedAlbumTitles);
+
   //<-, ->버튼으로 월 이동
   const prevMonth = () => setCurrentDate(currentDate.subtract(1, "month"));
   const nextMonth = () => setCurrentDate(currentDate.add(1, "month"));
@@ -52,6 +57,7 @@ function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
             matchingPhotos.push({
               title: photo.title, //사진 이름
               albumTitle: album.title, //앨범명
+              imgUrl: photo.imgUrl, //사진 imgurl
             });
           }
         });
@@ -63,6 +69,7 @@ function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
           day={d}
           photos={matchingPhotos}
           albumColorsMap={albumColorsMap}
+          albumDotColorsMap={albumDotColorsMap}
         />
       );
     }
@@ -92,7 +99,8 @@ function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
       <div className="days">{generateCalendar()}</div>
       <AlbumTitleColorList
         selectedAlbumTitles={selectedAlbumTitles}
-        albumColors={albumColors}
+        albumColorsMap={albumColorsMap}
+        albumDotColorsMap={albumDotColorsMap}
       />
     </div>
   );
