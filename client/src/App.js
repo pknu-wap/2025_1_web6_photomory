@@ -12,7 +12,7 @@ function App() {
   const [groupList, setGroupList] = useState([]); // 그룹명과 해당 그룹 멤버들의 리스트
   const [selectedGroupId, setSelectedGroupId] = useState(""); // 선택된 그룹 ID를 App에서 관리
   const [groupAlbums, setGroupAlbums] = useState([]); // 그룹별 앨범 리스트
-  const [albumTitlesByGroup, setAlbumTitlesByGroup] = useState({});
+  const [albumTitlesByGroup, setAlbumTitlesByGroup] = useState({}); //그룹ID에 대한 앨범 목록 객체
 
   //초기 그룹 정보, 앨범 가져오기
   useEffect(() => {
@@ -48,11 +48,6 @@ function App() {
     setGroupList((prev) => [...prev, newGroup]);
   };
 
-  //선택된 그룹의 앨범명들(AddGroupButton에서 사용할 예정)
-  const selectedAlbumTitles = groupAlbums.map((ga) => {
-    return ga.title;
-  });
-
   return (
     <div
       style={{
@@ -78,13 +73,16 @@ function App() {
       </nav>
 
       <Container>
-        <Calender />
+        <Calender
+          groupAlbums={groupAlbums}
+          selectedGroupId={selectedGroupId}
+          albumTitlesByGroup={albumTitlesByGroup}
+        />
 
         {/* 앨범 추가 오른쪽 영역을 가로 배치 */}
         <div style={{ display: "flex", gap: "24px", marginTop: "32px" }}>
           {/* 왼쪽: 앨범 추가 영역 */}
           <AddAlbum
-            existingAlbumTitles={selectedAlbumTitles} //기존의 앨범제목
             selectedGroupId={selectedGroupId} //해당그룹의 ID
             albumTitlesByGroup={albumTitlesByGroup} // 앨범 제목 목록 객체
             setAlbumTitlesByGroup={setAlbumTitlesByGroup} // 앨범 제목 목록 객체 세터 함수

@@ -13,7 +13,6 @@ function AddAlbum({
 
   // 현재 그룹에 해당하는 기존 앨범 제목 배열 (없으면 빈 배열)
   const currentAlbumTitles = albumTitlesByGroup[selectedGroupId] || [];
-  console.log(currentAlbumTitles);
   //앨범 내용 사용자 입력 상태 업데이트
   const handleChange = (e) => {
     const { name, value } = e.target;
