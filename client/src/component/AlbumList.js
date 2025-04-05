@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PaginationBar from "./PaginationBar";
 
 function AlbumList({ albums }) {
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
@@ -11,9 +12,6 @@ function AlbumList({ albums }) {
   const indexOfLastAlbum = currentPage * albumsPerPage; //마지막앨범
   const indexOfFirstAlbum = indexOfLastAlbum - albumsPerPage; //첫번째앨범
   const currentAlbums = albums.slice(indexOfFirstAlbum, indexOfLastAlbum); //앨범 범위
-
-  // 페이지 번호 배열 생성
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   // 페이지 이동 핸들러
   const handlePageClick = (page) => {
@@ -40,6 +38,7 @@ function AlbumList({ albums }) {
           <div style={{ display: "flex" }}>
             {/* 앨범 제목 */}
             <h4>#{currentAlbum.title}</h4>
+            <p>총 {currentAlbum.photos.length}장의 사진들</p>
             <p
               style={{
                 color: "#1a73e8",
@@ -88,26 +87,12 @@ function AlbumList({ albums }) {
           </div>
         </div>
       ))}
-      {/* 페이지 네비게이션 */}
-      <div style={{ textAlign: "center", marginTop: "16px" }}>
-        {pageNumbers.map((page) => (
-          <button
-            key={page}
-            onClick={() => handlePageClick(page)}
-            style={{
-              margin: "0 4px",
-              padding: "6px 12px",
-              backgroundColor: currentPage === page ? "#3b82f6" : "#eee",
-              color: currentPage === page ? "#fff" : "#333",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            {page}
-          </button>
-        ))}
-      </div>
+      {/*페이지네이션 바 */}
+      <PaginationBar
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageClick}
+      />
     </div>
   );
 }
