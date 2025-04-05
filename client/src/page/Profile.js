@@ -1,12 +1,15 @@
-import Header from './Header.js'
-
-
+import Header from '../component/Header.js'
+import ProfileMainpage from '../component/Profile.MainPage.js';
+import Footer from '../component/Footer.js';
 
 function Profile(){
 
     return(
-        <Header></Header>
-
+        <div>
+            <Header></Header>
+            <ProfileMainpage></ProfileMainpage>
+            <Footer></Footer>
+        </div>
     );
 };
 

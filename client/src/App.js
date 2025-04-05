@@ -1,7 +1,11 @@
+import { BrowserRouter } from 'react-router-dom';
+import Profile from "./page/Profile";
 
 function App() {
   return (
-    <h1></h1>
+    <BrowserRouter>
+      <Profile></Profile>
+    </BrowserRouter>
   );
 }
 

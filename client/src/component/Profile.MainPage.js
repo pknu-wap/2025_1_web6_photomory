@@ -1,4 +1,4 @@
-import styles from './Profile.Mainpage.module.css'
+import styles from './Profile.MainPage.module.css'
 
 function ProfileMainpage() {
     
