@@ -1,5 +1,5 @@
 import { BrowserRouter } from 'react-router-dom';
-import Profile from "./page/Profile";
+import Profile from "./page/Profile.Page";
 
 function App() {
   return (

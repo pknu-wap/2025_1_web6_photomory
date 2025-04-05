@@ -1,13 +1,14 @@
 import Header from '../component/Header.js'
-import ProfileMainpage from '../component/Profile.MainPage.js';
+import ProfileMain from '../component/Profile.Main.js';
 import Footer from '../component/Footer.js';
+import styles from './Profile.Page.module.css'
 
 function Profile(){
 
     return(
-        <div>
+        <div className={styles.pageContainer}>
             <Header></Header>
-            <ProfileMainpage></ProfileMainpage>
+            <ProfileMain></ProfileMain>
             <Footer></Footer>
         </div>
     );
