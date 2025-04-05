@@ -4,15 +4,15 @@ function AlbumTitleColorList({
   albumDotColorsMap,
 }) {
   return (
-    <div style={{ marginTop: "16px" }}>
+    <div
+      style={{ marginLeft: "80px", marginTop: "15px", width: "fit-content" }}
+    >
       <ul
         style={{
-          paddingLeft: "16px",
           listStyleType: "none", // 점 없애기
           display: "flex", // 가로로 나열
           flexWrap: "wrap", // 줄바꿈 허용 (너무 길면 다음 줄로)
           gap: "8px", // 항목 사이 간격
-          margin: 0, // 기본 마진 제거
         }}
       >
         {selectedAlbumTitles.map((title, i) => (

@@ -1,6 +1,6 @@
 .calendar {
   width: 1376px;
-  height: 660px;
+  height: 720px;
   border-radius: 8px;
   opacity: 1;
   margin: 0px auto;
@@ -37,8 +37,9 @@
 
 .weekdays,
 .days {
+  margin: 0px auto;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, 173.72px);
   text-align: center;
 }
 

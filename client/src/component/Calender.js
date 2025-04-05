@@ -11,7 +11,7 @@ import AlbumTitleColorList from "./AlbumTitleColorList.js";
 // 달력 컴포넌트
 function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
   const [currentDate, setCurrentDate] = useState(dayjs()); //앱이 처음 실행될 때 기준이 되는 날짜를 dayjs()로 설정 (즉, 오늘 날짜)
-  const startOfMonth = currentDate.startOf("month"); //현재 월의 1일을 구함
+  const startOfMonth = currentDate.startOf("month"); //현재 월의 1일 날짜 객체을 구함
   const startDay = startOfMonth.day(); // 이번 달의 1일이 무슨 요일인지 확인
   const daysInMonth = currentDate.daysInMonth(); //이번 달이 며칠까지 있는지 확인
 
@@ -20,6 +20,7 @@ function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
 
   // 앨범명 => 색상 매핑 객체 생성
   const albumColorsMap = getAlbumColorMap(selectedAlbumTitles);
+
   // 앨범명 점 =>색상 매핑 객체 생성
   const albumDotColorsMap = getAlbumDotColorsMap(selectedAlbumTitles);
 
@@ -29,14 +30,23 @@ function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
 
   //달력에 날짜를 동적으로 그려주는 함수
   const generateCalendar = () => {
-    const days = [];
+    const days = []; //달력 내의 날짜배열열
+    const daysInPrevMonth = currentDate.subtract(1, "month").daysInMonth(); //현재 달의 이전 달 마지막 날짜짜
 
-    // 이번 달 1일의 요일만큼 빈 셀 추가
-    for (let i = 0; i < startDay; i++) {
-      days.push(<DayCell key={`empty-${i}`} isEmpty={true} />);
+    // 이전 달의 날짜 채우기 (흐리게 표시)
+    for (let i = startDay - 1; i >= 0; i--) {
+      const dayNumber = daysInPrevMonth - i;
+
+      days.push(
+        <DayCell
+          key={`prev-${dayNumber}`}
+          day={dayNumber} //계산된 이전 달의 날짜
+          isOtherMonth={true}
+          isEmpty={false} //이전 달의 날짜
+        />
+      );
     }
-
-    // 이번 달 실제 날짜 채우기기
+    // 이번 달 실제 날짜 채우기
     for (let d = 1; d <= daysInMonth; d++) {
       const matchingPhotos = []; //각 날짜에 해당하는 사진 데이터를 모으는 배열열
 
@@ -70,6 +80,7 @@ function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
           photos={matchingPhotos}
           albumColorsMap={albumColorsMap}
           albumDotColorsMap={albumDotColorsMap}
+          isOtherMonth={false} //이번달의 날짜
         />
       );
     }

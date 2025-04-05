@@ -9,6 +9,7 @@ function DayCell({
   photos = [],
   albumColorsMap = {},
   albumDotColorsMap = {},
+  isOtherMonth = {},
 }) {
   //day: 날짜, isEmpty:빈 칸인지 여부 (true이면 날짜 없음)
   const [selectedPhoto, setSelectedPhoto] = useState(null);
@@ -39,13 +40,16 @@ function DayCell({
         padding: "8px",
         minHeight: "80px",
         boxSizing: "border-box",
+        width: "173.72px",
+        height: "88px",
       }}
     >
       {!isEmpty && (
         <>
           {/* 날짜 숫자 */}
-          <strong>{day}</strong>
-
+          <strong style={{ color: isOtherMonth ? "#bbb" : "#000" }}>
+            {day}
+          </strong>
           {/* 앨범명: 사진명 목록 */}
           <div
             style={{
@@ -74,7 +78,6 @@ function DayCell({
                 >
                   <span
                     style={{
-                      cursor: "pointer",
                       width: "10px",
                       height: "10px",
                       backgroundColor: dotColor,
