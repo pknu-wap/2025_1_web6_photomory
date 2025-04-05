@@ -27,6 +27,7 @@ function AddGroupButton({ onAddGroup }) {
     };
 
     onAddGroup(newGroup); // 상위 컴포넌트로 전달
+    setGroupName(""); //입력창 초기화
     handleCloseModal(); // 모달 닫기
   };
   return (

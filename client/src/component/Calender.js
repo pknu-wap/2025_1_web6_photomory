@@ -31,7 +31,7 @@ function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
   //달력에 날짜를 동적으로 그려주는 함수
   const generateCalendar = () => {
     const days = []; //달력 내의 날짜배열열
-    const daysInPrevMonth = currentDate.subtract(1, "month").daysInMonth(); //현재 달의 이전 달 마지막 날짜짜
+    const daysInPrevMonth = currentDate.subtract(1, "month").daysInMonth(); //현재 달의 이전 달 마지막 날짜
 
     // 이전 달의 날짜 채우기 (흐리게 표시)
     for (let i = startDay - 1; i >= 0; i--) {
