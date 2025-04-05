@@ -31,7 +31,7 @@ function Header(){
                     </button>
                     <button className={styles.weeklyMemory}
                     onClick={onclickHandle}
-                    value='/weeklyMemory'>
+                    value='/everyMemory'>
                         every memory
                     </button>
                 </div>

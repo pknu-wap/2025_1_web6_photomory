@@ -1,9 +1,10 @@
 .mainContainer{
-    width: 97.8%;
+    width: 70%;
+    margin-left: 15%;
     height: 100%;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: minmax(150px, 200px) minmax(250px, 300px) minmax(80px, 100px) minmax(250px, 300px) minmax(250px, 300px) minmax(50px, 60px);
+    grid-template-rows: minmax(150px, 200px) minmax(250px, 300px) minmax(80px, 100px) minmax(600px, 650px) minmax(400px, 450px) minmax(50px, 60px);
     gap: 20px;
     padding: 20px;
 }
@@ -194,9 +195,6 @@
 
 .myMemoryContainer:hover,
 .ourMemoryContainer:hover,
-.weeklyMemoryContainer1:hover,
-.weeklyMemoryContainer2:hover,
-.weeklyMemoryContainer3:hover,
 .morePicture:hover{
     box-shadow: rgba(100, 100, 100, 0.2) 0px 0px 30px 10px;
     background: linear-gradient(to bottom right,  #ccffff 0%, #ffccff 100%);
