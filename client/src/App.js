@@ -13,7 +13,6 @@ function App() {
   const [selectedGroupId, setSelectedGroupId] = useState(""); // 선택된 그룹 ID를 App에서 관리
   const [groupAlbums, setGroupAlbums] = useState([]); // 그룹별 앨범 리스트
   const [albumTitlesByGroup, setAlbumTitlesByGroup] = useState({}); //그룹ID에 대한 앨범 목록 객체
-
   //초기 그룹 정보, 앨범 가져오기
   useEffect(() => {
     const groups = getGroup(); // 그룹 데이터 불러오기
@@ -86,6 +85,7 @@ function App() {
             selectedGroupId={selectedGroupId} //해당그룹의 ID
             albumTitlesByGroup={albumTitlesByGroup} // 앨범 제목 목록 객체
             setAlbumTitlesByGroup={setAlbumTitlesByGroup} // 앨범 제목 목록 객체 세터 함수
+            setGroupAlbums={setGroupAlbums} //현재 앨범 목록 변경용
           />
 
           {/* 오른쪽 영역 */}

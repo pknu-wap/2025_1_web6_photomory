@@ -5,6 +5,7 @@ function AddAlbum({
   selectedGroupId,
   albumTitlesByGroup,
   setAlbumTitlesByGroup,
+  setGroupAlbums,
 }) {
   const [newAlbumData, setNewAlbumData] = useState({
     title: "", //제목
@@ -38,6 +39,16 @@ function AddAlbum({
         [selectedGroupId]: updatedTitles,
       }));
     }
+
+    const newAlbum = {
+      id: `album-${Date.now()}`, //임시 고유 ID
+      title,
+      description,
+      createdAt: new Date().toISOString().slice(0, 10), //YYYY-MM-DD
+      photos: [], //사진은 나중에 추가
+    };
+
+    setGroupAlbums((prev) => [...prev, newAlbum]);
 
     // 입력값 초기화
     setNewAlbumData({
