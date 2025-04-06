@@ -7,6 +7,8 @@ import dayjs from "dayjs";
 import "./Calender.css";
 import DayCell from "./DayCell.js";
 import AlbumTitleColorList from "./AlbumTitleColorList.js";
+import moveCalenderLeft from "../assets/moveCalenderLeft.svg";
+import moveCalenderRight from "../assets/moveCalenderRight.svg";
 
 // 달력 컴포넌트
 function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
@@ -91,11 +93,29 @@ function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
   return (
     <div className="calendar">
       <div className="calenderHeader">
-        <h3>촬영 캘린더</h3>
+        <h3 className="calendarTitle">촬영 캘린더</h3>
         <span className="moveMonth">
-          <button onClick={prevMonth}>⬅</button>
-          <h2>{currentDate.format("YYYY년 M월")}</h2>
-          <button onClick={nextMonth}>➡</button>
+          <button
+            onClick={prevMonth}
+            style={{
+              all: "unset", //버튼의 모든 기본 스타일 없애기
+              cursor: "pointer",
+            }}
+          >
+            <img src={moveCalenderLeft} alt="왼쪽 이동 버튼" />
+          </button>
+          <span className="calendarTitle">
+            {currentDate.format("YYYY년 M월")}
+          </span>
+          <button
+            onClick={nextMonth}
+            style={{
+              all: "unset", //버튼의 모든 기본 스타일 없애기
+              cursor: "pointer",
+            }}
+          >
+            <img src={moveCalenderRight} alt="오른쪽 이동 버튼" />
+          </button>
         </span>
       </div>
 

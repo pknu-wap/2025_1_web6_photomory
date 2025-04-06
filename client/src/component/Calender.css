@@ -28,6 +28,26 @@
   margin: 32px 32px 16px 32px;
 }
 
+.calendarTitle {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0px;
+
+  font-feature-settings: "kern" on;
+  color: #000000;
+}
+
+.yearMonth {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0px;
+
+  font-feature-settings: "kern" on;
+  color: #000000;
+}
+
 .moveMonth {
   display: flex;
   flex-direction: row;
@@ -47,6 +67,7 @@
 .weekday {
   padding: 10px;
   border: 1px solid #ccc;
+  border: none;
 }
 
 .empty {

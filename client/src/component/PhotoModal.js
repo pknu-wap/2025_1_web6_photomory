@@ -1,5 +1,5 @@
 import React from "react";
-
+import "./PhotoModal.css";
 function PhotoModal({ photo, onClose }) {
   if (!photo) return null;
 
@@ -8,41 +8,24 @@ function PhotoModal({ photo, onClose }) {
       {/* 어두운 배경 */}
       <div
         onClick={onClose} //클릭시 닫힘
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100vw",
-          height: "100vh",
-          background: "rgba(0,0,0,0.4)",
-          zIndex: 1000,
-        }}
+        className="photoModalBackColor"
       />
 
       {/* 모달 본체 */}
       <div
         onClick={(e) => e.stopPropagation()} // 이벤츠 전파 막기
-        style={{
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          backgroundColor: "#fff",
-          padding: "20px",
-          borderRadius: "8px",
-          zIndex: 1001,
-          boxShadow: "0 0 10px rgba(0,0,0,0.3)",
-          textAlign: "center",
-        }}
+        className="modalImageCard"
       >
-        <h4>#{photo.albumTitle}</h4>
-        <img
-          src={photo.imgUrl}
-          alt={photo.title}
-          style={{ width: "300px", borderRadius: "8px" }}
-        />
-        <p style={{ marginTop: "10px" }}>{photo.title}</p>
-        <button onClick={onClose}>닫기</button>
+        <div style={{ display: "flex" }}>
+          <img
+            src={photo.imgUrl}
+            alt={photo.title}
+            style={{ width: "864px", height: "658px", borderRadius: "8px" }}
+          />
+          <h3 style={{ marginTop: "10px" }}>{photo.title}</h3>
+          <h4>#{photo.albumTitle}</h4>
+          <button onClick={onClose}>닫기</button>
+        </div>
       </div>
     </>
   );
