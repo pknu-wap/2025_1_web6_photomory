@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import "./Calender"; //Calender 컴포넌트 css사용
+import "./Calender.css"; //Calender 컴포넌트 css사용
+import "./DayCell.css";
 import PhotoModal from "./PhotoModal";
 
 //달력 안에 들어가 있는 날짜 컴포넌트
@@ -36,12 +37,6 @@ function DayCell({
       className={`day ${isEmpty ? "empty" : ""}`}
       style={{
         backgroundColor: isEmpty ? "transparent" : bgColor, // 빈칸은 배경 없음
-        borderRadius: "8px",
-        padding: "8px",
-        minHeight: "80px",
-        boxSizing: "border-box",
-        width: "173.72px",
-        height: "88px",
       }}
     >
       {!isEmpty && (
@@ -51,39 +46,20 @@ function DayCell({
             {day}
           </strong>
           {/* 앨범명: 사진명 목록 */}
-          <div
-            style={{
-              display: "flex",
-              gap: "4px",
-              marginBottom: "6px",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              cursor: "pointer",
-            }}
-          >
+          <div className="photoByday">
             {photos.map((photo, idx) => {
               const dotColor = albumDotColorsMap[photo.albumTitle] || "#333"; //매핑된 점 색깔
               return (
                 <div
                   key={idx}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    gap: "4px",
-                    fontSize: "12px",
-                    color: "#333",
-                  }}
+                  className="contentsByPhoto"
                   onClick={() => handlePhotoClick(photo)} //클릭 시 selectedPhoto 설정
                 >
                   <span
                     style={{
-                      width: "10px",
-                      height: "10px",
                       backgroundColor: dotColor,
-                      borderRadius: "50%",
-                      display: "inline-block",
                     }}
+                    className="dot"
                   />
                   <span>
                     <strong>#{photo.albumTitle}</strong>:<br />

@@ -36,7 +36,6 @@
 
 .infoHeader {
   width: 240px;
-  height: 77px;
   margin-bottom: 16px;
   border-bottom: solid 1px #e5e7eb;
 }
@@ -58,6 +57,7 @@
 
 .createdDay {
   display: flex;
+  margin-bottom: 8px;
 }
 
 .albumTitleCard {

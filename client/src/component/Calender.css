@@ -34,7 +34,6 @@
   line-height: 24px;
   letter-spacing: 0px;
 
-  font-feature-settings: "kern" on;
   color: #000000;
 }
 
@@ -44,7 +43,6 @@
   line-height: 24px;
   letter-spacing: 0px;
 
-  font-feature-settings: "kern" on;
   color: #000000;
 }
 
@@ -63,10 +61,18 @@
   text-align: center;
 }
 
+.day {
+  border-radius: 8px;
+  padding: 8px;
+  min-height: 80px;
+  box-sizing: border-box;
+  width: 173.72px;
+  height: 88px;
+}
+
 .day,
 .weekday {
   padding: 10px;
-  border: 1px solid #ccc;
   border: none;
 }
 
