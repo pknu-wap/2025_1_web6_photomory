@@ -1,88 +1,12 @@
 import { BrowserRouter } from 'react-router-dom';
 import { useState, createContext } from 'react';
 import Profile from "./page/Profile.Page";
-const mokData=[
-  [
-    {
-      id: "group1",
-      groupName: "여행 친구들",
-      members: ["지훈", "민지", "영수", "소라"],
-      albums: [
-        {
-          id: "album1",
-          title: "2024 여름 제주도",
-          createdAt: "2024-08-12",
-          photos: [
-            {
-              id: "photo1",
-              title: "성산일출봉",
-              createdAt: "2024-08-12T14:30:00",
-              imgUrl: "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
-            },
-            {
-              id: "photo2",
-              title: "우도에서",
-              createdAt: "2024-08-12T15:00:00",
-              imgUrl: "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/6793de89-46d8-4147-8e80-015411e19246.jpg"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      id: "group2",
-      groupName: "가족 앨범",
-      members: ["엄마", "아빠", "나", "동생"],
-      albums: [
-        {
-          id: "album2",
-          title: "2023 추석 가족사진",
-          createdAt: "2023-09-28",
-          photos: [
-            {
-              id: "photo3",
-              title: "한복 입은 가족",
-              createdAt: "2023-09-28T11:00:00",
-              imgUrl: "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/32f0970f-baa2-478a-9938-db4a1ab3a167.jpg"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      id: "group3",
-      groupName: "학교 동아리",
-      members: ["현우", "수진", "재민"],
-      albums: [
-        {
-          id: "album3",
-          title: "MT 사진",
-          createdAt: "2024-03-10",
-          photos: [
-            {
-              id: "photo4",
-              title: "단체사진",
-              createdAt: "2024-03-10T12:00:00",
-              imgUrl: "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/300c4285-b0e2-42dc-a658-9416bb5bf3e9.jpg"
-            },
-            {
-              id: "photo5",
-              title: "야경",
-              createdAt: "2024-03-10T21:00:00",
-              imgUrl: "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/47ffccf5-c9f3-40b7-9c54-9ad4dabee1c4.jpg"
-            }
-          ]
-        }
-      ]
-    }
-  ]
-]
 export const context=createContext();
 
 function App() {
   return (
     <BrowserRouter>
-      <context.Provider vlaue={mokData}>
+      <context.Provider>
         <Profile></Profile>
       </context.Provider>
     </BrowserRouter>
