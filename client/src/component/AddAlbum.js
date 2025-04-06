@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AlbumTitleList from "./AlbumTitleList";
 import addAlbumButton from "../assets/addAlbumButton.svg";
+import "./AddAlbum.css";
 //앨범 추가 컴포넌트
 function AddAlbum({
   selectedGroupId,
@@ -59,16 +60,11 @@ function AddAlbum({
   };
 
   return (
-    <div
-      style={{
-        width: "256px",
-        height: "475px",
-        borderRadius: "8px",
-        background: `linear-gradient(0deg, rgba(0, 0, 0, 0.001), rgba(0, 0, 0, 0.001)), #FFFFFF`,
-      }}
-    >
-      <div style={{ margin: "24px 24px 16px 24px" }}>
-        <h3 style={{ marginBottom: "16px" }}>앨범 추가</h3>
+    <div className="addAlbumCard">
+      <div className="AddAlbumInner">
+        <h3 style={{ marginBottom: "16px" }} className="AddAlbumtitle">
+          앨범 추가
+        </h3>
         <form onSubmit={handleSubmit}>
           <label htmlFor="albumTitle">앨범 제목</label>
           <input
@@ -78,12 +74,7 @@ function AddAlbum({
             value={newAlbumData.title}
             onChange={handleChange}
             placeholder="앨범 제목을 입력하세요."
-            style={{
-              width: "100%",
-              padding: "8px",
-              marginBottom: "12px",
-              border: "1px solid #E5E7EB",
-            }}
+            className="albumTitleInput"
           />
           <label htmlFor="albumDescription">설명</label>
           <textarea
@@ -93,23 +84,11 @@ function AddAlbum({
             onChange={handleChange}
             placeholder="앨범에 대한 설명을 입력하세요."
             rows="4"
-            style={{
-              width: "208px",
-              height: "96px",
-              padding: "8px",
-              marginBottom: "12px",
-              border: "1px solid #E5E7EB",
-            }}
+            className="albumDescription"
           />
           {/*앨범 제목 목록 컴포넌트*/}
           <AlbumTitleList albumTitles={currentAlbumTitles} />
-          <button
-            type="submit"
-            style={{
-              all: "unset", //버튼의 모든 기본 스타일 없애기
-              cursor: "pointer",
-            }}
-          >
+          <button type="submit" className="addAlbumButton">
             <img src={addAlbumButton} alt="addAlbumButton" />
           </button>
         </form>
