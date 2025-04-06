@@ -11,13 +11,56 @@
 .modalImageCard {
   position: fixed;
   width: 1152px;
+  height: 658px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #ffffff;
-  padding: 20px;
   border-radius: 8px;
   z-index: 1001;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   text-align: center;
+}
+
+.modalImage {
+  width: 864px;
+  height: 658px;
+  border-radius: 8px;
+}
+
+.modalImageInfo {
+  margin: 24px 0 0 24px;
+  width: 288px;
+  text-align: left;
+}
+
+.infoHeader {
+  width: 240px;
+  height: 77px;
+  margin-bottom: 16px;
+  border-bottom: solid 1px #e5e7eb;
+}
+
+.imageTitle {
+  text-align: left;
+  margin-bottom: 8px;
+  width: 300px;
+  height: 32px;
+  opacity: 1;
+
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 32px;
+  letter-spacing: 0px;
+
+  color: #000000;
+}
+
+.createdDay {
+  display: flex;
+}
+
+.albumTitleCard {
+  font-size: 15px;
+  color: #000000;
 }

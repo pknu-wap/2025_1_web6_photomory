@@ -50,7 +50,7 @@ function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
     }
     // 이번 달 실제 날짜 채우기
     for (let d = 1; d <= daysInMonth; d++) {
-      const matchingPhotos = []; //각 날짜에 해당하는 사진 데이터를 모으는 배열열
+      const matchingPhotos = []; //각 날짜에 해당하는 사진 데이터를 모으는 배열
 
       //각 앨범을 돌며 해당 날짜에 맞는 사진 찾아내기
       groupAlbums.forEach((album) => {
@@ -70,6 +70,7 @@ function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
               title: photo.title, //사진 이름
               albumTitle: album.title, //앨범명
               imgUrl: photo.imgUrl, //사진 imgurl
+              createdAt: photo.createdAt, //사진 생성날짜
             });
           }
         });

@@ -12,7 +12,7 @@ function DayCell({
   isOtherMonth = {},
 }) {
   //day: 날짜, isEmpty:빈 칸인지 여부 (true이면 날짜 없음)
-  const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [selectedPhoto, setSelectedPhoto] = useState(null); //날짜 셀을 눌렀을때 선택되는 사진정보상태
 
   const handlePhotoClick = (photo) => {
     //클릭한 사진 정보 변경 헨들러
