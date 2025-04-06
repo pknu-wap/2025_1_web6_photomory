@@ -5,7 +5,27 @@ import {useState, useContext } from 'react'
 import { context } from '../App'
 
 function ProfileMain() {
-    // const {mokData}=useContext(context)
+    const [field, setField]=useState('');
+    const [myTool, setMyTool]=useState('');
+    const [myArea, setMyArea]=useState('');
+    const [longIntro, setlongIntro]=useState('');
+
+
+
+const onChangeHadle=(e)=>{
+    if (e.target.className === styles.myFieldInput) {
+        setField(e.target.value)
+    }
+    if (e.target.className === styles.myTool) {
+        setMyTool(e.target.value)
+    }
+    if (e.target.className === styles.myArea) {
+        setMyArea(e.target.value)
+    }
+    if (e.target.className === styles.longIntro) {
+        setlongIntro(e.target.value)
+    }
+}
 
 
     return(
@@ -26,31 +46,42 @@ function ProfileMain() {
                 <div className={styles.myFieldContainer}>
                     <p className={styles.myField}>전문 분야</p>
                     <input type='text' placeholder='풍경 사진'
-                    className={styles.myFieldInput}></input>
+                    className={styles.myFieldInput}
+                    onChange={onChangeHadle}
+                    value={field}></input>
                 </div>
                 <div className={styles.myToolContainer}>
                     <p className={styles.myTool}>사용 장비</p>
                     <input type='text' placeholder='sony A7 IV'
-                    className={styles.myToolInput}></input>
+                    className={styles.myToolInput}
+                    onChange={onChangeHadle}
+                    value={myTool}></input>
                 </div>
                 <div className={styles.myAreaContainer}>
                     <p className={styles.myArea}>활동 지역</p>
                     <input type='text' placeholder='서울, 강원'
-                    className={styles.myAreaInput}></input>
+                    className={styles.myAreaInput}
+                    onChange={onChangeHadle}
+                    value={myArea}></input>
                 </div>
             </div>
             <div className={styles.myDetailInfoContainer3}>
                 <p className={styles.introTop}>소개</p>
                 <textarea className={styles.longIntro}
-                type="text" placeholder="제가 누구냐면요.."></textarea>
+                type="text" placeholder="제가 누구냐면요.."
+                onChange={onChangeHadle}
+                value={longIntro}></textarea>
             </div>
         </div>
         <p className={styles.manageFriendTop}>친구 관리</p>
         <div className={styles.manageFriendContainer}>
             <div className={styles.myFriendsListContainer}>
                 <p className={styles.myFriendListTop}>내 친구 목록</p>
-                {/* map() */}
-                <FriendManage></FriendManage>
+                {myFriendsnum.map((nums)=>{ /* 변수 추가 예정 */
+                    return(
+                        <FriendManage></FriendManage>
+                    )
+                })}
             </div>
             <div className={styles.searchFriendContainer}>
                 <p className={styles.searchMyFriendTop}>친구 검색</p>
