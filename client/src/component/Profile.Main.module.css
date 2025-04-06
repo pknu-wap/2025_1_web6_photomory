@@ -1,5 +1,5 @@
 .myInfoContainer{
-    width: clamp(500px, 70%, 1000px);
+    width: clamp(600px, 70%, 1000px);
     height: auto;
     border: 1px solid black;
     border-radius: 7px;
@@ -94,13 +94,17 @@
     margin-top: 100px;
 }
 .manageFriendContainer{
-    width: clamp(500px, 70%, 1000px);
+    width: clamp(600px, 70%, 1000px);
     display: flex;
     flex-direction: row;
     border: 1px solid black;
     border-radius: 7px;
+    justify-content: center;
 }
 .myFriendsListContainer{
+    margin: 15px;
+    border: 1px solid black;
+    border-radius: 7px;
     width: 50%;
 }
 .myFriendListTop{
@@ -109,4 +113,13 @@
 }
 .searchFriendContainer{
     width: 50%;
+    margin: 15px 15px 15px 30px;
+    border: 1px solid black;
+    border-radius: 7px;
+}
+.searchMyFriendTop{
+    font-weight: 500;
+}
+.searchBar{
+    margin-left: 15px;
 }

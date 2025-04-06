@@ -11,7 +11,7 @@ function FriendManage(){
                         <p className={styles.myFriendItemShortIntro}>사진찍기</p>
                     </div>
                 </div>
-                <button className={styles.myFriendItemDeleteForFlexRight}>삭제하기</button>
+                <button className={styles.myFriendItemDeleteRight}>삭제하기</button>
             </div>
         </>
     )

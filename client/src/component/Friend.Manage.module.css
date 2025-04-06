@@ -1,8 +1,13 @@
 .myFriendItemContainer{
-    width: 100%;
+    width: clamp(230px, auto, 470px);
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    position:relative;
+    align-items: center;
+    border: 1px solid black;
+    border-radius: 7px;
+    margin: 15px;
+    padding: 15px;
 }
 .myFriendItemContainerForFlexLeft{
     display: flex;
@@ -10,8 +15,25 @@
     align-items: center;
 }
 .myFieldItemImage{
-    width: clamp(50px ,55px ,60px);
-    height: clamp(50px ,55px ,60px);
+    width: clamp(40px ,55px ,60px);
+    height: clamp(40px ,55px ,60px);
+    margin: 0px 10px 0px 0px;
     border: 1px solid black;
     border-radius: 100%;
+}
+.myFriendItemDeleteRight{
+    position: absolute;
+    right: 15px;
+    font-size: clamp(14px, 15px, 17px);
+    color: #DC143C;
+}
+.myFieldItemName{
+    margin: 0px;
+    font-weight: 500;
+}
+.myFriendItemShortIntro{
+    margin: 0px;
+    font-weight: 300;
+    font-size: clamp(12px, 13px, 16px);
+    color: rgb(130, 130,130);
 }

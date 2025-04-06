@@ -1,0 +1,39 @@
+.friendListContainer{
+    width: clamp(230px, auto, 470px);
+    display: flex;
+    flex-direction: row;
+    position:relative;
+    align-items: center;
+    border: 1px solid black;
+    border-radius: 7px;
+    margin: 15px;
+    padding: 15px;
+}
+.forFlexLeft{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.image{
+    width: clamp(50px ,55px ,60px);
+    height: clamp(50px ,55px ,60px);
+    margin: 0px 10px 0px 0px;
+    border: 1px solid black;
+    border-radius: 100%;
+}
+.name{
+    margin: 0px;
+    font-weight: 500;
+}
+.id{
+    margin: 0px;
+    font-weight: 300;
+    font-size: clamp(12px, 13px, 16px);
+    color: rgb(130, 130,130);
+}
+.addFriend{
+    font-size: clamp(14px, 15px, 17px);
+    position: absolute;
+    right: 15px;
+    color: #6B8E23;
+}

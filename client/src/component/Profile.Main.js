@@ -1,10 +1,13 @@
 import styles from './Profile.Main.module.css'
 import FriendManage from './Friend.Manage'
 import SearchFriend from './Search.Friend'
-
-
+import {useState, useContext } from 'react'
+import { context } from '../App'
 
 function ProfileMain() {
+    // const {mokData}=useContext(context)
+
+
     return(
     <>
         <div className={styles.myInfoContainer}>
@@ -46,11 +49,13 @@ function ProfileMain() {
         <div className={styles.manageFriendContainer}>
             <div className={styles.myFriendsListContainer}>
                 <p className={styles.myFriendListTop}>내 친구 목록</p>
+                {/* map() */}
                 <FriendManage></FriendManage>
             </div>
             <div className={styles.searchFriendContainer}>
                 <p className={styles.searchMyFriendTop}>친구 검색</p>
-                <input type='text' className='searchBar' placeholder='친구 검색...'></input>
+                <input type='text' className={styles.searchBar} placeholder='친구 검색...'></input>
+                {/* map() */}
                 <SearchFriend></SearchFriend>
             </div>
         </div>
