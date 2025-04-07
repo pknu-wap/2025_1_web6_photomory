@@ -7,7 +7,7 @@
     border: 1px solid black;
     border-radius: 7px;
     margin: 15px;
-    padding: 15px;
+    padding: 15px 0px 15px 15px;
 }
 .forFlexLeft{
     display: flex;
@@ -33,7 +33,8 @@
 }
 .addFriend{
     font-size: clamp(14px, 15px, 17px);
-    position: absolute;
     right: 15px;
+    position: absolute;
+    height: auto;
     color: #6B8E23;
 }

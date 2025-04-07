@@ -88,7 +88,7 @@
     text-align: left;
 }
 .manageFriendTop{
-    width: clamp(500px, 70%, 1000px);
+    width: clamp(600px, 70%, 1000px);
     text-align: left;
     font-weight: 600;
     margin-top: 100px;
@@ -119,6 +119,7 @@
 }
 .searchMyFriendTop{
     font-weight: 500;
+    margin-left: 15px;
 }
 .searchBar{
     margin-left: 15px;

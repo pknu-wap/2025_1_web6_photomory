@@ -7,7 +7,7 @@
     border: 1px solid black;
     border-radius: 7px;
     margin: 15px;
-    padding: 15px;
+    padding: 15px 0px 15px 15px;
 }
 .myFriendItemContainerForFlexLeft{
     display: flex;
@@ -22,7 +22,8 @@
     border-radius: 100%;
 }
 .myFriendItemDeleteRight{
-    position: absolute;
+    position:absolute;
+    height: auto;
     right: 15px;
     font-size: clamp(14px, 15px, 17px);
     color: #DC143C;

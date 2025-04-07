@@ -5,13 +5,15 @@ import {useState, useContext } from 'react'
 import { context } from '../App'
 
 function ProfileMain() {
+    const { friend, users } = useContext(context);
     const [field, setField]=useState('');
     const [myTool, setMyTool]=useState('');
     const [myArea, setMyArea]=useState('');
     const [longIntro, setlongIntro]=useState('');
 
-
-
+    const myFriendsNum = friend;
+    const newFriendsNum = users;
+    
 const onChangeHadle=(e)=>{
     if (e.target.className === styles.myFieldInput) {
         setField(e.target.value)
@@ -77,23 +79,26 @@ const onChangeHadle=(e)=>{
         <div className={styles.manageFriendContainer}>
             <div className={styles.myFriendsListContainer}>
                 <p className={styles.myFriendListTop}>내 친구 목록</p>
-                {myFriendsnum.map((nums)=>{ /* 변수 추가 예정 */
+                {myFriendsNum.map((myFriend)=>{ /* 변수 추가 예정 */
                     return(
-                        <FriendManage></FriendManage>
+                        <FriendManage
+                        key={myFriend.user_id}/>
                     )
                 })}
             </div>
             <div className={styles.searchFriendContainer}>
                 <p className={styles.searchMyFriendTop}>친구 검색</p>
-                <input type='text' className={styles.searchBar} placeholder='친구 검색...'></input>
-                {/* map() */}
-                <SearchFriend></SearchFriend>
+                <input type='text' className={styles.searchBar} placeholder='친구 id를 입력하세요!'></input>
+                {newFriendsNum.map((newFriend)=>{ /* 변수 추가 예정 */
+                    return(
+                        <SearchFriend
+                        key={newFriend.user_id}/>
+                    )
+                })}
             </div>
         </div>
     </>
     )
-
-
 }
 
 export default ProfileMain
