@@ -12,7 +12,7 @@ function MainPageMain() {
         nav(event.currentTarget.dataset.value);
     };
 
-    const weeklyImage='/Image.png';
+    const weeklyImage='./Image.png';
 
     return (
         <div className={styles.mainContainer}>
