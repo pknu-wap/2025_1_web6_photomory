@@ -1,4 +1,4 @@
-import MainPage from "./page/MainPage";
+import MainPage from './page/MainPage'
 import {Route ,Routes} from 'react-router-dom'
 
 
@@ -10,4 +10,4 @@ function App() {
   )
 }
 
-export default App;
+export default App
