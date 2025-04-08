@@ -8,13 +8,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public class AuthController {
     @PostMapping("/register")
-    public UserResponseDto register(@RequestBody UserRequestDto userRequestDto) {
+    public String register(@RequestBody UserRequestDto userRequestDto) {
         UserService userService = new UserService();
-        UserResponseDto userResponseDto = userService.register(userRequestDto);
-        if (userResponseDto != null) {
-            return userResponseDto;
-        } else {
-            return null;
-        }
+        String result = userService.register(userRequestDto);
+        return result;
+
     }
 }

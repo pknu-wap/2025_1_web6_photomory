@@ -4,10 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class photomoryApplication {
+public class PhotomoryApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(photomoryApplication.class, args);
+		SpringApplication.run(PhotomoryApplication.class, args);
 	}
-
 }

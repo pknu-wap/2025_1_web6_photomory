@@ -10,6 +10,7 @@ public class UserResponseDto {
     private String field;
     private String equipment;
     private String introduction;
+    private String url;
 
     public UserResponseDto(
             int user_id,
