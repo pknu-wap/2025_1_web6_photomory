@@ -8,71 +8,17 @@
         "user_field": "자연 풍경",
         "user_equipment": "Sony A7 IV, 24-70mm 렌즈",
         "user_introduction": "자연을 사랑하는 사진작가입니다. 주로 산과 바다를 찍습니다.",
-        "user_friends": [
-            {
-                "friend_id": 2,
-                "friend_name": "이민수"
-            },
-            {
-                "friend_id": 3,
-                "friend_name": "김지영"
-            }
-        ],
-        "user_photourl": "https://example.com/photos/kwon_profile.jpg"
+        "is_friend":"true"
     },
     {
-        "user_id": 2,
-        "user_name": "이민수",
-        "user_password": "hashed_password_456",
-        "user_email": "lee@example.com",
-        "user_job": "그래픽 디자이너",
-        "user_field": "UI/UX 디자인",
-        "user_equipment": "Wacom 태블릿, Adobe Photoshop",
-        "user_introduction": "사용자 경험을 중시하는 디자이너입니다.",
-        "user_friends": [
-            {
-                "friend_id": 1,
-                "friend_name": "권동욱"
-            },
-            {
-                "friend_id": 4,
-                "friend_name": "박서연"
-            }
-        ],
-        "user_photourl": "https://example.com/photos/lee_profile.jpg"
-    },
-    {
-        "user_id": 3,
-        "user_name": "김지영",
-        "user_password": "hashed_password_789",
-        "user_email": "kim@example.com",
-        "user_job": "영상 편집자",
-        "user_field": "다큐멘터리 편집",
-        "user_equipment": "MacBook Pro, Final Cut Pro",
-        "user_introduction": "이야기를 영상으로 전달하는 일을 좋아합니다.",
-        "user_friends": [
-            {
-                "friend_id": 1,
-                "friend_name": "권동욱"
-            }
-        ],
-        "user_photourl": "https://example.com/photos/kim_profile.jpg"
-    },
-    {
-        "user_id": 4,
-        "user_name": "박서연",
-        "user_password": "hashed_password_101",
-        "user_email": "park@example.com",
-        "user_job": "작가",
-        "user_field": "소설",
-        "user_equipment": "노트북, MS Word",
-        "user_introduction": "글로 사람들의 마음을 움직이고 싶습니다.",
-        "user_friends": [
-            {
-                "friend_id": 2,
-                "friend_name": "이민수"
-            }
-        ],
-        "user_photourl": "https://example.com/photos/park_profile.jpg"
+        "user_id": 1,
+        "user_name": "권동욱",
+        "user_password": "hashed_password_123",
+        "user_email": "kwon@example.com",
+        "user_job": "사진작가",
+        "user_field": "자연 풍경",
+        "user_equipment": "Sony A7 IV, 24-70mm 렌즈",
+        "user_introduction": "자연을 사랑하는 사진작가입니다. 주로 산과 바다를 찍습니다.",
+        "is_friend":"false"
     }
 ]

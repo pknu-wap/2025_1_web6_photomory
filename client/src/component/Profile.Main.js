@@ -1,34 +1,57 @@
 import styles from './Profile.Main.module.css'
 import FriendManage from './Friend.Manage'
 import SearchFriend from './Search.Friend'
-import {useState, useContext } from 'react'
-import { context } from '../App'
+import GetUser from '../api/GetUser'
+import {useEffect, useMemo, useState} from 'react'
+
 
 function ProfileMain() {
-    const { friend, users } = useContext(context);
+    const [users, setUsers]= useState([])
+    
     const [field, setField]=useState('');
     const [myTool, setMyTool]=useState('');
     const [myArea, setMyArea]=useState('');
-    const [longIntro, setlongIntro]=useState('');
+    const [longIntro, setLongIntro]=useState('');
+    const [search, setSearch]=useState('')
 
-    const myFriendsNum = friend;
-    const newFriendsNum = users;
     
-const onChangeHadle=(e)=>{
+const onChangeHandle=(e)=>{
     if (e.target.className === styles.myFieldInput) {
         setField(e.target.value)
     }
-    if (e.target.className === styles.myTool) {
+    if (e.target.className === styles.myToolInput) {
         setMyTool(e.target.value)
     }
-    if (e.target.className === styles.myArea) {
+    if (e.target.className === styles.myAreaInput) {
         setMyArea(e.target.value)
     }
     if (e.target.className === styles.longIntro) {
-        setlongIntro(e.target.value)
+        setLongIntro(e.target.value)
     }
 }
 
+useEffect(()=>{
+    const fetchUsers= async ()=>{
+        try{
+            const data= await GetUser();
+            setUsers(data);
+        }
+        catch(error){
+            console.error('Error fetching users:',error);
+        }
+    }
+    fetchUsers();
+},[]);
+
+const onChangeSearch=(e)=>{
+    setSearch(e.target.value);
+};
+
+const filterUsers = useMemo(() => {
+    return users.filter((user) =>
+        user && user.id ? user.id.toString().includes(search) : false
+    );
+}, [users, search]);
 
     return(
     <>
@@ -49,21 +72,21 @@ const onChangeHadle=(e)=>{
                     <p className={styles.myField}>전문 분야</p>
                     <input type='text' placeholder='풍경 사진'
                     className={styles.myFieldInput}
-                    onChange={onChangeHadle}
+                    onChange={onChangeHandle}
                     value={field}></input>
                 </div>
                 <div className={styles.myToolContainer}>
                     <p className={styles.myTool}>사용 장비</p>
                     <input type='text' placeholder='sony A7 IV'
                     className={styles.myToolInput}
-                    onChange={onChangeHadle}
+                    onChange={onChangeHandle}
                     value={myTool}></input>
                 </div>
                 <div className={styles.myAreaContainer}>
                     <p className={styles.myArea}>활동 지역</p>
                     <input type='text' placeholder='서울, 강원'
                     className={styles.myAreaInput}
-                    onChange={onChangeHadle}
+                    onChange={onChangeHandle}
                     value={myArea}></input>
                 </div>
             </div>
@@ -71,7 +94,7 @@ const onChangeHadle=(e)=>{
                 <p className={styles.introTop}>소개</p>
                 <textarea className={styles.longIntro}
                 type="text" placeholder="제가 누구냐면요.."
-                onChange={onChangeHadle}
+                onChange={onChangeHandle}
                 value={longIntro}></textarea>
             </div>
         </div>
@@ -79,22 +102,28 @@ const onChangeHadle=(e)=>{
         <div className={styles.manageFriendContainer}>
             <div className={styles.myFriendsListContainer}>
                 <p className={styles.myFriendListTop}>내 친구 목록</p>
-                {myFriendsNum.map((myFriend)=>{ /* 변수 추가 예정 */
-                    return(
+                {users.map((user) => (
+                    user.isFriend ? (
                         <FriendManage
-                        key={myFriend.user_id}/>
-                    )
-                })}
+                            key={user.id}
+                            userId={user.id}
+                            userName={user.name}
+                        />
+                    ) : null
+                ))}
             </div>
             <div className={styles.searchFriendContainer}>
                 <p className={styles.searchMyFriendTop}>친구 검색</p>
-                <input type='text' className={styles.searchBar} placeholder='친구 id를 입력하세요!'></input>
-                {newFriendsNum.map((newFriend)=>{ /* 변수 추가 예정 */
-                    return(
-                        <SearchFriend
-                        key={newFriend.user_id}/>
-                    )
-                })}
+                <input type='text' className={styles.searchBar} 
+                placeholder='친구 id를 입력하세요!'
+                onChange={onChangeSearch}></input>
+                {filterUsers.map((user)=>(
+                    <SearchFriend
+                    key={user.id}
+                    userId={user.id}
+                    userName={user.name}    
+                    />
+                ))}
             </div>
         </div>
     </>
