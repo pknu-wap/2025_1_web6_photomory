@@ -2,7 +2,7 @@
   {
     "id": "group1",
     "groupName": "여행 친구들",
-    "members": ["지훈", "민지", "영수", "소라"],
+    "members": ["지훈", "민지", "영수", "소라", "진오", "지민"],
     "albums": [
       {
         "id": "group1_album1",
@@ -536,7 +536,7 @@
   {
     "id": "group4",
     "groupName": "회사 동료",
-    "members": ["철수", "영희", "민호", "은정"],
+    "members": ["철수", "영희", "민호", "은정", "수혁"],
     "albums": [
       {
         "id": "group4_album1",

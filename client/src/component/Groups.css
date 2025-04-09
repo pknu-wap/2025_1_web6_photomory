@@ -1,0 +1,55 @@
+.allGroupCard {
+  border-radius: 8px;
+  background: #fff;
+  padding: 32px;
+  width: 100%;
+  box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.1),
+    0px 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.titleManagement {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.fourGroupSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 24px;
+}
+
+.groupcell {
+  border-radius: 8px;
+  padding: 16px;
+  min-height: 100px;
+}
+
+.groupInfo {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.groupMembers {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.groupMember {
+  background-color: #e0e0e0;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.overCount {
+  background-color: #d1d5db;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #555;
+}

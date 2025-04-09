@@ -29,6 +29,8 @@
   padding: 8px;
   margin-bottom: 12px;
   border: 1px solid #e5e7eb;
+  line-height: 1;
+  font-family: "Roboto";
 }
 
 .addAlbumButton {

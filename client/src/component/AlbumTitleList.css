@@ -1,0 +1,18 @@
+.titleList {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 10px;
+  max-height: 120px; /* 최대 높이 지정 (넘어가면 스크롤됨) */
+  overflow-y: auto; /* 세로 스크롤 추가 */
+  border-radius: 4px;
+}
+
+.title {
+  background: #f3f4f6;
+  border-radius: 9999px;
+  margin-bottom: 8px;
+  height: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

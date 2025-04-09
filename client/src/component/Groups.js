@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PaginationBar from "./PaginationBar";
 import GroupControlButton from "../assets/groupControlButton.svg";
+import "./Groups.css";
 function Groups({ groupList, selectedGroupId }) {
   const [currentPage, setCurrentPage] = useState(1); //초기 페이지 번호
 
@@ -13,36 +14,13 @@ function Groups({ groupList, selectedGroupId }) {
   const handlePageClick = (pageNum) => setCurrentPage(pageNum);
 
   return (
-    <div
-      style={{
-        borderRadius: "8px",
-        background: "#fff",
-        padding: "32px",
-        width: "100%",
-        boxShadow:
-          "0px 2px 4px -2px rgba(0, 0, 0, 0.1),0px 4px 6px -1px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-
-          justifyContent: "space-between",
-          marginBottom: "16px",
-        }}
-      >
-        <h3 style={{}}>그룹 관리</h3>
+    <div className="allGroupCard">
+      <div className="titleManagement">
+        <h3>그룹 관리</h3>
         <img src={GroupControlButton} alt="GroupControlButton" />
       </div>
       {/* 2행 2열 */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gridTemplateRows: "1fr 1fr",
-          gap: "24px",
-        }}
-      >
+      <div className="fourGroupSection">
         {Array(4)
           .fill(null)
           .map((_, i) => {
@@ -58,9 +36,6 @@ function Groups({ groupList, selectedGroupId }) {
                       ? "#dbeafe" //선택된 그룹 파란색 배경
                       : "#f0f0f0" //선택되지 않는 그룹 배경
                     : "transparent",
-                  borderRadius: "8px",
-                  padding: "16px",
-                  minHeight: "100px",
                   border: group
                     ? isSelected
                       ? "2px solid #3b82f6" //선택된 그룹 파란 경계
@@ -68,32 +43,26 @@ function Groups({ groupList, selectedGroupId }) {
                     : "1px dashed #ccc", //그룹이 없는 스롯 점선 경계
                   boxShadow: isSelected ? "0 0 0 2px #60a5fa" : "none",
                 }}
+                className="groupcell"
               >
                 {group ? (
                   <>
-                    <h4>{group.groupName}</h4>
-                    <span>{`(${group.members.length}명)`}</span>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexWrap: "nowrap",
-                        gap: "8px",
-                        marginTop: "8px",
-                      }}
-                    >
-                      {group.members.map((member, idx) => (
-                        <span
-                          key={idx}
-                          style={{
-                            backgroundColor: "#e0e0e0",
-                            padding: "4px 10px",
-                            borderRadius: "20px",
-                            fontSize: "14px",
-                          }}
-                        >
+                    <div className="groupInfo">
+                      <h4>{group.groupName}</h4>
+                      <span>{`${group.members.length}명`}</span>
+                    </div>
+                    <div className="groupMembers">
+                      {group.members.slice(0, 4).map((member, idx) => (
+                        <span key={idx} className="groupMember">
                           {member}
                         </span>
                       ))}
+                      {/* 초과 인원 있을 경우 +N명 표시 */}
+                      {group.members.length > 4 && (
+                        <span className="overCount">
+                          +{group.members.length - 4}명
+                        </span>
+                      )}
                     </div>
                   </>
                 ) : (

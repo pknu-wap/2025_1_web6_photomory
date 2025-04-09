@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddGroupButton from "./AddGroupButton";
 import SelectGroupOptions from "./SelectGroupOption";
+import "./CurrentGroup.css";
 
 function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
   const [selectedGroup, setSelectedGroup] = useState({
@@ -31,58 +32,15 @@ function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
   };
 
   return (
-    <div
-      style={{
-        width: "1088px",
-        height: "222px",
-        background: `linear-gradient(0deg, rgba(0, 0, 0, 0.001), rgba(0, 0, 0, 0.001)), #FFFFFF`,
-        boxShadow:
-          "0px 2px 4px -2px rgba(0, 0, 0, 0.1),0px 4px 6px -1px rgba(0, 0, 0, 0.1)",
-        borderRadius: "8px",
-        marginBottom: "39px",
-        padding: "36px 32px 48px",
-      }}
-    >
+    <div className="currentGroupCard">
       {selectedGroup && (
         <>
           {/*그룹명*/}
-          <h4
-            style={{
-              fontWeight: "500px",
-              fontSize: "18px",
-              lineHeight: "28px",
-              marginBottom: "16px",
-            }}
-          >
-            {selectedGroup.groupName}
-          </h4>
-          <ul
-            style={{
-              listStyleType: "none", // 리스트 점 없애기
-              display: "flex", // 가로로 나열
-              gap: "12px", // 항목 사이 간격
-              padding: 0, // 기본 들여쓰기 제거
-              marginBottom: "27px", // 기본 마진 제거
-            }}
-          >
+          <h4 className="groupTitle">{selectedGroup.groupName}</h4>
+          <ul className="groupMembers">
             {/*그룹멤버*/}
             {selectedGroup.members.map((member, index) => (
-              <li
-                style={{
-                  width: "90px",
-                  height: "32px",
-                  borderRadius: "9999px",
-                  background: "rgb(243, 244, 246)",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "end",
-                  alignItems: "center",
-                  padding: "4px 12px",
-                  flexWrap: "wrap",
-                  alignContent: "center",
-                }}
-                key={index}
-              >
+              <li className="member" key={index}>
                 {member}
               </li>
             ))}
