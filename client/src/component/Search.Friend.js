@@ -1,6 +1,6 @@
 import styles from './Search.Friend.module.css';
 
-function SearchFriend(userId, userName) {
+function SearchFriend({userId, userName}) {
 
     return (
         <>

@@ -1,57 +1,77 @@
 import styles from './Profile.Main.module.css'
 import FriendManage from './Friend.Manage'
 import SearchFriend from './Search.Friend'
-import GetUser from '../api/GetUser'
+import GetUserProfilePage from '../api/GetUserProfilePage'
+import GetMy from '../api/GetMy' 
 import {useEffect, useMemo, useState} from 'react'
 
 
 function ProfileMain() {
     const [users, setUsers]= useState([])
-    
+
+    const [id, setId] = useState();
+    const [name, setName] = useState('');
+    const [job, setJob] = useState('');
     const [field, setField]=useState('');
-    const [myTool, setMyTool]=useState('');
+    const [myEquipment, setMyEquipment]=useState('');
     const [myArea, setMyArea]=useState('');
-    const [longIntro, setLongIntro]=useState('');
+    const [introduction, setIntroduction]=useState('');
     const [search, setSearch]=useState('')
 
-    
-const onChangeHandle=(e)=>{
-    if (e.target.className === styles.myFieldInput) {
-        setField(e.target.value)
-    }
-    if (e.target.className === styles.myToolInput) {
-        setMyTool(e.target.value)
-    }
-    if (e.target.className === styles.myAreaInput) {
-        setMyArea(e.target.value)
-    }
-    if (e.target.className === styles.longIntro) {
-        setLongIntro(e.target.value)
-    }
-}
 
-useEffect(()=>{
-    const fetchUsers= async ()=>{
-        try{
-            const data= await GetUser();
-            setUsers(data);
+    const onChangeHandle = (e) => {
+        if (e.target.className === styles.myFieldInput) {
+            setField(e.target.value);
         }
-        catch(error){
-            console.error('Error fetching users:',error);
+        if (e.target.className === styles.myEquipmentInput) {
+            setMyEquipment(e.target.value);
         }
-    }
-    fetchUsers();
-},[]);
+        if (e.target.className === styles.myAreaInput) {
+            setMyArea(e.target.value);
+        }
+        if (e.target.className === styles.introduction) {
+            setIntroduction(e.target.value);
+        }
+        if (e.target.className === styles.name) {
+            setName(e.target.value);
+        }
+        if (e.target.className === styles.job) {
+            setJob(e.target.value);
+        }
+    };
 
-const onChangeSearch=(e)=>{
-    setSearch(e.target.value);
-};
+    useEffect(()=>{
+        const fetchUsers= async ()=>{
+            try{
+                const userData= await GetUserProfilePage();
+                setUsers(userData); 
 
-const filterUsers = useMemo(() => {
-    return users.filter((user) =>
-        user && user.id ? user.id.toString().includes(search) : false
-    );
-}, [users, search]);
+                const myData= GetMy();
+                if (myData) {
+                    setName(myData.name || '');
+                    setJob(myData.job || ''); 
+                    setField(myData.field || '');
+                    setMyEquipment(myData.equipment || '');
+                    setMyArea(myData.area || '');
+                    setIntroduction(myData.introduction || '');
+                }
+            }
+            catch(error){
+                console.error('Error fetching users:',error);
+            }
+        }
+        fetchUsers();
+    },[]);
+
+    const onChangeSearch=(e)=>{
+        setSearch(e.target.value);
+    };
+
+    const filterUsers = useMemo(() => {
+        return users.filter((user) =>
+            user && user.id ? user.id.toString().includes(search) : false
+        );
+    }, [users, search]);
 
     return(
     <>
@@ -60,9 +80,15 @@ const filterUsers = useMemo(() => {
                 <div className={styles.forFlexLeft}>
                     <div className={styles.image}></div>
                     <div className={styles.forFlex}>
-                        <div className={styles.name}>권동욱</div>
-                        <div className={styles.shortIntro}>자연 풍경 전문 사진작가</div>
-                        <div className={styles.photoNum}>사진 999</div>
+                        <input className={styles.name}
+                        onChange={onChangeHandle}
+                        value={name}
+                        placeholder={name? name :'이름을 알려줘!'}></input>
+                        <input className={styles.job}
+                        onChange={onChangeHandle}
+                        value={job}
+                        placeholder={job? job: '직업을 알려줘!' }></input>
+                        <div className={styles.id}>id:{id}</div>
                     </div>
                 </div>
                 <button className={styles.logOutForFlexRight}>log out</button>
@@ -75,12 +101,12 @@ const filterUsers = useMemo(() => {
                     onChange={onChangeHandle}
                     value={field}></input>
                 </div>
-                <div className={styles.myToolContainer}>
-                    <p className={styles.myTool}>사용 장비</p>
+                <div className={styles.myEquipmentContainer}>
+                    <p className={styles.myEquipment}>사용 장비</p>
                     <input type='text' placeholder='sony A7 IV'
-                    className={styles.myToolInput}
+                    className={styles.myEquipmentInput}
                     onChange={onChangeHandle}
-                    value={myTool}></input>
+                    value={myEquipment}></input>
                 </div>
                 <div className={styles.myAreaContainer}>
                     <p className={styles.myArea}>활동 지역</p>
@@ -92,10 +118,10 @@ const filterUsers = useMemo(() => {
             </div>
             <div className={styles.myDetailInfoContainer3}>
                 <p className={styles.introTop}>소개</p>
-                <textarea className={styles.longIntro}
+                <textarea className={styles.introduction}
                 type="text" placeholder="제가 누구냐면요.."
                 onChange={onChangeHandle}
-                value={longIntro}></textarea>
+                value={introduction}></textarea>
             </div>
         </div>
         <p className={styles.manageFriendTop}>친구 관리</p>
@@ -108,6 +134,8 @@ const filterUsers = useMemo(() => {
                             key={user.id}
                             userId={user.id}
                             userName={user.name}
+                            userField={user.field}
+                            isFriend={user.isFriend}
                         />
                     ) : null
                 ))}
