@@ -11,8 +11,9 @@
   background: #f3f4f6;
   border-radius: 9999px;
   margin-bottom: 8px;
+  padding: 0 12px; /* 좌우 여백 */
+  display: inline-flex; /* 내용 길이에 맞게 너비 조절 */
+  align-items: center;
   height: 32px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  width: fit-content; /* 내용에 따라 width 결정 */
 }

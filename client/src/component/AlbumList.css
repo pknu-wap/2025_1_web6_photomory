@@ -18,16 +18,16 @@
 
 .albumTitle {
   margin-right: 16px;
-  width: 180px;
+  width: fit-content;
   height: 36px;
   border-radius: 9999px;
   background: #000000;
   color: #ffffff;
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
+  padding: 10px;
 }
-
 .albumLink {
   width: 112px;
   height: 28px;
