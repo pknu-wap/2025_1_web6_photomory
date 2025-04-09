@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-
+import addGroupButton from "../assets/addGroupButton.svg";
+import "./AddGroupButton.css";
 function AddGroupButton({ onAddGroup }) {
   const [showModal, setShowModal] = useState(false); // 모달 표시 여부
   const [groupName, setGroupName] = useState(""); // 입력한 그룹 이름
@@ -31,9 +32,17 @@ function AddGroupButton({ onAddGroup }) {
     handleCloseModal(); // 모달 닫기
   };
   return (
-    <div>
-      {/* 그룹 추가 버튼 */}
-      <button onClick={handleOpenModal}>+ 그룹 추가</button>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+      }}
+    >
+      <button onClick={handleOpenModal} className="custom-hover-button">
+        <img src={addGroupButton} alt="그룹 추가 아이콘" />
+        <span style={{ fontSize: "16px", color: "#333" }}>새 그룹 만들기</span>
+      </button>
 
       {/* 모달창 (조건부 렌더링) */}
       {showModal && (
@@ -44,24 +53,74 @@ function AddGroupButton({ onAddGroup }) {
             left: "50%",
             transform: "translate(-50%, -50%)",
             background: "#fff",
-            padding: "20px",
+            padding: "32px",
             boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
             zIndex: 1000,
+            width: "436px",
+            height: "262px",
+            borderRadius: "8px",
           }}
         >
-          <h3>새 그룹 만들기</h3>
+          <h3
+            style={{
+              fontSize: "24px",
+              fontWeight: "bold",
+              lineHeight: "32px",
+              letterSpacing: "0px",
+              marginBottom: "24px",
+            }}
+          >
+            새 그룹 만들기
+          </h3>
+          <label
+            htmlFor="groupName"
+            style={{ display: "block", marginBottom: "8px" }}
+          >
+            그룹이름
+          </label>
           <input
+            id="groupName"
             type="text"
             placeholder="그룹명을 입력하세요"
             value={groupName}
             onChange={handleInputChange}
-            style={{ padding: "8px", width: "100%", marginBottom: "12px" }}
+            style={{
+              padding: "8px",
+              width: "100%",
+              marginBottom: "12px",
+              border: "1px solid #E5E7EB",
+              height: "42px",
+            }}
           />
           <div
             style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
           >
-            <button onClick={handleCloseModal}>취소</button>
-            <button onClick={handleSubmit}>그룹 만들기</button>
+            <button
+              onClick={handleCloseModal}
+              style={{
+                width: "81.45px",
+                height: "48px",
+                border: "2px solid #D1D5DB",
+                cursor: "pointer",
+                borderRadius: "8px",
+                background: "rgba(0, 0, 0, 0)",
+              }}
+            >
+              취소
+            </button>
+            <button
+              style={{
+                width: "125.56px",
+                height: "48px",
+                borderRadius: "8px",
+                background: "#000000",
+                color: "#ffffff",
+                cursor: "pointer",
+              }}
+              onClick={handleSubmit}
+            >
+              그룹 만들기
+            </button>
           </div>
         </div>
       )}

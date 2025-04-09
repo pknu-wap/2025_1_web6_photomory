@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PaginationBar from "./PaginationBar";
+import GroupControlButton from "../assets/groupControlButton.svg";
 function Groups({ groupList, selectedGroupId }) {
   const [currentPage, setCurrentPage] = useState(1); //초기 페이지 번호
 
@@ -14,15 +15,25 @@ function Groups({ groupList, selectedGroupId }) {
   return (
     <div
       style={{
-        marginTop: "16px",
         borderRadius: "8px",
         background: "#fff",
-        padding: "16px",
+        padding: "32px",
         width: "100%",
+        boxShadow:
+          "0px 2px 4px -2px rgba(0, 0, 0, 0.1),0px 4px 6px -1px rgba(0, 0, 0, 0.1)",
       }}
     >
-      <h3 style={{ marginBottom: "16px" }}>그룹 관리</h3>
+      <div
+        style={{
+          display: "flex",
 
+          justifyContent: "space-between",
+          marginBottom: "16px",
+        }}
+      >
+        <h3 style={{}}>그룹 관리</h3>
+        <img src={GroupControlButton} alt="GroupControlButton" />
+      </div>
       {/* 2행 2열 */}
       <div
         style={{

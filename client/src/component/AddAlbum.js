@@ -77,13 +77,12 @@ function AddAlbum({
             className="albumTitleInput"
           />
           <label htmlFor="albumDescription">설명</label>
-          <textarea
+          <input
             id="albumDescription"
             name="description"
             value={newAlbumData.description}
             onChange={handleChange}
             placeholder="앨범에 대한 설명을 입력하세요."
-            rows="4"
             className="albumDescription"
           />
           {/*앨범 제목 목록 컴포넌트*/}
