@@ -1,35 +1,35 @@
 package com.example.photomory.dto;
 
 public class UserRequestDto {
+
     private String user_name;
     private String user_email;
     private String user_password;
-    private String url;
-    private String job;
-    private String field;
-    private String equipment;
-    private String introduction;
-    
+    private String user_photourl;
+    private String user_job;
+    private String user_equipment;
+    private String user_introduction;
+    private String user_field;
+
     UserRequestDto(
             String user_name,
             String user_email,
             String user_password,
-            String url,
-            String job,
-            String field,
-            String equipment,
-            String introduction
+            String user_photourl,
+            String user_equipment,
+            String user_introduction,
+            String user_job,
+            String user_field
     ) {
         this.user_name = user_name;
         this.user_email = user_email;
         this.user_password = user_password;
-        this.url = url;
-        this.job = job;
-        this.field = field;
-        this.equipment = equipment;
-        this.introduction = introduction;
+        this.user_photourl = user_photourl;
+        this.user_equipment = user_equipment;
+        this.user_introduction = user_introduction;
+        this.user_job = user_job;
+        this.user_field = user_field;
     }
-
     public String getUser_name() {
         return user_name;
     }
@@ -42,24 +42,23 @@ public class UserRequestDto {
         return user_password;
     }
 
-    public String getUrl() {
-        return url;
+    public String getUser_photourl() {
+        return user_photourl;
     }
 
-    public String getJob() {
-        return job;
+    public String getUser_equipment() {
+        return user_equipment;
     }
 
-    public String getField() {
-        return field;
+    public String getUser_introduction() {
+        return user_introduction;
     }
 
-    public String getEquipment() {
-        return equipment;
+    public String getUser_job() {
+        return user_job;
     }
 
-    public String getIntroduction() {
-        return introduction;
+    public String getUser_field() {
+        return user_field;
     }
-
 }

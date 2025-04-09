@@ -10,10 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Controller
 @RestController
 public class AuthController {
+
+    private final UserService userService;
+
+    public AuthController(UserService userService) { //spring이 자동으로 userService를 넣어 @Service로 인해서.
+        this.userService = userService;
+    }
+
     @PostMapping("/register")
     public String register(@RequestBody UserRequestDto userRequestDto) {
-        UserService userService = new UserService();
-        String message = userService.register(userRequestDto);
+        String message = userService.register(userRequestDto); // new로 하면
         return message;
     }
 }
