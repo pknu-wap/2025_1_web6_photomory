@@ -1,10 +1,19 @@
 import styles from './LoginPage.Main.module.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faLock, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import { useState } from 'react'
 
 
 export default function LoginPageMain() {
-    
+    const [email, setEmail] = useState('')
+    const [pw, setPw] = useState('')
+
+    const onChangeHandle = (className) => {
+        if (className === 'emailInput') {
+            setEmail()
+        }
+    }
+
     return(
         <>
             <div className={styles.loginPageMainContainer}>
@@ -19,7 +28,8 @@ export default function LoginPageMain() {
                             className={styles.emailIicon}/>
                         </span>
                         <input className={styles.emailInput} 
-                        placeholder="이메일을 입력해줘요!"></input>
+                        placeholder="이메일을 입력해줘요!"
+                        ></input>
                     </div>
                     <div className={styles.pwContainer}>
                         <span className={styles.pwText}>

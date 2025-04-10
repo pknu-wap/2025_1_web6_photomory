@@ -39,8 +39,20 @@
 .pwText{
     margin-bottom: 4px;
 }
+.emailInput,
+.pwInput{
+    border: 1.5px solid black;
+    border-radius: 7px;
+}
+.emailInput:focus,
+.pwInput:focus{
+    outline: none;
+    border: none;
+}
 .loginButton{
+    width: 50%;
     height: auto;
+    font-size: clamp(20px, 26px, 28px);
 }
 .forgotPw,
 .notAccount,
