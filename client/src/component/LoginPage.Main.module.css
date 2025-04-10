@@ -1,3 +1,33 @@
-.LoginPageMainContainer{
-    width: 10%;
+.loginPageMainContainer{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+.logoImage{
+    width: 30%;
+    margin-right: 20px;
+    border: 1px solid black;
+    border-radius: 7px;
+}
+.loginContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.loginText{
+    font-size: clamp(23px, 25px, 27px);
+}
+.emailContainer,
+.pwContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+.emailText,
+.pwText{
+    margin-bottom: 4px;
 }
