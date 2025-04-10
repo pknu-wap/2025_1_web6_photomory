@@ -1,7 +1,9 @@
+import LoginPage from "./page/LoginPage";
+import { Route, Routes } from "react-router-dom";
 
 function App() {
   return (
-    <h1>초기 프로젝트 생성</h1>
+    <LoginPage/>
   );
 }
 
