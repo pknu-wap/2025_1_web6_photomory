@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import PaginationBar from "./PaginationBar";
 import emptyImage from "../assets/emptyImage.svg";
 import "./AlbumList.css";
@@ -31,7 +32,9 @@ function AlbumList({ albums }) {
           <div className="innerAlbum">
             {/* 앨범 제목 */}
             <h4 className="albumTitle">#{currentAlbum.title}</h4>
-            <p className="albumLink">앨범 상세보기</p>
+            <Link to={`/our-album/${currentAlbum.id}`} className="albumLink">
+              앨범 상세보기
+            </Link>
             <div className="albumInfo">
               <p>
                 총 {currentAlbum.photos.length}장의 사진들 | 생성일:{" "}
