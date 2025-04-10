@@ -15,7 +15,8 @@ export default function LoginPageMain() {
                     <div className={styles.emailContainer}>
                         <span className={styles.emailText}>
                             email
-                            <FontAwesomeIcon icon={faEnvelope}/>
+                            <FontAwesomeIcon icon={faEnvelope}
+                            className={styles.emailIicon}/>
                         </span>
                         <input className={styles.emailInput} 
                         placeholder="이메일을 입력해줘요!"></input>
@@ -24,7 +25,7 @@ export default function LoginPageMain() {
                         <span className={styles.pwText}>
                             password
                             <FontAwesomeIcon icon={faLock}
-                            className={styles.icon}/>
+                            className={styles.pwIcon}/>
                         </span>
                         <input className={styles.pwInput} 
                         placeholder="비밀번호를 입력해줘요!"></input>
@@ -37,7 +38,7 @@ export default function LoginPageMain() {
                     <p className={styles.or}>또는</p>
                     <span className={styles.notAccount}>
                         계정이 없으신가요?
-                        <sapn className={styles.signUp}></sapn>
+                        <sapn className={styles.signUp}>회원가입</sapn>
                     </span>
                 </div>
             </div>

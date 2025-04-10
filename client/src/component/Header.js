@@ -9,44 +9,46 @@ function Header(){
 
     return(
         <div className={styles.headerContainer}>
-            <div className={styles.headerContainerLeft}>
-                <div className={styles.headerTopLogo}>
-                    logo
+            <div className={styles.headerContainer2}>
+                <div className={styles.headerContainerLeft}>
+                    <div className={styles.headerTopLogo}>
+                        logo
+                    </div>
+                    <button className={styles.home}
+                    onClick={onclickHandle}
+                    value='/'>
+                        home
+                    </button>
+                    <div className={styles.memoryContainer}>
+                        <button className={styles.myMemory}
+                        onClick={onclickHandle}
+                        value='/myMemory'>
+                            my memory
+                        </button>
+                        <button className={styles.ourMemory}
+                        onClick={onclickHandle}
+                        value='/ourMemory'>
+                            our memory
+                        </button>
+                        <button className={styles.weeklyMemory}
+                        onClick={onclickHandle}
+                        value='/everyMemory'>
+                            every memory
+                        </button>
+                    </div>
                 </div>
-                <button className={styles.home}
-                onClick={onclickHandle}
-                value='/'>
-                    home
-                </button>
-                <div className={styles.memoryContainer}>
-                    <button className={styles.myMemory}
+                <div className={styles.headerContainerRight}>
+                    <button className={styles.signIn}
                     onClick={onclickHandle}
-                    value='/myMemory'>
-                        my memory
+                    value='/signIn'>
+                        sign in
                     </button>
-                    <button className={styles.ourMemory}
+                    <button className={styles.signUp}
                     onClick={onclickHandle}
-                    value='/ourMemory'>
-                        our memory
-                    </button>
-                    <button className={styles.weeklyMemory}
-                    onClick={onclickHandle}
-                    value='/everyMemory'>
-                        every memory
+                    value='/signUp'>
+                        sign up
                     </button>
                 </div>
-            </div>
-            <div className={styles.headerContainerRight}>
-                <button className={styles.signIn}
-                onClick={onclickHandle}
-                value='/signIn'>
-                    sign in
-                </button>
-                <button className={styles.signUp}
-                onClick={onclickHandle}
-                value='/signUp'>
-                    sign up
-                </button>
             </div>
         </div>
     );
