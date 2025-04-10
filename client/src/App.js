@@ -1,4 +1,4 @@
-import MainPage from './page/MainPage'
+import MainPage from './page/MainPage.js'
 import {Route ,Routes} from 'react-router-dom'
 
 
