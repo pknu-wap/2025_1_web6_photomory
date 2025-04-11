@@ -53,6 +53,10 @@
     margin-bottom: 20px;
     
 }
+.error {
+    color: #D32F2F;
+}
+
 .signUp{
     font-weight: 600;
 }
