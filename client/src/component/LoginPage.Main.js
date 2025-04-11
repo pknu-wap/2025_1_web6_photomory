@@ -23,6 +23,7 @@ export default function LoginPageMain() {
     const onClickButtonLogin = () => {
         const user = GetUserLogin.find((u) => u.email === email && u.password === pw);
     
+        
         if (user) {
             navigate('/Loged', {
             state: {
