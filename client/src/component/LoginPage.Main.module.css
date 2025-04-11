@@ -33,7 +33,7 @@
     justify-content: flex-start;
     margin-bottom: 20px;
 }
-.emailText,
+
 .pwText{
     margin-bottom: 4px;
 }
@@ -53,23 +53,21 @@
     margin-bottom: 20px;
     
 }
-
 .signUp{
     font-weight: 600;
 }
-
-
-
-
-/* 폰트 크기 수정하기 */
 .loginText{ 
-    font-size: clamp(23px, 25px, 27px);
+    font-size: clamp(43px, 45px, 47px);
 }
 .loginButton{
     font-size: clamp(26px, 32px, 38px);
 }
-.forgotPw,
-.notAccount,
-.or{
-    font-size: clamp(13px, 14px, 16px);
+
+.notAccount
+{
+    font-size: clamp(16px, 19px, 22px);
+}
+.emailInput,
+.pwInput{
+    font-size: clamp(16px, 24px, 32px);
 }

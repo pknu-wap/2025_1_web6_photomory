@@ -1,12 +1,15 @@
 import styles from './LoginPage.Main.module.css'
+import GetUserLogin from '../api/GetUserLogin.js'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faLock, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 
 export default function LoginPageMain() {
     const [email, setEmail] = useState('')
     const [pw, setPw] = useState('')
+    const navigate = useNavigate();
 
     const onChangeHandle = (e) => {
         if (e.target.className === 'emailInput') {
@@ -16,6 +19,22 @@ export default function LoginPageMain() {
             setPw(e.target.value)
         }
     }
+
+    const onClickButtonLogin = () => {
+        const user = GetUserLogin.find((u) => u.email === email && u.password === pw);
+    
+        if (user) {
+            navigate('/Loged', {
+            state: {
+            name: user.name
+            },
+        });
+        } 
+        else {
+            setEmail('')
+            setPw('')
+        }
+    };
 
     return(
         <>
@@ -32,7 +51,8 @@ export default function LoginPageMain() {
                         </span>
                         <input className={styles.emailInput} 
                         placeholder="이메일을 입력해줘요!"
-                        onChange={onChangeHandle}></input>
+                        onChange={onChangeHandle}
+                        value={email}></input>
                     </div>
                     <div className={styles.pwContainer}>
                         <span className={styles.pwText}>
@@ -42,13 +62,15 @@ export default function LoginPageMain() {
                         </span>
                         <input className={styles.pwInput} 
                         placeholder="비밀번호를 입력해줘요!"
-                        onChange={onChangeHandle}></input>
+                        onChange={onChangeHandle}
+                        value={pw}></input>
                     </div>
-                    <button className={styles.loginButton}>
+                    <button className={styles.loginButton}
+                    onClick={onClickButtonLogin}>
                         <FontAwesomeIcon icon={faRightToBracket} />
                         LOGIN
-                    </button> {/*기능 추가하기*/}
-                        계정이 없으신가요?
+                    </button>
+                        <apsn className={styles.notAccount}>계정이 없으신가요?</apsn>
                         <button className={styles.signUp}>회원가입</button>
                     
                 </div>
