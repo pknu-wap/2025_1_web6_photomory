@@ -8,6 +8,7 @@
         "id": "group1_album1",
         "title": "여행 친구들의 앨범 1",
         "createdAt": "2024-01-01",
+        "description": "여행 친구들의 '여행 친구들의 앨범 1' 앨범입니다.",
         "photos": [
           {
             "id": "group1_album1_photo1",
@@ -38,6 +39,7 @@
             "id": "group1_album2_photo1",
             "title": "여행 친구들 사진 2-1",
             "createdAt": "2024-01-06T00:00:00",
+            "description": "여행 친구들 앨범 1입니다",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           },
           {
@@ -64,7 +66,8 @@
             "createdAt": "2024-01-10T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "여행 친구들의 '여행 친구들의 앨범 2' 앨범입니다."
       },
       {
         "id": "group1_album3",
@@ -89,7 +92,8 @@
             "createdAt": "2024-01-13T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "여행 친구들의 '여행 친구들의 앨범 3' 앨범입니다."
       },
       {
         "id": "group1_album4",
@@ -108,7 +112,8 @@
             "createdAt": "2024-01-17T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "여행 친구들의 '여행 친구들의 앨범 4' 앨범입니다."
       },
       {
         "id": "group1_album5",
@@ -145,7 +150,8 @@
             "createdAt": "2024-01-25T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "여행 친구들의 '여행 친구들의 앨범 5' 앨범입니다."
       }
     ]
   },
@@ -189,7 +195,8 @@
             "createdAt": "2025-04-21T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "가족 앨범의 '가족 앨범의 앨범 1' 앨범입니다."
       },
       {
         "id": "group2_album2",
@@ -226,7 +233,8 @@
             "createdAt": "2024-01-10T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "가족 앨범의 '가족 앨범의 앨범 2' 앨범입니다."
       },
       {
         "id": "group2_album3",
@@ -263,7 +271,8 @@
             "createdAt": "2024-01-15T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "가족 앨범의 '가족 앨범의 앨범 3' 앨범입니다."
       },
       {
         "id": "group2_album4",
@@ -300,7 +309,8 @@
             "createdAt": "2024-01-20T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "가족 앨범의 '가족 앨범의 앨범 4' 앨범입니다."
       },
       {
         "id": "group2_album5",
@@ -337,7 +347,8 @@
             "createdAt": "2024-01-25T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "가족 앨범의 '가족 앨범의 앨범 5' 앨범입니다."
       }
     ]
   },
@@ -381,7 +392,8 @@
             "createdAt": "2025-04-22T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "학교 동아리의 '학교 동아리의 앨범 1' 앨범입니다."
       },
       {
         "id": "group3_album2",
@@ -418,7 +430,8 @@
             "createdAt": "2024-01-10T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "학교 동아리의 '학교 동아리의 앨범 2' 앨범입니다."
       },
       {
         "id": "group3_album3",
@@ -455,7 +468,8 @@
             "createdAt": "2024-01-15T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "학교 동아리의 '학교 동아리의 앨범 3' 앨범입니다."
       },
       {
         "id": "group3_album4",
@@ -492,7 +506,8 @@
             "createdAt": "2024-01-20T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "학교 동아리의 '학교 동아리의 앨범 4' 앨범입니다."
       },
       {
         "id": "group3_album5",
@@ -529,7 +544,8 @@
             "createdAt": "2024-01-25T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "학교 동아리의 '학교 동아리의 앨범 5' 앨범입니다."
       }
     ]
   },
@@ -573,7 +589,8 @@
             "createdAt": "2024-01-05T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "회사 동료의 '회사 동료의 앨범 1' 앨범입니다."
       },
       {
         "id": "group4_album2",
@@ -610,7 +627,8 @@
             "createdAt": "2024-01-10T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "회사 동료의 '회사 동료의 앨범 2' 앨범입니다."
       },
       {
         "id": "group4_album3",
@@ -647,7 +665,8 @@
             "createdAt": "2024-01-15T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "회사 동료의 '회사 동료의 앨범 3' 앨범입니다."
       },
       {
         "id": "group4_album4",
@@ -684,7 +703,8 @@
             "createdAt": "2024-01-20T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "회사 동료의 '회사 동료의 앨범 4' 앨범입니다."
       },
       {
         "id": "group4_album5",
@@ -721,7 +741,8 @@
             "createdAt": "2024-01-25T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "회사 동료의 '회사 동료의 앨범 5' 앨범입니다."
       }
     ]
   },
@@ -765,7 +786,8 @@
             "createdAt": "2024-01-05T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "사진 동호회의 '사진 동호회의 앨범 1' 앨범입니다."
       },
       {
         "id": "group5_album2",
@@ -802,7 +824,8 @@
             "createdAt": "2024-01-10T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "사진 동호회의 '사진 동호회의 앨범 2' 앨범입니다."
       },
       {
         "id": "group5_album3",
@@ -839,7 +862,8 @@
             "createdAt": "2024-01-15T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "사진 동호회의 '사진 동호회의 앨범 3' 앨범입니다."
       },
       {
         "id": "group5_album4",
@@ -876,7 +900,8 @@
             "createdAt": "2024-01-20T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "사진 동호회의 '사진 동호회의 앨범 4' 앨범입니다."
       },
       {
         "id": "group5_album5",
@@ -913,7 +938,8 @@
             "createdAt": "2024-01-25T00:00:00",
             "imgUrl": "https://learn-codeit-kr-static.s3.ap-northeast-2.amazonaws.com/react-02/film-reviews/5f2ad6df-2660-4b41-ad8b-df218a404346.jpg"
           }
-        ]
+        ],
+        "description": "사진 동호회의 '사진 동호회의 앨범 5' 앨범입니다."
       }
     ]
   }

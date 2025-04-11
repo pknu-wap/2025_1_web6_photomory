@@ -9,8 +9,9 @@ export default function getAlbumById(albumId) {
     if (album) {
       return {
         album,
-        groupId: group.id, // 그룹 정보도 같이 반환하면 유용할 수 있음
-        groupName: group.groupName,
+        description: album.description, //앨범에 대한 설명
+        groupMembers: group.members, //그룹 멤버
+        groupName: group.groupName, //그룹 이름
       };
     }
   }

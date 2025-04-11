@@ -1,10 +1,4 @@
 .container {
-  padding: 0 40px;
   font-family: "Roboto";
-
-  margin: 0 auto;
-  position: relative;
   width: 1440px;
-  height: 2942px;
-  opacity: 1;
 }

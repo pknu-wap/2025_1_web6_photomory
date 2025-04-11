@@ -1,0 +1,7 @@
+.logo {
+  background-image: url("../assets/photomory_logo.svg");
+  background-repeat: no-repeat; /* ✅ 이 줄이 핵심! */
+  background-size: contain; /* 또는 cover, 100px 100px 등 */
+  width: 120px;
+  height: 100px;
+}

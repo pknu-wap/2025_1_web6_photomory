@@ -48,7 +48,7 @@ function OurAlbumPage() {
   };
 
   return (
-    <Container>
+    <>
       <nav
         style={{
           width: "100%",
@@ -62,42 +62,52 @@ function OurAlbumPage() {
       >
         임시 메뉴 바
       </nav>
-      <Calender
-        groupAlbums={groupAlbums}
-        selectedGroupId={selectedGroupId}
-        albumTitlesByGroup={albumTitlesByGroup}
-      />
-
-      {/* 앨범 추가 오른쪽 영역을 가로 배치 */}
-      <div style={{ display: "flex", gap: "24px", marginTop: "32px" }}>
-        {/* 왼쪽: 앨범 추가 영역 */}
-        <AddAlbum
-          selectedGroupId={selectedGroupId} //해당그룹의 ID
-          albumTitlesByGroup={albumTitlesByGroup} // 앨범 제목 목록 객체
-          setAlbumTitlesByGroup={setAlbumTitlesByGroup} // 앨범 제목 목록 객체 세터 함수
-          setGroupAlbums={setGroupAlbums} //현재 앨범 목록 변경용
+      <Container
+        style={{
+          margin: "0 auto",
+          padding: "0 40px",
+          position: "relative",
+          height: "2942px",
+          opacity: "1",
+        }}
+      >
+        <Calender
+          groupAlbums={groupAlbums}
+          selectedGroupId={selectedGroupId}
+          albumTitlesByGroup={albumTitlesByGroup}
         />
 
-        {/* 오른쪽 영역 */}
-        <div style={{ flex: 1 }}>
-          {/* 현재 그룹을 나타내는 컴포넌트*/}
-          <CurrentGroup
-            groupList={groupList} // 모든 그룹 리스트
-            setSelectedGroupId={setSelectedGroupId} //선택된 그룹 ID 세터
-            onAddGroup={handleAddGroup}
+        {/* 앨범 추가 오른쪽 영역을 가로 배치 */}
+        <div style={{ display: "flex", gap: "24px", marginTop: "32px" }}>
+          {/* 왼쪽: 앨범 추가 영역 */}
+          <AddAlbum
+            selectedGroupId={selectedGroupId} //해당그룹의 ID
+            albumTitlesByGroup={albumTitlesByGroup} // 앨범 제목 목록 객체
+            setAlbumTitlesByGroup={setAlbumTitlesByGroup} // 앨범 제목 목록 객체 세터 함수
+            setGroupAlbums={setGroupAlbums} //현재 앨범 목록 변경용
           />
-          {/*그룹 목록을 보여주는 컴포넌트*/}
-          <Groups
-            groupList={groupList} // 모든 그룹 리스트
-            selectedGroupId={selectedGroupId} // 그룹 강조에 사용
-          />
-          <div>
-            {/*그룹별 앨범 목록을 보여주는 컴포넌트*/}
-            <AlbumList albums={groupAlbums} />
+
+          {/* 오른쪽 영역 */}
+          <div style={{ flex: 1 }}>
+            {/* 현재 그룹을 나타내는 컴포넌트*/}
+            <CurrentGroup
+              groupList={groupList} // 모든 그룹 리스트
+              setSelectedGroupId={setSelectedGroupId} //선택된 그룹 ID 세터
+              onAddGroup={handleAddGroup}
+            />
+            {/*그룹 목록을 보여주는 컴포넌트*/}
+            <Groups
+              groupList={groupList} // 모든 그룹 리스트
+              selectedGroupId={selectedGroupId} // 그룹 강조에 사용
+            />
+            <div>
+              {/*그룹별 앨범 목록을 보여주는 컴포넌트*/}
+              <AlbumList albums={groupAlbums} />
+            </div>
           </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </>
   );
 }
 
