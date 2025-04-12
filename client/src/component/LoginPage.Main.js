@@ -30,9 +30,10 @@ export default function LoginPageMain() {
                 navigate('/Loged', {
                 state: {
                 name: user.name,
-                id: user.email, //id는 이메일과 동일일
+                id: user.email, //id는 이메일과 동일
                 pw: user.password
                 }
+                //여기에 내 정보 제이슨=user로 하기 지금 그 파일 추가하면 머지하다가 오류남
             });
             } 
             else { //로그인 실패
@@ -47,6 +48,10 @@ export default function LoginPageMain() {
             setIsLoading(false); //로딩 종료
         }
     };
+
+    const onClickHandleSingUp=()=>{
+        navigate('/singUp')
+    }
     return(
         <>
             <div className={styles.loginPageMainContainer}>
@@ -87,8 +92,8 @@ export default function LoginPageMain() {
                         {isLoading? isLoading: 'LOGIN'}
                     </button>
                         <span className={styles.notAccount}>계정이 없으신가요?</span>
-                        <button className={styles.signUp}>회원가입</button>
-                    
+                        <button className={styles.signUp}
+                        onClick={onClickHandleSingUp}>회원가입</button>
                 </div>
             </div>
         </>
