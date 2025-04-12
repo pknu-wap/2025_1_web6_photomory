@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faLock, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom' 
-포커스 주기, 로그인 완료 창 마저 끝내기
 
 export default function LoginPageMain() {
     const [ email, setEmail] = useState('')
@@ -31,7 +30,7 @@ export default function LoginPageMain() {
                 navigate('/Loged', {
                 state: {
                 name: user.name,
-                id: user.id,
+                id: user.email, //id는 이메일과 동일일
                 pw: user.password
                 }
             });
