@@ -2,7 +2,6 @@ import React from "react";
 import "./PaginationBar.css";
 function PaginationBar({ currentPage, totalPages, onPageChange }) {
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1); //전체 페이지 갯수 만큼 번호 배열 생성
-  console.log(currentPage, totalPages);
   return (
     <div style={{ textAlign: "center", marginTop: "16px" }}>
       {pageNumbers.map((pageNum) => (

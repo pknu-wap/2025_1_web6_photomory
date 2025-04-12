@@ -3,7 +3,7 @@ import CommentBox from "./CommentBox";
 import dayjs from "dayjs";
 import PaginationBar from "./PaginationBar";
 
-function Photos({ album }) {
+function Photos({ albumTitle, album }) {
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
   const photosPerPage = 4; //한 페이지당  사진 갯수
 
@@ -20,7 +20,16 @@ function Photos({ album }) {
     setCurrentPage(page);
   };
   return (
-    <>
+    <div
+      style={{
+        marginBottom: "30px",
+      }}
+    >
+      <div style={{ height: "128px" }}>
+        <h2>#{album.title}</h2>
+        <p>현재 보고 계신 앨범은 "{albumTitle}"태그의 사진들입니다.</p>
+      </div>
+
       {currentPhotos.map((photo) => (
         <div
           key={photo.id}
@@ -33,7 +42,7 @@ function Photos({ album }) {
           />
           <div>
             <h3>{photo.title}</h3>
-            <p>{<p>{dayjs(photo.createdAt).format("YYYY/MM/DD")}</p>}</p>
+            <p>{dayjs(photo.createdAt).format("YYYY/MM/DD")}</p>
             <CommentBox />
           </div>
         </div>
@@ -43,7 +52,7 @@ function Photos({ album }) {
         totalPages={totalPages}
         onPageChange={handlePageClick}
       />
-    </>
+    </div>
   );
 }
 
