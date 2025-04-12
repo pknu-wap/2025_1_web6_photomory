@@ -4,8 +4,9 @@ import "./PhotoModal.css";
 import calenderIcon from "../assets/calenderIcon.svg";
 import modalCancelButton from "../assets/modalCancelButton.svg";
 
-function PhotoModal({ photo, onClose }) {
+function PhotoModal({ photo, onClose, onDelete }) {
   if (!photo) return null;
+  console.log(photo.id);
   return (
     <>
       {/* 어두운 배경 */}
@@ -53,6 +54,26 @@ function PhotoModal({ photo, onClose }) {
               <p style={{ marginBottom: "4px" }}>앨범</p>
               <p>#{photo.albumTitle}</p>
             </div>
+            {/* 삭제 버튼 조건부 렌더링 */}
+            {onDelete && (
+              <button
+                onClick={() => {
+                  onDelete(photo.id);
+                  onClose();
+                }}
+                style={{
+                  marginTop: "16px",
+                  padding: "8px 12px",
+                  backgroundColor: "#ff5a5a",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                삭제하기
+              </button>
+            )}
           </div>
         </div>
       </div>

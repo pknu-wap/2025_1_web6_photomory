@@ -12,14 +12,20 @@ function OurAlbumDetailPage() {
   const result = getAlbumById(albumId);
   const { album, description, groupName, groupMembers } = result; //앨범, 앨범설명, 그룹명, 그룹멤버
 
-  const [photoList, setPhotoList] = useState(album.photos); //앨범의 사진들 상태태
+  const [photoList, setPhotoList] = useState(album.photos); //앨범의 사진들 상태
 
   if (!result) {
     return <p>앨범을 찾을 수 없습니다.</p>;
   }
 
+  //사진 추가 헨들러러
   const handleAddPhoto = (newPhoto) => {
     setPhotoList((prev) => [newPhoto, ...prev]);
+  };
+
+  //사진 삭제 헨들러
+  const handleDeltePhoto = (photoId) => {
+    setPhotoList((prev) => prev.filter((p) => p.id !== photoId));
   };
 
   const albumPeriod = getPhotoPeriod(photoList); //앨범 기간
@@ -46,7 +52,11 @@ function OurAlbumDetailPage() {
             width: "1056px",
           }}
         >
-          <Photos albumTitle={albumTitle} photoList={photoList} />
+          <Photos
+            albumTitle={albumTitle}
+            photoList={photoList}
+            onDeltePhoto={handleDeltePhoto}
+          />
           <PhotoInfo
             albumTitle={albumTitle}
             albumPeriod={albumPeriod}
