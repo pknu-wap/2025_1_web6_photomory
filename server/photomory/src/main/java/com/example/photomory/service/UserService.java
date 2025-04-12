@@ -38,7 +38,8 @@ public class UserService {
         if ( // 최종 조건들 만족 여부
                 numCount >= 4 &&
                 specialCharacterCount >= 2 &&
-                userRequestDto.getUser_password().length() >= 12
+                userRequestDto.getUser_password().length() >= 12 &&
+                userRequestDto.getUser_email().contains("@")
         ) {
             RegisterEntity registerEntity = new RegisterEntity();
             registerEntity.register(userRequestDto);
