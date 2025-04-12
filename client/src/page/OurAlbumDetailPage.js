@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { useState } from "react";
 import getAlbumById from "../api/getAlbumById";
 import GroupMemberGrid from "../component/GroupMemberGrid";
 import Container from "../component/Container";
@@ -9,15 +10,21 @@ import PhotoSubmit from "../component/PhotoSubmit";
 function OurAlbumDetailPage() {
   const { albumId } = useParams();
   const result = getAlbumById(albumId);
+  const { album, description, groupName, groupMembers } = result; //앨범, 앨범설명, 그룹명, 그룹멤버
+
+  const [photoList, setPhotoList] = useState(album.photos); //앨범의 사진들 상태태
 
   if (!result) {
     return <p>앨범을 찾을 수 없습니다.</p>;
   }
 
-  const { album, description, groupName, groupMembers } = result; //앨범, 앨범설명, 그룹명, 그룹멤버
-  const albumPeriod = getPhotoPeriod(album.photos); //앨범 기간
+  const handleAddPhoto = (newPhoto) => {
+    setPhotoList((prev) => [newPhoto, ...prev]);
+  };
+
+  const albumPeriod = getPhotoPeriod(photoList); //앨범 기간
   const albumTitle = album.title; // 앨범이름
-  const Count = album.photos.length; //사진갯수
+  const Count = photoList.length; //사진갯수
   return (
     <Container
       style={{
@@ -39,7 +46,7 @@ function OurAlbumDetailPage() {
             width: "1056px",
           }}
         >
-          <Photos albumTitle={albumTitle} album={album} />
+          <Photos albumTitle={albumTitle} photoList={photoList} />
           <PhotoInfo
             albumTitle={albumTitle}
             albumPeriod={albumPeriod}
@@ -47,7 +54,7 @@ function OurAlbumDetailPage() {
             photoCount={Count}
           />
         </div>
-        <PhotoSubmit />
+        <PhotoSubmit handleAddPhoto={handleAddPhoto} />
       </div>
     </Container>
   );
