@@ -33,8 +33,30 @@ function Photos({ albumTitle, photoList, onDeltePhoto }) {
         marginBottom: "30px",
       }}
     >
-      <div style={{ height: "128px" }}>
-        <h2>#{albumTitle}</h2>
+      <div
+        style={{
+          height: "128px",
+          background:
+            "linear-gradient(0deg, rgba(0, 0, 0, 0.001), rgba(0, 0, 0, 0.001)), rgba(0, 0, 0, 0.1)",
+          border: "2px solid rgba(0, 0, 0, 0.2)",
+          borderRadius: "8px",
+          padding: "26px",
+          marginBottom: "56px",
+        }}
+      >
+        <h2
+          style={{
+            display: "inline-block", // 텍스트 길이에 맞게 박스 크기 자동 조절
+            padding: "8px 16px",
+            background: "#000000",
+            color: "#ffffff", // 텍스트 색상 흰색
+            borderRadius: "8px",
+            fontSize: "20px",
+            marginBottom: "12px",
+          }}
+        >
+          #{albumTitle}
+        </h2>
         <p>현재 보고 계신 앨범은 "{albumTitle}"태그의 사진들입니다.</p>
       </div>
 
@@ -55,8 +77,28 @@ function Photos({ albumTitle, photoList, onDeltePhoto }) {
             onClick={() => handleOpenModal(photo)}
           />
           <div>
-            <h3>{photo.title}</h3>
-            <p>{dayjs(photo.createdAt).format("YYYY/MM/DD")}</p>
+            <h3
+              style={{
+                fontSize: "20px",
+                fontWeight: "bold",
+                lineHeight: "28px",
+                letterSpacing: "0px",
+                marginBottom: "8px",
+              }}
+            >
+              {photo.title}
+            </h3>
+            <p
+              style={{
+                fontSize: "14px",
+                fontWeight: "normal",
+                lineHeight: "20px",
+                color: "#6B7280",
+                marginBottom: "12px",
+              }}
+            >
+              {dayjs(photo.createdAt).format("YYYY/MM/DD")}
+            </p>
             <CommentBox />
           </div>
           <PhotoModal

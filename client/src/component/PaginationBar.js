@@ -29,7 +29,6 @@ function PaginationBar({ currentPage, totalPages, onPageChange }) {
       setRangeIndex(rangeIndex + 1);
     }
   };
-  console.log("rangeIndex:", rangeIndex, "totalGroups:", totalGroups);
   return (
     <div style={{ textAlign: "center", marginTop: "16px" }}>
       <button
