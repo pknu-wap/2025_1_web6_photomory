@@ -29,7 +29,7 @@ function PhotoSubmit({ handleAddPhoto }) {
     e.preventDefault(); //기본 동작(새로고침) 막기
 
     const formData = new FormData(); //파일 업로드할 때 사용하는 전용 데이터 객체
-    formData.append("imgFile", newPhotoData.imgFile); //데이터 추가가
+    formData.append("imgFile", newPhotoData.imgFile); //데이터 추가
     formData.append("title", newPhotoData.title);
     formData.append("createdAt", newPhotoData.createdAt);
 

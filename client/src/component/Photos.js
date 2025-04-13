@@ -73,6 +73,8 @@ function Photos({ albumTitle, photoList, onDeltePhoto }) {
               width: "516px",
               height: "400px",
               cursor: "pointer",
+              boxShadow:
+                "0px 4px 6px -4px rgba(0, 0, 0, 0.1),0px 10px 15px -3px rgba(0, 0, 0, 0.1)",
             }}
             onClick={() => handleOpenModal(photo)}
           />
