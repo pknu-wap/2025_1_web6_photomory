@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import "./PhotoModal.css";
 import calenderIcon from "../assets/calenderIcon.svg";
 import modalCancelButton from "../assets/modalCancelButton.svg";
+import discardButton from "../assets/discardButton.svg";
 
 function PhotoModal({ photo, onClose, onDelete }) {
   if (!photo) return null;
@@ -56,23 +57,23 @@ function PhotoModal({ photo, onClose, onDelete }) {
             </div>
             {/* 삭제 버튼 조건부 렌더링 */}
             {onDelete && (
-              <button
-                onClick={() => {
-                  onDelete(photo.id);
-                  onClose();
-                }}
+              <div
                 style={{
-                  marginTop: "16px",
-                  padding: "8px 12px",
-                  backgroundColor: "#ff5a5a",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
+                  display: "flex",
+                  justifyContent: "center",
                 }}
               >
-                삭제하기
-              </button>
+                <button
+                  onClick={() => {
+                    onDelete(photo.id);
+                    onClose();
+                  }}
+                  className="deleteButton"
+                >
+                  <img src={discardButton} />
+                  삭제하기
+                </button>
+              </div>
             )}
           </div>
         </div>
