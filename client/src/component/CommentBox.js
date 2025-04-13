@@ -91,6 +91,8 @@ function CommentBox({ photoId }) {
         <button
           type="submit"
           style={{
+            display: "flex",
+            justifyContent: "center",
             padding: "8px 12px",
             width: "78px",
             backgroundColor: "#3b82f6",
