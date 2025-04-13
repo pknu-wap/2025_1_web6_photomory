@@ -1,6 +1,6 @@
 function PhotoInfo({ albumTitle, albumPeriod, description, photoCount }) {
   return (
-    <div style={{}}>
+    <div style={{ marginBottom: "54px" }}>
       <h2
         style={{
           display: "inline-block",
