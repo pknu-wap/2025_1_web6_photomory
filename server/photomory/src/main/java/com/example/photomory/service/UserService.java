@@ -1,7 +1,7 @@
 package com.example.photomory.service;
 
 import com.example.photomory.dto.UserRequestDto;
-import com.example.photomory.entity.RegisterEntity;
+import com.example.photomory.entity.UserEntity;
 import com.example.photomory.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +41,7 @@ public class UserService {
                 userRequestDto.getUser_password().length() >= 12 &&
                 userRequestDto.getUser_email().contains("@")
         ) {
-            RegisterEntity registerEntity = new RegisterEntity();
+            UserEntity registerEntity = new UserEntity();
             registerEntity.register(userRequestDto);
             userRepository.save(registerEntity); //15번 줄에서 선언
             return "회원가입 완료";
