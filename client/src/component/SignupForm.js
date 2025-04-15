@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
-
+import React, { useState } from "react";
+import ImageUploader from "./ImageUploader";
 //각 옵션들
 const jobOptions = ["디자이너", "개발자", "사진작가", "프리랜서", "학생"];
 const equipmentOptions = ["Canon", "Nikon", "Sony", "핸드폰 카메라"];
 const fieldOptions = ["서울", "부산", "대전", "광주", "원주", "강릉", "기타"];
 
 function SignupForm() {
+  //회원가입 입력 정보 객체 상태
   const [signupData, setSignupData] = useState({
     user_name: "",
     user_email: "",
@@ -16,8 +17,6 @@ function SignupForm() {
     user_introduction: "",
     user_field: "", // 활동 지역
   });
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const fileRef = useRef(null);
 
   //user_photourl을 제외한 입력한 입력값 헨들러
   const handleChange = (e) => {
@@ -28,34 +27,12 @@ function SignupForm() {
     }));
   };
 
-  //user_photourl 파일 입력값 헨들러
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  //이미지 파일 선택 헨들러
+  const handleImageSelect = (file) => {
     setSignupData((prev) => ({
       ...prev,
       user_photourl: file,
     }));
-
-    if (file) {
-      const url = URL.createObjectURL(file); //사진미리보기용 url
-      setPreviewUrl(url); //미리보기 상태 변경
-    } else {
-      setPreviewUrl(null);
-    }
-  };
-
-  //선택 이미지 초기화 헨들러
-  const handleImageCancel = () => {
-    setSignupData((prev) => ({
-      ...prev,
-      user_photourl: null,
-    }));
-    setPreviewUrl(null);
-
-    //파일 input 초기화
-    if (fileRef.current) {
-      fileRef.current.value = "";
-    }
   };
 
   const handleSubmit = (e) => {
@@ -96,22 +73,7 @@ function SignupForm() {
       user_introduction: "",
       user_field: "",
     });
-
-    setPreviewUrl(null);
-
-    if (fileRef.current) {
-      fileRef.current.value = ""; //파일 input 창 비우기
-    }
   };
-
-  //이전 previewUrl 메모리 수동 해제
-  useEffect(() => {
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-    };
-  }, [previewUrl]);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -136,29 +98,11 @@ function SignupForm() {
         value={signupData.user_password}
         onChange={handleChange}
       />
-
-      <input
-        type="file"
-        name="user_photourl"
-        accept="image/*"
-        onChange={handleFileChange}
-        ref={fileRef} ///ref연결
+      {/*이미지파일 입력 영역*/}
+      <ImageUploader
+        onFileSelect={handleImageSelect}
+        value={signupData.user_photourl}
       />
-      {/*이미지 미리보기 */}
-      {previewUrl && (
-        <div style={{ marginTop: "10px" }}>
-          <p>이미지 미리보기</p>
-          <img
-            src={previewUrl}
-            alt="previewUrl"
-            style={{ width: "200px", borderRadius: "8px" }}
-          />
-          <br />
-          <button type="button" onClick={handleImageCancel}>
-            이미지 취소
-          </button>
-        </div>
-      )}
 
       {/* 직업 */}
       <select
