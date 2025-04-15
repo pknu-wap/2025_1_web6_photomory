@@ -1,7 +1,5 @@
 .signupWrapper {
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)),
-    linear-gradient(140deg, #dbeafe 0%, #f3e8ff 50%, #fce7f3 100%);
-  padding: 50px 0px 50px;
+  padding: 50px 0px 0px;
 }
 
 .signupContainer {
