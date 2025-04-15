@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import ImageUploader from "./ImageUploader";
 import "./SignupForm.css";
-
+import isValidPassword from "../utils/isValidPassword";
 //각 옵션들
 const jobOptions = ["디자이너", "개발자", "사진작가", "프리랜서", "학생"];
 const equipmentOptions = ["Canon", "Nikon", "Sony", "핸드폰 카메라"];
@@ -13,12 +13,16 @@ function SignupForm() {
     user_name: "",
     user_email: "",
     user_password: "",
+    user_password_check: "", //비밀번호 확인용 필드
     user_photourl: null,
     user_job: "",
     user_equipment: "",
     user_introduction: "",
     user_field: "", // 활동 지역
   });
+
+  // 이미지 리셋용 상태
+  const [resetImage, setResetImage] = useState(false);
 
   //user_photourl을 제외한 입력한 입력값 헨들러
   const handleChange = (e) => {
@@ -39,8 +43,24 @@ function SignupForm() {
 
   //입력 폼 데이터 제출 헨들러러
   const handleSubmit = (e) => {
+    //기본 이벤트 방지
     e.preventDefault();
+    const { user_password } = signupData; //비밀번호 유효성 검사를 위한 구조분해
 
+    if (signupData.user_password !== signupData.user_password_check) {
+      alert("❗ 비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    if (!isValidPassword(user_password)) {
+      alert(
+        "❗ 비밀번호는 12자 이상, 숫자 4개 이상(중복 제외), 특수문자 2개 이상(중복 제외)이 포함되어야 합니다."
+      );
+      return;
+    }
+
+    //이미지 초기화
+    setResetImage(true);
     const formData = new FormData();
     // 텍스트 필드 저장
     formData.append("user_name", signupData.user_name);
@@ -70,6 +90,7 @@ function SignupForm() {
       user_name: "",
       user_email: "",
       user_password: "",
+      user_password_check: "",
       user_photourl: null,
       user_job: "",
       user_equipment: "",
@@ -77,6 +98,12 @@ function SignupForm() {
       user_field: "",
     });
   };
+
+  // resetImage 상태를 업데이트하는 함수를 useCallback으로 감싸서 메모이제이션
+  const handleResetImage = useCallback((value) => {
+    // 부모 컴포넌트의 reset 상태를 true 또는 false로 설정
+    setResetImage(value);
+  }, []);
 
   return (
     <div className="signupWrapper">
@@ -122,17 +149,26 @@ function SignupForm() {
             비밀번호 확인
             <input
               type="password"
-              name="user_password"
+              name="user_password_check"
               placeholder="비밀번호를 입력하세요"
-              value={signupData.user_password}
+              value={signupData.user_password_check}
               onChange={handleChange}
               className="signupInput"
             />
           </label>
+          {/*비밀번호가 다를때만 조건부 렌더링*/}
+          {signupData.user_password_check &&
+            signupData.user_password !== signupData.user_password_check && (
+              <p style={{ color: "red", fontSize: "13px", margin: 0 }}>
+                비밀번호가 일치하지 않습니다.
+              </p>
+            )}
           {/*이미지파일 입력 영역*/}
           <ImageUploader
             onFileSelect={handleImageSelect}
             value={signupData.user_photourl}
+            reset={resetImage}
+            onReset={handleResetImage}
           />
 
           {/* 직업 */}

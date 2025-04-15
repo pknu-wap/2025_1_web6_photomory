@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import defaultProfile from "../assets/defaultProfileIcon.svg";
 
-function ImageUploader({ onFileSelect, value }) {
-  const [previewUrl, setPreviewUrl] = useState(null);
+function ImageUploader({ onFileSelect, value, reset, onReset }) {
+  const [previewUrl, setPreviewUrl] = useState(defaultProfile); //기본 미리보기 상태
   const fileRef = useRef(null);
 
   // 파일 선택 시
@@ -15,30 +15,28 @@ function ImageUploader({ onFileSelect, value }) {
     }
   };
 
-  // 이미지 취소
-  const handleCancel = () => {
-    setPreviewUrl(defaultProfile); // 기본 이미지로 초기화
+  // 이미지 취소, 리렌더링마다 불필요하게 재실행 방지
+  const handleCancel = useCallback(() => {
+    setPreviewUrl(defaultProfile); //미리보기 초기화
     onFileSelect(null);
     if (fileRef.current) {
       fileRef.current.value = "";
     }
-  };
+  }, [onFileSelect]);
 
+  //숨겨진 input 클릭 헨들러
   const handleUploadClick = () => {
     if (fileRef.current) {
       fileRef.current.click(); //강제 클릭 이벤트 발생, 숨겨진 input 클릭
     }
   };
 
-  // 외부에서 null 들어오면 기본 이미지로 변경
   useEffect(() => {
-    if (!value) {
-      setPreviewUrl(defaultProfile);
-      if (fileRef.current) {
-        fileRef.current.value = "";
-      }
+    if (reset) {
+      handleCancel();
+      onReset(false);
     }
-  }, [value]);
+  }, [reset, handleCancel, onReset]); //항상 최신 상태의 함수를 참조
 
   return (
     <div style={{ marginBottom: "5px" }}>
