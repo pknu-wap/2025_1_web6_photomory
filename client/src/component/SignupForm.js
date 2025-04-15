@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import ImageUploader from "./ImageUploader";
+import "./SignupForm.css";
+
 //각 옵션들
 const jobOptions = ["디자이너", "개발자", "사진작가", "프리랜서", "학생"];
 const equipmentOptions = ["Canon", "Nikon", "Sony", "핸드폰 카메라"];
@@ -35,6 +37,7 @@ function SignupForm() {
     }));
   };
 
+  //입력 폼 데이터 제출 헨들러러
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -76,85 +79,136 @@ function SignupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        name="user_name"
-        placeholder="이름"
-        value={signupData.user_name}
-        onChange={handleChange}
-      />
-      <input
-        type="email"
-        name="user_email"
-        placeholder="이메일"
-        value={signupData.user_email}
-        onChange={handleChange}
-      />
-      <input
-        type="password"
-        name="user_password"
-        placeholder="비밀번호"
-        value={signupData.user_password}
-        onChange={handleChange}
-      />
-      {/*이미지파일 입력 영역*/}
-      <ImageUploader
-        onFileSelect={handleImageSelect}
-        value={signupData.user_photourl}
-      />
+    <div className="signupWrapper">
+      <div className="signupContainer">
+        <h2 className="signupTitle">회원가입</h2>
+        <form onSubmit={handleSubmit} className="signupForm">
+          <label className="signupLabel">
+            이름
+            <input
+              type="text"
+              name="user_name"
+              placeholder="이름을 입력하세요"
+              value={signupData.user_name}
+              onChange={handleChange}
+              className="signupInput"
+            />
+          </label>
 
-      {/* 직업 */}
-      <select
-        name="user_job"
-        value={signupData.user_job}
-        onChange={handleChange}
-      >
-        <option value="">직업 선택</option>
-        {jobOptions.map((job) => (
-          <option key={job} value={job}>
-            {job}
-          </option>
-        ))}
-      </select>
+          <label className="signupLabel">
+            이메일
+            <input
+              type="email"
+              name="user_email"
+              placeholder="이메일을 입력하세요"
+              value={signupData.user_email}
+              onChange={handleChange}
+              className="signupInput"
+            />
+          </label>
 
-      {/* 사용 장비 */}
-      <select
-        name="user_equipment"
-        value={signupData.user_equipment}
-        onChange={handleChange}
-      >
-        <option value="">사용 장비 선택</option>
-        {equipmentOptions.map((equiment) => (
-          <option key={equiment} value={equiment}>
-            {equiment}
-          </option>
-        ))}
-      </select>
-      {/* 활동 지역 */}
-      <select
-        name="user_field"
-        value={signupData.user_field}
-        onChange={handleChange}
-      >
-        <option value="">활동 지역 선택</option>
-        {fieldOptions.map((field) => (
-          <option key={field} value={field}>
-            {field}
-          </option>
-        ))}
-      </select>
-      {/* 한 줄 소개 (자기소개) */}
-      <input
-        type="text"
-        name="user_introduction"
-        placeholder="한 줄 소개를 입력하세요"
-        value={signupData.user_introduction}
-        onChange={handleChange}
-      />
+          <label className="signupLabel">
+            비밀번호
+            <input
+              type="password"
+              name="user_password"
+              placeholder="비밀번호를 입력하세요"
+              value={signupData.user_password}
+              onChange={handleChange}
+              className="signupInput"
+            />
+          </label>
+          <label className="signupLabel">
+            비밀번호 확인
+            <input
+              type="password"
+              name="user_password"
+              placeholder="비밀번호를 입력하세요"
+              value={signupData.user_password}
+              onChange={handleChange}
+              className="signupInput"
+            />
+          </label>
+          {/*이미지파일 입력 영역*/}
+          <ImageUploader
+            onFileSelect={handleImageSelect}
+            value={signupData.user_photourl}
+          />
 
-      <button type="submit">회원가입</button>
-    </form>
+          {/* 직업 */}
+          <div className="signupLabel">
+            <p>직업</p>
+            <select
+              name="user_job"
+              value={signupData.user_job}
+              onChange={handleChange}
+              className="signupSelect"
+            >
+              <option value="">직업 선택</option>
+              {jobOptions.map((job) => (
+                <option key={job} value={job}>
+                  {job}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* 사용 장비 */}
+          <div className="signupLabel">
+            <p>사용 장비</p>
+            <select
+              name="user_equipment"
+              value={signupData.user_equipment}
+              onChange={handleChange}
+              style={{ marginBottom: "4px" }}
+              className="signupSelect"
+            >
+              <option value="">사용 장비 선택</option>
+              {equipmentOptions.map((equiment) => (
+                <option key={equiment} value={equiment}>
+                  {equiment}
+                </option>
+              ))}
+            </select>
+          </div>
+          {/* 활동 지역 */}
+          <div className="signupLabel">
+            <p>활동 지역</p>
+            <select
+              name="user_field"
+              value={signupData.user_field}
+              onChange={handleChange}
+              style={{ marginBottom: "22px" }}
+              className="signupSelect"
+            >
+              <option value="">활동 지역 선택</option>
+              {fieldOptions.map((field) => (
+                <option key={field} value={field}>
+                  {field}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* 한 줄 소개 (자기소개) */}
+          <div className="signupLabel">
+            <p className="signupSubLabel">한 줄 소개</p>
+            <input
+              type="text"
+              name="user_introduction"
+              placeholder="한 줄 소개를 입력하세요"
+              value={signupData.user_introduction}
+              onChange={handleChange}
+              className="signupInput signupIntro"
+            />
+          </div>
+
+          <button type="submit" className="signupButton">
+            회원가입
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }
 

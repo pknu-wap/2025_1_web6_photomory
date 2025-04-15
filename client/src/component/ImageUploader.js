@@ -1,5 +1,5 @@
-// ImageUploader.js
 import React, { useEffect, useRef, useState } from "react";
+import defaultProfile from "../assets/defaultProfileIcon.svg";
 
 function ImageUploader({ onFileSelect, value }) {
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -15,19 +15,25 @@ function ImageUploader({ onFileSelect, value }) {
     }
   };
 
-  // 이미지 취소 버튼 클릭
+  // 이미지 취소
   const handleCancel = () => {
-    setPreviewUrl(null);
+    setPreviewUrl(defaultProfile); // 기본 이미지로 초기화
     onFileSelect(null);
     if (fileRef.current) {
       fileRef.current.value = "";
     }
   };
 
-  // 외부에서 value가 null로 바뀌면 자동 초기화
+  const handleUploadClick = () => {
+    if (fileRef.current) {
+      fileRef.current.click(); //강제 클릭 이벤트 발생, 숨겨진 input 클릭
+    }
+  };
+
+  // 외부에서 null 들어오면 기본 이미지로 변경
   useEffect(() => {
     if (!value) {
-      setPreviewUrl(null);
+      setPreviewUrl(defaultProfile);
       if (fileRef.current) {
         fileRef.current.value = "";
       }
@@ -35,26 +41,56 @@ function ImageUploader({ onFileSelect, value }) {
   }, [value]);
 
   return (
-    <div>
+    <div style={{ marginBottom: "5px" }}>
+      <p style={{ margin: "0px" }}>프로필 사진</p>
       <input
         type="file"
         accept="image/*"
         ref={fileRef}
         onChange={handleChange}
+        style={{ display: "none" }} //기본 버튼 제거
       />
-      {previewUrl && (
-        <div>
-          <img
-            src={previewUrl}
-            alt="미리보기"
-            style={{ width: "200px", marginTop: "10px" }}
-          />
-          <br />
-          <button type="button" onClick={handleCancel}>
+      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        <img
+          src={previewUrl}
+          alt="프로필 미리보기"
+          style={{
+            width: "96px",
+            height: "96px",
+            borderRadius: "50%",
+            objectFit: "cover",
+            marginTop: "10px",
+          }}
+        />
+        <button
+          type="button"
+          onClick={handleUploadClick}
+          style={{
+            width: "101.88px",
+            height: "38px",
+            borderRadius: "6px",
+            background: "#ffffff",
+            border: "1px solid #000000",
+          }}
+        >
+          사진 업로드
+        </button>
+        {previewUrl !== defaultProfile && (
+          <button
+            type="button"
+            onClick={handleCancel}
+            style={{
+              width: "101.88px",
+              height: "38px",
+              borderRadius: "6px",
+              background: "#ffffff",
+              border: "1px solid #000000",
+            }}
+          >
             이미지 취소
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
