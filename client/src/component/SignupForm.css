@@ -62,4 +62,19 @@
   padding: 12px auto;
   color: #ffffff;
   background: #000000;
+  cursor: pointer;
+}
+
+.signupLoginNotice {
+  margin: 16px auto 0px;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 20px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.signupLoginLink {
+  color: #000000;
+  cursor: pointer;
 }

@@ -243,6 +243,11 @@ function SignupForm() {
             회원가입
           </button>
         </form>
+        {/*임시 p태그*/}
+        <p className="signupLoginNotice">
+          이미 계정이 있으신가요?{" "}
+          <strong className="signupLoginLink">로그인 하기</strong>
+        </p>
       </div>
     </div>
   );
