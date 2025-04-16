@@ -1,9 +1,9 @@
-//안쓰는건데 아란이가 쓸 수 있으니까 나둠!!
 
 //package com.example.photomory.dto;
 //
 //
 //public class UserResponseDto {
+//안쓰는건데 아란이가 쓸 수 있으니까 나둠!!
 //
 //    private int user_id;
 //    private String user_name;

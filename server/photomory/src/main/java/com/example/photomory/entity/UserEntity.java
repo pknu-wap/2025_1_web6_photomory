@@ -1,6 +1,6 @@
 package com.example.photomory.entity;
 
-import com.example.photomory.dto.UserRequestDto;
+import com.example.photomory.dto.RegisterRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +39,7 @@ public class UserEntity {
     @Column(name = "user_field", nullable = false)
     private String user_field;
 
-    public void register(UserRequestDto userRequestDto) { //기본키로 지정해서 자동으로 MySQL에서 1로 시작하게 함.
+    public void register(RegisterRequestDto userRequestDto) { //기본키로 지정해서 자동으로 MySQL에서 1로 시작하게 함.
         this.user_name = userRequestDto.getUser_name();
         this.user_email = userRequestDto.getUser_email();
         this.user_password = userRequestDto.getUser_password();

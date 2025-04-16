@@ -1,6 +1,6 @@
 package com.example.photomory.dto;
 
-public class UserRequestDto {
+public class RegisterRequestDto {
 
     private String user_name;
     private String user_email;
@@ -11,7 +11,7 @@ public class UserRequestDto {
     private String user_introduction;
     private String user_field;
 
-    UserRequestDto(
+    RegisterRequestDto(
             String user_name,
             String user_email,
             String user_password,

@@ -1,4 +1,4 @@
 package com.example.photomory.dto;
 
-public class TokenResponse {
+public class TokenResponseDto {
 }

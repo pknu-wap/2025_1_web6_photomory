@@ -1,6 +1,6 @@
 package com.example.photomory.service;
 
-import com.example.photomory.dto.UserRequestDto;
+import com.example.photomory.dto.RegisterRequestDto;
 import com.example.photomory.entity.UserEntity;
 import com.example.photomory.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -9,10 +9,10 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class UserService {
+public class RegisterService {
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    public RegisterService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
     List<String> specialCharacters = Arrays.asList(
@@ -22,7 +22,7 @@ public class UserService {
             "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
     );
 
-    public String register(UserRequestDto userRequestDto) {
+    public String register(RegisterRequestDto userRequestDto) {
         int specialCharacterCount = 0;
         int numCount = 0;
         for (String specialCharacter : specialCharacters) { // 특수문자 포함여부(2자이상) + 중복 체크하기
@@ -43,7 +43,7 @@ public class UserService {
         ) {
             UserEntity registerEntity = new UserEntity();
             registerEntity.register(userRequestDto);
-            userRepository.save(registerEntity); //15번 줄에서 선언
+            userRepository.save(registerEntity); //13번 줄에서 선언
             return "회원가입 완료";
 
         } else {

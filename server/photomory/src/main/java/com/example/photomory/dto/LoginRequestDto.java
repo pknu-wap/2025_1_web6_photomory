@@ -1,10 +1,10 @@
 package com.example.photomory.dto;
 
-public class LoginRequest {
+public class LoginRequestDto {
     private String useremail;
     private String password;
 
-    LoginRequest(String useremail, String password) {
+    LoginRequestDto(String useremail, String password) {
         this.useremail = useremail;
         this.password = password;
     }
