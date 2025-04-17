@@ -21,7 +21,7 @@ public class AuthService {
         if (email.isEmpty()) { // Optional.empty()인 경우
             return "존재하지 않는 이메일입니다.";
 
-        } else if () { //DB에 비밀번호가 있지만 비밀번호가 틀렸을 때
+        } else if (email.isEmpty()) { //DB에 비밀번호가 있지만 비밀번호가 틀렸을 때
         }
         return "로그인 실패";
     }

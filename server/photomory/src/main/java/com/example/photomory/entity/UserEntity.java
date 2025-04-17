@@ -4,6 +4,7 @@ import com.example.photomory.dto.RegisterRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
@@ -39,15 +40,15 @@ public class UserEntity {
     @Column(name = "user_field", nullable = false)
     private String user_field;
 
-    public void register(RegisterRequestDto userRequestDto) { //기본키로 지정해서 자동으로 MySQL에서 1로 시작하게 함.
-        this.user_name = userRequestDto.getUser_name();
-        this.user_email = userRequestDto.getUser_email();
-        this.user_password = userRequestDto.getUser_password();
-        this.user_photourl = userRequestDto.getUser_photourl();
-        this.user_job = userRequestDto.getUser_job();
-        this.user_equipment = userRequestDto.getUser_equipment();
-        this.user_introduction = userRequestDto.getUser_introduction();
-        this.user_field = userRequestDto.getUser_field();
-
+    public UserEntity(
+            String user_email,
+            String user_name,
+            String user_password,
+            String user_photourl,
+            String user_equipment,
+            String user_introduction,
+            String user_job,
+            String user_field
+    ) {
     }
 }
