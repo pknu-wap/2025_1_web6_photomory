@@ -1,4 +1,4 @@
-function AddFriendList({ friends, onInvite }) {
+function AddFriendList({ friends }) {
   return (
     <div>
       <h3>나의 친구 목록</h3>
@@ -41,7 +41,6 @@ function AddFriendList({ friends, onInvite }) {
                 borderRadius: "4px",
                 cursor: "pointer",
               }}
-              onClick={() => onInvite(friend)} // 클릭시 해당 친구 초대
             >
               초대하기
             </button>
