@@ -1,52 +1,104 @@
 function AddFriendList({ friends }) {
   return (
-    <div>
-      <h3>나의 친구 목록</h3>
-      <ul style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-        {friends.map((friend) => (
-          <li
-            key={friend.userId}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              border: "1px solid #ccc",
-              borderRadius: "8px",
-              padding: "12px",
-              width: "120px",
-              gap: "8px",
-            }}
-          >
-            <img
-              src={friend.photoUrl}
-              alt={friend.name}
+    <div
+      style={{
+        width: "500px",
+        height: "818px",
+        borderRadius: "8px",
+        border: "1px solid #E5E7EB",
+        padding: "25px",
+        marginRight: "24px",
+      }}
+    >
+      <h3
+        style={{
+          marginBottom: "16px",
+          fontSize: "18px",
+          fontWeight: "bold",
+          lineHeight: "28px",
+        }}
+      >
+        나의 친구 목록
+      </h3>
+      {friends.length > 0 ? (
+        <ul
+          style={{
+            display: "flex",
+            flex: "1",
+            height: "90%",
+            flexDirection: "column",
+            gap: "16px",
+            overflowY: "auto", // 세로 스크롤
+            overflowX: "hidden", // 가로 스크롤 숨김
+          }}
+        >
+          {friends.map((friend) => (
+            <li
+              key={friend.userId}
               style={{
-                width: "80px",
-                height: "80px",
-                borderRadius: "50%",
-              }}
-            />
-            <span style={{ fontWeight: "bold", textAlign: "center" }}>
-              {friend.name}
-            </span>
-            {/* 초대하기 버튼 추가 */}
-            <button
-              style={{
-                marginTop: "8px",
-                padding: "4px 8px",
-                fontSize: "14px",
-                backgroundColor: "#3b82f6",
-                color: "#fff",
+                display: "flex",
+                alignItems: "center",
                 border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
+                borderRadius: "8px",
+                padding: "12px",
+                width: "450px",
+                height: "72px",
+                background: "#F3F4F6",
               }}
             >
-              초대하기
-            </button>
-          </li>
-        ))}
-      </ul>
+              <img
+                src={friend.photoUrl}
+                alt={friend.name}
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  marginRight: "16px",
+                }}
+              />
+              <span
+                style={{
+                  fontWeight: "bold",
+                  textAlign: "center",
+                  marginRight: "222px",
+                }}
+              >
+                {friend.name}
+              </span>
+              {/* 초대하기 버튼 추가 */}
+              <button
+                style={{
+                  padding: "4px 8px",
+                  fontSize: "14px",
+                  backgroundColor: "transparent",
+                  color: "#000000",
+                  cursor: "pointer",
+                  width: "94px",
+                  height: "44px",
+                  borderRadius: "9999px",
+                  border: "2px solid #000000",
+                }}
+              >
+                초대하기
+              </button>
+              {/* 친구 아이템 */}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div
+          style={{
+            height: "100%", // 빈 공간 전체 채우기
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#6B7280",
+            fontSize: "16px",
+          }}
+        >
+          친구를 찾을 수 없습니다
+        </div>
+      )}
     </div>
   );
 }

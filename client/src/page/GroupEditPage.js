@@ -42,9 +42,9 @@ function GroupEditPage() {
   };
 
   return (
-    <div>
-      <h2>{groupName} 그룹 관리</h2>
+    <div style={{ height: "1489px" }}>
       <GroupEditor
+        groupName={groupName} //그룹명
         friends={filteredFriends} // 검색된 친구 목록만 넘겨줌
         addedMembers={addedMembers}
         setAddedMembers={setAddedMembers}
