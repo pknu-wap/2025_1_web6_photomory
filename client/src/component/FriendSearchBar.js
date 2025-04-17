@@ -1,4 +1,5 @@
 import { useState } from "react";
+import searchIcon from "../assets/searchIcon.svg";
 
 function FriendSearchBar({ onSearch }) {
   const [keyword, setKeyword] = useState(""); //검색어 상태
@@ -10,18 +11,39 @@ function FriendSearchBar({ onSearch }) {
   };
 
   return (
-    <div style={{ marginBottom: "16px" }}>
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        marginBottom: "16px",
+      }}
+    >
+      <img
+        src={searchIcon}
+        alt="search"
+        style={{
+          position: "absolute",
+          left: "12px", // 왼쪽 정렬
+          top: "50%",
+          transform: "translateY(-50%)",
+          width: "16px",
+          height: "16px",
+          pointerEvents: "none",
+          opacity: 0.6,
+        }}
+      />
       <input
         type="text"
-        placeholder="친구 이름을 검색하세요"
+        placeholder="친구 검색..."
         value={keyword}
         onChange={handleChange}
         style={{
-          width: "300px",
-          padding: "8px 12px",
+          width: "100%",
+          padding: "8px 12px 8px 36px",
           fontSize: "14px",
           border: "1px solid #ccc",
-          borderRadius: "6px",
+          borderRadius: "8px",
+          height: "50px",
         }}
       />
     </div>
