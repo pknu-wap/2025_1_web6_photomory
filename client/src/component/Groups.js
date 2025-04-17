@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import React, { useState } from "react";
 import PaginationBar from "./PaginationBar";
 import GroupControlButton from "../assets/groupControlButton.svg";
@@ -17,7 +18,10 @@ function Groups({ groupList, selectedGroupId }) {
     <div className="allGroupCard">
       <div className="titleManagement">
         <h3>그룹 관리</h3>
-        <img src={GroupControlButton} alt="GroupControlButton" />
+        {/*TODO: 동적경로 변경 필요(그룹인원 관리페이지 이동)*/}
+        <Link to="/our-album/groupEdit" style={{ display: "inline-block" }}>
+          <img src={GroupControlButton} alt="GroupControlButton" />
+        </Link>
       </div>
       {/* 2행 2열 */}
       <div className="fourGroupSection">
