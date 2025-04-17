@@ -14,7 +14,7 @@ function GroupEditor({
     <div
       style={{
         width: "1088px",
-        height: "1100px",
+        height: "1050px",
         padding: "32px",
         borderRadius: "8px",
         background: "#ffffff",

@@ -1,13 +1,20 @@
 const MAX_MEMBERS = 20; // 최대 인원 20명
 
 function AddedMemberList({ addedMembers, onRemoveMember }) {
+  // 삭제 클릭 핸들러
+  const handleRemoveClick = (member) => {
+    if (window.confirm(`${member.user_name}님을 삭제하시겠습니까?`)) {
+      onRemoveMember(member.user_id);
+    }
+  };
+
   return (
     <div
       style={{
         width: "500px",
         height: "818px",
         border: "1px solid #E5E7EB",
-        padding: "25px",
+        padding: "13px",
         borderRadius: "8px",
       }}
     >
@@ -32,7 +39,7 @@ function AddedMemberList({ addedMembers, onRemoveMember }) {
       <ul
         style={{
           display: "flex",
-          height: "95%",
+          height: "85%",
           flexDirection: "column",
           gap: "16px",
           overflowY: "auto", // 세로 스크롤
@@ -73,7 +80,7 @@ function AddedMemberList({ addedMembers, onRemoveMember }) {
               {member.user_name}
             </span>
             <button
-              onClick={() => onRemoveMember(member.user_id)}
+              onClick={() => handleRemoveClick(member)}
               style={{
                 background: "none", // 배경 제거
                 border: "none", // 테두리 제거

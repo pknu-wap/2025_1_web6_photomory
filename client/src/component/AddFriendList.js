@@ -1,4 +1,9 @@
 function AddFriendList({ friends }) {
+  // 초대 버튼 클릭 핸들러
+  const handleInviteClick = (friend) => {
+    alert(`${friend.name}님을 초대했습니다!`);
+  };
+
   return (
     <div
       style={{
@@ -6,7 +11,7 @@ function AddFriendList({ friends }) {
         height: "818px",
         borderRadius: "8px",
         border: "1px solid #E5E7EB",
-        padding: "25px",
+        padding: "13px",
         marginRight: "24px",
       }}
     >
@@ -78,10 +83,10 @@ function AddFriendList({ friends }) {
                   borderRadius: "9999px",
                   border: "2px solid #000000",
                 }}
+                onClick={() => handleInviteClick(friend)}
               >
                 초대하기
               </button>
-              {/* 친구 아이템 */}
             </li>
           ))}
         </ul>
