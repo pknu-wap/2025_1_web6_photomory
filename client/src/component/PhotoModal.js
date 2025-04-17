@@ -70,7 +70,7 @@ function PhotoModal({ photo, onClose, onDelete }) {
                   }}
                   className="deleteButton"
                 >
-                  <img src={discardButton} />
+                  <img src={discardButton} alt="discardButton" />
                   삭제하기
                 </button>
               </div>
