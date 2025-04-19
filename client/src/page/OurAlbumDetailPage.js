@@ -18,7 +18,7 @@ function OurAlbumDetailPage() {
     return <p>앨범을 찾을 수 없습니다.</p>;
   }
 
-  //사진 추가 헨들러러
+  //사진 추가 헨들러
   const handleAddPhoto = (newPhoto) => {
     setPhotoList((prev) => [newPhoto, ...prev]);
   };
