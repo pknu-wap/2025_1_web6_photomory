@@ -1,0 +1,11 @@
+{
+    "my_id": 3,
+    "my_name": "권동욱",
+    "my_password": "hashed_password_123",
+    "my_email": "kwon@example.com",
+    "my_job": "사진작가",
+    "my_field": "자연 풍경",
+    "my_equipment": "Sony A7 IV, 24-70mm 렌즈",
+    "my_introduction": "자연을 사랑하는 사진작가입니다. 주로 산과 바다를 찍습니다.",
+    "my_area": "서울"
+}

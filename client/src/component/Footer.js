@@ -1,7 +1,7 @@
 import styles from './Footer.module.css'
 
-function Footer(){
-    return(
+function Footer() {
+    return (
         <div className={styles.footerContainer}>
             <div className={styles.footerLogo}>
                 logo

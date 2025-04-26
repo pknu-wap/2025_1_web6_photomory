@@ -1,0 +1,8 @@
+.imageInput {
+  background-color: #ffffff;
+  transition: background-color 0.2s ease;
+}
+
+.imageInput:hover {
+  background-color: rgba(0, 0, 0, 0.04); /* 살짝 어둡게 */
+}
