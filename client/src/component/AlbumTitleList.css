@@ -1,0 +1,26 @@
+.titleList {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 10px;
+
+  height: 160px; /* 고정 높이 */
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+/* 개별 타이틀 아이템 */
+.title {
+  background: #f3f4f6;
+  border-radius: 9999px;
+  margin-bottom: 8px;
+  padding: 0 12px;
+
+  display: block;
+  height: 32px; /*  각 항목 높이 고정 */
+  line-height: 32px; /*  텍스트 수직 정렬 */
+  white-space: nowrap; /* 글자 줄바꿈 방지 */
+  width: fit-content;
+}

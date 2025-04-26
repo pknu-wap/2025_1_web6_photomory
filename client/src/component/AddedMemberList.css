@@ -1,0 +1,66 @@
+.addedMemberContainer {
+  width: 500px;
+  height: 818px;
+  border: 1px solid #e5e7eb;
+  padding: 13px;
+  border-radius: 8px;
+}
+
+.addedMemberTitle {
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 28px;
+}
+
+.addedMemberCount {
+  margin-bottom: 16px;
+  color: #6b7280;
+}
+
+.addedMemberList {
+  display: flex;
+  height: 85%;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.addedMemberItem {
+  width: 450px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  background: #f3f4f6;
+}
+
+.addedMemberImg {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-right: 16px;
+}
+
+.addedMemberName {
+  font-weight: bold;
+  font-size: 14px;
+  margin-right: 275px;
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 14px;
+  transition: opacity 0.2s ease;
+}
+
+.removeButton:hover {
+  opacity: 0.7;
+}
