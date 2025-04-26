@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import MainPage from './page/MainPage.js'
 import LoginPage from "./page/LoginPage.js";
 import Loged from './component/Loged.js'
 import Profile from "./page/Profile.Page";
@@ -11,6 +12,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<MainPage />}/>
         <Route path="/Longin" element={<LoginPage/>}></Route>
         <Route path="/Loged" element={<Loged/>}></Route>
         <Route path="/profile" element={<profile />}>
@@ -27,4 +29,5 @@ function App() {
   );
 }
 
-export default App;
+export default App
+
