@@ -1,0 +1,25 @@
+.signupPageWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(140deg, #dbeafe, #f3e8ff, #fce7f3);
+  padding: 40px 16px;
+}
+
+.signupPageInner {
+  width: 100%;
+  max-width: 480px;
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.signupPageTitle {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 32px;
+  color: #111827;
+}
