@@ -3,10 +3,12 @@ import OurAlbumPage from "./page/OurAlbumPage";
 import OurAlbumPageTest from "./page/OurAlbumPageTest";
 import OurAlbumDetailPageTest from "./page/OurAlbumDetailPage";
 import GroupEditPage from "../src/page/GroupEditPage";
+import SignupPage from "./page/SignupPage";
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/Signup" element={<SignupPage />} />
         <Route path="/our-album" element={<OurAlbumPage />} />
         <Route path="/our-albumTest" element={<OurAlbumPageTest />} />
         <Route path="/our-album/groupEdit" element={<GroupEditPage />} />
