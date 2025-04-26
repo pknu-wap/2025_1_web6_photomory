@@ -1,0 +1,56 @@
+{
+  "name": "홍길동",
+  "email": "gildong@example.com",
+  "field": "풍경 사진",
+  "equipment": "Sony A7 IV",
+  "introduction": "안녕하세요, 자연 풍경을 담는 사진작가 홍길동입니다.",
+  "photourl": "https://picsum.photos/seed/member1/100",
+  "job": "자연풍경 사진작가",
+  "friends": [
+    {
+      "userId": 2,
+      "name": "김민수",
+      "photoUrl": "https://picsum.photos/seed/member1/100"
+    },
+    {
+      "userId": 4,
+      "name": "박영희",
+      "photoUrl": "https://picsum.photos/seed/member1/100"
+    },
+    {
+      "userId": 5,
+      "name": "박민지",
+      "photoUrl": "https://picsum.photos/seed/member1/100"
+    },
+    {
+      "userId": 6,
+      "name": "박진수",
+      "photoUrl": "https://picsum.photos/seed/member1/100"
+    },
+    {
+      "userId": 7,
+      "name": "김철수",
+      "photoUrl": "https://picsum.photos/seed/member1/100"
+    },
+    {
+      "userId": 8,
+      "name": "김지수",
+      "photoUrl": "https://picsum.photos/seed/member1/100"
+    },
+    {
+      "userId": 9,
+      "name": "김수혁",
+      "photoUrl": "https://picsum.photos/seed/member1/100"
+    },
+    {
+      "userId": 10,
+      "name": "김된혁",
+      "photoUrl": "https://picsum.photos/seed/member1/100"
+    },
+    {
+      "userId": 11,
+      "name": "박된혁",
+      "photoUrl": "https://picsum.photos/seed/member1/100"
+    }
+  ]
+}

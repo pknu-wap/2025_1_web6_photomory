@@ -1,0 +1,13 @@
+.custom-hover-button {
+  all: unset;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.custom-hover-button:hover {
+  background-color: rgba(0, 0, 0, 0.05); /* 살짝 어두운 배경 */
+}

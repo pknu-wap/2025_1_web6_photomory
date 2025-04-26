@@ -1,0 +1,24 @@
+.photoByday {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.contentsByPhoto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #333;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
