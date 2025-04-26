@@ -152,18 +152,6 @@
             "photo_url": "https://picsum.photos/seed/photo8/600",
             "photo_name": "모닥불 옆에서",
             "post_id": 3
-          },
-          {
-            "photo_id": 4,
-            "photo_url": "https://picsum.photos/seed/photo9/600",
-            "photo_name": "추억의 게임",
-            "post_id": 4
-          },
-          {
-            "photo_id": 5,
-            "photo_url": "https://picsum.photos/seed/photo10/600",
-            "photo_name": "다 함께",
-            "post_id": 5
           }
         ],
         "comments": []
