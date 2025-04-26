@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import ImageUploader from "./ImageUploader";
 import "./SignupForm.css";
 import isValidPassword from "../utils/isValidPassword";
+import signupUser from "../api/signupuser";
 //각 옵션들
 const jobOptions = ["디자이너", "개발자", "사진작가", "프리랜서", "학생"];
 const equipmentOptions = ["Canon", "Nikon", "Sony", "핸드폰 카메라"];
@@ -84,6 +85,8 @@ function SignupForm() {
         console.log(`${key}: ${value}`);
       }
     });
+    //폼데이터 전송
+    signupUser(formData);
 
     //입력값 초기화
     setSignupData({
