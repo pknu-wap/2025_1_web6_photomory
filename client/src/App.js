@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginPage from "./page/LoginPage.js";
+import Loged from './component/Loged.js'
 import Profile from "./page/Profile.Page";
 import OurAlbumPage from "./page/OurAlbumPage";
 import OurAlbumPageTest from "./page/OurAlbumPageTest";
@@ -9,6 +11,8 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/Longin" element={<LoginPage/>}></Route>
+        <Route path="/Loged" element={<Loged/>}></Route>
         <Route path="/profile" element={<profile />}>
         <Route path="/Signup" element={<SignupPage />} />
         <Route path="/our-album" element={<OurAlbumPage />} />
