@@ -1,0 +1,377 @@
+[
+  {
+    "group_id": 1,
+    "group_name": "여행 친구들",
+    "members": [
+      {
+        "user_id": 1,
+        "user_name": "장우진",
+        "profile_url": "https://picsum.photos/seed/member1/100"
+      },
+      {
+        "user_id": 2,
+        "user_name": "한예준",
+        "profile_url": "https://picsum.photos/seed/member2/100"
+      },
+      {
+        "user_id": 3,
+        "user_name": "노은채",
+        "profile_url": "https://picsum.photos/seed/member3/100"
+      },
+      {
+        "user_id": 4,
+        "user_name": "김민지",
+        "profile_url": "https://picsum.photos/seed/member4/100"
+      },
+      {
+        "user_id": 5,
+        "user_name": "박지훈",
+        "profile_url": "https://picsum.photos/seed/member5/100"
+      },
+      {
+        "user_id": 6,
+        "user_name": "김민숙",
+        "profile_url": "https://picsum.photos/seed/member5/100"
+      },
+      {
+        "user_id": 7,
+        "user_name": "박근혜",
+        "profile_url": "https://picsum.photos/seed/member5/100"
+      },
+      {
+        "user_id": 8,
+        "user_name": "박철민",
+        "profile_url": "https://picsum.photos/seed/member5/100"
+      },
+      {
+        "user_id": 9,
+        "user_name": "김철진",
+        "profile_url": "https://picsum.photos/seed/member5/100"
+      }
+    ],
+    "albums": [
+      {
+        "album_id": 1,
+        "album_name": "봄소풍",
+        "album_description": "따뜻한 봄날의 기록입니다.",
+        "album_makingtime": "2025-04-01",
+        "photos": [
+          {
+            "photo_id": 1,
+            "photo_url": "https://picsum.photos/seed/photo1/600",
+            "photo_name": "소풍 준비",
+            "post_id": 1
+          },
+          {
+            "photo_id": 2,
+            "photo_url": "https://picsum.photos/seed/photo2/600",
+            "photo_name": "풀밭 위",
+            "post_id": 2
+          },
+          {
+            "photo_id": 3,
+            "photo_url": "https://picsum.photos/seed/photo3/600",
+            "photo_name": "맛있는 간식",
+            "post_id": 3
+          },
+          {
+            "photo_id": 4,
+            "photo_url": "https://picsum.photos/seed/photo4/600",
+            "photo_name": "웃음 가득",
+            "post_id": 4
+          },
+          {
+            "photo_id": 5,
+            "photo_url": "https://picsum.photos/seed/photo5/600",
+            "photo_name": "단체 사진",
+            "post_id": 5
+          }
+        ],
+        "comments": [
+          {
+            "album_id": 1,
+            "user_id": 2,
+            "comment_text": "정말 즐거웠던 날이에요!"
+          },
+          { "album_id": 1, "user_id": 4, "comment_text": "또 가고 싶어요!" }
+        ]
+      }
+    ]
+  },
+  {
+    "group_id": 2,
+    "group_name": "가족 모임",
+    "members": [
+      {
+        "user_id": 6,
+        "user_name": "이서준",
+        "profile_url": "https://picsum.photos/seed/member6/100"
+      },
+      {
+        "user_id": 7,
+        "user_name": "정다영",
+        "profile_url": "https://picsum.photos/seed/member7/100"
+      },
+      {
+        "user_id": 8,
+        "user_name": "최은우",
+        "profile_url": "https://picsum.photos/seed/member8/100"
+      },
+      {
+        "user_id": 9,
+        "user_name": "윤소라",
+        "profile_url": "https://picsum.photos/seed/member9/100"
+      },
+      {
+        "user_id": 10,
+        "user_name": "박영희",
+        "profile_url": "https://picsum.photos/seed/member10/100"
+      }
+    ],
+    "albums": [
+      {
+        "album_id": 1,
+        "album_name": "가을 소풍",
+        "album_description": "노란 낙엽과 함께한 시간들.",
+        "album_makingtime": "2025-10-15",
+        "photos": [
+          {
+            "photo_id": 1,
+            "photo_url": "https://picsum.photos/seed/photo6/600",
+            "photo_name": "가을 단풍",
+            "post_id": 1
+          },
+          {
+            "photo_id": 2,
+            "photo_url": "https://picsum.photos/seed/photo7/600",
+            "photo_name": "함박웃음",
+            "post_id": 2
+          },
+          {
+            "photo_id": 3,
+            "photo_url": "https://picsum.photos/seed/photo8/600",
+            "photo_name": "모닥불 옆에서",
+            "post_id": 3
+          }
+        ],
+        "comments": []
+      }
+    ]
+  },
+  {
+    "group_id": 3,
+    "group_name": "학교 동창",
+    "members": [
+      {
+        "user_id": 11,
+        "user_name": "홍길동",
+        "profile_url": "https://picsum.photos/seed/member11/100"
+      },
+      {
+        "user_id": 12,
+        "user_name": "김민수",
+        "profile_url": "https://picsum.photos/seed/member12/100"
+      },
+      {
+        "user_id": 13,
+        "user_name": "이서진",
+        "profile_url": "https://picsum.photos/seed/member13/100"
+      },
+      {
+        "user_id": 14,
+        "user_name": "박지민",
+        "profile_url": "https://picsum.photos/seed/member14/100"
+      },
+      {
+        "user_id": 15,
+        "user_name": "최영수",
+        "profile_url": "https://picsum.photos/seed/member15/100"
+      }
+    ],
+    "albums": [
+      {
+        "album_id": 1,
+        "album_name": "졸업여행",
+        "album_description": "추억 가득한 졸업여행.",
+        "album_makingtime": "2025-02-20",
+        "photos": [
+          {
+            "photo_id": 1,
+            "photo_url": "https://picsum.photos/seed/photo11/600",
+            "photo_name": "버스 안에서",
+            "post_id": 1
+          },
+          {
+            "photo_id": 2,
+            "photo_url": "https://picsum.photos/seed/photo12/600",
+            "photo_name": "숙소 풍경",
+            "post_id": 2
+          },
+          {
+            "photo_id": 3,
+            "photo_url": "https://picsum.photos/seed/photo13/600",
+            "photo_name": "밤하늘",
+            "post_id": 3
+          },
+          {
+            "photo_id": 4,
+            "photo_url": "https://picsum.photos/seed/photo14/600",
+            "photo_name": "수영장 놀이",
+            "post_id": 4
+          },
+          {
+            "photo_id": 5,
+            "photo_url": "https://picsum.photos/seed/photo15/600",
+            "photo_name": "바닷가 산책",
+            "post_id": 5
+          }
+        ],
+        "comments": []
+      }
+    ]
+  },
+  {
+    "group_id": 4,
+    "group_name": "회사 동료",
+    "members": [
+      {
+        "user_id": 16,
+        "user_name": "이현수",
+        "profile_url": "https://picsum.photos/seed/member16/100"
+      },
+      {
+        "user_id": 17,
+        "user_name": "정소민",
+        "profile_url": "https://picsum.photos/seed/member17/100"
+      },
+      {
+        "user_id": 18,
+        "user_name": "박세진",
+        "profile_url": "https://picsum.photos/seed/member18/100"
+      },
+      {
+        "user_id": 19,
+        "user_name": "이수아",
+        "profile_url": "https://picsum.photos/seed/member19/100"
+      },
+      {
+        "user_id": 20,
+        "user_name": "김도윤",
+        "profile_url": "https://picsum.photos/seed/member20/100"
+      }
+    ],
+    "albums": [
+      {
+        "album_id": 1,
+        "album_name": "팀워크 캠프",
+        "album_description": "함께라서 가능했던 순간들.",
+        "album_makingtime": "2025-07-15",
+        "photos": [
+          {
+            "photo_id": 1,
+            "photo_url": "https://picsum.photos/seed/photo16/600",
+            "photo_name": "팀 미션 성공",
+            "post_id": 1
+          },
+          {
+            "photo_id": 2,
+            "photo_url": "https://picsum.photos/seed/photo17/600",
+            "photo_name": "모닥불 파티",
+            "post_id": 2
+          },
+          {
+            "photo_id": 3,
+            "photo_url": "https://picsum.photos/seed/photo18/600",
+            "photo_name": "아침 산책",
+            "post_id": 3
+          },
+          {
+            "photo_id": 4,
+            "photo_url": "https://picsum.photos/seed/photo19/600",
+            "photo_name": "공동 작품",
+            "post_id": 4
+          },
+          {
+            "photo_id": 5,
+            "photo_url": "https://picsum.photos/seed/photo20/600",
+            "photo_name": "하늘 아래 웃음",
+            "post_id": 5
+          }
+        ],
+        "comments": []
+      }
+    ]
+  },
+  {
+    "group_id": 5,
+    "group_name": "사진 동호회",
+    "members": [
+      {
+        "user_id": 21,
+        "user_name": "윤지후",
+        "profile_url": "https://picsum.photos/seed/member21/100"
+      },
+      {
+        "user_id": 22,
+        "user_name": "강서연",
+        "profile_url": "https://picsum.photos/seed/member22/100"
+      },
+      {
+        "user_id": 23,
+        "user_name": "김태현",
+        "profile_url": "https://picsum.photos/seed/member23/100"
+      },
+      {
+        "user_id": 24,
+        "user_name": "송다혜",
+        "profile_url": "https://picsum.photos/seed/member24/100"
+      },
+      {
+        "user_id": 25,
+        "user_name": "이도윤",
+        "profile_url": "https://picsum.photos/seed/member25/100"
+      }
+    ],
+    "albums": [
+      {
+        "album_id": 1,
+        "album_name": "출사 여행",
+        "album_description": "카메라에 담은 특별한 하루.",
+        "album_makingtime": "2025-09-09",
+        "photos": [
+          {
+            "photo_id": 1,
+            "photo_url": "https://picsum.photos/seed/photo21/600",
+            "photo_name": "붉은 노을",
+            "post_id": 1
+          },
+          {
+            "photo_id": 2,
+            "photo_url": "https://picsum.photos/seed/photo22/600",
+            "photo_name": "도심 야경",
+            "post_id": 2
+          },
+          {
+            "photo_id": 3,
+            "photo_url": "https://picsum.photos/seed/photo23/600",
+            "photo_name": "출렁이는 바다",
+            "post_id": 3
+          },
+          {
+            "photo_id": 4,
+            "photo_url": "https://picsum.photos/seed/photo24/600",
+            "photo_name": "비 오는 거리",
+            "post_id": 4
+          },
+          {
+            "photo_id": 5,
+            "photo_url": "https://picsum.photos/seed/photo25/600",
+            "photo_name": "한강의 아침",
+            "post_id": 5
+          }
+        ],
+        "comments": []
+      }
+    ]
+  }
+]

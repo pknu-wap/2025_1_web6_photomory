@@ -1,0 +1,22 @@
+.albumColorList {
+  list-style-type: none; /* 점 없애기 */
+  display: flex; /* 가로로 나열 */
+  flex-wrap: wrap; /* 줄바꿈 허용 (너무 길면 다음 줄로) */
+  gap: 8px; /* 항목 사이 간격 */
+}
+
+.albumBackColor {
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.albumColorDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: "inline-block";
+}
