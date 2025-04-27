@@ -28,17 +28,20 @@ function AlbumList({ albums }) {
   return (
     <div>
       {currentAlbums.map((currentAlbum) => (
-        <div key={currentAlbum.id} className="albumCard">
+        <div key={currentAlbum.album_id} className="albumCard">
           <div className="innerAlbum">
             {/* 앨범 제목 */}
-            <h4 className="albumTitle">#{currentAlbum.title}</h4>
-            <Link to={`/our-album/${currentAlbum.id}`} className="albumLink">
+            <h4 className="albumTitle">#{currentAlbum.album_name}</h4>
+            <Link
+              to={`/our-album/${currentAlbum.album_id}`}
+              className="albumLink"
+            >
               앨범 상세보기
             </Link>
             <div className="albumInfo">
               <p>
                 총 {currentAlbum.photos.length}장의 사진들 | 생성일:{" "}
-                {currentAlbum.createdAt}
+                {currentAlbum.album_makingtime}
               </p>
             </div>
           </div>
@@ -52,7 +55,11 @@ function AlbumList({ albums }) {
                   textAlign: "center",
                 }}
               >
-                <img src={photo.imgUrl} alt={photo.title} className="photo" />
+                <img
+                  src={photo.photo_url}
+                  alt={photo.photo_name}
+                  className="photo"
+                />
               </div>
             ))}
             {/* 부족한 개수만큼 placeholder 추가 */}

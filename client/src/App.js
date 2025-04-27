@@ -8,6 +8,7 @@ import OurAlbumPageTest from "./page/OurAlbumPageTest";
 import OurAlbumDetailPageTest from "./page/OurAlbumDetailPage";
 import GroupEditPage from "../src/page/GroupEditPage";
 import SignupPage from "./page/SignupPage";
+import MyAlbumPage from "./page/MyAlbumPage.js";
 function App() {
   return (
     <Router>
@@ -17,7 +18,8 @@ function App() {
         <Route path="/Loged" element={<Loged />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/Signup" element={<SignupPage />} />
-        <Route path="/ourMemory" element={<OurAlbumPage />} />
+        <Route path="/my-album" element={<MyAlbumPage />} />
+        <Route path="/our-album" element={<OurAlbumPage />} />
         <Route path="/our-albumTest" element={<OurAlbumPageTest />} />
         <Route path="/our-album/groupEdit" element={<GroupEditPage />} />
         <Route
