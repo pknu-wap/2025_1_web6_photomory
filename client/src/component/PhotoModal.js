@@ -7,7 +7,6 @@ import discardButton from "../assets/discardButton.svg";
 
 function PhotoModal({ photo, onClose, onDelete }) {
   if (!photo) return null;
-  console.log(photo.id);
   return (
     <>
       {/* 어두운 배경 */}
@@ -23,7 +22,11 @@ function PhotoModal({ photo, onClose, onDelete }) {
       >
         <div style={{ display: "flex", alignItems: "flex-start" }}>
           <div style={{ position: "relative" }}>
-            <img src={photo.imgUrl} alt={photo.title} className="modalImage" />
+            <img
+              src={photo.photo_url}
+              alt={photo.photo_name}
+              className="modalImage"
+            />
             <img
               src={modalCancelButton}
               alt={"modalCancelButton"}
@@ -38,7 +41,7 @@ function PhotoModal({ photo, onClose, onDelete }) {
           </div>
           <div className="modalImageInfo">
             <div className="infoHeader">
-              <h3 className="imageTitle">{photo.title}</h3>
+              <h3 className="imageTitle">{photo.photo_name}</h3>
               <div className="createdDay">
                 <img
                   src={calenderIcon}
@@ -47,7 +50,7 @@ function PhotoModal({ photo, onClose, onDelete }) {
                 />
                 {/*YYYY.MM.DD*/}
                 <p style={{ fontSize: "14px" }}>
-                  {dayjs(photo.createdAt).format("YYYY.MM.DD")}
+                  {dayjs(photo.photo_makingtime).format("YYYY.MM.DD")}
                 </p>
               </div>
             </div>

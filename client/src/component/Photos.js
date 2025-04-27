@@ -3,12 +3,13 @@ import CommentBox from "./CommentBox";
 import dayjs from "dayjs";
 import PhotoModal from "./PhotoModal";
 import PaginationBar from "./PaginationBar";
+import privateIcon from "../assets/privateIcon.svg";
 
 function Photos({ albumTitle, photoList, onDeltePhoto }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null); //선택된 이미지 상태
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
   const photosPerPage = 4; //한 페이지당  사진 갯수
-
+  console.log(selectedPhoto);
   //모달 오픈 헨들러
   const handleOpenModal = (photo) => setSelectedPhoto({ ...photo, albumTitle }); //객체의 형태로 앨범명 추가
   //모달 닫기 헨들러
@@ -44,6 +45,12 @@ function Photos({ albumTitle, photoList, onDeltePhoto }) {
           marginBottom: "56px",
         }}
       >
+        <img
+          src={privateIcon}
+          alt="privateIcon"
+          style={{ width: "21px", height: "24px", marginRight: "16px" }}
+        />
+
         <h2
           style={{
             display: "inline-block", // 텍스트 길이에 맞게 박스 크기 자동 조절
@@ -62,12 +69,12 @@ function Photos({ albumTitle, photoList, onDeltePhoto }) {
 
       {currentPhotos.map((photo) => (
         <div
-          key={photo.id}
+          key={photo.photo_id}
           style={{ display: "flex", gap: "24px", marginBottom: "24px" }}
         >
           <img
-            src={photo.imgUrl}
-            alt={photo.title}
+            src={photo.photo_url}
+            alt={photo.photo_name}
             style={{
               borderRadius: "8px",
               width: "516px",
@@ -88,7 +95,7 @@ function Photos({ albumTitle, photoList, onDeltePhoto }) {
                 marginBottom: "8px",
               }}
             >
-              {photo.title}
+              {photo.photo_name}
             </h3>
             <p
               style={{
@@ -99,7 +106,7 @@ function Photos({ albumTitle, photoList, onDeltePhoto }) {
                 marginBottom: "12px",
               }}
             >
-              {dayjs(photo.createdAt).format("YYYY/MM/DD")}
+              {dayjs(photo.photo_makingtime).format("YYYY/MM/DD")}
             </p>
             <CommentBox />
           </div>

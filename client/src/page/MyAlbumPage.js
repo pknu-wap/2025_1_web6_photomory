@@ -5,6 +5,8 @@ import CalenderTest from "../component/CalenderTest";
 import Header from "../component/Header";
 import AddAlbumTest from "../component/AddAlbumTest";
 import AlbumList from "../component/AlbumList";
+import Footer from "../component/Footer";
+import privateIcon from "../assets/privateIcon.svg";
 function MyAlbumPage() {
   const [myAlbums, setMyAlbums] = useState([]); //나의 앨범 상태
 
@@ -25,7 +27,7 @@ function MyAlbumPage() {
           margin: "0 auto",
           padding: "0 40px",
           position: "relative",
-          height: "2942px",
+          height: "2400px",
           opacity: "1",
         }}
       >
@@ -43,13 +45,39 @@ function MyAlbumPage() {
           />
           {/* 오른쪽 영역 */}
           <div style={{ flex: 1 }}>
+            <div
+              style={{
+                width: "340.17px",
+                height: "80px",
+                borderRadius: "8px",
+                padding: "16px",
+                background: "rgba(0, 0, 0, 0.1)",
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                marginBottom: "32px",
+              }}
+            >
+              <img
+                src={privateIcon}
+                alt="privateIcon"
+                style={{ width: "17.5px", height: "20px" }}
+              />
+              <div>
+                <h2 style={{ fontSize: "18px" }}>나만의 추억 앨범</h2>
+                <p style={{ fontSize: "14px" }}>
+                  이 앨범은 나만 볼 수 있는 프라이빗 공간입니다.
+                </p>
+              </div>
+            </div>
             <div>
               {/*그룹별 앨범 목록을 보여주는 컴포넌트*/}
-              <AlbumList albums={myAlbums} />
+              <AlbumList albums={myAlbums} basePath="/my-album" />
             </div>
           </div>
         </div>
       </Container>
+      <Footer />
     </>
   );
 }

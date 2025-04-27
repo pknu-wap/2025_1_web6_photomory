@@ -4,7 +4,7 @@ import PaginationBar from "./PaginationBar";
 import emptyImage from "../assets/emptyImage.svg";
 import "./AlbumList.css";
 
-function AlbumList({ albums }) {
+function AlbumList({ albums, basePath = "/our-album" }) {
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
   const albumsPerPage = 4; //한 페이지당 앨범 갯수
 
@@ -33,7 +33,7 @@ function AlbumList({ albums }) {
             {/* 앨범 제목 */}
             <h4 className="albumTitle">#{currentAlbum.album_name}</h4>
             <Link
-              to={`/our-album/${currentAlbum.album_id}`}
+              to={`${basePath}/${currentAlbum.album_id}`}
               className="albumLink"
             >
               앨범 상세보기

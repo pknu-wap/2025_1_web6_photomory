@@ -4,8 +4,8 @@ import submitFileImage from "../assets/submitFileImage.svg";
 function PhotoSubmit({ handleAddPhoto }) {
   const [newPhotoData, setNewPhotoData] = useState({
     imgFile: null,
-    title: "",
-    createdAt: "",
+    photo_name: "",
+    photo_makingtime: "",
   });
   const fileInputRef = useRef(null); // 파일 input을 직접 제어하기 위한 ref
 
@@ -31,23 +31,23 @@ function PhotoSubmit({ handleAddPhoto }) {
 
     const formData = new FormData(); //파일 업로드할 때 사용하는 전용 데이터 객체
     formData.append("imgFile", newPhotoData.imgFile); //데이터 추가
-    formData.append("title", newPhotoData.title);
-    formData.append("createdAt", newPhotoData.createdAt);
+    formData.append("photo_name", newPhotoData.photo_name);
+    formData.append("photo_makingtime", newPhotoData.photo_makingtime);
 
     // 상위에 넘길 수 있도록 imgUrl 포함해서 넘김
     handleAddPhoto({
-      id: Date.now(),
-      title: newPhotoData.title,
-      createdAt: newPhotoData.createdAt,
-      imgUrl: URL.createObjectURL(newPhotoData.imgFile),
+      photo_id: Date.now(),
+      photo_name: newPhotoData.photo_name,
+      photo_makingtime: newPhotoData.photo_makingtime,
+      photo_url: URL.createObjectURL(newPhotoData.imgFile),
     }); //사진 목록 다시 추가 후 재렌더링
 
     //데이터 확인인
     console.log(
       "제출된 데이터:",
       formData.get("imgFile"),
-      formData.get("title"),
-      formData.get("createdAt")
+      formData.get("photo_name"),
+      formData.get("photo_makingtime")
     );
 
     resetForm(); // 제출 후 초기화
@@ -57,10 +57,9 @@ function PhotoSubmit({ handleAddPhoto }) {
     //취소 후 초기화
     setNewPhotoData({
       imgFile: null,
-      title: "",
-      createdAt: "",
+      photo_name: "",
+      photo_makingtime: "",
     });
-    console.log(fileInputRef.current);
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; //브라우저 input 내부 파일 제거거
     }
@@ -190,8 +189,8 @@ function PhotoSubmit({ handleAddPhoto }) {
             사진 제목
             <input
               type="text"
-              name="title"
-              value={newPhotoData.title}
+              name="photo_name"
+              value={newPhotoData.photo_name}
               onChange={handleChange}
               placeholder="사진 제목 입력을 입력하세요"
               required
@@ -221,8 +220,8 @@ function PhotoSubmit({ handleAddPhoto }) {
             촬영일
             <input
               type="date"
-              name="createdAt"
-              value={newPhotoData.createdAt}
+              name="photo_makingtime"
+              value={newPhotoData.photo_makingtime}
               onChange={handleChange}
               required
               style={{
@@ -255,6 +254,7 @@ function PhotoSubmit({ handleAddPhoto }) {
               border: "1px solid #E5E7EB",
               borderRadius: "8px",
               cursor: "pointer",
+              fontSize: "16px",
             }}
           >
             취소
@@ -262,7 +262,7 @@ function PhotoSubmit({ handleAddPhoto }) {
           <button
             type="submit"
             style={{
-              width: "76.17px",
+              width: "88.17px",
               height: "42px",
               display: "flex",
               alignItems: "center",
@@ -275,6 +275,7 @@ function PhotoSubmit({ handleAddPhoto }) {
               borderRadius: "8px",
               cursor: "pointer",
               color: "#ffffff",
+              fontSize: "16px",
             }}
           >
             업로드
