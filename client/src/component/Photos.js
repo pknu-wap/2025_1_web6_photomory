@@ -5,6 +5,7 @@ import PhotoModal from "./PhotoModal";
 import PaginationBar from "./PaginationBar";
 import privateIcon from "../assets/privateIcon.svg";
 import PhotoGrid from "../component/PhotoGrid";
+import "./Photos.css";
 function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null); //선택된 이미지 상태
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
@@ -18,7 +19,7 @@ function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
   // 전체 페이지 수 계산
   const totalPages = Math.ceil(photoList.length / photosPerPage);
 
-  // 현재 페이지의 사진들
+  // 현재 페이지의 사진진들
   const indexOfLastPhoto = currentPage * photosPerPage; //마지막앨범
   const indexOfFirstPhoto = indexOfLastPhoto - photosPerPage; //첫번째앨범
   const currentPhotos = photoList.slice(indexOfFirstPhoto, indexOfLastPhoto); //앨범 범위
@@ -29,39 +30,14 @@ function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
   };
 
   return (
-    <div style={{ marginBottom: "30px" }}>
+    <div className="photosContainer">
       {/* private 타입일 때만 제목영역 + 아이콘 보여주기 */}
       {type === "private" && (
-        <div
-          style={{
-            height: "128px",
-            background:
-              "linear-gradient(0deg, rgba(0, 0, 0, 0.001), rgba(0, 0, 0, 0.001)), rgba(0, 0, 0, 0.1)",
-            border: "2px solid rgba(0, 0, 0, 0.2)",
-            borderRadius: "8px",
-            padding: "26px",
-            marginBottom: "56px",
-          }}
-        >
-          <img
-            src={privateIcon}
-            alt="privateIcon"
-            style={{ width: "25px", height: "25px", marginRight: "16px" }}
-          />
-
-          <h2
-            style={{
-              display: "inline-block",
-              padding: "8px 16px",
-              background: "#000000",
-              color: "#ffffff",
-              borderRadius: "8px",
-              fontSize: "20px",
-              marginBottom: "12px",
-            }}
-          >
-            #{albumTitle}
-          </h2>
+        <div className="privateHeader">
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <img src={privateIcon} alt="privateIcon" className="privateIcon" />
+            <h2 className="albumTitle">#{albumTitle}</h2>
+          </div>
           <p>현재 보고 계신 앨범은 "{albumTitle}"태그의 사진들입니다.</p>
         </div>
       )}
@@ -71,44 +47,16 @@ function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
         <PhotoGrid photoList={currentPhotos} />
       ) : (
         currentPhotos.map((photo) => (
-          <div
-            key={photo.photo_id}
-            style={{ display: "flex", gap: "24px", marginBottom: "24px" }}
-          >
+          <div key={photo.photo_id} className="photoItem">
             <img
               src={photo.photo_url}
               alt={photo.photo_name}
-              style={{
-                borderRadius: "8px",
-                width: "516px",
-                height: "400px",
-                cursor: "pointer",
-                boxShadow:
-                  "0px 4px 6px -4px rgba(0, 0, 0, 0.1),0px 10px 15px -3px rgba(0, 0, 0, 0.1)",
-              }}
+              className="photoImageByGroup"
               onClick={() => handleOpenModal(photo)}
             />
             <div>
-              <h3
-                style={{
-                  fontSize: "20px",
-                  fontWeight: "bold",
-                  lineHeight: "28px",
-                  letterSpacing: "0px",
-                  marginBottom: "8px",
-                }}
-              >
-                {photo.photo_name}
-              </h3>
-              <p
-                style={{
-                  fontSize: "14px",
-                  fontWeight: "normal",
-                  lineHeight: "20px",
-                  color: "#6B7280",
-                  marginBottom: "12px",
-                }}
-              >
+              <h3 className="photoTitle">{photo.photo_name}</h3>
+              <p className="photoDate">
                 {dayjs(photo.photo_makingtime).format("YYYY/MM/DD")}
               </p>
               {/* group 타입일 때만 댓글 입력창 */}

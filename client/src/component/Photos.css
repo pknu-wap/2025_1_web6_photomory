@@ -1,0 +1,63 @@
+.photosContainer {
+  margin-bottom: 30px;
+}
+
+.privateHeader {
+  height: 123px;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.001), rgba(0, 0, 0, 0.001)),
+    rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 26px;
+  margin-bottom: 56px;
+}
+
+.privateIcon {
+  width: 25px;
+  height: 25px;
+  margin-bottom: 8px;
+}
+
+.albumTitle {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background: #000000;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.photoItem {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.photoImageByGroup {
+  width: 516px;
+  height: 400px;
+  border-radius: 8px;
+  object-fit: cover;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.1),
+    0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.photoInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.photoTitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.photoDate {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
