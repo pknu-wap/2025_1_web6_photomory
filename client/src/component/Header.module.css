@@ -21,6 +21,31 @@
     gap: 20px;
     margin: 0px 10px;
 }
+.headerTopLogo{
+    background-image: url("../assets/photomory_logo.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 120px;
+    height: 100px;
+}
+.home{
+    font-weight: 500;
+}
+.myMemory,
+.ourMemory,
+.everyMemory{
+    color: rgb(150, 150, 150);
+}
+.signIn{
+    background-color: black;
+    color: #f2f3f4;
+    padding: 5px 10px;
+}
+.signUp{
+    background-color: #f2f3f4;
+    color: black;
+    padding: 5px 10px;
+}
 
 .headerContainerRight{
     display: flex;
@@ -42,9 +67,8 @@ button:active{
 button{
     display: inline-block;
     height: 100%;
-    font-size: clamp(16px, 2.5vw, 20px);
     background-color: transparent;
-    border-radius: 7px;
+    border-radius: 5px;
     cursor: pointer;
     border: none;
 }
