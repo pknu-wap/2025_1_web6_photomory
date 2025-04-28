@@ -71,7 +71,7 @@ function MyAlbumPage() {
               </div>
             </div>
             <div>
-              {/*그룹별 앨범 목록을 보여주는 컴포넌트*/}
+              {/*개인 앨범 목록을 보여주는 컴포넌트*/}
               <AlbumList albums={myAlbums} basePath="/my-album" />
             </div>
           </div>

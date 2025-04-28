@@ -56,7 +56,7 @@ function PhotoModal({ photo, onClose, onDelete }) {
             </div>
             <div className="albumTitleCard">
               <p style={{ marginBottom: "4px" }}>앨범</p>
-              <p>#{photo.album_name}</p>
+              <p>#{photo.albumTitle}</p>
             </div>
             {/* 삭제 버튼 조건부 렌더링 */}
             {onDelete && (

@@ -36,7 +36,7 @@ function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
         <div className="privateHeader">
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <img src={privateIcon} alt="privateIcon" className="privateIcon" />
-            <h2 className="albumTitle">#{albumTitle}</h2>
+            <h2 className="albumTitleByPrivate">#{albumTitle}</h2>
           </div>
           <p>현재 보고 계신 앨범은 "{albumTitle}"태그의 사진들입니다.</p>
         </div>
@@ -44,7 +44,13 @@ function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
 
       {/* type에 따라 다르게 사진 렌더링 */}
       {type === "private" ? (
-        <PhotoGrid photoList={currentPhotos} />
+        <PhotoGrid
+          photoList={currentPhotos}
+          photo={selectedPhoto}
+          onOpenModal={handleOpenModal}
+          onClose={handleCloseModal}
+          onDelete={onDeltePhoto}
+        />
       ) : (
         currentPhotos.map((photo) => (
           <div key={photo.photo_id} className="photoItem">
