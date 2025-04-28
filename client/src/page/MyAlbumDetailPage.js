@@ -40,7 +40,6 @@ function MyAlbumDetailPage() {
         style={{
           margin: "0 auto", // 좌우 가운데 정렬
           padding: "40px 24px", // 위아래/좌우 여백
-          height: "3650px",
         }}
       >
         <div

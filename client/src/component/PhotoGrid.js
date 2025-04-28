@@ -2,6 +2,7 @@ import React from "react";
 import dayjs from "dayjs";
 import PhotoModal from "./PhotoModal";
 import "./PhotoGrid.css";
+import emptyImage from "../assets/emptyImage.svg";
 function PhotoGrid({ photoList, photo, onOpenModal, onClose, onDelete }) {
   const totalSlots = 8; // 4행 2열 = 8칸
   const filledPhotos = [...photoList];
@@ -23,7 +24,7 @@ function PhotoGrid({ photoList, photo, onOpenModal, onClose, onDelete }) {
               <img
                 src={photo.photo_url}
                 alt={photo.photo_name}
-                className="photoImage"
+                className="photoImageByprivate"
                 onClick={() => onOpenModal(photo)} //사진 클릭시 해당 사진으로 모달 활성화
               />
               <div className="photoInfo">
@@ -34,7 +35,11 @@ function PhotoGrid({ photoList, photo, onOpenModal, onClose, onDelete }) {
               </div>
             </>
           ) : (
-            <span className="emptyText">빈 슬롯</span>
+            <img
+              src={emptyImage}
+              alt="emptyImage"
+              stlye={{ width: "100%", height: "100%" }}
+            />
           )}
         </div>
       ))}

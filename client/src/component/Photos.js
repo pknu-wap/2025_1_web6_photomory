@@ -9,7 +9,7 @@ import "./Photos.css";
 function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null); //선택된 이미지 상태
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
-  const photosPerPage = 4; //한 페이지당  사진 갯수
+  const photosPerPage = 8; //한 페이지당  사진 갯수
 
   //모달 오픈 헨들러
   const handleOpenModal = (photo) => setSelectedPhoto({ ...photo, albumTitle }); //객체의 형태로 앨범명 추가

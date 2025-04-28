@@ -28,16 +28,17 @@
 }
 
 .emptySlot {
-  background: #f9f9f9;
+  background: #f3f4f6;
   border: 2px dashed #bbb;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px -2px,
     rgba(0, 0, 0, 0.1) 0px 4px 6px -1px;
 }
 
-.photoImage {
+.photoImageByprivate {
   width: 100%;
   height: 276px;
   object-fit: cover;
+  cursor: pointer;
 }
 
 .photoInfo {
