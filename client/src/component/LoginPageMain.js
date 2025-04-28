@@ -10,6 +10,7 @@ export default function LoginPageMain() {
     const [ pw, setPw] = useState('')
     const [ error, setError] = useState();
     const [ isLoading , setIsLoading] = useState(false)
+    const [isLogged, setIsLogged] = useState(false)
     const navigate = useNavigate();
     const focusEmailRef = useRef();
     const focusPwRef = useRef();
@@ -38,6 +39,7 @@ export default function LoginPageMain() {
             const userLogin = await GetUserLogin()
             const user = userLogin.find((u) => u.email === email && u.password === pw);
             if (user) { //로그인 성공
+                setIsLogged(true)
                 navigate('/Loged', {
                 state: {
                 name: user.name,

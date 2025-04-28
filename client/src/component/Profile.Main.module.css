@@ -1,4 +1,6 @@
 .myInfoContainer{
+    background-color: #f2f3f4;
+    margin-top: 15px;
     width: clamp(600px, 70%, 1000px);
     height: auto;
     border: 1px solid black;
@@ -33,6 +35,9 @@
     font-size: clamp(20px, 21px, 22px);
     font-weight: 600;
 }
+.id{
+    margin-left: 7px;
+}
 .job,
 .id{
     font-size: 13px;
@@ -46,7 +51,7 @@
 .myFieldContainer,
 .myEquipmentContainer,
 .myAreaContainer{
-    background-color: rgb(220,220,220);
+    background-color: rgb(230,230,230);
     border-radius: 7px;
     padding-bottom:20px;
     display: flex;
@@ -58,22 +63,38 @@
 .myArea{
     margin: 5px;
 }
+.myFieldInput:hover,
+.myEquipmentInput:hover,
+.myAreaInput:hover,
+.name:hover,
+.job:hover,
+.searchBar{
+    cursor: pointer;
+}
 .myFieldInput,
 .myEquipmentInput,
 .myAreaInput,
-.name,
-.job{
-    background-color: rgb(220,220,220);
+.searchBar{
+    background-color: transparent;
     border-radius: 7px;
     border: none;
     margin: 5px;
     text-align: center;
 }
+.name,
+.job,
+.introduction{
+    background-color: transparent;
+    border-radius: 7px;
+    border: none;
+    margin: 5px;
+}
 .myFieldInput:focus,
 .myEquipmentInput:focus,
 .myAreaInput:focus,
 .name:focus,
-.job:focus{
+.job:focus,
+.searchBar:focus{
     border: none;
     outline: none;
 }
@@ -82,6 +103,7 @@
 }
 .introTop{
     font-weight: 600;
+    margin: 5px;
 }
 
 .introduction{
@@ -96,12 +118,14 @@
     text-align: left;
 }
 .manageFriendTop{
+    margin-bottom: 5px;
     width: clamp(600px, 70%, 1000px);
     text-align: left;
     font-weight: 600;
     margin-top: 100px;
 }
 .manageFriendContainer{
+    background-color: #f2f3f4;
     width: clamp(600px, 70%, 1000px);
     display: flex;
     flex-direction: row;

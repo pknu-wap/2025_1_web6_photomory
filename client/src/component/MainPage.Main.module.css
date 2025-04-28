@@ -199,3 +199,12 @@
     box-shadow: rgba(100, 100, 100, 0.2) 0px 0px 30px 10px;
     background: linear-gradient(to bottom right,  #ccffff 0%, #ffccff 100%);
 }
+.MainLogoContainer,
+.myMemoryContainer,
+.ourMemoryContainer,
+.weeklyMemoryTitleContainer,
+.weeklyMemoryContainer1,
+.weeklyMemoryContainer2,
+.weeklyMemoryContainer3{
+    background-color: #f2f3f4;
+}

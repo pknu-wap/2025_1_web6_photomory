@@ -12,7 +12,7 @@ function Header(){
             <div className={styles.headerContainer2}>
                 <div className={styles.headerContainerLeft}>
                     <div className={styles.headerTopLogo}>
-                        logo
+                        
                     </div>
                     <button className={styles.home}
                     onClick={onclickHandle}
@@ -40,7 +40,7 @@ function Header(){
                 <div className={styles.headerContainerRight}>
                     <button className={styles.signIn}
                     onClick={onclickHandle}
-                    value='/signIn'>
+                    value='/Longin'>
                         sign in
                     </button>
                     <button className={styles.signUp}

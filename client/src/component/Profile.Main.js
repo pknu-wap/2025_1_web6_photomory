@@ -8,7 +8,6 @@ import {useEffect, useMemo, useState} from 'react'
 
 function ProfileMain() {
     const [users, setUsers]= useState([])
-
     const [id, setId] = useState();
     const [name, setName] = useState('');
     const [job, setJob] = useState('');
@@ -40,14 +39,23 @@ function ProfileMain() {
         }
     };
 
+    const handleRemoverFriend=(userId)=>{
+        setUsers((prevUsers)=>{ //prevUsers는 setUsers를 부를 때 자동으로 나오는 이전 상태태
+            const updateUsers=prevUsers.map((user)=>
+            user.id===userId ? {...user, isFriend: false} : user) //...user 속성 바꾸기
+            return updateUsers
+        })
+    }
+
     useEffect(()=>{
         const fetchUsers= async ()=>{
             try{
                 const userData= await GetUserProfilePage();
                 setUsers(userData); 
 
-                const myData= GetMy();
+                const myData= await GetMy();
                 if (myData) {
+                    setId(myData.id || '');
                     setName(myData.name || '');
                     setJob(myData.job || ''); 
                     setField(myData.field || '');
@@ -136,6 +144,7 @@ function ProfileMain() {
                             userName={user.name}
                             userField={user.field}
                             isFriend={user.isFriend}
+                            onRemoveFriend={handleRemoverFriend}
                         />
                     ) : null
                 ))}
