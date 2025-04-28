@@ -3,7 +3,7 @@ package com.example.photomory.service;
 import com.example.photomory.dto.RegisterRequestDto;
 import com.example.photomory.entity.UserEntity;
 import com.example.photomory.mapper.UserMapper;
-import com.example.photomory.repository.UserRepository;
+import com.example.photomory.repository.AuthUserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +14,10 @@ import java.util.Optional;
 @Service
 public class RegisterService {
 
-    private final UserRepository userRepository;
+    private final AuthUserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public RegisterService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public RegisterService(AuthUserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }

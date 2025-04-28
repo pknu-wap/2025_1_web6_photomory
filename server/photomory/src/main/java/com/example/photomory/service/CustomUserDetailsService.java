@@ -1,6 +1,6 @@
 package com.example.photomory.service; // CustomUserDetailsService가 있는 패키지
 
-import com.example.photomory.repository.UserRepository; // 올바른 import 경로
+import com.example.photomory.repository.AuthUserRepository; // 올바른 import 경로
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final AuthUserRepository userRepository;
 
-    public CustomUserDetailsService(UserRepository userRepository) {
+    public CustomUserDetailsService(AuthUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
