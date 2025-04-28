@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import PhotoModal from "./PhotoModal";
 import PaginationBar from "./PaginationBar";
 import privateIcon from "../assets/privateIcon.svg";
-
+import PhotoGrid from "../component/PhotoGrid";
 function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null); //선택된 이미지 상태
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
@@ -18,7 +18,7 @@ function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
   // 전체 페이지 수 계산
   const totalPages = Math.ceil(photoList.length / photosPerPage);
 
-  // 현재 페이지의 사진진들
+  // 현재 페이지의 사진들
   const indexOfLastPhoto = currentPage * photosPerPage; //마지막앨범
   const indexOfFirstPhoto = indexOfLastPhoto - photosPerPage; //첫번째앨범
   const currentPhotos = photoList.slice(indexOfFirstPhoto, indexOfLastPhoto); //앨범 범위
@@ -29,100 +29,107 @@ function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
   };
 
   return (
-    <div
-      style={{
-        marginBottom: "30px",
-      }}
-    >
-      <div
-        style={{
-          height: "128px",
-          background:
-            "linear-gradient(0deg, rgba(0, 0, 0, 0.001), rgba(0, 0, 0, 0.001)), rgba(0, 0, 0, 0.1)",
-          border: "2px solid rgba(0, 0, 0, 0.2)",
-          borderRadius: "8px",
-          padding: "26px",
-          marginBottom: "56px",
-        }}
-      >
-        <img
-          src={privateIcon}
-          alt="privateIcon"
-          style={{ width: "25px", height: "25px", marginRight: "16px" }}
-        />
-
-        <h2
+    <div style={{ marginBottom: "30px" }}>
+      {/* private 타입일 때만 제목영역 + 아이콘 보여주기 */}
+      {type === "private" && (
+        <div
           style={{
-            display: "inline-block", // 텍스트 길이에 맞게 박스 크기 자동 조절
-            padding: "8px 16px",
-            background: "#000000",
-            color: "#ffffff", // 텍스트 색상 흰색
+            height: "128px",
+            background:
+              "linear-gradient(0deg, rgba(0, 0, 0, 0.001), rgba(0, 0, 0, 0.001)), rgba(0, 0, 0, 0.1)",
+            border: "2px solid rgba(0, 0, 0, 0.2)",
             borderRadius: "8px",
-            fontSize: "20px",
-            marginBottom: "12px",
+            padding: "26px",
+            marginBottom: "56px",
           }}
         >
-          #{albumTitle}
-        </h2>
-        <p>현재 보고 계신 앨범은 "{albumTitle}"태그의 사진들입니다.</p>
-      </div>
-
-      {currentPhotos.map((photo) => (
-        <div
-          key={photo.photo_id}
-          style={{ display: "flex", gap: "24px", marginBottom: "24px" }}
-        >
           <img
-            src={photo.photo_url}
-            alt={photo.photo_name}
+            src={privateIcon}
+            alt="privateIcon"
+            style={{ width: "25px", height: "25px", marginRight: "16px" }}
+          />
+
+          <h2
             style={{
+              display: "inline-block",
+              padding: "8px 16px",
+              background: "#000000",
+              color: "#ffffff",
               borderRadius: "8px",
-              width: "516px",
-              height: "400px",
-              cursor: "pointer",
-              boxShadow:
-                "0px 4px 6px -4px rgba(0, 0, 0, 0.1),0px 10px 15px -3px rgba(0, 0, 0, 0.1)",
+              fontSize: "20px",
+              marginBottom: "12px",
             }}
-            onClick={() => handleOpenModal(photo)}
-          />
-          <div>
-            <h3
-              style={{
-                fontSize: "20px",
-                fontWeight: "bold",
-                lineHeight: "28px",
-                letterSpacing: "0px",
-                marginBottom: "8px",
-              }}
-            >
-              {photo.photo_name}
-            </h3>
-            <p
-              style={{
-                fontSize: "14px",
-                fontWeight: "normal",
-                lineHeight: "20px",
-                color: "#6B7280",
-                marginBottom: "12px",
-              }}
-            >
-              {dayjs(photo.photo_makingtime).format("YYYY/MM/DD")}
-            </p>
-            {/* 우리의 추억 페이지 일때만 조건부 렌더링 */}
-            {type === "group" && <CommentBox />}
-          </div>
-          <PhotoModal
-            photo={selectedPhoto}
-            onClose={handleCloseModal}
-            onDelete={onDeltePhoto}
-          />
+          >
+            #{albumTitle}
+          </h2>
+          <p>현재 보고 계신 앨범은 "{albumTitle}"태그의 사진들입니다.</p>
         </div>
-      ))}
+      )}
+
+      {/* type에 따라 다르게 사진 렌더링 */}
+      {type === "private" ? (
+        <PhotoGrid photoList={currentPhotos} />
+      ) : (
+        currentPhotos.map((photo) => (
+          <div
+            key={photo.photo_id}
+            style={{ display: "flex", gap: "24px", marginBottom: "24px" }}
+          >
+            <img
+              src={photo.photo_url}
+              alt={photo.photo_name}
+              style={{
+                borderRadius: "8px",
+                width: "516px",
+                height: "400px",
+                cursor: "pointer",
+                boxShadow:
+                  "0px 4px 6px -4px rgba(0, 0, 0, 0.1),0px 10px 15px -3px rgba(0, 0, 0, 0.1)",
+              }}
+              onClick={() => handleOpenModal(photo)}
+            />
+            <div>
+              <h3
+                style={{
+                  fontSize: "20px",
+                  fontWeight: "bold",
+                  lineHeight: "28px",
+                  letterSpacing: "0px",
+                  marginBottom: "8px",
+                }}
+              >
+                {photo.photo_name}
+              </h3>
+              <p
+                style={{
+                  fontSize: "14px",
+                  fontWeight: "normal",
+                  lineHeight: "20px",
+                  color: "#6B7280",
+                  marginBottom: "12px",
+                }}
+              >
+                {dayjs(photo.photo_makingtime).format("YYYY/MM/DD")}
+              </p>
+              {/* group 타입일 때만 댓글 입력창 */}
+              {type === "group" && <CommentBox />}
+            </div>
+          </div>
+        ))
+      )}
+
+      {/* 모달 */}
+      <PhotoModal
+        photo={selectedPhoto}
+        onClose={handleCloseModal}
+        onDelete={onDeltePhoto}
+      />
+
+      {/* 페이지네이션 바 */}
       <PaginationBar
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageClick}
-        onDelte={onDeltePhoto} //상위 컴포넌트의 사진 삭제 컨트롤러
       />
     </div>
   );
