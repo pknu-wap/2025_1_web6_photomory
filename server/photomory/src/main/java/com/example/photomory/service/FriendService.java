@@ -2,11 +2,12 @@ package com.example.photomory.service;
 
 import com.example.photomory.dto.FriendResponse;
 import com.example.photomory.entity.Friend;
-import com.example.photomory.entity.User;
 import com.example.photomory.repository.FriendRepository;
 import com.example.photomory.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.example.photomory.entity.UserEntity;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,9 +28,9 @@ public class FriendService {
     }
 
     public List<FriendResponse> searchUsers(String keyword) {
-        List<User> users = userRepository.findByUserNameContaining(keyword);
-        return users.stream()
-                .map(u -> new FriendResponse(u.getUserId(), u.getUserName(), u.getPhotourl()))
+        List<UserEntity> userEntities = userRepository.findByUserNameContaining(keyword);
+        return userEntities.stream()
+                .map(u -> new FriendResponse((long) u.getUserId(), u.getUserName(), u.getUserPhotourl()))
                 .collect(Collectors.toList());
     }
 }
