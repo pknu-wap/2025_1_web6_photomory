@@ -1,5 +1,5 @@
 .mainContainer{
-    width: clamp(800px, 70%, 70%);
+    width: clamp(700px, 70%, 70%);
     margin-left: 15%;
     height: 100%;
     display: grid;
@@ -53,9 +53,8 @@
 
 .myMemoryImage1,
 .myMemoryImage2{
-    width: 100%;
+    width: 70%;
     height: 100%;
-    
     border-radius: 7px;
 }
 
@@ -97,7 +96,7 @@
 
 .ourMemoryImage1,
 .ourMemoryImage2{
-    width: 100%;
+    width: 70%;
     height: 100%;
     border-radius: 7px;
 }
@@ -122,7 +121,6 @@
 .weeklyMemoryTitleText{
     font-size: clamp(25px, 27px, 29px);
 }
-
 .weeklyMemoryTitleTextSmall{
     font-size: clamp(16px, 18px, 20px);
 }
@@ -160,16 +158,18 @@
 
 .weeklyMemoryImage1,
 .weeklyMemoryImage2,
-.weeklyMemoryImage3,
-.myMemoryImage1,
-.myMemoryImage2,
-.ourMemoryImage2,
-.ourMemoryImage2{
+.weeklyMemoryImage3{
     background-color:rgb(230,230,230) ;
     border-radius: 7px;
     margin-bottom: 5px;
 }
-
+.myMemoryImage1,
+.myMemoryImage2,
+.ourMemoryImage2,
+.ourMemoryImage2{
+    border-radius: 7px;
+    margin-bottom: 5px;
+}
 
 .weeklyMemoryImageText1{
     font-size: clamp(16px, 18px, 20px);
