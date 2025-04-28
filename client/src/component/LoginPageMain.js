@@ -1,5 +1,6 @@
 import styles from './LoginPage.Main.module.css'
 import GetUserLogin from '../api/GetUserLogin.js'
+import logo from "../assets/photomory_logo.svg"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faLock, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 import { useState, useRef } from 'react'
@@ -68,18 +69,18 @@ export default function LoginPageMain() {
     return(
         <>
             <div className={styles.loginPageMainContainer}>
-                <img className={styles.logoImage} alt="logoImage"></img>
+                <img src={logo} className={styles.logoImage} alt="Photomy"></img>
 
                 <div className={styles.loginContainer}>
-                    <p className={styles.loginText}>Login</p>
+                    <p className={styles.loginText}>로그인</p>
                     <div className={styles.emailContainer}>
                         <span className={styles.emailText}>
                             email
-                            <FontAwesomeIcon icon={faEnvelope}
-                            className={styles.emailIicon}/>
                         </span>
+                        <FontAwesomeIcon icon={faEnvelope}
+                        className={styles.emailIicon}/> {/*앱솔루트로 아이콘 인풋태그 안에다가 넣기*/}
                         <input className={styles.emailInput} 
-                        placeholder="이메일을 입력해줘요!"
+                        placeholder="이메일을 입력하세요."
                         onChange={onChangeHandleEmail}
                         value={email}
                         disabled={isLoading}
@@ -88,12 +89,12 @@ export default function LoginPageMain() {
                     <div className={styles.pwContainer}>
                         <span className={styles.pwText}>
                             password
-                            <FontAwesomeIcon icon={faLock}
-                            className={styles.pwIcon}/>
                         </span>
+                        <FontAwesomeIcon icon={faLock}
+                        className={styles.pwIcon}/> {/*앱솔루트로 아이콘 인풋태그 안에다가 넣기*/}
                         <input className={styles.pwInput}
                         type='password'
-                        placeholder="비밀번호를 입력해줘요!"
+                        placeholder="이메일을 입력하세요."
                         onChange={onChangeHandlePw}
                         value={pw}
                         disabled={isLoading}
