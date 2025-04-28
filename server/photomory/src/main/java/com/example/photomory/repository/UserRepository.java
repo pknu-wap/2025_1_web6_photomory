@@ -9,7 +9,6 @@ import java.util.Optional;// Optional
 
 
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, Integer> {
-
-    Optional<UserEntity> findByEmail(String email); // 로그인 전용 이메일 찾는 메서드
+public interface UserRepository extends JpaRepository<UserEntity, Long> { // UserEntity의 ID 타입이 Long이라고 가정하고 수정
+    Optional<UserEntity> findByUserEmail(String userEmail); // 메서드명 유지
 }

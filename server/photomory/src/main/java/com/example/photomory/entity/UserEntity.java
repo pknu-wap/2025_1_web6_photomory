@@ -1,10 +1,8 @@
 package com.example.photomory.entity;
 
-import com.example.photomory.dto.RegisterRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
@@ -17,38 +15,50 @@ public class UserEntity {
     private int userId;
 
     @Column(name = "user_name", nullable = false)
-    private String user_name;
+    private String userName;
 
     @Column(name = "user_email", nullable = false, unique = true)
-    private String user_email;
+    private String userEmail;
 
     @Column(name = "user_password", nullable = false)
-    private String user_password;
+    private String userPassword;
 
     @Column(name = "user_photourl")
-    private String user_photourl;
+    private String userPhotourl;
 
     @Column(name = "user_equipment", nullable = false)
-    private String user_equipment;
+    private String userEquipment;
 
     @Column(name = "user_introduction", columnDefinition = "TEXT")
-    private String user_introduction;
+    private String userIntroduction;
 
     @Column(name = "user_job", nullable = false)
-    private String user_job;
+    private String userJob;
 
     @Column(name = "user_field", nullable = false)
-    private String user_field;
+    private String userField;
 
     public UserEntity(
-            String user_email,
-            String user_name,
-            String user_password,
-            String user_photourl,
-            String user_equipment,
-            String user_introduction,
-            String user_job,
-            String user_field
+            String userEmail,
+            String userName,
+            String userPassword,
+            String userPhotourl,
+            String userEquipment,
+            String userIntroduction,
+            String userJob,
+            String userField
     ) {
+        this.userEmail = userEmail;
+        this.userName = userName;
+        this.userPassword = userPassword;
+        this.userPhotourl = userPhotourl;
+        this.userEquipment = userEquipment;
+        this.userIntroduction = userIntroduction;
+        this.userJob = userJob;
+        this.userField = userField;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
     }
 }

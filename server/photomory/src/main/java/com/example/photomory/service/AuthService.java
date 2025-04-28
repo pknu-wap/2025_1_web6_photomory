@@ -3,6 +3,7 @@ package com.example.photomory.service;
 import com.example.photomory.dto.LoginRequestDto;
 import com.example.photomory.entity.UserEntity;
 import com.example.photomory.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,19 +12,29 @@ import java.util.Optional;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository) {
+    // 생성자 주입 방식으로 passwordEncoder 주입
+    public AuthService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public String Auth(LoginRequestDto loginRequestDto) {
-        Optional<UserEntity> email = userRepository.findByEmail(loginRequestDto.getUseremail());
-        if (email.isEmpty()) { // Optional.empty()인 경우
+        // 이메일로 사용자 찾기
+        Optional<UserEntity> userEntityOpt = userRepository.findByUserEmail(loginRequestDto.getUseremail());
+
+        if (userEntityOpt.isEmpty()) {
             return "존재하지 않는 이메일입니다.";
-
-        } else if (email.isEmpty()) { //DB에 비밀번호가 있지만 비밀번호가 틀렸을 때
         }
-        return "로그인 실패";
-    }
 
+        UserEntity userEntity = userEntityOpt.get();
+
+        // 비밀번호 비교
+        if (passwordEncoder.matches(loginRequestDto.getPassword(), userEntity.getUserPassword())) {
+            return "로그인 성공";
+        } else {
+            return "로그인 실패(비밀번호가 틀렸습니다.)";
+        }
+    }
 }
