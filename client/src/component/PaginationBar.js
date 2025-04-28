@@ -30,7 +30,14 @@ function PaginationBar({ currentPage, totalPages, onPageChange }) {
     }
   };
   return (
-    <div style={{ textAlign: "center", marginTop: "16px" }}>
+    <div
+      style={{
+        textAlign: "center",
+        marginTop: "16px",
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
       <button
         onClick={handlePrevGroup}
         disabled={rangeIndex === 0}
