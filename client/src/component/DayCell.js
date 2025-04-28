@@ -16,9 +16,9 @@ function DayCell({
   const [selectedPhoto, setSelectedPhoto] = useState(null); //날짜 셀을 눌렀을때 선택되는 사진정보상태
 
   const handlePhotoClick = (photo) => {
-    //클릭한 사진 정보 변경 헨들러
-    setSelectedPhoto(photo);
-    console.log(photo);
+    // 클릭한 사진 정보 변경 핸들러
+    // album_name을 albumTitle로 통일해서 PhotoModal에 전달
+    setSelectedPhoto({ ...photo, albumTitle: photo.album_name });
   };
 
   const handleCloseModal = () => {
