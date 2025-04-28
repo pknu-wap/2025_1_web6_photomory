@@ -18,6 +18,7 @@ function DayCell({
   const handlePhotoClick = (photo) => {
     //클릭한 사진 정보 변경 헨들러
     setSelectedPhoto(photo);
+    console.log(photo);
   };
 
   const handleCloseModal = () => {
@@ -28,8 +29,8 @@ function DayCell({
   // 해당 날짜에 사진이 있다면 첫 번째 사진의 앨범 색상 사용
   const firstPhoto = photos[0];
   const bgColor =
-    firstPhoto && albumColorsMap[firstPhoto.albumTitle] //앨범명에 매핑된 배경색
-      ? albumColorsMap[firstPhoto.albumTitle]
+    firstPhoto && albumColorsMap[firstPhoto.album_name] //앨범명에 매핑된 배경색
+      ? albumColorsMap[firstPhoto.album_name]
       : "#fff"; // 기본 흰색
 
   return (
@@ -55,13 +56,13 @@ function DayCell({
                 <span
                   style={{
                     backgroundColor:
-                      albumDotColorsMap[firstPhoto.albumTitle] || "#333",
+                      albumDotColorsMap[firstPhoto.album_name] || "#333",
                   }}
                   className="dot"
                 />
                 <span>
-                  <strong>#{firstPhoto.albumTitle}</strong>:<br />
-                  {firstPhoto.title}
+                  <strong>#{firstPhoto.album_name}</strong>:<br />
+                  {firstPhoto.photo_name}
                 </span>
               </div>
             )}

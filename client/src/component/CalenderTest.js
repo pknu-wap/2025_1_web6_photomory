@@ -83,10 +83,10 @@ function CalenderTest({
             photoDate === d
           ) {
             matchingPhotos.push({
-              title: photo.photo_name, //사진 이름
-              albumTitle: album.album_name, //앨범명
-              imgUrl: photo.photo_url, //사진 imgurl
-              createdAt: photo.photo_makingtime, //사진 생성날짜
+              photo_name: photo.photo_name, //사진 이름
+              album_name: album.album_name, //앨범명
+              photo_url: photo.photo_url, //사진 imgurl
+              photo_makingtime: photo.photo_makingtime, //사진 생성날짜
             });
           }
         });

@@ -5,11 +5,11 @@ import PhotoModal from "./PhotoModal";
 import PaginationBar from "./PaginationBar";
 import privateIcon from "../assets/privateIcon.svg";
 
-function Photos({ albumTitle, photoList, onDeltePhoto }) {
+function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null); //선택된 이미지 상태
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
   const photosPerPage = 4; //한 페이지당  사진 갯수
-  console.log(selectedPhoto);
+
   //모달 오픈 헨들러
   const handleOpenModal = (photo) => setSelectedPhoto({ ...photo, albumTitle }); //객체의 형태로 앨범명 추가
   //모달 닫기 헨들러
@@ -48,7 +48,7 @@ function Photos({ albumTitle, photoList, onDeltePhoto }) {
         <img
           src={privateIcon}
           alt="privateIcon"
-          style={{ width: "21px", height: "24px", marginRight: "16px" }}
+          style={{ width: "25px", height: "25px", marginRight: "16px" }}
         />
 
         <h2
@@ -108,7 +108,8 @@ function Photos({ albumTitle, photoList, onDeltePhoto }) {
             >
               {dayjs(photo.photo_makingtime).format("YYYY/MM/DD")}
             </p>
-            <CommentBox />
+            {/* 우리의 추억 페이지 일때만 조건부 렌더링 */}
+            {type === "group" && <CommentBox />}
           </div>
           <PhotoModal
             photo={selectedPhoto}
