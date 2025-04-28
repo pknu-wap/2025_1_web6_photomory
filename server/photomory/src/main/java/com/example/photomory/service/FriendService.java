@@ -29,8 +29,7 @@ public class FriendService {
     public List<FriendResponse> searchUsers(String keyword) {
         List<User> users = userRepository.findByUserNameContaining(keyword);
         return users.stream()
-                .map(u -> new FriendResponse(u.getUser_id(), u.getUser_name(), u.getPhotourl()))
+                .map(u -> new FriendResponse(u.getUserId(), u.getUserName(), u.getPhotourl()))
                 .collect(Collectors.toList());
     }
 }
-

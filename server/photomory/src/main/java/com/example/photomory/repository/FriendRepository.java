@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
+
     List<Friend> findByFromUserIdAndAreWeFriendTrue(Long fromUserId);
+
     Optional<Friend> findByFromUserIdAndToUserId(Long fromUserId, Long toUserId);
 }
-

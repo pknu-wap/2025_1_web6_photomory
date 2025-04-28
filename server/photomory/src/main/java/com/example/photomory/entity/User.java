@@ -13,13 +13,13 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    private Long userId;
 
-    private String user_name;
-    private String user_email;
-    private String user_field;
-    private String user_equipment;
-    private String user_introduction;
-    private String user_job;
+    private String userName;
+    private String userEmail;
+    private String userField;
+    private String userEquipment;
+    private String userIntroduction;
+    private String userJob;
     private String photourl;
 }

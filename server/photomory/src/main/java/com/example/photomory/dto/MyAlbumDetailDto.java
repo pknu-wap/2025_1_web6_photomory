@@ -1,11 +1,9 @@
 package com.example.photomory.dto;
+
 import lombok.Builder;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.util.List;
-
-import com.example.photomory.dto.MyPhotoDto;
 
 @Data
 @Builder

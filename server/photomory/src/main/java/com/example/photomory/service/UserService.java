@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 @Service
 public class UserService {
@@ -22,24 +24,28 @@ public class UserService {
     private FriendRepository friendRepository;
 
     public UserProfileResponse getUserProfile(Long userId) {
+        // 유저 정보 조회
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("해당 사용자를 찾을 수 없습니다."));
 
-        List<Friend> friends = friendRepository.findByFromUserIdAndAreWeFriendTrue(userId);
+        List<Friend> friends = Optional.ofNullable(friendRepository.findByFromUserIdAndAreWeFriendTrue(userId))
+                .orElse(new ArrayList<>());
+
         List<FriendResponse> friendList = friends.stream()
-                .map(f -> userRepository.findById(f.getTo_user_id()).orElse(null))
-                .filter(u -> u != null)
-                .map(u -> new FriendResponse(u.getUser_id(), u.getUser_name(), u.getPhotourl()))
+                .map(f -> userRepository.findById(f.getToUserId()).orElse(null)) // toUserId로 유저 조회
+                .filter(u -> u != null) // null 걸러주기
+                .map(u -> new FriendResponse(u.getUserId(), u.getUserName(), u.getPhotourl()))
                 .collect(Collectors.toList());
 
+
         return new UserProfileResponse(
-                user.getUser_name(),
-                user.getUser_email(),
-                user.getUser_field(),
-                user.getUser_equipment(),
-                user.getUser_introduction(),
+                user.getUserName(),
+                user.getUserEmail(),
+                user.getUserField(),
+                user.getUserEquipment(),
+                user.getUserIntroduction(),
                 user.getPhotourl(),
-                user.getUser_job(),
+                user.getUserJob(),
                 friendList
         );
     }

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "album_connect")
 @Getter
 @NoArgsConstructor
-public class AlbumConnect {
+public class MyAlbumConnect {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,9 +20,4 @@ public class AlbumConnect {
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
-
-    public AlbumConnect(Long albumId, Long userId) {
-        this.albumId = albumId;
-        this.userId = userId;
-    }
 }

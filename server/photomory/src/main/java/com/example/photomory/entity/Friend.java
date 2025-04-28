@@ -1,20 +1,25 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name = "friend")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
+@IdClass(FriendId.class) // ★ 복합키를 사용하겠다고 명시
 public class Friend {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "from_user_id")
+    private Long fromUserId;
 
-    private Long from_user_id;
-    private Long to_user_id;
-    private Boolean are_we_friend;
+    @Id
+    @Column(name = "to_user_id")
+    private Long toUserId;
+
+    @Column(name = "are_we_friend")
+    private Boolean areWeFriend;
 }
