@@ -2,6 +2,7 @@ package com.example.photomory.controller;
 
 import com.example.photomory.dto.LoginRequestDto;
 import com.example.photomory.dto.TokenResponseDto;
+import com.example.photomory.entity.UserEntity;
 import com.example.photomory.security.JwtTokenProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,8 +45,13 @@ public class AuthController {
             String accessToken = jwtTokenProvider.generateAccessToken(userDetails.getUsername());
             String refreshToken = jwtTokenProvider.generateRefreshToken(userDetails.getUsername());
 
-            // 4. 응답 DTO 생성 및 반환
-            TokenResponseDto tokenResponse = new TokenResponseDto(accessToken, refreshToken);
+            // 4. UserDetails에서 UserEntity로 캐스팅하여 이름과 이메일 추출
+            UserEntity user = (UserEntity) userDetails;
+            String userName = user.getUserName();
+            String userEmail = user.getUserEmail();
+
+            // 5. 응답 DTO 생성 및 반환
+            TokenResponseDto tokenResponse = new TokenResponseDto(accessToken, refreshToken, userName, userEmail);
             return ResponseEntity.ok(tokenResponse);
 
         } catch (Exception e) {
