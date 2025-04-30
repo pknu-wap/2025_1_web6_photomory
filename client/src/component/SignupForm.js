@@ -47,7 +47,7 @@ function SignupForm() {
   };
 
   //입력 폼 데이터 제출 헨들러
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     //기본 이벤트 방지
     e.preventDefault();
     const { user_password } = signupData; //비밀번호 유효성 검사를 위한 구조분해
@@ -66,33 +66,22 @@ function SignupForm() {
 
     //이미지 초기화
     setResetImage(true);
-    const formData = new FormData();
-    // 텍스트 필드 저장
-    formData.append("user_name", signupData.user_name);
-    formData.append("user_email", signupData.user_email);
-    formData.append("user_password", signupData.user_password);
-    formData.append("user_job", signupData.user_job);
-    formData.append("user_equipment", signupData.user_equipment);
-    formData.append("user_introduction", signupData.user_introduction);
-    formData.append("user_field", signupData.user_field);
 
-    // 파일 전송
-    if (signupData.user_photourl) {
-      formData.append("user_photourl", signupData.user_photourl);
-    }
+    const data = {
+      user_name: signupData.user_name,
+      user_email: signupData.user_email,
+      user_password: signupData.user_password,
+      user_job: signupData.user_job,
+      user_equipment: signupData.user_equipment,
+      user_introduction: signupData.user_introduction,
+      user_field: signupData.user_field,
+      user_photourl: null,
+    };
 
-    console.log("FormData 준비 완료:");
-    formData.forEach((value, key) => {
-      if (value instanceof File) {
-        console.log(`${key}: [파일 이름] ${value.name}`);
-      } else {
-        console.log(`${key}: ${value}`);
-      }
-    });
     try {
-      const result = signupUser(formData);
+      const result = await signupUser(data);
 
-      if (result === "회원가입 완료") {
+      if (result.message === "회원가입 완료") {
         // 성공했을 때만 초기화
         setSignupData({
           user_name: "",
@@ -107,10 +96,11 @@ function SignupForm() {
         });
 
         navigate("/Signup/Confirm");
-      } else if (result === "회원가입 실패(데이터베이스 오류 발생)") {
+      } else if (
+        result.message === "회원가입 실패(이미 존재하는 이메일입니다.)"
+      ) {
         alert("이미 존재하는 이메일입니다.");
       } else {
-        console.log(result);
         alert("회원가입에 실패했습니다.");
       }
     } catch (error) {

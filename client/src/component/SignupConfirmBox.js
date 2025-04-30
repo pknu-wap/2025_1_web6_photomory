@@ -15,7 +15,7 @@ function SignupConfirmBox() {
       </Link>
 
       {/* 로그인 페이지 이동 */}
-      <Link to="/Longin" className="loginLink">
+      <Link to="/Login" className="loginLink">
         로그인하기
       </Link>
     </div>
