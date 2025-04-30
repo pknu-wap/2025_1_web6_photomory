@@ -27,10 +27,24 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/images/**").permitAll() // ✅ 이미지 API 허용
+                        .requestMatchers("/error").permitAll() // ✅ 에러 페이지 허용 (4번 관련)
+                        .anyRequest().authenticated() // 나머지는 인증 필요
+                )
+                .build();
+    }
+
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> {}) // CORS 설정은 WebMvcConfigurer에서
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().permitAll() // 모든 요청 허용
                 )
                 .sessionManagement(session -> session

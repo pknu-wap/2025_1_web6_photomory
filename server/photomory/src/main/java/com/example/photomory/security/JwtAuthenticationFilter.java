@@ -29,11 +29,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+
         final String authHeader = request.getHeader("Authorization");
 
         if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
-            String jwt = authHeader.substring(7); // "Bearer " 이후 토큰 추출
-            String userEmail = jwtTokenProvider.extractUsername(jwt); // 토큰에서 이메일 추출
+            String jwt = authHeader.substring(7);
+            String userEmail = jwtTokenProvider.extractUsername(jwt);
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
@@ -43,22 +44,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             null,
                             userDetails.getAuthorities()
                     );
-                    authToken.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request)
-                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
         }
 
-        // 토큰이 없든 말든 반드시 다음 필터로 넘기기
+        // 토큰이 없거나 유효하지 않더라도 계속 다음 필터로 전달
         filterChain.doFilter(request, response);
     }
 
-    // ✅ 로그인 및 회원가입 요청은 필터 제외
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        return path.equals("/api/auth/register") || path.equals("/api/auth/login");
+        return path.equals("/api/auth/register") ||
+                path.equals("/api/auth/login") ||
+                path.equals("/error");
     }
 }
