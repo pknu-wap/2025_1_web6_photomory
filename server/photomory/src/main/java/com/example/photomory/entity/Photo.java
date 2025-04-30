@@ -22,5 +22,5 @@ public class Photo {
 
     @ManyToOne
     @JoinColumn(name = "album_id")
-    private Album album;
+    private MyAlbum myAlbum;
 }
