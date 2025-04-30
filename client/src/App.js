@@ -9,6 +9,7 @@ import GroupEditPage from "../src/page/GroupEditPage";
 import SignupPage from "./page/SignupPage";
 import MyAlbumPage from "./page/MyAlbumPage.js";
 import MyAlbumDetailPage from "./page/MyAlbumDetailPage.js";
+import SignupConfirmPage from "./page/SignupConfirmPage.js";
 function App() {
   return (
     <Router>
@@ -18,6 +19,7 @@ function App() {
         <Route path="/Loged" element={<Loged />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/Signup" element={<SignupPage />} />
+        <Route path="/Signup/Confirm" element={<SignupConfirmPage />} />
         <Route path="/my-album" element={<MyAlbumPage />} />
         <Route path="/my-album/:albumId" element={<MyAlbumDetailPage />} />
         <Route path="/our-album" element={<OurAlbumPageTest />} />
