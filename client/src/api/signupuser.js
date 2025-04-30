@@ -1,6 +1,6 @@
 async function signupUser(formData) {
   try {
-    const response = await fetch("https://your-backend.com/api/signup", {
+    const response = await fetch("http://3.38.237.115:8080/register", {
       method: "POST",
       body: formData, // 회원가입 정보 formData 그대로 보내기
     });
