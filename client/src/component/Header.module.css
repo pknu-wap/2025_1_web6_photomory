@@ -7,11 +7,11 @@
     align-items: center;
 }
 .headerContainer2 {
-  width: 95%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+width: 95%;
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
 }
 .headerContainerLeft{
     display: flex;
@@ -49,18 +49,18 @@
 }
 
 .headerContainerRight {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  margin-right: 10px;
+display: flex;
+flex-direction: row;
+align-items: center;
+gap: 10px;
+margin-right: 10px;
 }
 
 .memoryContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 15px;
+display: flex;
+flex-direction: row;
+align-items: center;
+gap: 15px;
 }
 button:active{
     transform: scale(0.95);

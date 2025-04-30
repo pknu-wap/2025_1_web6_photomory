@@ -14,8 +14,8 @@ async function loginUser(email,password) {
         'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-        email: email,
-        pw: password,
+        useremail: email,
+        password: password,
         }),
     });
 
@@ -79,9 +79,10 @@ export default function LoginPageMain() {
                 setIsLogged(true)
                 navigate('/Loged', {
                 state: {
-                name: user.name,
-                id: user.email, //id는 이메일과 동일
-                pw: user.password
+                name: user.userName,
+                id: user.userEmail, //id는 이메일과 동일
+                
+
                 }
                 //여기에 내 정보 제이슨=user로 하기 지금 그 파일 추가하면 머지하다가 오류남
             });
@@ -108,15 +109,14 @@ export default function LoginPageMain() {
         <>
             <div className={styles.loginPageMainContainer}>
                 <img src={logo} className={styles.logoImage} alt="Photomy"></img>
-
                 <div className={styles.loginContainer}>
                     <p className={styles.loginText}>로그인</p>
                     <div className={styles.emailContainer}>
                         <span className={styles.emailText}>
                             email
                         </span>
-                        <FontAwesomeIcon icon={faEnvelope}
-                        className={styles.emailIcon}/> {/*앱솔루트로 아이콘 인풋태그 안에다가 넣기*/}
+                        {/* <FontAwesomeIcon icon={faEnvelope}
+                        className={styles.emailIcon}/>  */}
                         <input className={styles.emailInput} 
                         placeholder="     이메일을 입력하세요."
                         onChange={onChangeHandleEmail}
@@ -128,8 +128,7 @@ export default function LoginPageMain() {
                         <span className={styles.pwText}>
                             password
                         </span>
-                        <FontAwesomeIcon icon={faLock}
-                        className={styles.pwIcon}/> {/*앱솔루트로 아이콘 인풋태그 안에다가 넣기*/}
+                        {/* <FontAwesomeIcon icon={faLock} className={styles.pwIcon}/>  */}
                         <input className={styles.pwInput}
                         type='password'
                         placeholder="     비밀번호를 입력하세요."
@@ -143,7 +142,7 @@ export default function LoginPageMain() {
                     onClick={onClickButtonLogin}
                     disabled={isLoading}>
                         <FontAwesomeIcon icon={faRightToBracket} />
-                        {isLoading? isLoading: 'LOGIN'}
+                        {isLoading? isLoading : 'LOGIN'}
                     </button>
                         <span className={styles.notAccount}>계정이 없으신가요?</span>
                         <button className={styles.signUp}
