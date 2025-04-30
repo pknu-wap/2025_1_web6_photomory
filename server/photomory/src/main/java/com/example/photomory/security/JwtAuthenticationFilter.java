@@ -20,7 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtTokenProvider jwtTokenProvider; // JwtTokenProvider로 수정
+    private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -35,15 +35,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7); // "Bearer " 이후의 토큰 추출
-            userEmail = jwtTokenProvider.extractUsername(jwt); // JwtTokenProvider 사용
+            userEmail = jwtTokenProvider.extractUsername(jwt);
         }
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-            if (jwtTokenProvider.isTokenValid(jwt, userDetails)) { // JwtTokenProvider 사용
+            if (jwtTokenProvider.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
-                        null, // No credentials needed for JWT authentication
+                        null,
                         userDetails.getAuthorities()
                 );
                 authToken.setDetails(
@@ -52,6 +52,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+
         filterChain.doFilter(request, response);
+    }
+
+    // ✅ 로그인/회원가입 요청은 필터 제외
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.equals("/api/auth/register") || path.equals("/api/auth/login");
     }
 }
