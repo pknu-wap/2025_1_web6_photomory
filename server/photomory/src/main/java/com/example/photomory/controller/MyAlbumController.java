@@ -5,6 +5,10 @@ import com.example.photomory.service.MyAlbumService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/my-albums")
@@ -13,12 +17,18 @@ public class MyAlbumController {
 
     private final MyAlbumService myAlbumService;
 
-    @GetMapping("/{albumId}/user/{userId}")
-    public ResponseEntity<MyAlbumDetailDto> getMyAlbumDetail(
-            @PathVariable Long albumId,
-            @PathVariable Long userId) {
+    @PostMapping("/create")
+    public ResponseEntity<MyAlbumDetailDto> createMyAlbum(
+            @RequestParam Long userId,
+            @RequestParam String myalbumName,
+            @RequestParam String myalbumDescription,
+            @RequestParam("photos") List<MultipartFile> photoFiles
+    ) throws IOException {
+        return ResponseEntity.ok(myAlbumService.createMyAlbum(userId, myalbumName, myalbumDescription, photoFiles));
+    }
 
-        MyAlbumDetailDto albumDetail = myAlbumService.getMyAlbum(albumId, userId);
-        return ResponseEntity.ok(albumDetail);
+    @GetMapping("/{myalbumId}")
+    public ResponseEntity<MyAlbumDetailDto> getMyAlbumDetail(@PathVariable Long myalbumId) {
+        return ResponseEntity.ok(myAlbumService.getMyAlbum(myalbumId));
     }
 }
