@@ -29,9 +29,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> {}) // CORS는 WebMvcConfigurer에서 설정
+                .cors(cors -> {}) // CORS 설정은 WebMvcConfigurer에서
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // 모든 요청에 접근 허용
+                        .anyRequest().permitAll() // 모든 요청 허용
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -42,6 +42,7 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // ✅ 인터페이스 타입으로 등록 (RegisterService에서 자동 주입됨)
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

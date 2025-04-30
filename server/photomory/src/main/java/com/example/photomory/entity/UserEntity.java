@@ -1,9 +1,6 @@
-// UserEntity.java
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,8 +9,6 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Getter
-@NoArgsConstructor
 @Table(name = "USERS")
 public class UserEntity implements UserDetails {
 
@@ -46,6 +41,8 @@ public class UserEntity implements UserDetails {
     @Column(name = "user_field", nullable = false)
     private String userField;
 
+    public UserEntity() {}
+
     public UserEntity(
             String userEmail,
             String userName,
@@ -70,10 +67,46 @@ public class UserEntity implements UserDetails {
         this.userPassword = userPassword;
     }
 
-    // 🔐 UserDetails 구현 메서드들
+    // ✅ 추가된 getter
+    public String getUserPassword() {
+        return this.userPassword;
+    }
+
+    public String getUserName() {
+        return this.userName;
+    }
+
+    public String getUserEmail() {
+        return this.userEmail;
+    }
+
+    public String getUserPhotourl() {
+        return this.userPhotourl;
+    }
+
+    public String getUserEquipment() {
+        return this.userEquipment;
+    }
+
+    public String getUserIntroduction() {
+        return this.userIntroduction;
+    }
+
+    public String getUserJob() {
+        return this.userJob;
+    }
+
+    public String getUserField() {
+        return this.userField;
+    }
+
+    public int getUserId() {
+        return this.userId;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + userJob)); // 예: ROLE_PHOTOGRAPHER
+        return List.of(new SimpleGrantedAuthority("ROLE_" + userJob));
     }
 
     @Override
@@ -83,26 +116,18 @@ public class UserEntity implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.userEmail; // Spring Security에서 로그인 ID로 사용할 값
+        return this.userEmail;
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+    public boolean isAccountNonLocked() { return true; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    public boolean isEnabled() { return true; }
 }
