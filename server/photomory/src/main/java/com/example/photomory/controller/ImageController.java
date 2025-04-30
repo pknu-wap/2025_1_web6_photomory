@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/images")
@@ -20,6 +22,7 @@ public class ImageController {
     private final ImageRepository imageRepository;
 
     @PostMapping("/upload")
+
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
             System.out.println("🔥 [UPLOAD] 파일 수신: " + file);
@@ -35,6 +38,7 @@ public class ImageController {
             e.printStackTrace();  // 📛 실제 에러 라인 여기서 찍힘!
             return ResponseEntity.status(500).body("서버 내부 오류: " + e.getMessage());
         }
+
     }
 
 
