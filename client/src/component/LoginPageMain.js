@@ -6,6 +6,37 @@ import { faEnvelope, faLock, faRightToBracket } from '@fortawesome/free-solid-sv
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom' 
 
+
+async function loginUser(email, password) {
+    try {
+    const response = await fetch('http://3.38.237.115:8080/login', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+        email: email,
+        password: password,
+        }),
+    });
+
+    if (!response.ok) {
+        throw new Error('이메일 또는 비밀번호가 잘못되었습니다.');
+    }
+
+    const data = await response.json();
+    const token = data.token;
+    const user = data.user; // 백엔드가 user: { name, email }을 반환한다고 가정?
+
+      // 토큰 저장
+    localStorage.setItem('token', token);
+    console.log('로그인 성공, 토큰 저장 완료:', token);
+    return user; // 사용자 정보 반환
+    } catch (error) {
+    console.error('로그인 에러:', error.message);
+    throw error; 
+    }
+}
 export default function LoginPageMain() {
     const [ email, setEmail] = useState('')
     const [ pw, setPw] = useState('')
@@ -37,8 +68,8 @@ export default function LoginPageMain() {
                 setError('비밀번호를 입력해주세요!')
                 return;
             }
-            const userLogin = await GetUserLogin()
-            const user = userLogin.find((u) => u.email === email && u.password === pw);
+            
+            const user = await loginUser(email, pw);
             if (user) { //로그인 성공
                 setIsLogged(true)
                 navigate('/Loged', {
@@ -56,6 +87,8 @@ export default function LoginPageMain() {
                 focusEmailRef.current.focus();
             };
         } catch (error) {
+            setEmail('')
+            setPw('')
             console.error('An error occurred during login');
             setError('로그인 중 오류가 발생했습니다.');
         } finally {
