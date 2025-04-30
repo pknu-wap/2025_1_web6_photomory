@@ -29,6 +29,7 @@ function MyAlbumPage() {
           position: "relative",
           height: "2400px",
           opacity: "1",
+          marginTop: "15px",
         }}
       >
         <CalenderTest

@@ -61,7 +61,7 @@ function PhotoSubmit({ handleAddPhoto }) {
       photo_makingtime: "",
     });
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; //브라우저 input 내부 파일 제거거
+      fileInputRef.current.value = ""; //브라우저 input 내부 파일 제거
     }
   };
 
