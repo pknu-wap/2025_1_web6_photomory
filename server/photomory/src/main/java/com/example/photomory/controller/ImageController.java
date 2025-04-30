@@ -20,14 +20,23 @@ public class ImageController {
     private final ImageRepository imageRepository;
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
-        System.out.println("📥 파일 받음: " + file);
-        System.out.println("📎 파일 이름: " + file.getOriginalFilename());
-        String imageUrl = s3Service.uploadFile(file);
-        System.out.println("✅ 업로드 성공 URL: " + imageUrl);
-        imageRepository.save(new ImageEntity(imageUrl));
-        return ResponseEntity.ok(imageUrl);
+    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+        try {
+            System.out.println("🔥 [UPLOAD] 파일 수신: " + file);
+            System.out.println("📎 파일 이름: " + file.getOriginalFilename());
+
+            String imageUrl = s3Service.uploadFile(file);
+            System.out.println("✅ 업로드 성공 URL: " + imageUrl);
+
+            imageRepository.save(new ImageEntity(imageUrl));
+            return ResponseEntity.ok(imageUrl);
+        } catch (Exception e) {
+            System.err.println("❌ 업로드 중 예외 발생: " + e.getMessage());
+            e.printStackTrace();  // 📛 실제 에러 라인 여기서 찍힘!
+            return ResponseEntity.status(500).body("서버 내부 오류: " + e.getMessage());
+        }
     }
+
 
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteImage(@RequestParam("url") String imageUrl) {
