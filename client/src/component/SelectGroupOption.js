@@ -12,7 +12,6 @@ function SelectGroupOptions({ groupList, onSelect }) {
     };
     onSelect(fakeEvent); // 기존 handleChange에 맞춤
     setIsOpen(false); // 드롭다운 닫기
-    console.log(isOpen);
   };
   return (
     <div>

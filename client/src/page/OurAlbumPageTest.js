@@ -16,12 +16,12 @@ function OurAlbumPage() {
   //초기 그룹 정보, 앨범 가져오기
   useEffect(() => {
     const groups = getGroupTest(); // 그룹 데이터 불러오기
-    console.log(groups);
+
     setGroupList(groups);
     if (groups.length > 0) {
       const firstGroup = groups[0]; //항상 첫번째 그룹 선택
       const firstGroupAlbums = getGroupAlbumsTest(firstGroup.group_id); //항상 첫번째 그룹의 앨범 선택
-      console.log(firstGroupAlbums);
+
       setSelectedGroupId(firstGroup.group_id); // 선택된 그룹 ID
       setGroupAlbums(firstGroupAlbums); // 선택된 그룹의 앨범 전체 데이터
       const initTitlesByGroup = {};
@@ -35,8 +35,6 @@ function OurAlbumPage() {
       setAlbumTitlesByGroup(initTitlesByGroup);
     }
   }, []);
-
-  console.log("선택그룹ID:", selectedGroupId);
 
   //그룹id가 바뀔 대마다 그룹 앨범 가져오기
   useEffect(() => {

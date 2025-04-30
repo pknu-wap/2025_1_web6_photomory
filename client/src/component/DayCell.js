@@ -10,14 +10,15 @@ function DayCell({
   photos = [],
   albumColorsMap = {},
   albumDotColorsMap = {},
-  isOtherMonth = {},
+  isOtherMonth = false,
 }) {
   //day: 날짜, isEmpty:빈 칸인지 여부 (true이면 날짜 없음)
   const [selectedPhoto, setSelectedPhoto] = useState(null); //날짜 셀을 눌렀을때 선택되는 사진정보상태
 
   const handlePhotoClick = (photo) => {
-    //클릭한 사진 정보 변경 헨들러
-    setSelectedPhoto(photo);
+    // 클릭한 사진 정보 변경 핸들러
+    // album_name을 albumTitle로 통일해서 PhotoModal에 전달
+    setSelectedPhoto({ ...photo, albumTitle: photo.album_name });
   };
 
   const handleCloseModal = () => {
@@ -28,8 +29,8 @@ function DayCell({
   // 해당 날짜에 사진이 있다면 첫 번째 사진의 앨범 색상 사용
   const firstPhoto = photos[0];
   const bgColor =
-    firstPhoto && albumColorsMap[firstPhoto.albumTitle] //앨범명에 매핑된 배경색
-      ? albumColorsMap[firstPhoto.albumTitle]
+    firstPhoto && albumColorsMap[firstPhoto.album_name] //앨범명에 매핑된 배경색
+      ? albumColorsMap[firstPhoto.album_name]
       : "#fff"; // 기본 흰색
 
   return (
@@ -47,33 +48,26 @@ function DayCell({
           </strong>
           {/* 앨범명: 사진명 목록 */}
           <div className="photoByday">
-            {photos.map((photo, idx) => {
-              const dotColor = albumDotColorsMap[photo.albumTitle] || "#333"; //매핑된 점 색깔
-              return (
-                <div
-                  key={idx}
-                  className="contentsByPhoto"
-                  onClick={() => handlePhotoClick(photo)} //클릭 시 selectedPhoto 설정
-                >
-                  <span
-                    style={{
-                      backgroundColor: dotColor,
-                    }}
-                    className="dot"
-                  />
-                  <span>
-                    <strong>#{photo.albumTitle}</strong>:<br />
-                    {photo.title}
-                  </span>
-                  {/* 모달 표시 */}
-                  <PhotoModal
-                    photo={selectedPhoto}
-                    onClose={handleCloseModal}
-                  />
-                </div>
-              );
-            })}
+            {firstPhoto && (
+              <div
+                className="contentsByPhoto"
+                onClick={() => handlePhotoClick(firstPhoto)}
+              >
+                <span
+                  style={{
+                    backgroundColor:
+                      albumDotColorsMap[firstPhoto.album_name] || "#333",
+                  }}
+                  className="dot"
+                />
+                <span>
+                  <strong>#{firstPhoto.album_name}</strong>:<br />
+                  {firstPhoto.photo_name}
+                </span>
+              </div>
+            )}
           </div>
+          <PhotoModal photo={selectedPhoto} onClose={handleCloseModal} />
         </>
       )}
     </div>
