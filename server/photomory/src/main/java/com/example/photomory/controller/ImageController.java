@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/images")
@@ -20,13 +22,19 @@ public class ImageController {
     private final ImageRepository imageRepository;
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
         System.out.println("📥 파일 받음: " + file);
         System.out.println("📎 파일 이름: " + file.getOriginalFilename());
+
         String imageUrl = s3Service.uploadFile(file);
         System.out.println("✅ 업로드 성공 URL: " + imageUrl);
+
         imageRepository.save(new ImageEntity(imageUrl));
-        return ResponseEntity.ok(imageUrl);
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("imageUrl", imageUrl);
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/delete")
