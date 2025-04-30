@@ -27,9 +27,20 @@
     padding-left: 15px;
     margin-right: 20px;
 }
+.emailIcon{
+    position: absolute;
+    transform: translate(50%, +200%);
+    color: rgb(128, 128, 128);
+}
+.pwIcon{
+    position: absolute;
+    transform: translate(50%, +220%);
+    color: rgb(128, 128, 128);
+}
 
 .emailContainer,
 .pwContainer{
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -65,6 +76,7 @@
 }
 .loginText{ 
     font-size: clamp(43px, 45px, 47px);
+    font-weight: 600;
 }
 .loginButton{
     font-size: clamp(26px, 32px, 38px);
@@ -76,6 +88,6 @@
 }
 .emailInput,
 .pwInput{
-    padding: 7px 0px 5px 2px;
-    font-size: clamp(16px, 20px, 24px);
+    padding: 12px 25px 10px 10px;
+    font-size: clamp(10px, 14px, 18px);
 }

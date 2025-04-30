@@ -39,7 +39,7 @@ function Header(){
                 <div className={styles.headerContainerRight}>
                     <button className={styles.signIn}
                     onClick={onclickHandle}
-                    value='/Longin'>
+                    value='/Login'>
                         로그인
                     </button>
                     <button className={styles.signUp}
