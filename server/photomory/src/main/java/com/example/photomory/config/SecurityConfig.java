@@ -29,11 +29,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable) // 필요에 따라 설정
+                .cors(cors -> {}) // CORS는 WebMvcConfigurer에서 설정
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register").permitAll() // 회원가입은 인증 없이 허용
-                        .requestMatchers("/api/auth/**").permitAll() // /api/auth/** 경로는 모두 허용 (로그인 등)
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/auth/**", "/").permitAll() // 회원가입·로그인 허용
+                        .anyRequest().authenticated() // 나머지는 인증 필요
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
