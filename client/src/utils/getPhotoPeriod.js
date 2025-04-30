@@ -2,7 +2,7 @@ export function getPhotoPeriod(photos) {
   if (!photos || photos.length === 0) return null;
 
   // 날짜들을 Date 객체로 변환
-  const dates = photos.map((photo) => new Date(photo.createdAt));
+  const dates = photos.map((photo) => new Date(photo.photo_makingtime));
 
   // 가장 빠른 날짜 (최솟값)
   const minDate = new Date(Math.min(...dates));

@@ -3,11 +3,13 @@ import MainPage from "./page/MainPage.js";
 import LoginPage from "./page/LoginPage.js";
 import Loged from "./component/Loged.js";
 import ProfilePage from "./page/ProfilePage.js";
-import OurAlbumPage from "./page/OurAlbumPage";
 import OurAlbumPageTest from "./page/OurAlbumPageTest";
 import OurAlbumDetailPageTest from "./page/OurAlbumDetailPage";
 import GroupEditPage from "../src/page/GroupEditPage";
 import SignupPage from "./page/SignupPage";
+import MyAlbumPage from "./page/MyAlbumPage.js";
+import MyAlbumDetailPage from "./page/MyAlbumDetailPage.js";
+import SignupConfirmPage from "./page/SignupConfirmPage.js";
 function App() {
   return (
     <Router>
@@ -17,8 +19,10 @@ function App() {
         <Route path="/Loged" element={<Loged />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/Signup" element={<SignupPage />} />
-        <Route path="/ourMemory" element={<OurAlbumPage />} />
-        <Route path="/our-albumTest" element={<OurAlbumPageTest />} />
+        <Route path="/Signup/Confirm" element={<SignupConfirmPage />} />
+        <Route path="/my-album" element={<MyAlbumPage />} />
+        <Route path="/my-album/:albumId" element={<MyAlbumDetailPage />} />
+        <Route path="/our-album" element={<OurAlbumPageTest />} />
         <Route path="/our-album/groupEdit" element={<GroupEditPage />} />
         <Route
           path="/our-album/:albumId"

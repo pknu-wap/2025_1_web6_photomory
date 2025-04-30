@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import ImageUploader from "./ImageUploader";
 import "./SignupForm.css";
 import isValidPassword from "../utils/isValidPassword";
@@ -22,6 +23,9 @@ function SignupForm() {
     user_field: "", // 활동 지역
   });
 
+  //navigate 사용
+  const navigate = useNavigate();
+
   // 이미지 리셋용 상태
   const [resetImage, setResetImage] = useState(false);
 
@@ -42,7 +46,7 @@ function SignupForm() {
     }));
   };
 
-  //입력 폼 데이터 제출 헨들러러
+  //입력 폼 데이터 제출 헨들러
   const handleSubmit = (e) => {
     //기본 이벤트 방지
     e.preventDefault();
@@ -100,6 +104,9 @@ function SignupForm() {
       user_introduction: "",
       user_field: "",
     });
+
+    //회원가입 확인 페이지로 이동, 추후 조건 검사 추가
+    navigate("/Signup/Confirm");
   };
 
   // resetImage 상태를 업데이트하는 함수를 useCallback으로 감싸서 메모이제이션

@@ -62,10 +62,9 @@
     border-radius: 7px;
 }
 
-.icon{
-    font-size: clamp(30px, 35px, 40px);
+.icon {
+  font-size: clamp(30px, 35px, 40px);
 }
-
 .ourMemoryContainer{
     padding: 10px;
     border-radius: 6px;
@@ -76,25 +75,24 @@
     flex-direction: column;
     justify-content: center;
     align-items: center
+
+.ourMemoryText {
+  margin: 5px;
+  font-size: clamp(16px, 18px, 20px);
 }
 
-.ourMemoryText{
-    margin: 5px;
-    font-size: clamp(16px, 18px, 20px);
+.ourMemoryExplain {
+  margin: 5px;
+  font-size: clamp(12px, 14px, 16px);
 }
 
-.ourMemoryExplain{
-    margin: 5px;
-    font-size: clamp(12px, 14px, 16px);
-}
-
-.ourMemoryImageContainer{
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 1fr;
-    gap: 10px;
+.ourMemoryImageContainer {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 1fr;
+  gap: 10px;
 }
 
 .ourMemoryImage1,
@@ -112,21 +110,20 @@
     padding: 10px;
     grid-column: 1/3;
     border-radius: 6px;
-    
 }
 
-.weeklyMemoryTitleBox{
-    margin: 5px;
-    background-color: black;
-    color: white;
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 10px;
-    font-size: clamp(16px, 18px, 20px);
+.weeklyMemoryTitleBox {
+  margin: 5px;
+  background-color: black;
+  color: white;
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: clamp(16px, 18px, 20px);
 }
 
-.weeklyMemoryTitleText{
-    font-size: clamp(25px, 27px, 29px);
+.weeklyMemoryTitleText {
+  font-size: clamp(25px, 27px, 29px);
 }
 .weeklyMemoryTitleTextSmall{
     font-size: clamp(16px, 18px, 20px);
@@ -158,9 +155,9 @@
 
 .weeklyMemoryLikesContainer1,
 .weeklyMemoryLikesContainer2,
-.weeklyMemoryLikesContainer3{
-    display: flex;
-    align-items: center;
+.weeklyMemoryLikesContainer3 {
+  display: flex;
+  align-items: center;
 }
 
 .weeklyMemoryImage1,
@@ -178,29 +175,26 @@
     margin-bottom: 5px;
 }
 
-.weeklyMemoryImageText1{
-    font-size: clamp(16px, 18px, 20px);
+.weeklyMemoryImageText1 {
+  font-size: clamp(16px, 18px, 20px);
 }
 .weeklyMemoryImageText2,
-.weeklyMemoryImageText3{
-    font-size: clamp(14px, 16px, 18px);
+.weeklyMemoryImageText3 {
+  font-size: clamp(14px, 16px, 18px);
 }
 
-.morePictureContainer{
-    padding: 7px;
-    grid-column: 1/3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.morePictureContainer {
+  padding: 7px;
+  grid-column: 1/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
 .morePicture{
     border-radius: 7px;
     padding: 5px;
-    display: inline-block;
-    
+    display: inline-block;   
 }
-
 .myMemoryContainer:hover,
 .ourMemoryContainer:hover,
 .morePicture:hover{

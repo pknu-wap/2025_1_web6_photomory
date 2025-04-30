@@ -1,0 +1,62 @@
+.photoGridContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 24px;
+  width: 100%;
+  max-width: 1088px;
+  margin: 0 auto;
+}
+
+.photoSlot {
+  width: 100%;
+  height: 330px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.filledSlot {
+  background: #ffffff;
+  border: 1px solid #ccc;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px -2px,
+    rgba(0, 0, 0, 0.1) 0px 4px 6px -1px;
+}
+
+.emptySlot {
+  background: #f3f4f6;
+  border: 2px dashed #bbb;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px -2px,
+    rgba(0, 0, 0, 0.1) 0px 4px 6px -1px;
+}
+
+.photoImageByprivate {
+  width: 100%;
+  height: 276px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.photoInfo {
+  padding: 8px;
+}
+
+.photoTitle {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.photoDate {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.emptyText {
+  color: #bbb;
+  font-size: 14px;
+}

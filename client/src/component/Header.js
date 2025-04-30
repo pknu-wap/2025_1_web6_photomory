@@ -2,12 +2,11 @@ import styles from './Header.module.css'
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/photomory_logo.svg';
 
-function Header(){
-    const nav = useNavigate();
-    const onclickHandle = (event) => {
-        nav(event.target.value);
-    };
-
+function Header() {
+  const nav = useNavigate();
+  const onclickHandle = (event) => {
+    nav(event.target.value);
+  };
     return(
         <div className={styles.headerContainer}>
             <div className={styles.headerContainer2}>
@@ -21,12 +20,12 @@ function Header(){
                     <div className={styles.memoryContainer}>
                         <button className={styles.myMemory}
                         onClick={onclickHandle}
-                        value='/myMemory'>
+                        value='/my-album'>
                             나만의 추억
                         </button>
                         <button className={styles.ourMemory}
                         onClick={onclickHandle}
-                        value='/ourMemory'>
+                        value='/our-album'>
                             우리의 추억
                         </button>
                         <button className={styles.everyMemory}
@@ -50,7 +49,25 @@ function Header(){
                 </div>
             </div>
         </div>
-    );
+        <div className={styles.headerContainerRight}>
+          <button
+            className={styles.signIn}
+            onClick={onclickHandle}
+            value="/signIn"
+          >
+            sign in
+          </button>
+          <button
+            className={styles.signUp}
+            onClick={onclickHandle}
+            value="/signUp"
+          >
+            sign up
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Header;
