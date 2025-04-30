@@ -1,15 +1,16 @@
+import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./LoginPage.Main.module.css";
-import logo from "../assets/photomory_logo.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEnvelope,
   faLock,
   faRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import logo from "../assets/photomory_logo.svg";
 
-async function loginUser(email, password) {
+// loginUser.js (API 요청 함수)
+export async function loginUser(email, password, navigate) {
   try {
     const response = await fetch("http://3.38.237.115:8080/api/auth/login", {
       method: "POST",
@@ -18,7 +19,7 @@ async function loginUser(email, password) {
       },
       body: JSON.stringify({
         useremail: email,
-        password: password, // ← 수정 포인트
+        password: password,
       }),
     });
 
@@ -28,22 +29,31 @@ async function loginUser(email, password) {
 
     const data = await response.json();
 
-    const accessToken = data.accessToken;
-    const refreshToken = data.refreshToken;
-    const user = data.user;
-
-    if (!accessToken || !refreshToken || !user) {
-      throw new Error("응답에 토큰 또는 사용자 정보가 없습니다.");
+    if (!data.accessToken) {
+      alert("❌ accessToken이 없습니다!");
+      return null;
     }
-    //엑세스 토큰, 리프레쉬 토큰 저장
-    localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
 
-    console.log("로그인 성공, 토큰 저장 완료:", refreshToken);
-    return user;
+    localStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("refreshToken", data.refreshToken);
+    console.log("✅ accessToken:", localStorage.getItem("accessToken"));
+    console.log("✅ refreshToken:", localStorage.getItem("refreshToken"));
+
+    navigate("/Loged", {
+      state: {
+        name: data.userName, // "박진오"
+        email: data.userEmail, // "jinoh1030@naver.com"
+        password: password, // 사용자가 입력한 pw
+      },
+    });
+    return {
+      email: data.userEmail,
+      name: data.userName,
+    };
   } catch (error) {
     console.error("로그인 에러:", error.message);
-    alert("로그인에 실패하였습니다. 다시 시도해주세요.");
+    alert("로그인에 실패했습니다. 다시 시도해주세요.");
+    return null;
   }
 }
 
@@ -79,20 +89,11 @@ export default function LoginPageMain() {
         return;
       }
 
-      const user = await loginUser(email, pw);
+      const user = await loginUser(email, pw, navigate);
       if (user) {
-        //로그인 성공
         setIsLogged(true);
-        navigate("/Loged", {
-          state: {
-            name: user.name,
-            id: user.email, //id는 이메일과 동일
-            pw: user.password,
-          },
-          //여기에 내 정보 제이슨=user로 하기 지금 그 파일 추가하면 머지하다가 오류남
-        });
+        // 사용자 정보를 상태로 저장하고 싶다면 여기서 추가 가능
       } else {
-        //로그인 실패
         setEmail("");
         setPw("");
         setError("이메일 또는 비밀번호가 잘못되었습니다.");
@@ -104,65 +105,58 @@ export default function LoginPageMain() {
       console.error("An error occurred during login");
       setError("로그인 중 오류가 발생했습니다.");
     } finally {
-      setIsLoading(false); //로딩 종료
+      setIsLoading(false);
     }
   };
 
   const onClickHandleSignUp = () => {
     navigate("/signUp");
   };
-  return (
-    <>
-      <div className={styles.loginPageMainContainer}>
-        <img src={logo} className={styles.logoImage} alt="Photomy"></img>
 
-        <div className={styles.loginContainer}>
-          <p className={styles.loginText}>로그인</p>
-          <div className={styles.emailContainer}>
-            <span className={styles.emailText}>email</span>
-            <FontAwesomeIcon
-              icon={faEnvelope}
-              className={styles.emailIcon}
-            />{" "}
-            {/*앱솔루트로 아이콘 인풋태그 안에다가 넣기*/}
-            <input
-              className={styles.emailInput}
-              placeholder="     이메일을 입력하세요."
-              onChange={onChangeHandleEmail}
-              value={email}
-              disabled={isLoading}
-              ref={focusEmailRef}
-            ></input>
-          </div>
-          <div className={styles.pwContainer}>
-            <span className={styles.pwText}>password</span>
-            <FontAwesomeIcon icon={faLock} className={styles.pwIcon} />{" "}
-            {/*앱솔루트로 아이콘 인풋태그 안에다가 넣기*/}
-            <input
-              className={styles.pwInput}
-              type="password"
-              placeholder="     비밀번호를 입력하세요."
-              onChange={onChangeHandlePw}
-              value={pw}
-              disabled={isLoading}
-              ref={focusPwRef}
-            ></input>
-          </div>
-          {error && <p className={styles.error}>{error}</p>}
-          <button
-            className={styles.loginButton}
-            onClick={onClickButtonLogin}
+  return (
+    <div className={styles.loginPageMainContainer}>
+      <img src={logo} className={styles.logoImage} alt="Photomy" />
+      <div className={styles.loginContainer}>
+        <p className={styles.loginText}>로그인</p>
+        <div className={styles.emailContainer}>
+          <span className={styles.emailText}>email</span>
+          <FontAwesomeIcon icon={faEnvelope} className={styles.emailIcon} />
+          <input
+            className={styles.emailInput}
+            placeholder="     이메일을 입력하세요."
+            onChange={onChangeHandleEmail}
+            value={email}
             disabled={isLoading}
-          >
-            <FontAwesomeIcon icon={faRightToBracket} />
-            {isLoading ? isLoading : "LOGIN"}
-          </button>
-          <span className={styles.notAccount}>계정이 없으신가요?</span>
-          <button className={styles.signUp} onClick={onClickHandleSignUp}>
-            회원가입
-          </button>
+            ref={focusEmailRef}
+          />
         </div>
+        <div className={styles.pwContainer}>
+          <span className={styles.pwText}>password</span>
+          <FontAwesomeIcon icon={faLock} className={styles.pwIcon} />
+          <input
+            className={styles.pwInput}
+            type="password"
+            placeholder="     비밀번호를 입력하세요."
+            onChange={onChangeHandlePw}
+            value={pw}
+            disabled={isLoading}
+            ref={focusPwRef}
+          />
+        </div>
+        {error && <p className={styles.error}>{error}</p>}
+        <button
+          className={styles.loginButton}
+          onClick={onClickButtonLogin}
+          disabled={isLoading}
+        >
+          <FontAwesomeIcon icon={faRightToBracket} />
+          {isLoading ? "로딩 중..." : "LOGIN"}
+        </button>
+        <span className={styles.notAccount}>계정이 없으신가요?</span>
+        <button className={styles.signUp} onClick={onClickHandleSignUp}>
+          회원가입
+        </button>
       </div>
-    </>
+    </div>
   );
 }
