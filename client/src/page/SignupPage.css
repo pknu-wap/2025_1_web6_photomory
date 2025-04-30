@@ -1,9 +1,4 @@
 .signupPageWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(140deg, #dbeafe, #f3e8ff, #fce7f3);
   padding: 40px 16px;
 }
 
