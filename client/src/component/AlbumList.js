@@ -50,7 +50,7 @@ function AlbumList({ albums, basePath = "" }) {
             {/* 사진 4개까지 미리보기 */}
             {currentAlbum.photos.slice(0, 4).map((photo) => (
               <div
-                key={photo.id}
+                key={photo.photo_id}
                 style={{
                   textAlign: "center",
                 }}
