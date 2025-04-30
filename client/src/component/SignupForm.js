@@ -66,6 +66,7 @@ function SignupForm() {
 
     //이미지 초기화
     setResetImage(true);
+
     const data = {
       user_name: signupData.user_name,
       user_email: signupData.user_email,
@@ -95,7 +96,9 @@ function SignupForm() {
         });
 
         navigate("/Signup/Confirm");
-      } else if (result.message === "회원가입 실패(데이터베이스 오류 발생)") {
+      } else if (
+        result.message === "회원가입 실패(이미 존재하는 이메일입니다.)"
+      ) {
         alert("이미 존재하는 이메일입니다.");
       } else {
         alert("회원가입에 실패했습니다.");
