@@ -50,9 +50,22 @@ function ProfileMain() {
     useEffect(()=>{
         const fetchUsers= async ()=>{
             try{
-                const userData= await GetUserProfilePage();
-                setUsers(userData); 
-
+                const userData= await fetch('http://3.38.237.115:8080/api/auth/login',{
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                    name: name,
+                    job: job,
+                    field: field,
+                    equipment: myEquipment,
+                    area: myArea,
+                    introduction: introduction 
+                    }) 
+                }) 
+                setUsers(userData);
+                {/*서버에 전송으로 고치기*/}
                 const myData= await GetMy();
                 if (myData) {
                     setId(myData.id || '');
@@ -96,7 +109,7 @@ function ProfileMain() {
                         onChange={onChangeHandle}
                         value={job}
                         placeholder={job? job: '직업을 알려줘!' }></input>
-                        <div className={styles.id}>id:{id}</div>
+                        <div className={styles.id}></div>
                     </div>
                 </div>
                 <button className={styles.logOutForFlexRight}>log out</button>

@@ -32,8 +32,9 @@ async function loginUser(email,password) {
     }
 
       // 토큰 저장
-    localStorage.setItem('token', refreshToken);
-    console.log('로그인 성공, 토큰 저장 완료:', refreshToken);
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    console.log('로그인 성공, 토큰 저장 완료:', { accessToken, refreshToken});
     return user; // 사용자 정보 반환
     
 } catch (error) {
@@ -105,6 +106,13 @@ export default function LoginPageMain() {
     const onClickHandleSignUp=()=>{
         navigate('/signUp')
     }
+
+    const onFocusHandle=(e)=>{
+        if (e.className) {
+            
+        }
+    }
+
     return(
         <>
             <div className={styles.loginPageMainContainer}>
@@ -115,20 +123,22 @@ export default function LoginPageMain() {
                         <span className={styles.emailText}>
                             email
                         </span>
-                        {/* <FontAwesomeIcon icon={faEnvelope}
-                        className={styles.emailIcon}/>  */}
+                        <FontAwesomeIcon icon={faEnvelope}
+                        className={styles.emailIcon}/> 
                         <input className={styles.emailInput} 
                         placeholder="     이메일을 입력하세요."
                         onChange={onChangeHandleEmail}
                         value={email}
                         disabled={isLoading}
-                        ref={focusEmailRef}></input>
+                        ref={focusEmailRef}
+                        onFocus={onFocusHandle}></input> {/*온포커스로 마저 완성하기*/}
                     </div>
                     <div className={styles.pwContainer}>
                         <span className={styles.pwText}>
                             password
                         </span>
-                        {/* <FontAwesomeIcon icon={faLock} className={styles.pwIcon}/>  */}
+                        {}
+                        <FontAwesomeIcon icon={faLock} className={styles.pwIcon}/> 
                         <input className={styles.pwInput}
                         type='password'
                         placeholder="     비밀번호를 입력하세요."
