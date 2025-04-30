@@ -1,19 +1,21 @@
-async function signupUser(formData) {
+async function signupUser(data) {
   try {
-    const response = await fetch("http://3.38.237.115:8080/register", {
+    const response = await fetch("http://3.38.237.115:8080/api/auth/register", {
       method: "POST",
-      body: formData, // 회원가입 정보 formData 그대로 보내기
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data), // JSON으로 문자열 변환
     });
 
     if (!response.ok) {
       throw new Error("회원가입 실패!");
     }
-
+    //회원가입 확인 메시지 받기기
     const result = await response.json();
-    console.log("회원가입 성공:", result);
+
     return result;
   } catch (error) {
-    console.error("회원가입 에러:", error.message);
     throw error;
   }
 }
