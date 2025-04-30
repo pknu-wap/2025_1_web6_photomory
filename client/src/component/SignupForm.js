@@ -89,24 +89,34 @@ function SignupForm() {
         console.log(`${key}: ${value}`);
       }
     });
-    //폼데이터 전송
-    signupUser(formData);
+    try {
+      const result = signupUser(formData);
 
-    //입력값 초기화
-    setSignupData({
-      user_name: "",
-      user_email: "",
-      user_password: "",
-      user_password_check: "",
-      user_photourl: null,
-      user_job: "",
-      user_equipment: "",
-      user_introduction: "",
-      user_field: "",
-    });
+      if (result === "회원가입 완료") {
+        // 성공했을 때만 초기화
+        setSignupData({
+          user_name: "",
+          user_email: "",
+          user_password: "",
+          user_password_check: "",
+          user_photourl: null,
+          user_job: "",
+          user_equipment: "",
+          user_introduction: "",
+          user_field: "",
+        });
 
-    //회원가입 확인 페이지로 이동, 추후 조건 검사 추가
-    navigate("/Signup/Confirm");
+        navigate("/Signup/Confirm");
+      } else if (result === "회원가입 실패(데이터베이스 오류 발생)") {
+        alert("이미 존재하는 이메일입니다.");
+      } else {
+        console.log(result);
+        alert("회원가입에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("회원가입 중 오류:", error);
+      alert("서버 오류로 회원가입에 실패했습니다.");
+    }
   };
 
   // resetImage 상태를 업데이트하는 함수를 useCallback으로 감싸서 메모이제이션
