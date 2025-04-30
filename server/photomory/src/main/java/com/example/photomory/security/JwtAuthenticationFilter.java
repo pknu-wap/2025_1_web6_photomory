@@ -30,33 +30,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
-        String jwt = null;
-        String userEmail = null;
 
         if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
-            jwt = authHeader.substring(7); // "Bearer " 이후의 토큰 추출
-            userEmail = jwtTokenProvider.extractUsername(jwt);
-        }
+            String jwt = authHeader.substring(7); // "Bearer " 이후 토큰 추출
+            String userEmail = jwtTokenProvider.extractUsername(jwt); // 토큰에서 이메일 추출
 
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-            if (jwtTokenProvider.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+                if (jwtTokenProvider.isTokenValid(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+                    authToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
+                    );
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
         }
 
+        // 토큰이 없든 말든 반드시 다음 필터로 넘기기
         filterChain.doFilter(request, response);
     }
 
-    // ✅ 로그인/회원가입 요청은 필터 제외
+    // ✅ 로그인 및 회원가입 요청은 필터 제외
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
