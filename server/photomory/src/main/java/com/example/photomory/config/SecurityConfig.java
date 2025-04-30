@@ -31,7 +31,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> {}) // CORS는 WebMvcConfigurer에서 설정
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // 모든 요청에 대해 인증 없이 접근 허용
+                        .requestMatchers("/login", "/signup", "/public/**").permitAll() // 여기는 토큰 없이 허용
+                        .anyRequest().authenticated() // 그 외는 인증 필요
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
