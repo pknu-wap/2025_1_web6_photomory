@@ -11,6 +11,12 @@ import MyAlbumPage from "./page/MyAlbumPage.js";
 import MyAlbumDetailPage from "./page/MyAlbumDetailPage.js";
 import SignupConfirmPage from "./page/SignupConfirmPage.js";
 function App() {
+  // const handleLogin = (userName) => {
+  //   setIsLogged(true);
+  //   setName(userName);
+  //   localStorage.setItem('isLogged', 'true');
+  //   localStorage.setItem('userName', userName);
+  // };
   return (
     <Router>
       <Routes>

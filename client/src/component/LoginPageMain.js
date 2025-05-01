@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 
 async function loginUser(email,password) {
     try {
-    const response = await fetch('http://3.38.237.115:8080/api/auth/login', {
+    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ async function loginUser(email,password) {
     const data = await response.json(); //서버로부터 받은 json 응답 처리리
     const accessToken = data.accessToken;
     const refreshToken = data.refreshToken; 
-    const user = data.user; //user로 주나..?
+    const user = data.user; 
     if (!accessToken || !refreshToken || !user) {
         throw new Error('응답에 토큰 또는 사용자 정보가 없습니다.')
     }

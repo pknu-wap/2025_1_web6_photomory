@@ -3,17 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../assets/photomory_logo.svg';
 import { faGear, faBell } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import LoginPageMain from './LoginPageMain';
 
-function Header({isLogged, setIsLogged}){
+function Header({isLogged, name }){ //로그인에서 받기
     const nav = useNavigate();
     const onclickHandle = (event) => {
         nav(event.target.value);
-    };
-    const handleLogout = () => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        setIsLogged(false); // 로그인 상태 해제
-        nav('/'); // 홈으로 이동
     };
 
     return(
@@ -47,18 +42,20 @@ function Header({isLogged, setIsLogged}){
                 <div className={styles.headerContainerRight}>
                     {isLogged ? (
                         <>
-                            <button className={styles.welcomeButton}>
+                            <div className={styles.welcomeButton}>
                                 <img src='#' alt='#' 
                                 className={styles.image}/>
-                                <span className={styles.welcome}>님, 반갑습니다!</span>
-                            </button>
-                            <button className={styles.myInfoButton}>
+                                <span className={styles.welcome}>{name}님, 반갑습니다!</span>
+                            </div>
+                            <button className={styles.myInfoButton}
+                            onClick={onclickHandle}
+                            value='/profile'>
                                 <FontAwesomeIcon icon={faGear} className={styles.gearIcon}/>
-                                <span className={styles.myInfo}>프로필</span>
                             </button>
-                            <FontAwesomeIcon icon={faBell} />
+                            <FontAwesomeIcon icon={faBell} 
+                            className={styles.bellIcon} /> {/*알람 추후*/}
                         </>
-                    ) : (
+                        ) : (
                         <>
                             <button className={styles.signIn}
                             onClick={onclickHandle}

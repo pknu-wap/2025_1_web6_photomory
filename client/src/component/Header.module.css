@@ -81,3 +81,13 @@ button{
 .signUp:hover{
     box-shadow: rgba(100, 100, 100, 0.2) 0px 0px 10px 3px;
 }
+.welcome,
+.gearIcon,
+.bellIcon{
+    color: rgb(100,100,100);
+    font-size: 14px;
+}
+.gearIcon,
+.bellIcon{
+    font-size: 16px;
+}

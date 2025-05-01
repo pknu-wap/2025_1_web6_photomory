@@ -3,6 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faLock, faTrophy, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import logo from "../assets/photomory_logo.svg"
+import image1 from '../assets/mainPageImage1.svg'
+import image2 from '../assets/mainPageImage2.svg'
+import image3 from '../assets/mainPageImage3.svg'
+import image4 from '../assets/mainPageImage4.svg'
 
 
 
@@ -32,8 +36,8 @@ function MainPageMain() {
                 <p className={styles.myMemoryText}>my memory</p>
                 <p className={styles.myMemoryExplain}>나만 볼 수 있는 특별한 순간을 안전하게 보관하세요</p>
                 <div className={styles.myMemoryImageContainer}>
-                    <img src={logo} alt="" className={styles.myMemoryImage1}></img>
-                    <img src={logo} alt="" className={styles.myMemoryImage2}></img>
+                    <img src={image1} alt="" className={styles.myMemoryImage1}></img>
+                    <img src={image2} alt="" className={styles.myMemoryImage2}></img>
                 </div>
             </div>
             <div className={styles.ourMemoryContainer}
@@ -43,8 +47,8 @@ function MainPageMain() {
                 <p className={styles.ourMemoryText}>our memory</p>
                 <p className={styles.ourMemoryExplain}>특별한 순간을 다른 사람들과 함께 나누고 소통하세요</p>
                 <div className={styles.ourMemoryImageContainer}>
-                    <img src={logo} alt="" className={styles.ourMemoryImage1}></img>
-                    <img src={logo} alt="" className={styles.ourMemoryImage2}></img>
+                    <img src={image3} alt="" className={styles.ourMemoryImage1}></img>
+                    <img src={image4} alt="" className={styles.ourMemoryImage2}></img>
                 </div>
             </div>
             <div className={styles.weeklyMemoryTitleContainer}>
