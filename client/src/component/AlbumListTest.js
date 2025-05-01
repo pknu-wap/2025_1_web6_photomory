@@ -7,7 +7,6 @@ import "./AlbumList.css";
 function AlbumListTest({ albums }) {
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
   const albumsPerPage = 4; //한 페이지당 앨범 갯수
-  console.log("albums:", albums);
   // 전체 페이지 수 계산
   const totalPages = Math.ceil(albums.length / albumsPerPage);
 
