@@ -1,6 +1,8 @@
+const BASE_URL = process.env.REACT_APP_API_URL;
+
 async function signupUser(data) {
   try {
-    const response = await fetch("http://3.38.237.115:8080/api/auth/register", {
+    const response = await fetch(`${BASE_URL}/api/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
