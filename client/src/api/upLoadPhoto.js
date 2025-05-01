@@ -3,7 +3,6 @@ export async function uploadPhoto(formData) {
     //토큰 가져오기
     const token = localStorage.getItem("accessToken");
 
-    console.log(token);
     const response = await fetch("http://3.38.237.115:8080/api/images/upload", {
       method: "POST",
       headers: {
