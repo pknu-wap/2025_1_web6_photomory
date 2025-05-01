@@ -1,0 +1,17 @@
+.footerContainer{
+    background-color: #f2f3f4;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+}
+
+.footerLogo{
+    margin-right: 40px;
+}
+
+.footerText{
+    font-size: 12px;
+}

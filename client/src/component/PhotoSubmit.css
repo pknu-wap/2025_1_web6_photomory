@@ -1,0 +1,141 @@
+.photoSubmitContainer {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  height: 395px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.1),
+    0px 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.photoSubmitTitle {
+  margin-bottom: 16px;
+}
+
+.photoSubmitForm {
+  width: 1008px;
+  height: 246px;
+}
+
+.uploadLabel {
+  position: relative;
+  display: inline-block;
+  width: 1008px;
+  height: 132px;
+  border-radius: 8px;
+  border: 2px dashed #d1d5db;
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: 24px;
+  background-color: #ffffff;
+  transition: background-color 0.2s ease;
+}
+
+.uploadLabel:hover {
+  background-color: rgba(0, 0, 0, 0.04); /* 살짝 어둡게 */
+}
+
+.uploadInput {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+
+.uploadPlaceholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.uploadIcon {
+  width: 48px;
+  height: 48px;
+}
+
+.uploadText {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 20px;
+}
+
+.strongUploadText {
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  color: #000000;
+}
+
+.selectedFileName {
+  font-size: 14px;
+  color: #374151;
+  margin-top: 8px;
+}
+
+.inputFields {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.inputLabel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  height: 57px;
+}
+
+.textInput {
+  height: 34.4px;
+  border-radius: 8px;
+  border: 1px solid #6b7280;
+  padding: 8px 12px;
+  font-size: 14px;
+  outline: none;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.cancelButton {
+  width: 63.45px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0);
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.submitButton {
+  width: 88.17px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background: #000000;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 16px;
+}

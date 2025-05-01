@@ -1,0 +1,80 @@
+.signupWrapper {
+  margin-top: 39px;
+}
+
+.signupContainer {
+  width: 448px;
+  margin: 0 auto 64px;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  padding: 32px 0px 32px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.1),
+    0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+.signupTitle {
+  margin: 0 auto 32px;
+}
+
+.signupForm {
+  display: flex;
+  flex-direction: column;
+  margin: 0 32px;
+}
+
+.signupLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 15px;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.signupLabel p {
+  margin: 0px;
+}
+
+.signupSubLabel {
+  margin: 0 0 5px;
+}
+
+.signupSelect,
+.signupInput {
+  margin-bottom: 4px;
+  width: 384px;
+  height: 42px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+.signupIntro {
+  margin-bottom: 26px;
+}
+
+.signupButton {
+  width: 384px;
+  height: 48px;
+  border-radius: 6px;
+  padding: 12px auto;
+  color: #ffffff;
+  background: #000000;
+  cursor: pointer;
+}
+
+.signupLoginNotice {
+  margin: 16px auto 0px;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 20px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.signupLoginLink {
+  color: #000000;
+  cursor: pointer;
+}
