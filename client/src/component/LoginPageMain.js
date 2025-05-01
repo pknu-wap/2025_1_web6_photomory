@@ -9,10 +9,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import logo from "../assets/photomory_logo.svg";
 
+const BASE_URL = process.env.REACT_APP_API_URL;
+
 // loginUser.js (API 요청 함수)
 export async function loginUser(email, password, navigate) {
+  console.log(BASE_URL);
   try {
-    const response = await fetch("http://3.38.237.115:8080/api/auth/login", {
+    const response = await fetch(`${BASE_URL}/api/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -36,8 +39,6 @@ export async function loginUser(email, password, navigate) {
 
     localStorage.setItem("accessToken", data.accessToken);
     localStorage.setItem("refreshToken", data.refreshToken);
-    console.log("✅ accessToken:", localStorage.getItem("accessToken"));
-    console.log("✅ refreshToken:", localStorage.getItem("refreshToken"));
 
     navigate("/Loged", {
       state: {

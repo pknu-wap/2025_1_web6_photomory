@@ -1,9 +1,11 @@
+const BASE_URL = process.env.REACT_APP_API_URL;
+
 export async function uploadPhoto(formData) {
   try {
     //토큰 가져오기
     const token = localStorage.getItem("accessToken");
 
-    const response = await fetch("http://3.38.237.115:8080/api/images/upload", {
+    const response = await fetch(`${BASE_URL}/api/images/upload`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
