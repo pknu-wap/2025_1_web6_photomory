@@ -23,7 +23,7 @@ async function loginUser(email,password) {
         throw new Error('이메일 또는 비밀번호가 잘못되었습니다.');
     }
 
-    const data = await response.json(); //서버로부터 받은 json 응답 처리리
+    const data = await response.json(); //서버로부터 받은 json 응답 처리
     const accessToken = data.accessToken;
     const refreshToken = data.refreshToken; 
     const user = data.user; 
@@ -43,12 +43,11 @@ async function loginUser(email,password) {
     }
 }
 
-export default function LoginPageMain() {
+export default function LoginPageMain({ setIsLogged, setName }) {
     const [ email, setEmail] = useState('')
     const [ pw, setPw] = useState('')
     const [ error, setError] = useState();
     const [ isLoading , setIsLoading] = useState(false)
-    const [isLogged, setIsLogged] = useState(false)
     const navigate = useNavigate();
     const focusEmailRef = useRef();
     const focusPwRef = useRef();
@@ -74,16 +73,14 @@ export default function LoginPageMain() {
                 setError('비밀번호를 입력해주세요.')
                 return;
             }
-            
             const user = await loginUser(email, pw);
-            if (user) { //로그인 성공
+            if (user) { //로그인 성공(따로 프롭스 줄 거 있음 여기서 설정 ㄱㄱ)
                 setIsLogged(true)
+                setName(user.userName)
                 navigate('/Loged', {
                 state: {
                 name: user.userName,
                 id: user.userEmail, //id는 이메일과 동일
-                
-
                 }
                 //여기에 내 정보 제이슨=user로 하기 지금 그 파일 추가하면 머지하다가 오류남
             });

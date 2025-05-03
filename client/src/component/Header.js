@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../assets/photomory_logo.svg';
 import { faGear, faBell } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import LoginPageMain from './LoginPageMain';
+
 
 function Header({isLogged, name }){ //로그인에서 받기
     const nav = useNavigate();

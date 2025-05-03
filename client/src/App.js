@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainPage from "./page/MainPage.js";
 import LoginPage from "./page/LoginPage.js";
@@ -11,17 +12,17 @@ import MyAlbumPage from "./page/MyAlbumPage.js";
 import MyAlbumDetailPage from "./page/MyAlbumDetailPage.js";
 import SignupConfirmPage from "./page/SignupConfirmPage.js";
 function App() {
-  // const handleLogin = (userName) => {
-  //   setIsLogged(true);
-  //   setName(userName);
-  //   localStorage.setItem('isLogged', 'true');
-  //   localStorage.setItem('userName', userName);
-  // };
+  const [isLogged, setIsLogged] = useState(false);
+  const [name, setName] = useState("");
+
   return (
     <Router>
       <Routes>
         <Route path="/" element={<MainPage />} />
-        <Route path="/Login" element={<LoginPage />} />
+        <Route
+          path="/Login"
+          element={<LoginPage isLogged={isLogged} setIsLogged={setIsLogged} name={name} setName={setName} />}
+        />
         <Route path="/Loged" element={<Loged />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/Signup" element={<SignupPage />} />
