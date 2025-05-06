@@ -1,9 +1,8 @@
 .myInfoContainer{
-    background-color: #f2f3f4;
+    background-color: white;
     margin-top: 15px;
     width: clamp(600px, 70%, 1000px);
     height: auto;
-    border: 1px solid black;
     border-radius: 7px;
     display: flex;
     flex-direction: column;
@@ -125,17 +124,15 @@
     margin-top: 100px;
 }
 .manageFriendContainer{
-    background-color: #f2f3f4;
+    background-color: white;
     width: clamp(600px, 70%, 1000px);
     display: flex;
     flex-direction: row;
-    border: 1px solid black;
     border-radius: 7px;
     justify-content: center;
 }
 .myFriendsListContainer{
     margin: 15px;
-    border: 1px solid black;
     border-radius: 7px;
     width: 50%;
 }
@@ -146,7 +143,6 @@
 .searchFriendContainer{
     width: 50%;
     margin: 15px 15px 15px 30px;
-    border: 1px solid black;
     border-radius: 7px;
 }
 .searchMyFriendTop{

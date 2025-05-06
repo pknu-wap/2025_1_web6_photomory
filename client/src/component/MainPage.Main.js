@@ -21,14 +21,7 @@ function MainPageMain() {
 
     return (
         <div className={styles.mainContainer}>
-            <div className={styles.MainLogoContainer}>
-                <div className={styles.logo}>
-                    logo
-                </div>
-                <p className={styles.photomory}>
-                    photomory
-                </p>
-            </div>
+            <img src={logo} alt="PHOTOMORY" className={styles.mainLogo}></img>
             <div className={styles.myMemoryContainer}
             onClick={onClickHandle}
             data-value='/myMemory'>
@@ -113,7 +106,7 @@ function MainPageMain() {
                 <div className={styles.morePicture}
                 onClick={onClickHandle}
                 data-value='/everyMemory'>
-                        every memory
+                        모두의 추억
                 </div>
             </div>
         </div>

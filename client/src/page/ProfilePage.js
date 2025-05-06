@@ -8,7 +8,7 @@ function ProfilePage() {
     <div className={styles.pageContainer}>
       <Header />
       <ProfileMain />
-      <Footer />
+      <Footer className={styles.footer}/>
     </div>
   );
 }

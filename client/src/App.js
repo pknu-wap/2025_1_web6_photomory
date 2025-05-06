@@ -27,9 +27,9 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/Signup" element={<SignupPage />} />
         <Route path="/Signup/Confirm" element={<SignupConfirmPage />} />
-        <Route path="/my-album" element={<MyAlbumPage />} />
+        <Route path="/myMemory" element={<MyAlbumPage />} />
         <Route path="/my-album/:albumId" element={<MyAlbumDetailPage />} />
-        <Route path="/our-album" element={<OurAlbumPageTest />} />
+        <Route path="/ourMemory" element={<OurAlbumPageTest />} />
         <Route path="/our-album/groupEdit" element={<GroupEditPage />} />
         <Route
           path="/our-album/:albumId"
