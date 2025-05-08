@@ -11,6 +11,8 @@ import SignupPage from "./page/SignupPage";
 import MyAlbumPage from "./page/MyAlbumPage.js";
 import MyAlbumDetailPage from "./page/MyAlbumDetailPage.js";
 import SignupConfirmPage from "./page/SignupConfirmPage.js";
+import EveryMemoryPage from './page/EveryMemoryPage.js'
+
 function App() {
   const [isLogged, setIsLogged] = useState(false);
   const [name, setName] = useState("");
@@ -35,6 +37,7 @@ function App() {
           path="/our-album/:albumId"
           element={<OurAlbumDetailPageTest />}
         />
+        <Route path="/everyMemory" element={<EveryMemoryPage />} />
       </Routes>
     </Router>
   );

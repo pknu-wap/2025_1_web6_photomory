@@ -1,0 +1,281 @@
+.mainContainer{
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: repeat(8, fit-content);
+    margin: 10px 40px;
+}
+
+.weeklyTagCamera{
+    width: 20px;
+    height: 20px;
+}
+.weeklyTag{
+    font-weight: 700;
+}
+.weeklyTagText{
+    font-size: clamp(26px, 4vw, 30px);
+    margin: 0 0 0 5px;
+}
+.forFlexTagBox{
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+.tagBox{
+    border: 1px solid black;
+    width: fit-content;
+    border-radius: 20px;
+    padding: 0 10px;
+    margin: 10px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: black;
+}
+.tagBoxLandscape{
+    width: clamp(18px, 3.5vw, 24px);
+    height: clamp(18px, 3.5vw, 24px);
+}
+
+.tagBoxLandscape path {
+    fill: #00ff00 !important;
+}
+
+.tagBoxText{
+    font-weight: 700;
+    font-size: clamp(18px, 3.5vw, 24px);
+    margin-left: 5px;
+}
+
+.forFlexweeklyTag1{
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    flex-wrap: wrap;
+    height: fit-content;
+    width: 100%;
+    justify-content: space-between;
+}
+@media (min-width: 1400px) {
+    .forFlexweeklyTag1 {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 1399px) and (min-width: 530px) {
+    .forFlexweeklyTag1 {
+        position: relative;
+        left: 50%;
+        transform: translate(-50%, 0);
+        width: 80%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 530px) {
+    .forFlexweeklyTag1 {
+        justify-content: center;
+    }
+}
+
+.weeklyTagContainer{
+    width: clamp(220px, 40vw, 430px);
+    aspect-ratio: 1/1;
+    border: 1px solid black;
+    border-radius: 10px;
+    background-color: white;
+}
+
+.weeklyTagImage{
+    width: 100%;
+    height: clamp(150px, 38vw, 300px);
+    border-bottom: 1px solid black;
+}
+.trophyIcon{
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+.weeklyTagNthPlace{
+    font-weight: 700;
+    font-size: 24px;
+    display: inline-block;
+    transform: translate(0,-15%);
+}
+.weeklyTagAlbumName{
+    display: inline-block;
+    transform: translate(0,-15%);
+    font-weight: 700;
+    font-size: 20px;
+}
+.forFlexUserInfo{
+    display: flex;
+    flex-direction: row;
+}
+.userImage{
+    border: 1px solid black;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin: 0px 5px 5px 5px;
+}
+.userEmail{
+    display: inline-block;
+    padding-top: 8px;
+    font-weight: 500;
+}
+.forFlexweeklyTag2{
+    display: flex;
+    flex-direction: row;
+    margin: 5px 0px 10px 5px;
+}
+
+.heartContainer{
+    background-color: #FEF2F2;
+    border-radius: 20px;
+    padding: 4px 7px 4px 7px;
+    margin-right: 15px;
+}
+.commentContainer{
+    background-color: rgb(235,235,235);
+    border-radius: 20px;
+    padding: 4px 7px 4px 7px;
+}
+.heartIcon{
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+.commentIcon{
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+.heartNum{
+    display: inline-block;
+    transform: translate(0,-15%);
+    color: #EF4444;
+}
+.commentNum{
+    display: inline-block;
+    transform: translate(0,-15%);
+}
+.twinkleIcon{
+    width: 40px;
+    height: 40px;
+}
+.todayTag{
+    display: inline-block;
+    transform: translate(0, -25%);
+    font-weight: 700;
+    font-size: 24px;
+}
+.todayTagAllContainer{
+    display: grid;
+    width: 100%;
+    height: fit-content;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3,1fr);
+    gap: 20px;
+    box-sizing: border-box;
+}
+@media (max-width: 1090px){
+    .todayTagAllContainer{
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+    }
+}
+.todayTagContainer {
+    width: 100%;
+    height: clamp(150px, 20vw, 200px); 
+    box-sizing: border-box; 
+    border: 1px solid black;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    background-color: white;
+
+}
+.todayTagImage{
+    height: 100%;
+    width: clamp(150px, 20vw, 200px);
+    border-right: 1px solid black;
+    flex: none;
+}
+.forFlexTodayTag1{
+    flex: 1;
+    margin: 5px 15px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.forFlexTodayTag2 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+.todayTagImageName {
+    font-weight: 700;
+    font-size: 20px;
+    flex: 1;
+}
+.view{
+    font-size: 14px;
+    color: #6B7280;
+}
+.todayTagExplain{
+    color: #4B5563;
+    margin-bottom: 10px;
+}
+.forFlexTodayTag3{
+    display: flex;
+    flex-direction: row;
+}
+.heartContainer,
+.commentContainer{
+    width: fit-content;
+} 
+.todayTagHeartIcon{
+    width: 20px;
+    height: 20px;
+}
+.todayTagCommentIcon{
+    width: 20px;
+    height: 20px;
+}
+.forFlexButton{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 30px 0;
+    gap: 10px;
+}
+.num1Icon,
+.num2Icon,
+.num3Icon,
+.num4Icon,
+.leftButton,
+.rightButton{
+    width: 40px;
+    height: 40px;
+    background-color: rgba(229, 231, 235, 1);
+    border-radius: 50%;
+    padding: 7px;
+}
+.postImageIconOutter,
+.postImageIconInner,
+.cloudIcon{
+    width: 20px;
+    height: 20px;
+}
+.twinkleIcon2{
+    width: 40px;
+    height: 40px;
+}

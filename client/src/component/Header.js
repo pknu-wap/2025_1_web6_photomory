@@ -29,7 +29,7 @@ function Header({isLogged, name }){ //로그인에서 받기
                         </button>
                         <button className={styles.ourMemory}
                         onClick={onclickHandle}
-                        value='/our-album'>
+                        value='/ourMemory'>
                             우리의 추억
                         </button>
                         <button className={styles.everyMemory}
