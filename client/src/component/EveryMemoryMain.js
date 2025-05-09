@@ -12,12 +12,69 @@ import camera from '../assets/camera.svg'
 import landscape from '../assets/landscape.svg'
 import cloud from '../assets/cloud.svg'
 import twinkle from '../assets/twinkle.svg'
+async function getAuthToken(email, password) {
+try {
+    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password }),
+    });
 
+    if (!response.ok) {
+    throw new Error(`Authentication failed! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.accessToken;
+} catch (error) {
+    console.error('Error getting auth token:', error);
+    return null;
+}
+}
+
+async function fetchPostData(post_Id, token) {
+try {
+    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}`, {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+    },
+    });
+
+    if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+} catch (error) {
+    console.error('Error fetching post data:', error);
+    return null;
+}
+}
+
+async function displayPostData(post_Id, email, password) {
+  // 1. 토큰 요청
+    const token = await getAuthToken(email, password);
+    if (!token) {
+    console.log('Failed to authenticate.');
+    return;
+}
+  // 2. 게시물 데이터 요청
+    const postData = await fetchPostData(post_Id, token);
+    if (postData) {
+    console.log('Fetched Post Data:', postData);
+} else {
+    console.log('Failed to fetch post data.');
+}
+}
 
 
 export default function EveryMemoryMain(){
         return (
-        /* 이번 주의 컨테이너, 하트 박스, 코멘트 클래스 공유 */
         <div>
             <div className={styles.mainContainer}>
                 <p className={styles.weeklyTag}>
@@ -257,22 +314,20 @@ export default function EveryMemoryMain(){
                 </div>
                 <div className={styles.postImageContainerOutter}>
                     <img src={camera} alt='' className={styles.postImageIconOutter}></img>
-                    <span className={styles.postImageTextOutter}>사진 올리기</span>
+                    <span className={styles.postImageTextOutter}>#사진 올리기</span>
                 </div>
                 <div className={styles.postImageContainerInner}>
-                    <span className={styles.postImageTextInner}>
-                        <img src={camera} alt='' className={styles.postImageIconInner}></img>
-                        새로운 풍경 사진 업로드
-                    </span>
+                    <img src={camera} alt='' className={styles.postImageIconInner}></img>
+                    <span className={styles.postImageTextInner}>새로운 풍경 사진 업로드</span>
                     <div className={styles.postImageToolContainer}>
                         <img src={cloud} alt='' className={styles.cloudIcon}></img>
-                        <p className={styles.postImageToolText}>이곳을 클릭하거나 사진을 드래그하여 업로드하세요</p>
+                        <p className={styles.postImageToolText}>이곳을 클릭하거나 사진을 드래그하여 업로드하세요.</p>
                         <p className={styles.ImageInfo}>지원 형식: JPG, PNG, HEIC / 최대 파일 크기: 20MB</p>
                     </div>
                     <p className={styles.postImageTitle}>제목</p>
                     <input className={styles.inputTitle} 
                     placeholder='예: 제주도 성산일출봉의 아름다운 일출'></input>
-                    <p className={styles.postImageExplain}></p>
+                    <p className={styles.postImageExplain}>설명</p>
                     <textarea className={styles.inputExplain} 
                     placeholder='사진에 담긴 이야기나 촬영 시 느낀 감정을 자류롭게 작성해주세요.'></textarea>
                     <p className={styles.postImageLocation}>위치</p>
@@ -283,7 +338,7 @@ export default function EveryMemoryMain(){
                             <img src={twinkle} alt='' className={styles.twinkleIcon2}></img>
                             <span className={styles.upLoadImageText}>사진 업로드하기</span>
                         </button>
-                        <button className={styles.cancleButton}>취속하기</button>
+                        <button className={styles.cancleButton}>취소하기</button>
                     </div>
                 </div>
             </div>
