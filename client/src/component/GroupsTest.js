@@ -18,8 +18,10 @@ function GroupsTest({ groupList, selectedGroupId }) {
     <div className="allGroupCard">
       <div className="titleManagement">
         <h3>그룹 관리</h3>
-        {/*TODO: 동적경로 변경 필요(그룹인원 관리페이지 이동)*/}
-        <Link to="/our-album/groupEdit" style={{ display: "inline-block" }}>
+        <Link
+          to={`/our-album/${selectedGroupId}/groupEdit`}
+          style={{ display: "inline-block" }}
+        >
           <img src={GroupControlButton} alt="GroupControlButton" />
         </Link>
       </div>

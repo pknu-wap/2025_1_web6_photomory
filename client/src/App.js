@@ -27,7 +27,10 @@ function App() {
           path="/our-album/:groupId/:albumId"
           element={<OurAlbumDetailPageTest />}
         />
-        <Route path="/our-album/groupEdit" element={<GroupEditPage />} />
+        <Route
+          path="/our-album/:groupId/groupEdit"
+          element={<GroupEditPage />}
+        />
       </Routes>
     </Router>
   );

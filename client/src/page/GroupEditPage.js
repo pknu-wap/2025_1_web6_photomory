@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { getMyGroupById } from "../api/getMyGroupById";
 import { getFriends } from "../api/getFriends";
 import GroupEditor from "../component/GroupEditor";
+import { useParams } from "react-router-dom";
 
 function GroupEditPage() {
+  const { groupId } = useParams(); //GroupId 불러오기
   const [friends, setFriends] = useState([]); //친구 목록 배열 원본
   const [filteredFriends, setFilteredFriends] = useState([]); // 검색 결과 상태 추가
   const [groupName, setGroupName] = useState(""); //그룹명
@@ -16,12 +18,12 @@ function GroupEditPage() {
       setFilteredFriends(myFriends); // 초기에는 전체 친구를 보여줌
     }
 
-    const myGroup = getMyGroupById(1); // 임시로 groupId 1로 고정
+    const myGroup = getMyGroupById(Number(groupId)); // 현재 선택된 그룹 Id로 맴버 불러오기기
     if (myGroup) {
       setGroupName(myGroup.groupName);
       setAddedMembers(myGroup.members);
     }
-  }, []);
+  }, [groupId]); //groupId가 바뀔때 마다 다시 불러오기
 
   //친구 검색 핸들러
   const handleFriendSearch = (keyword) => {
