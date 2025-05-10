@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import AlbumTitleListTest from "./AlbumTitleListTest";
 import addAlbumButton from "../assets/addAlbumButton.svg";
 import "./AddAlbum.css";
+
+const MAX_ALBUM_COUNT = 7; //최대 앨범 갯수
+
 //앨범 추가 컴포넌트
 function AddAlbumTest({
   type = "", //private | group
@@ -53,7 +56,7 @@ function AddAlbumTest({
         : albumTitles.length;
 
     // 최대 7개 제한
-    if (currentAlbumCount >= 7) {
+    if (currentAlbumCount >= MAX_ALBUM_COUNT) {
       alert("❗앨범은 최대 7개까지 생성할 수 있습니다.");
       return;
     }
