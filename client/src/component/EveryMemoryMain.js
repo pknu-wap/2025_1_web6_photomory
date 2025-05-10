@@ -12,75 +12,109 @@ import camera from '../assets/camera.svg'
 import landscape from '../assets/landscape.svg'
 import cloud from '../assets/cloud.svg'
 import twinkle from '../assets/twinkle.svg'
-async function getAuthToken(email, password) {
-try {
-    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}`, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email, password }),
-    });
+import { useState, useEffect } from 'react'
 
-    if (!response.ok) {
-    throw new Error(`Authentication failed! status: ${response.status}`);
+async function fetchUserposts(accessToken) {
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/user/posts`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            if (response.status===401) {
+                throw new Error('Unauthorized'); //토큰 말료
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const posts = await response.json();
+        return posts;
+    } catch (error) {
+        console.error('Error fetching user posts:', error);
+        throw error;
     }
-
-    const data = await response.json();
-    return data.accessToken;
-} catch (error) {
-    console.error('Error getting auth token:', error);
-    return null;
-}
 }
 
-async function fetchPostData(post_Id, token) {
-try {
-    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}`, {
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-    },
-    });
+async function refreshAccessToken(refreshToken) {
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/refresh-token`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({refreshToken})
+        });
 
-    if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`Token refredh failed status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.accessToken;
     }
-
-    const data = await response.json();
-    return data;
-} catch (error) {
-    console.error('Error fetching post data:', error);
-    return null;
-}
+    catch (error) {
+        console.error('Error fetching token:', error);
+        return null;
+    }
 }
 
-async function displayPostData(post_Id, email, password) {
-  // 1. 토큰 요청
-    const token = await getAuthToken(email, password);
-    if (!token) {
-    console.log('Failed to authenticate.');
-    return;
-}
-  // 2. 게시물 데이터 요청
-    const postData = await fetchPostData(post_Id, token);
-    if (postData) {
-    console.log('Fetched Post Data:', postData);
-} else {
-    console.log('Failed to fetch post data.');
-}
+async function getUserPosts() {
+    let accessToken= localStorage.getItem('accessToken');
+    const refreshToken= localStorage.getItem('refreshToken');
+    try{
+        const posts = await fetchUserposts(accessToken)
+        return posts
+    }
+    catch (error){
+        if (error.message === 'Unauthorized' && refreshToken) { //리프토큰 없으면 요청 안 되게게
+            accessToken=await refreshAccessToken(refreshToken);
+            if (accessToken) {
+                localStorage.setItem('accessToken', accessToken);
+                const posts = await fetchUserposts(accessToken);
+                return posts
+            }
+        }
+        console.log('Failed to fetch user posts')
+        return null
+    }
 }
 
 
 export default function EveryMemoryMain(){
+    const [posts, setPosts] = useState([])
+    const [error, setError] = useState();
+
+    useEffect(()=>{ //근데 여기선 try를 안 써도 되나?
+        async function fetchPosts(){
+            try{
+                const posts = await getUserPosts();
+                if (posts) {
+                    setPosts(posts);
+                }
+                else{
+                    setError('데이터를 불러오지 못했습니다.')
+                }
+            }
+            catch (error){
+                console.error('Error in fetchPosts', error)
+                setError('서버 오류가 발생했습니다. 나중에 다시 시도해주세요.')
+            }
+        }
+        fetchPosts();
+    }, [])
+
         return (
         <div>
             <div className={styles.mainContainer}>
+                {error && <p className={styles.error}>{error}</p>}
                 <p className={styles.weeklyTag}>
                     <img src={camera} alt='' className={styles.weeklyTagCamera}></img>
                     <span className={styles.weeklyTagText}>
-                        오늘의 태그 #풍경{/* 태그 받기 */} - 이달의 인기 풍경{/* 태그 받기 */} 사진 갤러리
+                        오늘의 태그 #{}{/* 태그 받기 */} - 이달의 인기 풍경{/* 태그 받기 */} 사진 갤러리
                     </span>
                 </p>
                 <div className={styles.forFlexTagBox}>
@@ -91,25 +125,26 @@ export default function EveryMemoryMain(){
                 </div>
                 <div className={styles.forFlexweeklyTag1}>
                     <div className={styles.weeklyTagContainer}>
-                        <div className={styles.weeklyTagImage}></div>
-                        <img src={trophy} alt='' className={styles.trophyIcon}></img>
+                        <div className={styles.weeklyTagImage}
+                        style={{backgroundImage:`url(${posts.photo_url}})`}}></div> {/*여기서 벡엔드가 좋아요 수에 따라 처리하고 순서 대로 보내주나? 그럼 이건 [0]처럼 순서로 선택하면 되는데 뭔가 말을 맞춰야 함. */}
+                        <img src={trophy} alt='' className={styles.trophyIcon}></img>{/*그리고 목데이터에서 처음 저 사진도 배열이겠지?*/}
                         <div className={styles.weeklyTagNthPlace}>1등:</div>
-                        <div className={styles.weeklyTagAlbumName}>&nbsp;봄날의 벚꽃{/*앨범 이름 받기*/}</div>
+                        <div className={styles.weeklyTagAlbumName}>&nbsp;{posts.post_text}{/*앨범 이름 받기*/}</div>
                         <div className={styles.forFlexUserInfo}>
-                            <div className={styles.userImage}>{/*사진 받기*/}</div>
-                            <div className={styles.userEmail}>kdw061224{/*아이디 받기*/}</div>
+                            <div className={styles.userImage}>{posts.user_image}{/*사진 받기*/}</div>
+                            <div className={styles.userEmail}>{posts.user_id}{/*아이디 받기? 아이딘지 이메일인지 잘 모르겠음*/}</div>
                         </div>
                         <div className={styles.forFlexweeklyTag2}>
                             <div className={styles.heartContainer}>
                                 <img src={heart} alt='' className={styles.heartIcon}></img>
                                 <p className={styles.heartNum}>
-                                    999{/*하트 갯수 받기*/}
+                                    {posts.likes_count}{/*하트 갯수 받기*/}
                                 </p>
                             </div>
                             <div className={styles.commentContainer}>
                                 <img src={comment} alt='' className={styles.commentIcon}></img>
                                 <p className={styles.commentNum}>
-                                    999{/*댓글 갯수 받기*/}
+                                    {posts.comments_count}{/*댓글 갯수 받기*/}
                                 </p>
                             </div>
                         </div>
