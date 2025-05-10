@@ -85,15 +85,26 @@ async function getUserPosts() {
 
 
 export default function EveryMemoryMain(){
-    const [posts, setPosts] = useState([])
+    const [posts, setPosts] = useState([]) //모든 태그의 포스트 중 좋아요 순을 위한
     const [error, setError] = useState();
-
-    useEffect(()=>{ //근데 여기선 try를 안 써도 되나?
+    const [randomTagText, setRandomTagText] = useState();
+    const [randomPosts, setRandomPosts]= useState(['oh god!']); //랜덤 태그에 해당하는 포스트 중 좋아요 순을 위한
+                                                    // 지금은 undefined가 뜨기에 일단 해둠
+    useEffect(()=>{
         async function fetchPosts(){
             try{
                 const posts = await getUserPosts();
-                if (posts) {
-                    setPosts(posts);
+                if (posts && Array.isArray(posts)) {
+                    const sortedPosts = posts.sort((a,b)=>b.likes_count-a.likes_count);
+                    setPosts(sortedPosts); // 태그 상관 없이 좋아요 내림차순으로 posts 객체 정리
+                    const allTag=[...new Set(posts.flatMap((post)=>post.tags))] //중복 없는 하나의 배열로 만들기
+                    if (allTag.length>0) {
+                        const randomIndex = Math.floor(Math.random()*allTag.length); //0이상 allTag.length이하의 난수 생성
+                        setRandomTagText(allTag[randomIndex])
+                        console.log('selected tag:', allTag[randomIndex])
+                        const filteredPosts= sortedPosts.filter((post)=>(post.tags || []).includes(allTag[randomIndex]));
+                        setRandomPosts(filteredPosts);
+                    }
                 }
                 else{
                     setError('데이터를 불러오지 못했습니다.')
@@ -105,7 +116,15 @@ export default function EveryMemoryMain(){
             }
         }
         fetchPosts();
-    }, [])
+    }, []);
+    const weeklyPosts= randomPosts.slice(0,3); //아 여기선 먼저 useState([])에서[]로 됐다가 다시 비동기로 값을 받는다 usestate에서 useState() 그냥 이렇게 하면 비동기라서 이 코드가 먼저 실행될 떄 undefined가 떠서 타입 오류가 뜬다. slice는 undefined이면 오류가 뜬다. 따라서 []을 쓴다. 그 후 값이 들어온다.
+    console.log(weeklyPosts)
+
+    const dailyPosts = posts.filter(
+        (post)=>!post.post_id=== weeklyPosts.post_id
+    )
+
+
 
         return (
         <div>
@@ -114,87 +133,92 @@ export default function EveryMemoryMain(){
                 <p className={styles.weeklyTag}>
                     <img src={camera} alt='' className={styles.weeklyTagCamera}></img>
                     <span className={styles.weeklyTagText}>
-                        오늘의 태그 #{}{/* 태그 받기 */} - 이달의 인기 풍경{/* 태그 받기 */} 사진 갤러리
+                        오늘의 태그 #{randomTagText} - 주간 인기 {randomTagText} 사진 갤러리
                     </span>
                 </p>
                 <div className={styles.forFlexTagBox}>
                     <div className={styles.tagBox}>
                         <img src={landscape} alt='' className={styles.tagBoxLandscape}></img>
-                        <span className={styles.tagBoxText}>#풍경{/* 태그 받기 */}</span>
+                        <span className={styles.tagBoxText}>#{randomTagText}</span>
                     </div>
                 </div>
                 <div className={styles.forFlexweeklyTag1}>
                     <div className={styles.weeklyTagContainer}>
                         <div className={styles.weeklyTagImage}
-                        style={{backgroundImage:`url(${posts.photo_url}})`}}></div> {/*여기서 벡엔드가 좋아요 수에 따라 처리하고 순서 대로 보내주나? 그럼 이건 [0]처럼 순서로 선택하면 되는데 뭔가 말을 맞춰야 함. */}
-                        <img src={trophy} alt='' className={styles.trophyIcon}></img>{/*그리고 목데이터에서 처음 저 사진도 배열이겠지?*/}
+                        style={{backgroundImage:`url(${weeklyPosts[0].photo_url})`}}></div>
+                        <img src={trophy} alt='' className={styles.trophyIcon}></img>
                         <div className={styles.weeklyTagNthPlace}>1등:</div>
-                        <div className={styles.weeklyTagAlbumName}>&nbsp;{posts.post_text}{/*앨범 이름 받기*/}</div>
+                        <div className={styles.weeklyTagAlbumName}>&nbsp;{weeklyPosts[0].post_text}{/*앨범 이름 받기*/}</div>
                         <div className={styles.forFlexUserInfo}>
-                            <div className={styles.userImage}>{posts.user_image}{/*사진 받기*/}</div>
-                            <div className={styles.userEmail}>{posts.user_id}{/*아이디 받기? 아이딘지 이메일인지 잘 모르겠음*/}</div>
+                            <div className={styles.userImage}
+                            style={{backgroundImage:`url(${weeklyPosts[0].user_photourl})`}}>{/*사진 받기*/}</div>
+                            <div className={styles.userName}>{weeklyPosts[0].user_name}{/*이름 받기? 아이딘지 이메일인지 잘 모르겠음*/}</div>
                         </div>
                         <div className={styles.forFlexweeklyTag2}>
                             <div className={styles.heartContainer}>
                                 <img src={heart} alt='' className={styles.heartIcon}></img>
                                 <p className={styles.heartNum}>
-                                    {posts.likes_count}{/*하트 갯수 받기*/}
+                                    {weeklyPosts[0].likes_count}{/*하트 갯수 받기*/}
                                 </p>
                             </div>
                             <div className={styles.commentContainer}>
                                 <img src={comment} alt='' className={styles.commentIcon}></img>
                                 <p className={styles.commentNum}>
-                                    {posts.comments_count}{/*댓글 갯수 받기*/}
+                                    {weeklyPosts[0].comments_count}{/*댓글 갯수 받기*/}
                                 </p>
                             </div>
                         </div>
                     </div>
                     {/*------*/}
                     <div className={styles.weeklyTagContainer}>
-                        <div className={styles.weeklyTagImage}></div>
+                        <div className={styles.weeklyTagImage}
+                        style={{backgroundImage:`url(${weeklyPosts[1].photo_url})`}}></div>
                         <img src={trophy} alt='' className={styles.trophyIcon}></img>
-                        <div className={styles.weeklyTagNthPlace}>2등</div>
-                        <div className={styles.weeklyTagAlbumName}>: 봄날의 벚꽃{/*앨범 이름 받기*/}</div>
+                        <div className={styles.weeklyTagNthPlace}>2등:</div>
+                        <div className={styles.weeklyTagAlbumName}>&nbsp;{weeklyPosts[1].post_text}{/*앨범 이름 받기*/}</div>
                         <div className={styles.forFlexUserInfo}>
-                            <div className={styles.userImage}>{/*사진 받기*/}</div>
-                            <div className={styles.userEmail}>kdw061224{/*아이디 받기*/}</div>
+                            <div className={styles.userImage}
+                            style={{backgroundImage:`url(${weeklyPosts[1].user_photourl})`}}>{/*사진 받기*/}</div>
+                            <div className={styles.userName}>{weeklyPosts[1].user_name}{/*이름 받기? 아이딘지 이메일인지 잘 모르겠음*/}</div>
                         </div>
                         <div className={styles.forFlexweeklyTag2}>
                             <div className={styles.heartContainer}>
                                 <img src={heart} alt='' className={styles.heartIcon}></img>
                                 <p className={styles.heartNum}>
-                                    999{/*하트 갯수 받기*/}
+                                    {weeklyPosts[1].likes_count}{/*하트 갯수 받기*/}
                                 </p>
                             </div>
                             <div className={styles.commentContainer}>
                                 <img src={comment} alt='' className={styles.commentIcon}></img>
                                 <p className={styles.commentNum}>
-                                    999{/*댓글 갯수 받기*/}
+                                    {weeklyPosts[1].comments_count}{/*댓글 갯수 받기*/}
                                 </p>
                             </div>
                         </div>
                     </div>
                     {/*------*/}
                     <div className={styles.weeklyTagContainer}>
-                        <div className={styles.weeklyTagImage}></div>
+                        <div className={styles.weeklyTagImage}
+                        style={{backgroundImage:`url(${weeklyPosts[2].photo_url})`}}></div>
                         <img src={trophy} alt='' className={styles.trophyIcon}></img>
-                        <div className={styles.weeklyTagNthPlace}>3등</div>
-                        <div className={styles.weeklyTagAlbumName}>: 봄날의 벚꽃{/*앨범 이름 받기*/}</div>
+                        <div className={styles.weeklyTagNthPlace}>3등:</div>
+                        <div className={styles.weeklyTagAlbumName}>&nbsp;{weeklyPosts[2].post_text}{/*앨범 이름 받기*/}</div>
                         <div className={styles.forFlexUserInfo}>
-                            <div className={styles.userImage}>{/*사진 받기*/}</div>
-                            <div className={styles.userEmail}>kdw061224{/*아이디 받기*/}</div>
+                            <div className={styles.userImage}
+                            style={{backgroundImage:`url(${weeklyPosts[2].user_photourl})`}}>{/*사진 받기*/}</div>
+                            <div className={styles.userName}>{weeklyPosts[2].user_name}{/*이름 받기? 아이딘지 이메일인지 잘 모르겠음*/}</div>
                         </div>
                         <div className={styles.forFlexweeklyTag2}>
                             <div className={styles.heartContainer}>
                                 <img src={heart} alt='' className={styles.heartIcon}></img>
                                 <p className={styles.heartNum}>
-                                    999{/*하트 갯수 받기*/}
+                                    {weeklyPosts[2].likes_count}{/*하트 갯수 받기*/}
                                 </p>
                             </div>
                             <div className={styles.commentContainer}>
                                 <img src={comment} alt='' className={styles.commentIcon}></img>
                                 <p className={styles.commentNum}>
-                                    999{/*댓글 갯수 받기*/}
+                                    {weeklyPosts[2].comments_count}{/*댓글 갯수 받기*/}
                                 </p>
                             </div>
                         </div>
@@ -211,18 +235,18 @@ export default function EveryMemoryMain(){
                         <div className={styles.forFlexTodayTag1}>
                             <div className={styles.forFlexTodayTag2}>
                                 {/*여기 아이콘은 빼야 할 듯*/}
-                                <span className={styles.todayTagImageName}>겨울 마을의 정경{/*앨범 제목 받아오기*/}</span>
-                                <span className={styles.view}>조회수 3.2k{/*조회수 받기*/}</span>
+                                <span className={styles.todayTagImageName}>{dailyPosts.post_text}{/*앨범 제목 받아오기*/}</span>
+                                <span className={styles.view}>{dailyPosts.}{/*조회수 받기*/}</span>
                             </div>
-                            <p className={styles.todayTagExplain}>전통 마을 전경{/*설명 받기*/}</p>
+                            <p className={styles.todayTagExplain}>{dailyPosts.post_description}{/*설명 받기*/}</p>
                             <div className={styles.forFlexTodayTag3}>
                                 <div className={styles.heartContainer}>
                                     <img src={heart} alt='' className={styles.todayTagHeartIcon}></img>
-                                    999{/*하트 갯수 받기*/}
+                                    {dailyPosts[0].likes_count}{/*하트 갯수 받기*/}
                                 </div>
                                 <div className={styles.commentContainer}>
                                     <img src={comment} alt='' className={styles.todayTagCommentIcon}></img>
-                                    999{/*댓글 갯수 받기*/}
+                                    {dailyPosts.comments_count}{/*댓글 갯수 받기*/}
                                 </div>
                             </div>
                         </div>
