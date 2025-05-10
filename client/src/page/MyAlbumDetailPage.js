@@ -10,15 +10,19 @@ import Header from "../component/Header";
 import Footer from "../component/Footer";
 function MyAlbumDetailPage() {
   const { albumId } = useParams();
-  //albumId는 문자열이므로 정수형으로 변환
   const result = getAlbumById(parseInt(albumId), "private");
-  const { album, description } = result; //앨범, 앨범설명, 그룹명, 그룹멤버
+  //TODO: 서버 연동시 수정 필요
+  const album = result?.album || {
+    album_name: "(제목 없음)",
+    photos: [],
+  };
 
-  const [photoList, setPhotoList] = useState(album.photos); //앨범의 사진들 상태
+  //앨범 설명
+  const description =
+    result?.description || "목 데이터 기반이라서 아직 설명 추가를 못함";
 
-  if (!result) {
-    return <p>앨범을 찾을 수 없습니다.</p>;
-  }
+  //앨범에 대한 사진 배열 상태
+  const [photoList, setPhotoList] = useState(album.photos || []);
 
   //사진 추가 헨들러
   const handleAddPhoto = (newPhoto) => {

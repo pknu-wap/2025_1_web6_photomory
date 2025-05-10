@@ -6,21 +6,20 @@ export default function getAlbumById(album_id, type, group_id = null) {
   if (!album_id || !type) return null;
   //그룹의 앨범을 그룹id, 앨범 아이디를 이용해서 찾기
   if (type === "group") {
-    for (const group of final_group_album_data) {
-      if (group.group_id === group_id) {
-        const album = group.albums.find((a) => a.album_id === album_id);
-        if (album) {
-          return {
-            album,
-            description: album.album_description, //앨범 설명
-            groupMembers: group.members, //앨범에 대한 그룹 멤버 들
-            groupName: group.group_name, //그룹명
-          };
-        }
-      }
-    }
-    //개인 앨범을 id를 이용해서 찾기
-  } else if (type === "private") {
+    const group = final_group_album_data.find((g) => g.group_id === group_id);
+    if (!group) return null; // groupId가 진짜 없을 경우만 null 반환
+
+    const album = group.albums.find((a) => a.album_id === album_id);
+
+    return {
+      album: album || null, // 앨범이 없으면 null
+      description: album?.album_description || null,
+      groupMembers: group.members,
+      groupName: group.group_name,
+    };
+  }
+  //개인 앨범을 id를 이용해서 찾기
+  else if (type === "private") {
     const myAlbum = final_my_album_data.find((a) => a.album_id === album_id);
     if (myAlbum) {
       return {
