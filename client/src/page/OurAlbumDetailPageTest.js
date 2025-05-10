@@ -9,7 +9,7 @@ import PhotoInfo from "../component/PhotoInfo";
 import PhotoSubmit from "../component/PhotoSubmit";
 function OurAlbumDetailPageTest() {
   const { albumId } = useParams();
-  const result = getAlbumByIdTest(albumId);
+  const result = getAlbumByIdTest(Number(albumId), "group");
   console.log(result);
   const { album, description, groupName, groupMembers } = result; //앨범, 앨범설명, 그룹명, 그룹멤버
 
@@ -54,6 +54,7 @@ function OurAlbumDetailPageTest() {
           }}
         >
           <Photos
+            type="group"
             albumTitle={albumTitle}
             photoList={photoList}
             onDeltePhoto={handleDeltePhoto}

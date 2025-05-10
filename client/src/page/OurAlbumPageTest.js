@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import Header from "../component/Header";
+import Footer from "../component/Footer";
 import Container from "../component/Container";
 import CalenderTest from "../component/CalenderTest";
 import AddAlbumTest from "../component/AddAlbumTest";
@@ -51,22 +53,10 @@ function OurAlbumPage() {
 
   return (
     <>
-      <nav
-        style={{
-          width: "100%",
-          height: "80px",
-          backgroundColor: "#f2f2f2",
-          display: "flex",
-          alignItems: "center",
-          paddingLeft: "20px",
-          marginBottom: "28px",
-        }}
-      >
-        임시 메뉴 바
-      </nav>
+      <Header />
       <Container
         style={{
-          margin: "0 auto",
+          margin: "28px auto",
           padding: "0 40px",
           position: "relative",
           height: "2942px",
@@ -74,6 +64,7 @@ function OurAlbumPage() {
         }}
       >
         <CalenderTest
+          type="group"
           groupAlbums={groupAlbums}
           selectedGroupId={selectedGroupId}
           albumTitlesByGroup={albumTitlesByGroup}
@@ -83,6 +74,7 @@ function OurAlbumPage() {
         <div style={{ display: "flex", gap: "24px", marginTop: "32px" }}>
           {/* 왼쪽: 앨범 추가 영역 */}
           <AddAlbumTest
+            type="group"
             selectedGroupId={selectedGroupId} //해당그룹의 ID
             albumTitlesByGroup={albumTitlesByGroup} // 앨범 제목 목록 객체
             setAlbumTitlesByGroup={setAlbumTitlesByGroup} // 앨범 제목 목록 객체 세터 함수
@@ -109,6 +101,7 @@ function OurAlbumPage() {
           </div>
         </div>
       </Container>
+      <Footer />
     </>
   );
 }

@@ -32,7 +32,7 @@ function AlbumListTest({ albums }) {
             {/* 앨범 제목 */}
             <h4 className="albumTitle">#{currentAlbum.album_name}</h4>
             <Link
-              to={`/our-albumTest/${currentAlbum.album_id}`}
+              to={`/our-album/${currentAlbum.album_id}`}
               className="albumLink"
             >
               앨범 상세보기

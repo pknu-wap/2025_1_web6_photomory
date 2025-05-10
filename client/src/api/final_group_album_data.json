@@ -60,31 +60,36 @@
             "photo_id": 1,
             "photo_url": "https://picsum.photos/seed/photo1/600",
             "photo_name": "소풍 준비",
-            "post_id": 1
+            "post_id": 1,
+            "photo_makingtime": "2025-04-17"
           },
           {
             "photo_id": 2,
             "photo_url": "https://picsum.photos/seed/photo2/600",
             "photo_name": "풀밭 위",
-            "post_id": 2
+            "post_id": 2,
+            "photo_makingtime": "2025-03-17"
           },
           {
             "photo_id": 3,
             "photo_url": "https://picsum.photos/seed/photo3/600",
             "photo_name": "맛있는 간식",
-            "post_id": 3
+            "post_id": 3,
+            "photo_makingtime": "2025-04-30"
           },
           {
             "photo_id": 4,
             "photo_url": "https://picsum.photos/seed/photo4/600",
             "photo_name": "웃음 가득",
-            "post_id": 4
+            "post_id": 4,
+            "photo_makingtime": "2025-04-11"
           },
           {
             "photo_id": 5,
             "photo_url": "https://picsum.photos/seed/photo5/600",
             "photo_name": "단체 사진",
-            "post_id": 5
+            "post_id": 5,
+            "photo_makingtime": "2025-04-07"
           }
         ],
         "comments": [
@@ -93,7 +98,11 @@
             "user_id": 2,
             "comment_text": "정말 즐거웠던 날이에요!"
           },
-          { "album_id": 1, "user_id": 4, "comment_text": "또 가고 싶어요!" }
+          {
+            "album_id": 1,
+            "user_id": 4,
+            "comment_text": "또 가고 싶어요!"
+          }
         ]
       }
     ]
@@ -139,19 +148,22 @@
             "photo_id": 1,
             "photo_url": "https://picsum.photos/seed/photo6/600",
             "photo_name": "가을 단풍",
-            "post_id": 1
+            "post_id": 1,
+            "photo_makingtime": "2025-03-20"
           },
           {
             "photo_id": 2,
             "photo_url": "https://picsum.photos/seed/photo7/600",
             "photo_name": "함박웃음",
-            "post_id": 2
+            "post_id": 2,
+            "photo_makingtime": "2025-03-24"
           },
           {
             "photo_id": 3,
             "photo_url": "https://picsum.photos/seed/photo8/600",
             "photo_name": "모닥불 옆에서",
-            "post_id": 3
+            "post_id": 3,
+            "photo_makingtime": "2025-04-12"
           }
         ],
         "comments": []
@@ -199,31 +211,36 @@
             "photo_id": 1,
             "photo_url": "https://picsum.photos/seed/photo11/600",
             "photo_name": "버스 안에서",
-            "post_id": 1
+            "post_id": 1,
+            "photo_makingtime": "2025-03-22"
           },
           {
             "photo_id": 2,
             "photo_url": "https://picsum.photos/seed/photo12/600",
             "photo_name": "숙소 풍경",
-            "post_id": 2
+            "post_id": 2,
+            "photo_makingtime": "2025-04-13"
           },
           {
             "photo_id": 3,
             "photo_url": "https://picsum.photos/seed/photo13/600",
             "photo_name": "밤하늘",
-            "post_id": 3
+            "post_id": 3,
+            "photo_makingtime": "2025-04-07"
           },
           {
             "photo_id": 4,
             "photo_url": "https://picsum.photos/seed/photo14/600",
             "photo_name": "수영장 놀이",
-            "post_id": 4
+            "post_id": 4,
+            "photo_makingtime": "2025-03-16"
           },
           {
             "photo_id": 5,
             "photo_url": "https://picsum.photos/seed/photo15/600",
             "photo_name": "바닷가 산책",
-            "post_id": 5
+            "post_id": 5,
+            "photo_makingtime": "2025-03-16"
           }
         ],
         "comments": []
@@ -271,31 +288,36 @@
             "photo_id": 1,
             "photo_url": "https://picsum.photos/seed/photo16/600",
             "photo_name": "팀 미션 성공",
-            "post_id": 1
+            "post_id": 1,
+            "photo_makingtime": "2025-04-12"
           },
           {
             "photo_id": 2,
             "photo_url": "https://picsum.photos/seed/photo17/600",
             "photo_name": "모닥불 파티",
-            "post_id": 2
+            "post_id": 2,
+            "photo_makingtime": "2025-03-13"
           },
           {
             "photo_id": 3,
             "photo_url": "https://picsum.photos/seed/photo18/600",
             "photo_name": "아침 산책",
-            "post_id": 3
+            "post_id": 3,
+            "photo_makingtime": "2025-04-21"
           },
           {
             "photo_id": 4,
             "photo_url": "https://picsum.photos/seed/photo19/600",
             "photo_name": "공동 작품",
-            "post_id": 4
+            "post_id": 4,
+            "photo_makingtime": "2025-03-25"
           },
           {
             "photo_id": 5,
             "photo_url": "https://picsum.photos/seed/photo20/600",
             "photo_name": "하늘 아래 웃음",
-            "post_id": 5
+            "post_id": 5,
+            "photo_makingtime": "2025-04-21"
           }
         ],
         "comments": []
@@ -343,31 +365,36 @@
             "photo_id": 1,
             "photo_url": "https://picsum.photos/seed/photo21/600",
             "photo_name": "붉은 노을",
-            "post_id": 1
+            "post_id": 1,
+            "photo_makingtime": "2025-04-18"
           },
           {
             "photo_id": 2,
             "photo_url": "https://picsum.photos/seed/photo22/600",
             "photo_name": "도심 야경",
-            "post_id": 2
+            "post_id": 2,
+            "photo_makingtime": "2025-03-30"
           },
           {
             "photo_id": 3,
             "photo_url": "https://picsum.photos/seed/photo23/600",
             "photo_name": "출렁이는 바다",
-            "post_id": 3
+            "post_id": 3,
+            "photo_makingtime": "2025-04-17"
           },
           {
             "photo_id": 4,
             "photo_url": "https://picsum.photos/seed/photo24/600",
             "photo_name": "비 오는 거리",
-            "post_id": 4
+            "post_id": 4,
+            "photo_makingtime": "2025-04-05"
           },
           {
             "photo_id": 5,
             "photo_url": "https://picsum.photos/seed/photo25/600",
             "photo_name": "한강의 아침",
-            "post_id": 5
+            "post_id": 5,
+            "photo_makingtime": "2025-04-27"
           }
         ],
         "comments": []

@@ -7,6 +7,8 @@ import Groups from "../component/Groups";
 import AlbumList from "../component/AlbumList";
 import getGroup from "../api/getGroup";
 import getGroupAlbums from "../api/getGroupAlbums";
+import Header from "../component/Header";
+import Footer from "../component/Footer";
 
 function OurAlbumPage() {
   const [groupList, setGroupList] = useState([]); // 그룹명과 해당 그룹 멤버들의 리스트
@@ -49,19 +51,7 @@ function OurAlbumPage() {
 
   return (
     <>
-      <nav
-        style={{
-          width: "100%",
-          height: "80px",
-          backgroundColor: "#f2f2f2",
-          display: "flex",
-          alignItems: "center",
-          paddingLeft: "20px",
-          marginBottom: "28px",
-        }}
-      >
-        임시 메뉴 바
-      </nav>
+      <Header />
       <Container
         style={{
           margin: "0 auto",
@@ -81,6 +71,7 @@ function OurAlbumPage() {
         <div style={{ display: "flex", gap: "24px", marginTop: "32px" }}>
           {/* 왼쪽: 앨범 추가 영역 */}
           <AddAlbum
+            type="group"
             selectedGroupId={selectedGroupId} //해당그룹의 ID
             albumTitlesByGroup={albumTitlesByGroup} // 앨범 제목 목록 객체
             setAlbumTitlesByGroup={setAlbumTitlesByGroup} // 앨범 제목 목록 객체 세터 함수
@@ -107,6 +98,7 @@ function OurAlbumPage() {
           </div>
         </div>
       </Container>
+      <Footer />
     </>
   );
 }

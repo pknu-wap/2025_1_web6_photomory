@@ -3,16 +3,19 @@ import PaginationBar from "./PaginationBar";
 
 // 그룹 멤버를 2행 4열 그리드로 렌더링하는 컴포넌트
 function GroupMemberGrid({ groupName, groupMembers = [] }) {
-  const [currentPage, setCurrnetPage] = useState(0); //현재 페이지 상태태
+  const [currentPage, setCurrnetPage] = useState(1); //현재 페이지 상태태
   const membersPerPage = 8; //한 영역 당 최대 그룹 인원수
 
   // 전체 페이지 수 계산
   const totalPages = Math.ceil(groupMembers.length / membersPerPage);
 
   // 현재 페이지에 보여줄 멤버들 잘라내기
-  const startIdx = currentPage * membersPerPage;
-  const endIdx = startIdx + membersPerPage;
-  const currentMembers = groupMembers.slice(startIdx, endIdx);
+  const indexOfLastMember = currentPage * membersPerPage; //마지막멤버
+  const indexOfFirstMember = indexOfLastMember - membersPerPage; //첫번째멤버
+  const currentMembers = groupMembers.slice(
+    indexOfFirstMember,
+    indexOfLastMember
+  ); //그룹 멤버 범위
 
   const filledMembers = [...currentMembers]; //빈 공간 채우기용 배열
 
@@ -66,9 +69,9 @@ function GroupMemberGrid({ groupName, groupMembers = [] }) {
         >
           {filledMembers.map((member, i) => (
             <div
-              key={i}
+              key={member ? member.user_id : `empty-${i}`}
               style={{
-                weight: "239px",
+                width: "239px",
                 height: "136px",
                 display: "flex",
                 alignItems: "center",
@@ -80,7 +83,7 @@ function GroupMemberGrid({ groupName, groupMembers = [] }) {
                 color: member ? "#333" : "#bbb",
               }}
             >
-              {member || "빈 슬롯"}
+              {member ? member.user_name : "빈 슬롯"}
             </div>
           ))}
         </div>
