@@ -27,7 +27,6 @@ function AlbumListTest({ albums }) {
     <div>
       {currentAlbums.map((currentAlbum) => (
         <div key={currentAlbum.album_id} className="albumCard">
-          {console.log(currentAlbum.album_id)}
           <div className="innerAlbum">
             {/* 앨범 제목 */}
             <h4 className="albumTitle">#{currentAlbum.album_name}</h4>

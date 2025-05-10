@@ -5,10 +5,10 @@ import "./AddAlbum.css";
 //앨범 추가 컴포넌트
 function AddAlbumTest({
   type = "", //private | group
-  selectedGroupId,
-  albumTitlesByGroup,
-  setAlbumTitlesByGroup,
-  setGroupAlbums,
+  selectedGroupId, //선택된 그룹 ID
+  albumTitlesByGroup, //선택 그룹 앨범명 배열
+  setAlbumTitlesByGroup, //선택 그룹 앨범명 상태 변화 함수
+  setGroupAlbums, //그룹 앨범 추가
   albumTitles = [], //나만의 추억에서만 쓸 앨범명 목록
   setMyAlbums, //나만의 추억  앨범 상태 변화 함수
 }) {
@@ -36,10 +36,35 @@ function AddAlbumTest({
     const { album_name, album_description } = newAlbumData;
 
     // 입력값이 모두 있을 때만 실행
-    if (!album_name && !album_description) {
+    if (!album_name || !album_description) {
+      alert("앨범 제목과 설명을 모두 입력해주세요.");
       return;
     }
 
+    // 현재 앨범 제목 목록과 현재 전체 앨범 개수 가져오기
+    const currentTitles =
+      type === "group"
+        ? albumTitlesByGroup[selectedGroupId] || []
+        : albumTitles;
+
+    const currentAlbumCount =
+      type === "group"
+        ? albumTitlesByGroup[selectedGroupId]?.length || 0
+        : albumTitles.length;
+
+    // 최대 7개 제한
+    if (currentAlbumCount >= 7) {
+      alert("❗앨범은 최대 7개까지 생성할 수 있습니다.");
+      return;
+    }
+
+    // 제목 중복 확인
+    if (currentTitles.includes(album_name)) {
+      alert("❗이미 존재하는 앨범 제목입니다.");
+      return;
+    }
+
+    //새 앨범 객체
     const newAlbum = {
       album_id: `album-${Date.now()}`, //임시 고유 ID
       album_name,
@@ -48,6 +73,7 @@ function AddAlbumTest({
       photos: [], //사진은 나중에 추가
     };
 
+    //타입에 따라 분기기
     if (type === "group") {
       // 그룹 앨범 추가 로직
       const updatedTitles = [
