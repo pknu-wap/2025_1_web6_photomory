@@ -74,6 +74,7 @@ function GroupMemberGrid({ groupName, groupMembers = [] }) {
                 width: "239px",
                 height: "136px",
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
                 border: member ? "1px solid #ccc" : "2px dashed #bbb",
@@ -81,8 +82,20 @@ function GroupMemberGrid({ groupName, groupMembers = [] }) {
                 fontWeight: "bold",
                 backgroundColor: member ? "#fff" : "#f9f9f9",
                 color: member ? "#333" : "#bbb",
+                gap: "12px",
               }}
             >
+              {member ? (
+                <img
+                  src={member.profile_url}
+                  alt="profile_url"
+                  style={{
+                    width: "64px",
+                    height: "64px",
+                    borderRadius: "9999px",
+                  }}
+                />
+              ) : null}
               {member ? member.user_name : "빈 슬롯"}
             </div>
           ))}

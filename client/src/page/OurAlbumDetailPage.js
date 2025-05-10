@@ -29,7 +29,7 @@ function OurAlbumDetailPage() {
   };
 
   const albumPeriod = getPhotoPeriod(photoList); //앨범 기간
-  const albumTitle = album.title; // 앨범이름
+  const albumTitle = album.album_name; // 앨범이름
   const Count = photoList.length; //사진갯수
   return (
     <Container

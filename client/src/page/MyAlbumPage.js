@@ -24,12 +24,11 @@ function MyAlbumPage() {
       <Header />
       <Container
         style={{
-          margin: "0 auto",
+          margin: "28px auto 0",
           padding: "0 40px",
           position: "relative",
           height: "2400px",
           opacity: "1",
-          marginTop: "15px",
         }}
       >
         <CalenderTest
