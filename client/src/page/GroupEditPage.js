@@ -3,6 +3,8 @@ import { getMyGroupById } from "../api/getMyGroupById";
 import { getFriends } from "../api/getFriends";
 import GroupEditor from "../component/GroupEditor";
 import { useParams } from "react-router-dom";
+import Header from "../component/Header";
+import Footer from "../component/Footer";
 
 function GroupEditPage() {
   const { groupId } = useParams(); //GroupId 불러오기
@@ -18,7 +20,7 @@ function GroupEditPage() {
       setFilteredFriends(myFriends); // 초기에는 전체 친구를 보여줌
     }
 
-    const myGroup = getMyGroupById(Number(groupId)); // 현재 선택된 그룹 Id로 맴버 불러오기기
+    const myGroup = getMyGroupById(Number(groupId)); // 현재 선택된 그룹 Id로 맴버 불러오기
     if (myGroup) {
       setGroupName(myGroup.groupName);
       setAddedMembers(myGroup.members);
@@ -44,7 +46,8 @@ function GroupEditPage() {
   };
 
   return (
-    <div style={{ height: "1489px" }}>
+    <div style={{ height: "auto" }}>
+      <Header />
       <GroupEditor
         groupName={groupName} //그룹명
         friends={filteredFriends} // 검색된 친구 목록만 넘겨줌
@@ -53,6 +56,7 @@ function GroupEditPage() {
         onFriendSearch={handleFriendSearch} // 검색 핸들러
         onRemoveMember={handleRemoveMember} //삭제 헨들러
       />
+      <Footer />
     </div>
   );
 }
