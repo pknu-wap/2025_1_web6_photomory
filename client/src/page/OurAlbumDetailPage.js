@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import getAlbumByIdTest from "../api/getAlbumByIdTest";
+import getAlbumById from "../api/getAlbumById";
 import Header from "../component/Header";
 import GroupMemberGrid from "../component/GroupMemberGrid";
 import Container from "../component/Container";
@@ -11,7 +11,7 @@ import PhotoSubmit from "../component/PhotoSubmit";
 import Footer from "../component/Footer";
 function OurAlbumDetailPage() {
   const { groupId, albumId } = useParams();
-  const result = getAlbumByIdTest(Number(albumId), "group", Number(groupId));
+  const result = getAlbumById(Number(albumId), "group", Number(groupId));
   const { album, description, groupName, groupMembers } = result; //앨범, 앨범설명, 그룹명, 그룹멤버
 
   const [photoList, setPhotoList] = useState(album.photos); //앨범의 사진들 상태

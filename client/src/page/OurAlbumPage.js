@@ -7,8 +7,8 @@ import AddAlbum from "../component/AddAlbum";
 import CurrentGroup from "../component/CurrentGroup";
 import Groups from "../component/Groups";
 import AlbumList from "../component/AlbumList";
-import getGroupTest from "../api/getGroupTest";
-import getGroupAlbumsTest from "../api/getGroupAlbumsTest";
+import getGroup from "../api/getGroup";
+import getGroupAlbums from "../api/getGroupAlbums";
 
 function OurAlbumPage() {
   const [groupList, setGroupList] = useState([]); // 그룹명과 해당 그룹 멤버들의 리스트
@@ -17,19 +17,19 @@ function OurAlbumPage() {
   const [albumTitlesByGroup, setAlbumTitlesByGroup] = useState({}); //그룹ID에 대한 앨범 목록 객체
   //초기 그룹 정보, 앨범 가져오기
   useEffect(() => {
-    const groups = getGroupTest(); // 그룹 데이터 불러오기
+    const groups = getGroup(); // 그룹 데이터 불러오기
 
     setGroupList(groups);
     if (groups.length > 0) {
       const firstGroup = groups[0]; //항상 첫번째 그룹 선택
-      const firstGroupAlbums = getGroupAlbumsTest(firstGroup.group_id); //항상 첫번째 그룹의 앨범 선택
+      const firstGroupAlbums = getGroupAlbums(firstGroup.group_id); //항상 첫번째 그룹의 앨범 선택
 
       setSelectedGroupId(firstGroup.group_id); // 선택된 그룹 ID
       setGroupAlbums(firstGroupAlbums); // 선택된 그룹의 앨범 전체 데이터
       const initTitlesByGroup = {};
       groups.forEach((group) => {
         //처음부터 모든 그룹의 앨범 제목 목록을 한 번에 저장
-        const albums = getGroupAlbumsTest(group.group_id);
+        const albums = getGroupAlbums(group.group_id);
         initTitlesByGroup[group.group_id] = albums.map(
           (album) => album.album_name
         );
@@ -41,7 +41,7 @@ function OurAlbumPage() {
   //그룹id가 바뀔 대마다 그룹 앨범 가져오기
   useEffect(() => {
     if (selectedGroupId) {
-      const albums = getGroupAlbumsTest(selectedGroupId); // 그룹 ID로 앨범 가져오기
+      const albums = getGroupAlbums(selectedGroupId); // 그룹 ID로 앨범 가져오기
       setGroupAlbums(albums); // 상태에 저장
     }
   }, [selectedGroupId]);

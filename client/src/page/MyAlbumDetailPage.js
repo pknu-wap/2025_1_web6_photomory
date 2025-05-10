@@ -5,13 +5,13 @@ import Photos from "../component/Photos";
 import { getPhotoPeriod } from "../utils/getPhotoPeriod";
 import PhotoInfo from "../component/PhotoInfo";
 import PhotoSubmit from "../component/PhotoSubmit";
-import getAlbumByIdTest from "../api/getAlbumByIdTest";
+import getAlbumById from "../api/getAlbumById";
 import Header from "../component/Header";
 import Footer from "../component/Footer";
 function MyAlbumDetailPage() {
   const { albumId } = useParams();
   //albumId는 문자열이므로 정수형으로 변환
-  const result = getAlbumByIdTest(parseInt(albumId), "private");
+  const result = getAlbumById(parseInt(albumId), "private");
   const { album, description } = result; //앨범, 앨범설명, 그룹명, 그룹멤버
 
   const [photoList, setPhotoList] = useState(album.photos); //앨범의 사진들 상태
