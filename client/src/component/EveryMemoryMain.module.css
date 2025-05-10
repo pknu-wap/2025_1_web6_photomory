@@ -11,6 +11,7 @@
     transform: translate(-50%, 0);
     color: #EF4444;
 }
+
 .weeklyTagCamera{
     width: 20px;
     height: 20px;
@@ -127,7 +128,7 @@
     border-radius: 50%;
     margin: 0px 5px 5px 5px;
 }
-.userEmail{
+.userName{
     display: inline-block;
     padding-top: 8px;
     font-weight: 500;
