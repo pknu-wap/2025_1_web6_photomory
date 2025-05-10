@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import AddGroupButton from "./AddGroupButton";
-import SelectGroupOptions from "./SelectGroupOption";
+import SelectGroupOptions from "./SelectGroupOptions";
 import "./CurrentGroup.css";
 
-function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
+function CurrentGroupTest({ groupList, setSelectedGroupId, onAddGroup }) {
   const [selectedGroup, setSelectedGroup] = useState({
-    id: "",
-    groupName: "",
+    group_id: "",
+    group_name: "",
     members: [],
   }); //선택된 그룹의 전체 객체
 
@@ -21,12 +21,12 @@ function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
   //선택 그룹룹 변경 헨들러
   const handleChange = (e) => {
     const name = e.target.value; // 선택된 <option>의 value 값 (즉, 그룹 이름)을 가져옴
-    const group = groupList.find((g) => g.groupName === name);
-    setSelectedGroupId(group.id);
+    const group = groupList.find((g) => g.group_name === name);
+    setSelectedGroupId(group.group_id);
     setSelectedGroup((prev) => ({
       ...prev,
-      id: group.id,
-      groupName: group.groupName,
+      group_id: group.group_id,
+      group_name: group.group_name,
       members: group.members,
     }));
   };
@@ -36,12 +36,25 @@ function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
       {selectedGroup && (
         <>
           {/*그룹명*/}
-          <h4 className="groupTitle">{selectedGroup.groupName}</h4>
+          <h4 className="groupTitle">{selectedGroup.group_name}</h4>
           <ul className="groupMembers">
-            {/*그룹멤버*/}
             {selectedGroup.members.map((member, index) => (
-              <li className="member" key={index}>
-                {member}
+              <li
+                className="member"
+                key={index}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
+              >
+                <img
+                  src={member.profile_url}
+                  alt={member.user_name}
+                  style={{ width: "24px", height: "24px", borderRadius: "50%" }}
+                />
+                <span>{member.user_name}</span>
               </li>
             ))}
           </ul>
@@ -61,4 +74,4 @@ function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
   );
 }
 
-export default CurrentGroup;
+export default CurrentGroupTest;

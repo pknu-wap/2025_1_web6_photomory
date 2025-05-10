@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { getMyAlbums } from "../api/getMyAlbum";
 import Container from "../component/Container";
-import CalenderTest from "../component/CalenderTest";
+import Calender from "../component/Calender";
 import Header from "../component/Header";
-import AddAlbumTest from "../component/AddAlbumTest";
+import AddAlbum from "../component/AddAlbum";
 import AlbumList from "../component/AlbumList";
 import Footer from "../component/Footer";
 import privateIcon from "../assets/privateIcon.svg";
@@ -31,14 +31,14 @@ function MyAlbumPage() {
           opacity: "1",
         }}
       >
-        <CalenderTest
+        <Calender
           type="private" //개인 앨범용 타입
           myAlbums={myAlbums}
         />
 
         {/* 앨범 추가 오른쪽 영역을 가로 배치 */}
         <div style={{ display: "flex", gap: "24px", marginTop: "32px" }}>
-          <AddAlbumTest
+          <AddAlbum
             type="private"
             albumTitles={albumTitles}
             setMyAlbums={setMyAlbums}

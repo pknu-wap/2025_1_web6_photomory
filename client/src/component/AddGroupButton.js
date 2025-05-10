@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import addGroupButton from "../assets/addGroupButton.svg";
 import "./AddGroupButton.css";
-function AddGroupButton({ onAddGroup }) {
+function AddGroupButtonTest({ onAddGroup }) {
   const [showModal, setShowModal] = useState(false); // 모달 표시 여부
   const [groupName, setGroupName] = useState(""); // 입력한 그룹 이름
 
@@ -22,8 +22,8 @@ function AddGroupButton({ onAddGroup }) {
 
     // 그룹 객체 생성 (멤버는 나중에 추가한다고 가정)
     const newGroup = {
-      id: `group${Date.now()}`, // 고유 ID 생성
-      groupName: groupName.trim(),
+      group_id: `group${Date.now()}`, // 고유 ID 생성
+      group_name: groupName.trim(),
       members: [],
     };
 
@@ -144,4 +144,4 @@ function AddGroupButton({ onAddGroup }) {
   );
 }
 
-export default AddGroupButton;
+export default AddGroupButtonTest;

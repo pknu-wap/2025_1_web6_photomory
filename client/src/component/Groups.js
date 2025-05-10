@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import PaginationBar from "./PaginationBar";
 import GroupControlButton from "../assets/groupControlButton.svg";
 import "./Groups.css";
-function Groups({ groupList, selectedGroupId }) {
+function GroupsTest({ groupList, selectedGroupId }) {
   const [currentPage, setCurrentPage] = useState(1); //초기 페이지 번호
 
   const groupsPerPage = 4; //한 페이지당 그룹 수
@@ -18,8 +18,10 @@ function Groups({ groupList, selectedGroupId }) {
     <div className="allGroupCard">
       <div className="titleManagement">
         <h3>그룹 관리</h3>
-        {/*TODO: 동적경로 변경 필요(그룹인원 관리페이지 이동)*/}
-        <Link to="/our-album/groupEdit" style={{ display: "inline-block" }}>
+        <Link
+          to={`/our-album/${selectedGroupId}/groupEdit`}
+          style={{ display: "inline-block" }}
+        >
           <img src={GroupControlButton} alt="GroupControlButton" />
         </Link>
       </div>
@@ -29,7 +31,7 @@ function Groups({ groupList, selectedGroupId }) {
           .fill(null)
           .map((_, i) => {
             const group = currentGroups[i] || null;
-            const isSelected = group && group.id === selectedGroupId; //선택된 그룹만 강조 스타일 적용
+            const isSelected = group && group.group_id === selectedGroupId; //선택된 그룹만 강조 스타일 적용
 
             return (
               <div
@@ -52,13 +54,13 @@ function Groups({ groupList, selectedGroupId }) {
                 {group ? (
                   <>
                     <div className="groupInfo">
-                      <h4>{group.groupName}</h4>
+                      <h4>{group.group_name}</h4>
                       <span>{`${group.members.length}명`}</span>
                     </div>
                     <div className="groupMembers">
                       {group.members.slice(0, 4).map((member, idx) => (
                         <span key={idx} className="groupMember">
-                          {member}
+                          {member.user_name}
                         </span>
                       ))}
                       {/* 초과 인원 있을 경우 +N명 표시 */}
@@ -86,4 +88,4 @@ function Groups({ groupList, selectedGroupId }) {
   );
 }
 
-export default Groups;
+export default GroupsTest;
