@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PaginationBar from "./PaginationBar";
+import "./GroupMemberGrid.css";
 
 // 그룹 멤버를 2행 4열 그리드로 렌더링하는 컴포넌트
 function GroupMemberGrid({ groupName, groupMembers = [] }) {
@@ -30,70 +31,20 @@ function GroupMemberGrid({ groupName, groupMembers = [] }) {
 
   return (
     <div>
-      <h2
-        style={{
-          fontSize: "24px",
-          fontWeight: "bold",
-          lineHeight: "32px",
-          letterSpacing: "0px",
-          marginBottom: "16px",
-        }}
-      >
-        {groupName}
-      </h2>
-      <div
-        style={{
-          margin: "0 auto 32px",
-          padding: "26px",
-          width: "1056px",
-          height: "424px",
-          background: " #FFFFFF",
-          border: "2px solid #000000",
-          borderRadius: "8px",
-          boxShadow:
-            "0px 4px 6px -4px rgba(0, 0, 0, 0.1),0px 10px 15px -3px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <h3 style={{ marginBottom: "16px" }}>그룹 멤버</h3>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gridTemplateRows: "repeat(2, 1fr)",
-            gap: "12px",
-
-            width: "1004px",
-            height: "288px",
-            margin: "0px auto",
-          }}
-        >
+      <h2 className="groupGridTitle">{groupName}</h2>
+      <div className="groupGridContainer">
+        <h3 className="groupGridSubtitle">그룹 멤버</h3>
+        <div className="memberGrid">
           {filledMembers.map((member, i) => (
             <div
               key={member ? member.user_id : `empty-${i}`}
-              style={{
-                width: "239px",
-                height: "136px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                border: member ? "1px solid #ccc" : "2px dashed #bbb",
-                borderRadius: "8px",
-                fontWeight: "bold",
-                backgroundColor: member ? "#fff" : "#f9f9f9",
-                color: member ? "#333" : "#bbb",
-                gap: "12px",
-              }}
+              className={`memberCard ${member ? "filled" : "empty"}`} //멤버 객체가 있을 때와 없을 때 각각에 따른 처치
             >
               {member ? (
                 <img
                   src={member.profile_url}
                   alt="profile_url"
-                  style={{
-                    width: "64px",
-                    height: "64px",
-                    borderRadius: "9999px",
-                  }}
+                  className="memberAvatar"
                 />
               ) : null}
               {member ? member.user_name : "빈 슬롯"}
