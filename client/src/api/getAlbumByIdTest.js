@@ -2,19 +2,21 @@ import final_group_album_data from "./final_group_album_data";
 import final_my_album_data from "./final_my_album_data";
 
 // album_id + type을 받아서 앨범 찾아오는 함수
-export default function getAlbumByIdTest(album_id, type) {
+export default function getAlbumByIdTest(album_id, type, group_id = null) {
   if (!album_id || !type) return null;
-  //그룹의 앨범을 id를 이용해서 찾기
+  //그룹의 앨범을 그룹id, 앨범 아이디를 이용해서 찾기
   if (type === "group") {
     for (const group of final_group_album_data) {
-      const album = group.albums.find((a) => a.album_id === album_id);
-      if (album) {
-        return {
-          album,
-          description: album.album_description, //앨범 설명
-          groupMembers: group.members, //앨범에 대한 그룹 멤버 들
-          groupName: group.group_name, //그룹명
-        };
+      if (group.group_id === group_id) {
+        const album = group.albums.find((a) => a.album_id === album_id);
+        if (album) {
+          return {
+            album,
+            description: album.album_description, //앨범 설명
+            groupMembers: group.members, //앨범에 대한 그룹 멤버 들
+            groupName: group.group_name, //그룹명
+          };
+        }
       }
     }
     //개인 앨범을 id를 이용해서 찾기

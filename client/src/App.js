@@ -24,7 +24,7 @@ function App() {
         <Route path="/my-album/:albumId" element={<MyAlbumDetailPage />} />
         <Route path="/our-album" element={<OurAlbumPageTest />} />
         <Route
-          path="/our-album/:albumId"
+          path="/our-album/:groupId/:albumId"
           element={<OurAlbumDetailPageTest />}
         />
         <Route path="/our-album/groupEdit" element={<GroupEditPage />} />

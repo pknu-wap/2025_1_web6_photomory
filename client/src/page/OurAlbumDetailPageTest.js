@@ -10,9 +10,8 @@ import PhotoInfo from "../component/PhotoInfo";
 import PhotoSubmit from "../component/PhotoSubmit";
 import Footer from "../component/Footer";
 function OurAlbumDetailPageTest() {
-  const { albumId } = useParams();
-  const result = getAlbumByIdTest(Number(albumId), "group");
-  console.log(result);
+  const { groupId, albumId } = useParams();
+  const result = getAlbumByIdTest(Number(albumId), "group", Number(groupId));
   const { album, description, groupName, groupMembers } = result; //앨범, 앨범설명, 그룹명, 그룹멤버
 
   const [photoList, setPhotoList] = useState(album.photos); //앨범의 사진들 상태
@@ -41,7 +40,7 @@ function OurAlbumDetailPageTest() {
         style={{
           margin: "0 auto", // 좌우 가운데 정렬
           padding: "40px 24px", // 위아래/좌우 여백
-          height: "3650px",
+          height: "auto",
         }}
       >
         <div

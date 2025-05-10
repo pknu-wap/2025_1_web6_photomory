@@ -14,7 +14,7 @@ function AlbumListTest({ albums }) {
   const indexOfLastAlbum = currentPage * albumsPerPage; //마지막앨범
   const indexOfFirstAlbum = indexOfLastAlbum - albumsPerPage; //첫번째앨범
   const currentAlbums = albums.slice(indexOfFirstAlbum, indexOfLastAlbum); //앨범 범위
-
+  console.log(currentAlbums);
   // 페이지 이동 핸들러
   const handlePageClick = (page) => {
     setCurrentPage(page);
@@ -23,11 +23,11 @@ function AlbumListTest({ albums }) {
   if (!albums || albums.length === 0) {
     return <p>앨범이 없습니다.</p>;
   }
-
   return (
     <div>
       {currentAlbums.map((currentAlbum) => (
         <div key={currentAlbum.album_id} className="albumCard">
+          {console.log(currentAlbum.album_id)}
           <div className="innerAlbum">
             {/* 앨범 제목 */}
             <h4 className="albumTitle">#{currentAlbum.album_name}</h4>
@@ -49,7 +49,7 @@ function AlbumListTest({ albums }) {
             {/* 사진 4개까지 미리보기 */}
             {currentAlbum.photos.slice(0, 4).map((photo) => (
               <div
-                key={photo.id}
+                key={photo.photo_id}
                 style={{
                   textAlign: "center",
                 }}

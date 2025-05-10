@@ -6,7 +6,7 @@ import CalenderTest from "../component/CalenderTest";
 import AddAlbumTest from "../component/AddAlbumTest";
 import CurrentGroupTest from "../component/CurrentGroupTest";
 import GroupsTest from "../component/GroupsTest";
-import AlbumListTest from "../component/AlbumListTest";
+import AlbumList from "../component/AlbumList";
 import getGroupTest from "../api/getGroupTest";
 import getGroupAlbumsTest from "../api/getGroupAlbumsTest";
 
@@ -96,7 +96,11 @@ function OurAlbumPage() {
             />
             <div>
               {/*그룹별 앨범 목록을 보여주는 컴포넌트*/}
-              <AlbumListTest albums={groupAlbums} />
+              <AlbumList
+                albums={groupAlbums}
+                selectedGroupId={selectedGroupId}
+                basePath="/our-album"
+              />
             </div>
           </div>
         </div>
