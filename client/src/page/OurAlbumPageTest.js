@@ -98,6 +98,7 @@ function OurAlbumPage() {
               {/*그룹별 앨범 목록을 보여주는 컴포넌트*/}
               <AlbumList
                 albums={groupAlbums}
+                type="group"
                 selectedGroupId={selectedGroupId}
                 basePath="/our-album"
               />

@@ -72,7 +72,11 @@ function MyAlbumPage() {
             </div>
             <div>
               {/*개인 앨범 목록을 보여주는 컴포넌트*/}
-              <AlbumList albums={myAlbums} basePath="/my-album" />
+              <AlbumList
+                albums={myAlbums}
+                type="private"
+                basePath="/my-album"
+              />
             </div>
           </div>
         </div>
