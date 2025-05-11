@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import getAlbumById from "../api/getAlbumById";
 import Header from "../component/Header";
 import GroupMemberGrid from "../component/GroupMemberGrid";
@@ -11,28 +11,14 @@ import PhotoSubmit from "../component/PhotoSubmit";
 import Footer from "../component/Footer";
 function OurAlbumDetailPage() {
   const { groupId, albumId } = useParams();
-
-  // 그룹은 항상 존재, 앨범은 없을 수 있음
   const result = getAlbumById(Number(albumId), "group", Number(groupId));
+  const { album, description, groupName, groupMembers } = result; //앨범, 앨범설명, 그룹명, 그룹멤버
 
-  // 앨범 fallback 처리
-  const album = result.album || {
-    album_name: "(제목 없음)",
-    photos: [],
-  };
+  const [photoList, setPhotoList] = useState(album.photos); //앨범의 사진들 상태
 
-  // 설명도 fallback
-  const description = result.description ?? "이 앨범에는 아직 설명이 없습니다.";
-
-  const groupName = result.groupName;
-  const groupMembers = result.groupMembers;
-
-  // 사진 상태 관리
-  const [photoList, setPhotoList] = useState(album.photos);
-
-  useEffect(() => {
-    setPhotoList(album.photos || []);
-  }, [album]);
+  if (!result) {
+    return <p>앨범을 찾을 수 없습니다.</p>;
+  }
 
   //사진 추가 헨들러
   const handleAddPhoto = (newPhoto) => {

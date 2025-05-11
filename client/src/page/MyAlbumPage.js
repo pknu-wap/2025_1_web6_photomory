@@ -16,7 +16,7 @@ function MyAlbumPage() {
     setMyAlbums(albums);
   }, []);
 
-  //앨범 제목만 뽑아낸 배열
+  //앨범 제목만 따로 추출한 배열
   const albumTitles = myAlbums.map((album) => album.album_name);
 
   return (

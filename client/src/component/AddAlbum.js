@@ -6,7 +6,7 @@ import "./AddAlbum.css";
 const MAX_ALBUM_COUNT = 7; //최대 앨범 갯수
 
 //앨범 추가 컴포넌트
-function AddAlbumTest({
+function AddAlbum({
   type = "", //private | group
   selectedGroupId, //선택된 그룹 ID
   albumTitlesByGroup, //선택 그룹 앨범명 배열
@@ -140,4 +140,4 @@ function AddAlbumTest({
   );
 }
 
-export default AddAlbumTest;
+export default AddAlbum;
