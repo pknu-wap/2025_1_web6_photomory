@@ -42,8 +42,8 @@ function GroupMemberGrid({ groupName, groupMembers = [] }) {
             >
               {member ? (
                 <img
-                  src={member.profile_url}
-                  alt="profile_url"
+                  src={member.user_photourl}
+                  alt="user_photourl"
                   className="memberAvatar"
                 />
               ) : null}
