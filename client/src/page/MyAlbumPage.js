@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { getMyAlbums } from "../api/getMyAlbum";
 import Container from "../component/Container";
-import CalenderTest from "../component/CalenderTest";
+import Calender from "../component/Calender";
 import Header from "../component/Header";
-import AddAlbumTest from "../component/AddAlbumTest";
+import AddAlbum from "../component/AddAlbum";
 import AlbumList from "../component/AlbumList";
 import Footer from "../component/Footer";
 import privateIcon from "../assets/privateIcon.svg";
@@ -16,7 +16,7 @@ function MyAlbumPage() {
     setMyAlbums(albums);
   }, []);
 
-  //앨범 제목만 뽑아낸 배열
+  //앨범 제목만 따로 추출한 배열
   const albumTitles = myAlbums.map((album) => album.album_name);
 
   return (
@@ -24,22 +24,21 @@ function MyAlbumPage() {
       <Header />
       <Container
         style={{
-          margin: "0 auto",
+          margin: "28px auto 0",
           padding: "0 40px",
           position: "relative",
           height: "2400px",
           opacity: "1",
-          marginTop: "15px",
         }}
       >
-        <CalenderTest
+        <Calender
           type="private" //개인 앨범용 타입
           myAlbums={myAlbums}
         />
 
         {/* 앨범 추가 오른쪽 영역을 가로 배치 */}
         <div style={{ display: "flex", gap: "24px", marginTop: "32px" }}>
-          <AddAlbumTest
+          <AddAlbum
             type="private"
             albumTitles={albumTitles}
             setMyAlbums={setMyAlbums}
@@ -73,7 +72,11 @@ function MyAlbumPage() {
             </div>
             <div>
               {/*개인 앨범 목록을 보여주는 컴포넌트*/}
-              <AlbumList albums={myAlbums} basePath="/my-album" />
+              <AlbumList
+                albums={myAlbums}
+                type="private"
+                basePath="/my-album"
+              />
             </div>
           </div>
         </div>
