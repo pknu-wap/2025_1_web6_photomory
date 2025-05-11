@@ -191,14 +191,14 @@ export default function EveryMemoryMain(){
     
 
     const [nextPage, setNextPage] = useState([0,1,2,3,4,5]);
-    const onClickNextPage=(e)=>{
+    const onClickNextPage=(value)=>{ //if로 오른쪽 왼쪽도 구현하기
         const page=[
             [0,1,2,3,4,5],
             [6,7,8,9,10,11],
             [12,13,14,15,16,17],
             [18,19,20,21,22,23]
         ]
-        setNextPage(page[e.target.value]);
+        setNextPage(page[value]);
     }
         return (
         <div>
@@ -264,12 +264,15 @@ export default function EveryMemoryMain(){
                     {/*--------*/}
                 </div>
                 <div className={styles.forFlexButton}>
-                    <img alt='' src={leftButton} className={styles.leftButton} 
-                    onClick={()=>onClickNextPage(1)}/
-                    <img alt='' src={num1} className={styles.num1Icon} />
-                    <img alt='' src={num2} className={styles.num2Icon} />
-                    <img alt='' src={num3} className={styles.num3Icon} />
-                    <img alt='' src={num4} className={styles.num4Icon} />
+                    <img alt='' src={leftButton} className={styles.leftButton} /
+                    <img alt='' src={num1} className={styles.num1Icon} 
+                    onClick={()=>onClickNextPage(0)}/>
+                    <img alt='' src={num2} className={styles.num2Icon} 
+                    onClick={()=>onClickNextPage(1)}/>
+                    <img alt='' src={num3} className={styles.num3Icon} 
+                    onClick={()=>onClickNextPage(2)}/>
+                    <img alt='' src={num4} className={styles.num4Icon} 
+                    onClick={()=>onClickNextPage(3)}/>
                     <img alt='' src={rightButton} className={styles.rightButton} />
                 </div>
                 <div className={styles.postImageContainerOutter}>
