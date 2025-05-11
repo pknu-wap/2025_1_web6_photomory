@@ -6,47 +6,47 @@
       {
         "user_id": 1,
         "user_name": "장우진",
-        "profile_url": "https://picsum.photos/seed/member1/100"
+        "user_photourl": "https://picsum.photos/seed/member1/100"
       },
       {
         "user_id": 2,
         "user_name": "한예준",
-        "profile_url": "https://picsum.photos/seed/member2/100"
+        "user_photourl": "https://picsum.photos/seed/member2/100"
       },
       {
         "user_id": 3,
         "user_name": "노은채",
-        "profile_url": "https://picsum.photos/seed/member3/100"
+        "user_photourl": "https://picsum.photos/seed/member3/100"
       },
       {
         "user_id": 4,
         "user_name": "김민지",
-        "profile_url": "https://picsum.photos/seed/member4/100"
+        "user_photourl": "https://picsum.photos/seed/member4/100"
       },
       {
         "user_id": 5,
         "user_name": "박지훈",
-        "profile_url": "https://picsum.photos/seed/member5/100"
+        "user_photourl": "https://picsum.photos/seed/member5/100"
       },
       {
         "user_id": 6,
         "user_name": "김민숙",
-        "profile_url": "https://picsum.photos/seed/member5/100"
+        "user_photourl": "https://picsum.photos/seed/member5/100"
       },
       {
         "user_id": 7,
         "user_name": "박근혜",
-        "profile_url": "https://picsum.photos/seed/member5/100"
+        "user_photourl": "https://picsum.photos/seed/member5/100"
       },
       {
         "user_id": 8,
         "user_name": "박철민",
-        "profile_url": "https://picsum.photos/seed/member5/100"
+        "user_photourl": "https://picsum.photos/seed/member5/100"
       },
       {
         "user_id": 9,
         "user_name": "김철진",
-        "profile_url": "https://picsum.photos/seed/member5/100"
+        "user_photourl": "https://picsum.photos/seed/member5/100"
       }
     ],
     "albums": [
@@ -114,27 +114,27 @@
       {
         "user_id": 6,
         "user_name": "이서준",
-        "profile_url": "https://picsum.photos/seed/member6/100"
+        "user_photourl": "https://picsum.photos/seed/member6/100"
       },
       {
         "user_id": 7,
         "user_name": "정다영",
-        "profile_url": "https://picsum.photos/seed/member7/100"
+        "user_photourl": "https://picsum.photos/seed/member7/100"
       },
       {
         "user_id": 8,
         "user_name": "최은우",
-        "profile_url": "https://picsum.photos/seed/member8/100"
+        "user_photourl": "https://picsum.photos/seed/member8/100"
       },
       {
         "user_id": 9,
         "user_name": "윤소라",
-        "profile_url": "https://picsum.photos/seed/member9/100"
+        "user_photourl": "https://picsum.photos/seed/member9/100"
       },
       {
         "user_id": 10,
         "user_name": "박영희",
-        "profile_url": "https://picsum.photos/seed/member10/100"
+        "user_photourl": "https://picsum.photos/seed/member10/100"
       }
     ],
     "albums": [
@@ -177,27 +177,27 @@
       {
         "user_id": 11,
         "user_name": "홍길동",
-        "profile_url": "https://picsum.photos/seed/member11/100"
+        "user_photourl": "https://picsum.photos/seed/member11/100"
       },
       {
         "user_id": 12,
         "user_name": "김민수",
-        "profile_url": "https://picsum.photos/seed/member12/100"
+        "user_photourl": "https://picsum.photos/seed/member12/100"
       },
       {
         "user_id": 13,
         "user_name": "이서진",
-        "profile_url": "https://picsum.photos/seed/member13/100"
+        "user_photourl": "https://picsum.photos/seed/member13/100"
       },
       {
         "user_id": 14,
         "user_name": "박지민",
-        "profile_url": "https://picsum.photos/seed/member14/100"
+        "user_photourl": "https://picsum.photos/seed/member14/100"
       },
       {
         "user_id": 15,
         "user_name": "최영수",
-        "profile_url": "https://picsum.photos/seed/member15/100"
+        "user_photourl": "https://picsum.photos/seed/member15/100"
       }
     ],
     "albums": [
@@ -254,27 +254,27 @@
       {
         "user_id": 16,
         "user_name": "이현수",
-        "profile_url": "https://picsum.photos/seed/member16/100"
+        "user_photourl": "https://picsum.photos/seed/member16/100"
       },
       {
         "user_id": 17,
         "user_name": "정소민",
-        "profile_url": "https://picsum.photos/seed/member17/100"
+        "user_photourl": "https://picsum.photos/seed/member17/100"
       },
       {
         "user_id": 18,
         "user_name": "박세진",
-        "profile_url": "https://picsum.photos/seed/member18/100"
+        "user_photourl": "https://picsum.photos/seed/member18/100"
       },
       {
         "user_id": 19,
         "user_name": "이수아",
-        "profile_url": "https://picsum.photos/seed/member19/100"
+        "user_photourl": "https://picsum.photos/seed/member19/100"
       },
       {
         "user_id": 20,
         "user_name": "김도윤",
-        "profile_url": "https://picsum.photos/seed/member20/100"
+        "user_photourl": "https://picsum.photos/seed/member20/100"
       }
     ],
     "albums": [
@@ -331,27 +331,27 @@
       {
         "user_id": 21,
         "user_name": "윤지후",
-        "profile_url": "https://picsum.photos/seed/member21/100"
+        "user_photourl": "https://picsum.photos/seed/member21/100"
       },
       {
         "user_id": 22,
         "user_name": "강서연",
-        "profile_url": "https://picsum.photos/seed/member22/100"
+        "user_photourl": "https://picsum.photos/seed/member22/100"
       },
       {
         "user_id": 23,
         "user_name": "김태현",
-        "profile_url": "https://picsum.photos/seed/member23/100"
+        "user_photourl": "https://picsum.photos/seed/member23/100"
       },
       {
         "user_id": 24,
         "user_name": "송다혜",
-        "profile_url": "https://picsum.photos/seed/member24/100"
+        "user_photourl": "https://picsum.photos/seed/member24/100"
       },
       {
         "user_id": 25,
         "user_name": "이도윤",
-        "profile_url": "https://picsum.photos/seed/member25/100"
+        "user_photourl": "https://picsum.photos/seed/member25/100"
       }
     ],
     "albums": [

@@ -50,7 +50,7 @@ function CurrentGroupTest({ groupList, setSelectedGroupId, onAddGroup }) {
                 }}
               >
                 <img
-                  src={member.profile_url}
+                  src={member.user_photourl}
                   alt={member.user_name}
                   style={{ width: "24px", height: "24px", borderRadius: "50%" }}
                 />
