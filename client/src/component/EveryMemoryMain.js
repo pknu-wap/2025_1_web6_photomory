@@ -9,9 +9,9 @@ import camera from '../assets/camera.svg'
 import landscape from '../assets/landscape.svg'
 import cloud from '../assets/cloud.svg'
 import twinkle from '../assets/twinkle.svg'
-import PhotoModal from './PhotoModal'
 import WeeklyPopularTag from './WeeklyPopularTag.js'
 import DailyPopularTag from './DailyPopularTag.js'
+import DailyPopularTagModal from './DailyPopularTagModal'
 import { useState, useEffect, useMemo } from 'react'
 
 async function fetchUserposts(accessToken) {
@@ -114,6 +114,9 @@ export default function EveryMemoryMain(){
     const [randomTagText, setRandomTagText] = useState();
     const [randomPosts, setRandomPosts]= useState([]); //랜덤 태그에 해당하는 포스트 중 좋아요 순을 위한
                                                     // 지금은 undefined가 뜨기에 일단 해둠
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedPost, setSelectedPost] = useState(null);
+
     const fetchPosts= async ()=>{
         try{
             const posts= await getUserPosts();
@@ -148,37 +151,51 @@ export default function EveryMemoryMain(){
         }
     }, [posts]); //뭔가 posts말고 posts 좋아요 순서가 바뀐다면으로 하는 게 더 좋을 거 같은데..
 
-    const handleLikeCommentClike =async(e, post_id)=>{
+    const handleLikeClick =async(post_id)=>{
         try{
-            if (e.target.value === 'likes_count') {
                 setPosts((prevPosts) => //낙관적 업뎃
                     prevPosts.map((post)=> post.post_id=== post_id
                     ? { ...post, likes_count: post.likes_count + 1 } //이미 {}여기엔 속성이라 post.을 안 붙임
                     : post).sort((a, b) => b.likes_count - a.likes_count)
                 );
                 
-                const updatedPost = await updateLikeCommentCount(post_id); //서버 업뎃
+                const updatedPostByLike = await updateLikeCommentCount(post_id); //서버 업뎃
                 setPosts((prevPosts) =>
                     prevPosts.map((post) =>post.post_id=== post_id
-                    ? { ...post, likes_count: updatedPost.likes_count }
+                    ? { ...post, likes_count: updatedPostByLike.likes_count }
                     :post).sort((a, b) => b.likes_count - a.likes_count)
                 );
-            }
-            else{
                 setPosts((prevPosts)=> //낙관적 업뎃
                     prevPosts.map((post)=>post.post_id===post_id
                     ? {...post, comments_count: post.comments_count+1}
                     : post)
                 );
-                const updatedPost= await updateLikeCommentCount(post_id) //서버 업뎃
+                const updatedPostByComment= await updateLikeCommentCount(post_id) //서버 업뎃
                 setPosts((prevPosts)=>
                     prevPosts.map((post)=>post.post_id===post_id
-                    ? {...post, comments_count: updatedPost.comments_count}
+                    ? {...post, comments_count: updatedPostByComment.comments_count}
                     : post)
                 );
             }
-            }
         catch (error) {
+            console.error('Error uploading like count', error);
+        }
+    }
+    const handleCommentClick=async(post_id)=>{
+        try{
+            setPosts((prevPosts)=> //낙관적 업뎃
+                prevPosts.map((post)=>post.post_id===post_id
+                ? {...post, comments_count: post.comments_count+1}
+                : post)
+            );
+            const updatedPostByComment= await updateLikeCommentCount(post_id) //서버 업뎃
+            setPosts((prevPosts)=>
+                prevPosts.map((post)=>post.post_id===post_id
+                ? {...post, comments_count: updatedPostByComment.comments_count}
+                : post)
+            );
+        }
+        catch(error){
             console.error('Error uploading like count', error);
         }
     }
@@ -191,16 +208,44 @@ export default function EveryMemoryMain(){
     
 
     const [nextPage, setNextPage] = useState([0,1,2,3,4,5]);
-    const onClickNextPage=(value)=>{ //if로 오른쪽 왼쪽도 구현하기
+    const onClickNextPage=(value)=>{ 
         const page=[
             [0,1,2,3,4,5],
             [6,7,8,9,10,11],
             [12,13,14,15,16,17],
             [18,19,20,21,22,23]
         ]
-        setNextPage(page[value]);
+        if(value==='<'){
+            if(nextPage[0]===0){
+                setNextPage(nextPage.map((num)=>num+18))
+            }
+            else{
+                setNextPage(nextPage.map((num)=>num-6))
+            }
+        }
+        else if (value==='>') {
+            if (nextPage[0]===18) {
+                setNextPage(nextPage.map((num)=>num-18))
+            }
+            else{
+                setNextPage(nextPage.map((num)=>num+6))
+            }
+        }
+        else{
+            setNextPage(page[value]);
+        }
     }
-        return (
+
+    const handleTagClick = (post) => {
+        setIsModalOpen(true);
+        setSelectedPost(post);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+    return (
         <div>
             <div className={styles.mainContainer}>
                 {error && <p className={styles.error}>{error}</p>}
@@ -219,17 +264,20 @@ export default function EveryMemoryMain(){
                 <div className={styles.forFlexweeklyTag1}>
                     <WeeklyPopularTag
                     post= {[weeklyPosts[0]]}
-                    onLikeCommentClick={handleLikeCommentClike}
+                    handleLikeClick={handleLikeClick}
+                    handleCommentClick={handleCommentClick}
                     />
                     {/*------*/}
                     <WeeklyPopularTag
                     post= {[weeklyPosts[1]]}
-                    onLikeCommentClick={handleLikeCommentClike}
+                    handleLikeClick={handleLikeClick}
+                    handleCommentClick={handleCommentClick}
                     />
                     {/*------*/}
                     <WeeklyPopularTag
                     post= {[weeklyPosts[2]]}
-                    onLikeCommentClick={handleLikeCommentClike}
+                    handleLikeClick={handleLikeClick}
+                    handleCommentClick={handleCommentClick}
                     />
                     {/*------*/}
                 </div>
@@ -238,33 +286,83 @@ export default function EveryMemoryMain(){
                     <span className={styles.todayTag}>오늘의 태그 인기 사진</span>
                 </div>
                 <div className={styles.todayTagAllContainer}>
-                    <DailyPopularTag
-                    post={[dailyPosts[nextPage[0]]]}
-                    onLikeCommentClick={handleLikeCommentClike}/>
+                    <div className={styles.forModalContainer}
+                    onClick={() => {
+                        handleTagClick(dailyPosts[nextPage[0]]);
+                    }}>
+                        <DailyPopularTag
+                            post={[dailyPosts[nextPage[0]]]}
+                            handleLikeClick={handleLikeClick}
+                            handleCommentClick={handleCommentClick}
+                        />
+                    </div>
+                    <DailyPopularTagModal
+                        isOpen={isModalOpen}
+                        onClose={handleCloseModal}
+                        post={selectedPost ? [selectedPost] : []}
+                        handleLikeClick={handleLikeClick}
+                        handleCommentClick={handleCommentClick}
+                    />
                     {/*-------*/}
-                    <DailyPopularTag
-                    post={[dailyPosts[nextPage[1]]]}
-                    onLikeCommentClick={handleLikeCommentClike}/>
+                    <div className={styles.forModalContainer}
+                    onClick={() => {
+                        handleTagClick(dailyPosts[nextPage[0]]);
+                    }}>
+                        <DailyPopularTag
+                            post={[dailyPosts[nextPage[0]]]}
+                            handleLikeClick={handleLikeClick}
+                            handleCommentClick={handleCommentClick}
+                        />
+                    </div>
                     {/*--------*/}
-                    <DailyPopularTag
-                    post={[dailyPosts[nextPage[2]]]}
-                    onLikeCommentClick={handleLikeCommentClike}/>
+                    <div className={styles.forModalContainer}
+                    onClick={() => {
+                        handleTagClick(dailyPosts[nextPage[0]]);
+                    }}>
+                        <DailyPopularTag
+                            post={[dailyPosts[nextPage[0]]]}
+                            handleLikeClick={handleLikeClick}
+                            handleCommentClick={handleCommentClick}
+                        />
+                    </div>
                     {/*--------*/}
-                    <DailyPopularTag
-                    post={[dailyPosts[nextPage[3]]]}
-                    onLikeCommentClick={handleLikeCommentClike}/>
+                    <div className={styles.forModalContainer}
+                    onClick={() => {
+                        handleTagClick(dailyPosts[nextPage[0]]);
+                    }}>
+                        <DailyPopularTag
+                            post={[dailyPosts[nextPage[0]]]}
+                            handleLikeClick={handleLikeClick}
+                            handleCommentClick={handleCommentClick}
+                        />
+                    </div>
                     {/*--------*/}
-                    <DailyPopularTag
-                    post={[dailyPosts[nextPage[4]]]}
-                    onLikeCommentClick={handleLikeCommentClike}/>
+                    <div className={styles.forModalContainer}
+                    onClick={() => {
+                        handleTagClick(dailyPosts[nextPage[0]]);
+                    }}>
+                        <DailyPopularTag
+                            post={[dailyPosts[nextPage[0]]]}
+                            handleLikeClick={handleLikeClick}
+                            handleCommentClick={handleCommentClick}
+                        />
+                    </div>
                     {/*--------*/}
-                    <DailyPopularTag
-                    post={[dailyPosts[nextPage[5]]]}
-                    onLikeCommentClick={handleLikeCommentClike}/>
+                    <div className={styles.forModalContainer}
+                    onClick={() => {
+                        handleTagClick(dailyPosts[nextPage[0]]);
+                    }}>
+                        <DailyPopularTag
+                            post={[dailyPosts[nextPage[0]]]}
+                            handleLikeClick={handleLikeClick}
+                            handleCommentClick={handleCommentClick}
+                        />
+                    </div>
                     {/*--------*/}
                 </div>
                 <div className={styles.forFlexButton}>
-                    <img alt='' src={leftButton} className={styles.leftButton} /
+                    <img alt='' src={leftButton} className={styles.leftButton} 
+                    onClick={()=>onClickNextPage('<')}/>
                     <img alt='' src={num1} className={styles.num1Icon} 
                     onClick={()=>onClickNextPage(0)}/>
                     <img alt='' src={num2} className={styles.num2Icon} 
@@ -273,7 +371,8 @@ export default function EveryMemoryMain(){
                     onClick={()=>onClickNextPage(2)}/>
                     <img alt='' src={num4} className={styles.num4Icon} 
                     onClick={()=>onClickNextPage(3)}/>
-                    <img alt='' src={rightButton} className={styles.rightButton} />
+                    <img alt='' src={rightButton} className={styles.rightButton} 
+                    onClick={()=>onClickNextPage('>')}/>
                 </div>
                 <div className={styles.postImageContainerOutter}>
                     <img src={camera} alt='' className={styles.postImageIconOutter}></img>

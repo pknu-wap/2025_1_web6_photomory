@@ -5,7 +5,7 @@ import trophy from '../assets/trophy.svg'
 import defaultProfileIcon from '../assets/defaultProfileIcon.svg'
 import emptyImage from '../assets/emptyImage.svg'
 
-export default function WeeklyPopularTag({post, handleLikeCommentClike}){
+export default function WeeklyPopularTag({post, handleLikeClick, handleCommentClick}){
 
     return(
         <div className={styles.weeklyTagContainer}>
@@ -21,16 +21,14 @@ export default function WeeklyPopularTag({post, handleLikeCommentClike}){
             </div>
             <div className={styles.forFlexweeklyTag2}>
                 <div className={styles.heartContainer}
-                onClick={handleLikeCommentClike}
-                value='likes_count'>
+                onClick={handleLikeClick}>
                     <img src={heart} alt='' className={styles.heartIcon}/>
                     <p className={styles.heartNum}>
                         {post?.likes_count || '1.2k'}
                     </p>
                 </div>
                 <div className={styles.commentContainer}
-                onClick={handleLikeCommentClike}
-                value='comments_count'>
+                onClick={handleCommentClick}>
                     <img src={comment} alt='' className={styles.commentIcon}></img>
                     <p className={styles.commentNum}>
                         {post?.comments_count || '80'}
