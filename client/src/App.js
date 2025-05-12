@@ -11,7 +11,7 @@ import SignupPage from "./page/SignupPage";
 import MyAlbumPage from "./page/MyAlbumPage.js";
 import MyAlbumDetailPage from "./page/MyAlbumDetailPage.js";
 import SignupConfirmPage from "./page/SignupConfirmPage.js";
-import EveryMemoryPage from './page/EveryMemoryPage.js'
+import EveryMemoryPage from "./page/EveryMemoryPage.js";
 
 function App() {
   const [isLogged, setIsLogged] = useState(false);
@@ -23,13 +23,20 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route
           path="/Login"
-          element={<LoginPage isLogged={isLogged} setIsLogged={setIsLogged} name={name} setName={setName} />}
+          element={
+            <LoginPage
+              isLogged={isLogged}
+              setIsLogged={setIsLogged}
+              name={name}
+              setName={setName}
+            />
+          }
         />
         <Route path="/Loged" element={<Loged />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/Signup" element={<SignupPage />} />
         <Route path="/Signup/Confirm" element={<SignupConfirmPage />} />
-        <Route path="/myMemory" element={<MyAlbumPage />} />
+        <Route path="/my-album" element={<MyAlbumPage />} />
         <Route path="/my-album/:albumId" element={<MyAlbumDetailPage />} />
         <Route path="/our-album" element={<OurAlbumPage />} />
         <Route

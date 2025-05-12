@@ -27,7 +27,7 @@ function MainPageMain() {
       <div
         className={styles.myMemoryContainer}
         onClick={onClickHandle}
-        data-value="/myMemory"
+        data-value="/my-album"
       >
         <FontAwesomeIcon icon={faLock} className={styles.icon} /> <br></br>
         <p className={styles.myMemoryText}>my memory</p>
@@ -42,7 +42,7 @@ function MainPageMain() {
       <div
         className={styles.ourMemoryContainer}
         onClick={onClickHandle}
-        data-value="/ourMemory"
+        data-value="/our-album"
       >
         <FontAwesomeIcon icon={faUsers} className={styles.icon} /> <br></br>
         <p className={styles.ourMemoryText}>our memory</p>
