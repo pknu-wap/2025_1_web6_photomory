@@ -1,17 +1,17 @@
 .headerContainer{
-    background-color: #f2f3f4;
+    background-color: white;
     width: 100%;
-    height: 100%;
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 .headerContainer2 {
-  width: 95%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+width: 95%;
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
 }
 .headerContainerLeft{
     display: flex;
@@ -22,9 +22,6 @@
 }
 
 .headerTopLogo{
-    background-image: url("../assets/photomory_logo.svg");
-    background-repeat: no-repeat;
-    background-size: cover;
     width: 50px;
     height: 50px;
     border-radius: 10px;
@@ -39,28 +36,29 @@
 }
 .signIn{
     background-color: black;
-    color: #f2f3f4;
+    color: white;
     padding: 5px 10px;
 }
 .signUp{
-    background-color: #f2f3f4;
+    background-color: white;
     color: black;
     padding: 5px 10px;
+    border: 1px solid black;
 }
 
 .headerContainerRight {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  margin-right: 10px;
+display: flex;
+flex-direction: row;
+align-items: center;
+gap: 10px;
+margin-right: 10px;
 }
 
 .memoryContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 15px;
+display: flex;
+flex-direction: row;
+align-items: center;
+gap: 15px;
 }
 button:active{
     transform: scale(0.95);
@@ -80,4 +78,14 @@ button{
 .signIn:hover,
 .signUp:hover{
     box-shadow: rgba(100, 100, 100, 0.2) 0px 0px 10px 3px;
+}
+.welcome,
+.gearIcon,
+.bellIcon{
+    color: rgb(100,100,100);
+    font-size: 14px;
+}
+.gearIcon,
+.bellIcon{
+    font-size: 16px;
 }

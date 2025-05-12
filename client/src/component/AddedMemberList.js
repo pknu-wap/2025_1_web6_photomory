@@ -23,7 +23,7 @@ function AddedMemberList({ addedMembers, onRemoveMember }) {
         {addedMembers.map((member) => (
           <li key={member.user_id} className="addedMemberItem">
             <img
-              src={member.profile_url}
+              src={member.user_photourl}
               alt={member.user_name}
               className="addedMemberImg"
             />

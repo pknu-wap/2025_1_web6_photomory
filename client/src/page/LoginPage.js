@@ -3,12 +3,19 @@ import Header from "../component/Header";
 import Footer from "../component/Footer";
 import LoginPageMain from "../component/LoginPageMain";
 
-export default function LoginPage() {
+
+export default function LoginPage({
+  isLogged,
+  setIsLogged,
+  name, 
+  setName}) {
+  
+
   return (
     <>
       <div className={styles.pageContainer}>
-        <Header />
-        <LoginPageMain />
+        <Header isLogged={isLogged} name={name}/>
+        <LoginPageMain setIsLogged={setIsLogged} setName={setName}/>
         <Footer />
       </div>
     </>

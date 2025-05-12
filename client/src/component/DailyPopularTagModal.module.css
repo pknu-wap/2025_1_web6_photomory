@@ -1,0 +1,96 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  min-width: 320px;
+  max-width: 90vw;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  color: #333;
+}
+
+.modalBody {
+  margin-top: 16px;
+}
+
+.modalImage {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  object-fit: cover;
+  max-height: 60vh;
+}
+
+.postInfo {
+  margin-top: 16px;
+}
+
+.description {
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.interactionContainer {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.heartContainer,
+.commentContainer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.heartIcon,
+.commentIcon {
+  font-size: 1.5rem;
+}
+
+.heartNum,
+.commentNum {
+  color: #666;
+  font-size: 0.9rem;
+} 

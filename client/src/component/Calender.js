@@ -11,14 +11,30 @@ import moveCalenderLeft from "../assets/moveCalenderLeft.svg";
 import moveCalenderRight from "../assets/moveCalenderRight.svg";
 
 // 달력 컴포넌트
-function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
+function CalenderTest({
+  type = "", // "group | private"
+  groupAlbums = [],
+  selectedGroupId,
+  albumTitlesByGroup = {},
+  myAlbums = [],
+}) {
   const [currentDate, setCurrentDate] = useState(dayjs()); //앱이 처음 실행될 때 기준이 되는 날짜를 dayjs()로 설정 (즉, 오늘 날짜)
   const startOfMonth = currentDate.startOf("month"); //현재 월의 1일 날짜 객체을 구함
   const startDay = startOfMonth.day(); // 이번 달의 1일이 무슨 요일인지 확인
   const daysInMonth = currentDate.daysInMonth(); //이번 달이 며칠까지 있는지 확인
 
-  //선택된 그룹의 id로 선택 그룹의 앨범명 배열
-  const selectedAlbumTitles = albumTitlesByGroup[selectedGroupId] || []; //선택된 그룹의 앨범명들
+  //상황별로 데이터 선택
+  let albums = [];
+  let selectedAlbumTitles = [];
+
+  if (type === "group") {
+    albums = groupAlbums || [];
+    //선택된 그룹의 id로 선택 그룹의 앨범명 배열
+    selectedAlbumTitles = albumTitlesByGroup[selectedGroupId] || [];
+  } else if (type === "private") {
+    albums = myAlbums || [];
+    selectedAlbumTitles = albums.map((album) => album.album_name);
+  }
 
   // 앨범명 => 색상 매핑 객체 생성
   const albumColorsMap = getAlbumColorMap(selectedAlbumTitles);
@@ -53,9 +69,9 @@ function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
       const matchingPhotos = []; //각 날짜에 해당하는 사진 데이터를 모으는 배열
 
       //각 앨범을 돌며 해당 날짜에 맞는 사진 찾아내기
-      groupAlbums.forEach((album) => {
+      albums.forEach((album) => {
         album.photos.forEach((photo) => {
-          const createdDate = new Date(photo.createdAt);
+          const createdDate = new Date(photo.photo_makingtime);
           const photoYear = createdDate.getFullYear();
           const photoMonth = createdDate.getMonth(); // 0부터 시작
           const photoDate = createdDate.getDate();
@@ -67,10 +83,10 @@ function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
             photoDate === d
           ) {
             matchingPhotos.push({
-              title: photo.title, //사진 이름
-              albumTitle: album.title, //앨범명
-              imgUrl: photo.imgUrl, //사진 imgurl
-              createdAt: photo.createdAt, //사진 생성날짜
+              photo_name: photo.photo_name, //사진 이름
+              album_name: album.album_name, //앨범명
+              photo_url: photo.photo_url, //사진 imgurl
+              photo_makingtime: photo.photo_makingtime, //사진 생성날짜
             });
           }
         });
@@ -138,4 +154,4 @@ function Calender({ groupAlbums, selectedGroupId, albumTitlesByGroup }) {
   );
 }
 
-export default Calender;
+export default CalenderTest;

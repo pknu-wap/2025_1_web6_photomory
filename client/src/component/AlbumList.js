@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import PaginationBar from "./PaginationBar";
 import emptyImage from "../assets/emptyImage.svg";
 import "./AlbumList.css";
-
-function AlbumList({ albums, basePath = "" }) {
+//개인 앨범, 공유 앨범에서 각 앨범을 보여주는 컴포넌트
+function AlbumList({ albums, type = "", selectedGroupId = "", basePath = "" }) {
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
   const albumsPerPage = 4; //한 페이지당 앨범 갯수
 
@@ -33,7 +33,11 @@ function AlbumList({ albums, basePath = "" }) {
             {/* 앨범 제목 */}
             <h4 className="albumTitle">#{currentAlbum.album_name}</h4>
             <Link
-              to={`${basePath}/${currentAlbum.album_id}`}
+              to={
+                type === "group"
+                  ? `${basePath}/${selectedGroupId}/${currentAlbum.album_id}`
+                  : `${basePath}/${currentAlbum.album_id}`
+              }
               className="albumLink"
             >
               앨범 상세보기
