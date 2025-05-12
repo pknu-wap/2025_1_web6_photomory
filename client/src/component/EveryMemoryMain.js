@@ -16,7 +16,7 @@ import { useState, useEffect, useMemo } from 'react'
 
 async function fetchUserposts(accessToken) {
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/user/posts`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/user/posts`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ async function fetchUserposts(accessToken) {
 
 async function refreshAccessToken(refreshToken) {
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/refresh-token`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/refresh-token`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ async function getUserPosts() {
 async function updateLikeCommentCount(post_id){
     try{
         const accessToken= localStorage.getItem('accessToken')
-        const reponse= await fetch(`${process.env.REACT_APP_API_BASE_URL}/posts`,{
+        const reponse= await fetch(`${process.env.REACT_APP_API_URL}/posts`,{
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json',

@@ -1,6 +1,6 @@
 async function signupUser(formData) {
   try {
-    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}`, {
       method: "POST",
       body: formData, // 회원가입 정보 formData 그대로 보내기
     });
