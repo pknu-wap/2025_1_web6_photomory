@@ -13,7 +13,6 @@ const BASE_URL = process.env.REACT_APP_API_URL;
 
 // loginUser.js (API 요청 함수)
 async function loginUser(email, password, navigate) {
-  console.log(BASE_URL);
   try {
     const response = await fetch(`${BASE_URL}/api/auth/login`, {
       method: "POST",
@@ -59,13 +58,13 @@ async function loginUser(email, password, navigate) {
 }
 
 export default function LoginPageMain({ setIsLogged, setName }) {
-    const [ email, setEmail] = useState('')
-    const [ pw, setPw] = useState('')
-    const [ error, setError] = useState();
-    const [ isLoading , setIsLoading] = useState(false)
-    const navigate = useNavigate();
-    const focusEmailRef = useRef();
-    const focusPwRef = useRef();
+  const [email, setEmail] = useState("");
+  const [pw, setPw] = useState("");
+  const [error, setError] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const focusEmailRef = useRef();
+  const focusPwRef = useRef();
 
   const onChangeHandleEmail = (e) => {
     setEmail(e.target.value);
@@ -76,50 +75,34 @@ export default function LoginPageMain({ setIsLogged, setName }) {
     setError("");
   };
 
-    const onClickButtonLogin = async () => {
-        setIsLoading(true);
-        try{
-            if (email==="") {
-                focusEmailRef.current.focus();
-                setError('이메일을 입력해주세요.')
-                return;
-            }else if (pw==="") {
-                focusPwRef.current.focus();
-                setError('비밀번호를 입력해주세요.')
-                return;
-            }
-            const user = await loginUser(email, pw);
-            if (user) { //로그인 성공(따로 프롭스 줄 거 있음 여기서 설정 ㄱㄱ)
-                setIsLogged(true)
-                setName(user.userName)
-                navigate('/Loged', {
-                state: {
-                name: user.userName,
-                id: user.userEmail, //id는 이메일과 동일
-                }
-                //여기에 내 정보 제이슨=user로 하기 지금 그 파일 추가하면 머지하다가 오류남
-            });
-            } else { //로그인 실패
-                setEmail('')
-                setPw('')
-                setError('이메일 또는 비밀번호가 잘못되었습니다.')
-                focusEmailRef.current.focus();
-            };
-        } catch (error) {
-            setEmail('')
-            setPw('')
-            console.error('An error occurred during login');
-            setError('로그인 중 오류가 발생했습니다.');
-        } finally {
-            setIsLoading(false); //로딩 종료
-        }
-    };
+  const onClickHandleSignUp = () => {};
 
-      const user = await loginUser(email, pw, navigate);
+  const onClickButtonLogin = async () => {
+    setIsLoading(true);
+    try {
+      if (email === "") {
+        focusEmailRef.current.focus();
+        setError("이메일을 입력해주세요.");
+        return;
+      } else if (pw === "") {
+        focusPwRef.current.focus();
+        setError("비밀번호를 입력해주세요.");
+        return;
+      }
+      const user = await loginUser(email, pw);
       if (user) {
+        //로그인 성공(따로 프롭스 줄 거 있음 여기서 설정 ㄱㄱ)
         setIsLogged(true);
-        // 사용자 정보를 상태로 저장하고 싶다면 여기서 추가 가능
+        setName(user.userName);
+        navigate("/Loged", {
+          state: {
+            name: user.userName,
+            id: user.userEmail, //id는 이메일과 동일
+          },
+          //여기에 내 정보 제이슨=user로 하기 지금 그 파일 추가하면 머지하다가 오류남
+        });
       } else {
+        //로그인 실패
         setEmail("");
         setPw("");
         setError("이메일 또는 비밀번호가 잘못되었습니다.");
@@ -131,61 +114,84 @@ export default function LoginPageMain({ setIsLogged, setName }) {
       console.error("An error occurred during login");
       setError("로그인 중 오류가 발생했습니다.");
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); //로딩 종료
     }
+  };
 
-//     const onFocusHandle=(e)=>{ 온포커스 마루리하기
-//         if (e.className) {
-            
-//         }
-//     }
+  const user = loginUser(email, pw, navigate);
+  if (user) {
+    setIsLogged(true);
+    // 사용자 정보를 상태로 저장하고 싶다면 여기서 추가 가능
+  } else {
+    setEmail("");
+    setPw("");
+    setError("이메일 또는 비밀번호가 잘못되었습니다.");
+    focusEmailRef.current.focus();
+  }
 
-    return(
-        <>
-            <div className={styles.loginPageMainContainer}>
-                <img src={logo} className={styles.logoImage} alt="Photomy"></img>
-                <div className={styles.loginContainer}>
-                    <p className={styles.loginText}>로그인</p>
-                    <div className={styles.emailContainer}>
-                        <span className={styles.emailText}>
-                            email
-                        </span>
-                        <FontAwesomeIcon icon={faEnvelope}
-                        className={styles.emailIcon}/> 
-                        <input className={styles.emailInput} 
-                        placeholder="     이메일을 입력하세요."
-                        onChange={onChangeHandleEmail}
-                        value={email}
-                        disabled={isLoading}
-                        ref={focusEmailRef}</input> {/*온포커스로 마저 완성하기*/}
-                    </div>
-                    <div className={styles.pwContainer}>
-                        <span className={styles.pwText}>
-                            password
-                        </span>
-                        {}
-                        <FontAwesomeIcon icon={faLock} className={styles.pwIcon}/> 
-                        <input className={styles.pwInput}
-                        type='password'
-                        placeholder="     비밀번호를 입력하세요."
-                        onChange={onChangeHandlePw}
-                        value={pw}
-                        disabled={isLoading}
-                        ref={focusPwRef}></input>
-                    </div>
-                    { error&& <p className={styles.error}>{error}</p>}
-                    <button className={styles.loginButton}
-                    onClick={onClickButtonLogin}
-                    disabled={isLoading}>
-                        <FontAwesomeIcon icon={faRightToBracket} />
-                        {isLoading? isLoading : 'LOGIN'}
-                    </button>
-                        <span className={styles.notAccount}>계정이 없으신가요?</span>
-                        <button className={styles.signUp}
-                        onClick={onClickHandleSignUp}>회원가입
-                     </button>
-                </div>
-            </div>
-        </>
-    )
+  //     const onFocusHandle=(e)=>{ 온포커스 마루리하기
+  //         if (e.className) {
+
+  //         }
+  //     }
+
+  return (
+    <>
+      <div className={styles.loginPageMainContainer}>
+        <img src={logo} className={styles.logoImage} alt="Photomy" />
+        <div className={styles.loginContainer}>
+          <p className={styles.loginText}>로그인</p>
+
+          {/* 이메일 입력 */}
+          <div className={styles.emailContainer}>
+            <span className={styles.emailText}>email</span>
+            <FontAwesomeIcon icon={faEnvelope} className={styles.emailIcon} />
+            <input
+              className={styles.emailInput}
+              placeholder="     이메일을 입력하세요."
+              onChange={onChangeHandleEmail}
+              value={email}
+              disabled={isLoading}
+              ref={focusEmailRef}
+              onFocus={() => {}} // TODO: 원하는 포커스 동작 추가
+            />
+          </div>
+
+          {/* 비밀번호 입력 */}
+          <div className={styles.pwContainer}>
+            <span className={styles.pwText}>password</span>
+            <FontAwesomeIcon icon={faLock} className={styles.pwIcon} />
+            <input
+              className={styles.pwInput}
+              type="password"
+              placeholder="     비밀번호를 입력하세요."
+              onChange={onChangeHandlePw}
+              value={pw}
+              disabled={isLoading}
+              ref={focusPwRef}
+            />
+          </div>
+
+          {/* 에러 메시지 출력 */}
+          {error && <p className={styles.error}>{error}</p>}
+
+          {/* 로그인 버튼 */}
+          <button
+            className={styles.loginButton}
+            onClick={onClickButtonLogin}
+            disabled={isLoading}
+          >
+            <FontAwesomeIcon icon={faRightToBracket} />
+            {isLoading ? "로그인 중..." : "LOGIN"}
+          </button>
+
+          {/* 회원가입 안내 */}
+          <span className={styles.notAccount}>계정이 없으신가요?</span>
+          <button className={styles.signUp} onClick={onClickHandleSignUp}>
+            회원가입
+          </button>
+        </div>
+      </div>
+    </>
+  );
 }
