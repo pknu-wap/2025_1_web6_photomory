@@ -154,19 +154,30 @@
     display: flex;
     flex-direction: row;
 }
+.heartContainer:hover .heartIcon,
+.commentContainer:hover .commentIcon,
+.heartContainer:hover .todayTagHeartIcon,
+.commentContainer:hover .todayTagCommentIcon{
+    transform: scale(1.2) rotate(5deg);
+}
+.heartContainer:hover,
+.commentContainer:hover{
+    cursor: pointer;
+}
 .heartIcon{
     width: 20px;
     height: 20px;
     margin-right: 5px;
+    transition: all 0.2s ease;
 }
 .commentIcon{
     width: 20px;
     height: 20px;
     margin-right: 5px;
+    transition: all 0.2s ease;
 }
 .heartNum{
     display: inline-block;
-    
     color: #EF4444;
 }
 .commentNum{
@@ -257,8 +268,8 @@
 .todayTagHeartIcon{
     width: 20px;
     height: 20px;
-    
     margin-right: 5px;
+    transition: all 0.2s ease;
 }
 .todayTagheartText{
     color: #EF4444;
@@ -266,8 +277,8 @@
 .todayTagCommentIcon{
     width: 20px;
     height: 20px;
-    
     margin-right: 5px;
+    transition: all 0.2s ease;
 }
 .forFlexButton{
     display: flex;
@@ -287,6 +298,16 @@
     background-color: rgba(229, 231, 235, 1);
     border-radius: 50%;
     padding: 7px;
+    transition: all 0.2s ease,
+}
+.num1Icon:hover,
+.num2Icon:hover,
+.num3Icon:hover,
+.num4Icon:hover,
+.leftButton:hover,
+.rightButton:hover {
+    background-color: rgba(200, 202, 206, 1);
+    transform: scale(1.12);
 }
 .postImageIconOutter{
     width: 24px;
@@ -412,4 +433,16 @@
     border: 1px solid #CCCCCC;
     height: 40px;
     margin-left: 15px;
+}
+
+.heartIconContainer:hover .heartIcon {
+    transform: scale(1.2) rotate(5deg);
+    color: #ff4d4d;
+}
+
+.heartIconContainer {
+    cursor: pointer;
+}
+.forModalContainer{
+    display: contents;
 }
