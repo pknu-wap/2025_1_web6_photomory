@@ -1,6 +1,7 @@
 .mainContainer{
-    width: clamp(700px, 70%, 70%);
-    margin-left: 15%;
+    width: 80%;
+    min-width: 700px;
+    margin-left: 10%;
     height: 100%;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -21,15 +22,11 @@
 }
 .myMemoryContainer{
     padding: 10px;
-    
     border-radius: 6px;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 
 .myMemoryText{
@@ -64,6 +61,8 @@
 
 .icon {
   font-size: clamp(30px, 35px, 40px);
+
+  margin-top: 20px;
 }
 .ourMemoryContainer{
     padding: 10px;
