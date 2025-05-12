@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import "./PhotoSubmit.css";
 import submitFileImage from "../assets/submitFileImage.svg";
+import { uploadPhoto } from "../api/upLoadPhoto";
 function PhotoSubmit({ handleAddPhoto }) {
   const [newPhotoData, setNewPhotoData] = useState({
     imgFile: null,
@@ -26,31 +27,30 @@ function PhotoSubmit({ handleAddPhoto }) {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); //기본 동작(새로고침) 막기
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const formData = new FormData(); //파일 업로드할 때 사용하는 전용 데이터 객체
-    formData.append("imgFile", newPhotoData.imgFile); //데이터 추가
-    formData.append("photo_name", newPhotoData.photo_name);
-    formData.append("photo_makingtime", newPhotoData.photo_makingtime);
+    const formData = new FormData();
+    formData.append("file", newPhotoData.imgFile);
 
-    // 상위에 넘길 수 있도록 imgUrl 포함해서 넘김
-    handleAddPhoto({
-      photo_id: Date.now(),
-      photo_name: newPhotoData.photo_name,
-      photo_makingtime: newPhotoData.photo_makingtime,
-      photo_url: URL.createObjectURL(newPhotoData.imgFile),
-    }); //사진 목록 다시 추가 후 재렌더링
+    // 서버에 업로드 요청
+    const result = await uploadPhoto(formData);
 
-    //데이터 확인인
-    console.log(
-      "제출된 데이터:",
-      formData.get("imgFile"),
-      formData.get("photo_name"),
-      formData.get("photo_makingtime")
-    );
+    if (result) {
+      console.log("서버에서 응답받은 데이터:", result);
 
-    resetForm(); // 제출 후 초기화
+      // 로컬에 목록 추가 (화면 렌더링용)
+      handleAddPhoto({
+        photo_id: Date.now(),
+        photo_name: newPhotoData.photo_name,
+        photo_makingtime: newPhotoData.photo_makingtime,
+        photo_url: URL.createObjectURL(newPhotoData.imgFile),
+      });
+
+      resetForm();
+    } else {
+      alert("서버 업로드에 실패했습니다.");
+    }
   };
 
   const resetForm = () => {
@@ -61,7 +61,7 @@ function PhotoSubmit({ handleAddPhoto }) {
       photo_makingtime: "",
     });
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; //브라우저 input 내부 파일 제거거
+      fileInputRef.current.value = ""; //브라우저 input 내부 파일 제거
     }
   };
 

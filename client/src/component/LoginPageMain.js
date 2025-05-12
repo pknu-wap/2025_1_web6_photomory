@@ -1,46 +1,61 @@
-import styles from './LoginPage.Main.module.css'
-import logo from "../assets/photomory_logo.svg"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEnvelope, faLock, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
-import { useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom' 
+import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import styles from "./LoginPage.Main.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faEnvelope,
+  faLock,
+  faRightToBracket,
+} from "@fortawesome/free-solid-svg-icons";
+import logo from "../assets/photomory_logo.svg";
 
+const BASE_URL = process.env.REACT_APP_API_URL;
 
-async function loginUser(email,password) {
-    try {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+// loginUser.js (API 요청 함수)
+async function loginUser(email, password, navigate) {
+  console.log(BASE_URL);
+  try {
+    const response = await fetch(`${BASE_URL}/api/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         useremail: email,
         password: password,
-        }),
+      }),
     });
 
-    if (!response.ok) { //응답에 따른
-        throw new Error('이메일 또는 비밀번호가 잘못되었습니다.');
+    if (!response.ok) {
+      throw new Error("이메일 또는 비밀번호가 잘못되었습니다.");
     }
 
-    const data = await response.json(); //서버로부터 받은 json 응답 처리
-    const accessToken = data.accessToken;
-    const refreshToken = data.refreshToken; 
-    const user = data.user; 
-    if (!accessToken || !refreshToken || !user) {
-        throw new Error('응답에 토큰 또는 사용자 정보가 없습니다.')
+    const data = await response.json();
+
+    if (!data.accessToken) {
+      alert("❌ accessToken이 없습니다!");
+      return null;
     }
 
-      // 토큰 저장
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
-    console.log('로그인 성공, 토큰 저장 완료:', { accessToken, refreshToken});
-    return user; // 사용자 정보 반환
-    
-} catch (error) {
-    console.error('로그인 에러:', error.message);
-    alert('로그인에 실해하였습니다. 다시 시도해주세요.'); 
-    }
+    localStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("refreshToken", data.refreshToken);
+
+    navigate("/Loged", {
+      state: {
+        name: data.userName, // "박진오"
+        email: data.userEmail, // "jinoh1030@naver.com"
+        password: password, // 사용자가 입력한 pw
+      },
+    });
+    return {
+      email: data.userEmail,
+      name: data.userName,
+    };
+  } catch (error) {
+    console.error("로그인 에러:", error.message);
+    alert("로그인에 실패했습니다. 다시 시도해주세요.");
+    return null;
+  }
 }
 
 export default function LoginPageMain({ setIsLogged, setName }) {
@@ -52,14 +67,14 @@ export default function LoginPageMain({ setIsLogged, setName }) {
     const focusEmailRef = useRef();
     const focusPwRef = useRef();
 
-    const onChangeHandleEmail = (e) => {
-        setEmail(e.target.value)
-        setError('')
-    }
-    const onChangeHandlePw = (e) => {
-        setPw(e.target.value)
-        setError('')
-    }
+  const onChangeHandleEmail = (e) => {
+    setEmail(e.target.value);
+    setError("");
+  };
+  const onChangeHandlePw = (e) => {
+    setPw(e.target.value);
+    setError("");
+  };
 
     const onClickButtonLogin = async () => {
         setIsLoading(true);
@@ -100,15 +115,30 @@ export default function LoginPageMain({ setIsLogged, setName }) {
         }
     };
 
-    const onClickHandleSignUp=()=>{
-        navigate('/signUp')
+      const user = await loginUser(email, pw, navigate);
+      if (user) {
+        setIsLogged(true);
+        // 사용자 정보를 상태로 저장하고 싶다면 여기서 추가 가능
+      } else {
+        setEmail("");
+        setPw("");
+        setError("이메일 또는 비밀번호가 잘못되었습니다.");
+        focusEmailRef.current.focus();
+      }
+    } catch (error) {
+      setEmail("");
+      setPw("");
+      console.error("An error occurred during login");
+      setError("로그인 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
     }
 
-    const onFocusHandle=(e)=>{
-        if (e.className) {
+//     const onFocusHandle=(e)=>{ 온포커스 마루리하기
+//         if (e.className) {
             
-        }
-    }
+//         }
+//     }
 
     return(
         <>
@@ -127,8 +157,7 @@ export default function LoginPageMain({ setIsLogged, setName }) {
                         onChange={onChangeHandleEmail}
                         value={email}
                         disabled={isLoading}
-                        ref={focusEmailRef}
-                        onFocus={onFocusHandle}></input> {/*온포커스로 마저 완성하기*/}
+                        ref={focusEmailRef}</input> {/*온포커스로 마저 완성하기*/}
                     </div>
                     <div className={styles.pwContainer}>
                         <span className={styles.pwText}>
@@ -153,7 +182,8 @@ export default function LoginPageMain({ setIsLogged, setName }) {
                     </button>
                         <span className={styles.notAccount}>계정이 없으신가요?</span>
                         <button className={styles.signUp}
-                        onClick={onClickHandleSignUp}>회원가입</button>
+                        onClick={onClickHandleSignUp}>회원가입
+                     </button>
                 </div>
             </div>
         </>

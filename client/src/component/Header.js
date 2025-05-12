@@ -29,7 +29,7 @@ function Header({isLogged, name }){ //로그인에서 받기
                         </button>
                         <button className={styles.ourMemory}
                         onClick={onclickHandle}
-                        value='/ourMemory'>
+                        value='/our-album'>
                             우리의 추억
                         </button>
                         <button className={styles.everyMemory}
@@ -73,6 +73,5 @@ function Header({isLogged, name }){ //로그인에서 받기
             </div>
         </div>
     );
-}
 
 export default Header;

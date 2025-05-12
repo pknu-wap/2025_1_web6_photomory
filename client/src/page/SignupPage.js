@@ -6,7 +6,7 @@ import Header from "../component/Header";
 
 function SignupPage() {
   return (
-    <div className="signupPageWrapper">
+    <div>
       {/* 회원가입 폼 */}
       <Header />
       <SignupForm />

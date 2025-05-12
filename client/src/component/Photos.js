@@ -9,8 +9,12 @@ import "./Photos.css";
 function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null); //선택된 이미지 상태
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
-  const photosPerPage = 8; //한 페이지당  사진 갯수
-
+  let photosPerPage; //한 페이지당  사진 갯수
+  if (type === "private") {
+    photosPerPage = 8; //개인앨범일 때 한 페이지 당 8개의 사진
+  } else {
+    photosPerPage = 4; //그룹앨범일 때 한 페이지 당 4개의 사진
+  }
   //모달 오픈 헨들러
   const handleOpenModal = (photo) => setSelectedPhoto({ ...photo, albumTitle }); //객체의 형태로 앨범명 추가
   //모달 닫기 헨들러

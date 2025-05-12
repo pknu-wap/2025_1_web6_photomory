@@ -8,16 +8,13 @@ import image2 from '../assets/mainPageImage2.svg'
 import image3 from '../assets/mainPageImage3.svg'
 import image4 from '../assets/mainPageImage4.svg'
 
-
-
-
 function MainPageMain() {
-    const nav = useNavigate();
-    const onClickHandle=(event)=>{
-        nav(event.currentTarget.dataset.value);
-    };
+  const nav = useNavigate();
+  const onClickHandle = (event) => {
+    nav(event.currentTarget.dataset.value);
+  };
 
-    const weeklyImage='./Image.png';
+  const weeklyImage = "./Image.png";
 
     return (
         <div className={styles.mainContainer}>
@@ -110,7 +107,9 @@ function MainPageMain() {
                 </div>
             </div>
         </div>
-    );
-};
+      </div>
+    </div>
+  );
+}
 
 export default MainPageMain;
