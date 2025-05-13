@@ -1,6 +1,5 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ImageUploader from "./ImageUploader";
 import "./SignupForm.css";
 import isValidPassword from "../utils/isValidPassword";
 import signupUser from "../api/signupuser";
@@ -16,7 +15,6 @@ function SignupForm() {
     user_email: "",
     user_password: "",
     user_password_check: "", //비밀번호 확인용 필드
-    user_photourl: null,
     user_job: "",
     user_equipment: "",
     user_introduction: "",
@@ -26,23 +24,12 @@ function SignupForm() {
   //navigate 사용
   const navigate = useNavigate();
 
-  // 이미지 리셋용 상태
-  const [resetImage, setResetImage] = useState(false);
-
   //user_photourl을 제외한 입력한 입력값 헨들러
   const handleChange = (e) => {
     const { name, value } = e.target;
     setSignupData((prev) => ({
       ...prev,
       [name]: value,
-    }));
-  };
-
-  //이미지 파일 선택 헨들러
-  const handleImageSelect = (file) => {
-    setSignupData((prev) => ({
-      ...prev,
-      user_photourl: file,
     }));
   };
 
@@ -64,9 +51,6 @@ function SignupForm() {
       return;
     }
 
-    //이미지 초기화
-    setResetImage(true);
-
     const data = {
       user_name: signupData.user_name,
       user_email: signupData.user_email,
@@ -75,7 +59,6 @@ function SignupForm() {
       user_equipment: signupData.user_equipment,
       user_introduction: signupData.user_introduction,
       user_field: signupData.user_field,
-      user_photourl: null,
     };
 
     try {
@@ -94,7 +77,7 @@ function SignupForm() {
           user_introduction: "",
           user_field: "",
         });
-
+        //회원가입 확인 페이지로 이동
         navigate("/Signup/Confirm");
       } else if (
         result.message === "회원가입 실패(이미 존재하는 이메일입니다.)"
@@ -108,12 +91,6 @@ function SignupForm() {
       alert("서버 오류로 회원가입에 실패했습니다.");
     }
   };
-
-  // resetImage 상태를 업데이트하는 함수를 useCallback으로 감싸서 메모이제이션
-  const handleResetImage = useCallback((value) => {
-    // 부모 컴포넌트의 reset 상태를 true 또는 false로 설정
-    setResetImage(value);
-  }, []);
 
   return (
     <div className="signupWrapper">
@@ -173,14 +150,6 @@ function SignupForm() {
                 비밀번호가 일치하지 않습니다.
               </p>
             )}
-          {/*이미지파일 입력 영역*/}
-          <ImageUploader
-            onFileSelect={handleImageSelect}
-            value={signupData.user_photourl}
-            reset={resetImage}
-            onReset={handleResetImage}
-          />
-
           {/* 직업 */}
           <div className="signupLabel">
             <p>직업</p>
