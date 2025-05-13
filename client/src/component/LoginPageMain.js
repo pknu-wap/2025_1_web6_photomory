@@ -11,8 +11,8 @@ import logo from "../assets/photomory_logo.svg";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-// loginUser.js (API 요청 함수)
-async function loginUser(email, password, navigate) {
+// 로그인 API 함수
+export async function loginUser(email, password, navigate) {
   try {
     const response = await fetch(`${BASE_URL}/api/auth/login`, {
       method: "POST",
@@ -79,55 +79,36 @@ export default function LoginPageMain({ setIsLogged, setName }) {
 
   const onClickButtonLogin = async () => {
     setIsLoading(true);
-    try {
-      if (email === "") {
-        focusEmailRef.current.focus();
-        setError("이메일을 입력해주세요.");
-        return;
-      } else if (pw === "") {
-        focusPwRef.current.focus();
-        setError("비밀번호를 입력해주세요.");
-        return;
-      }
-      const user = await loginUser(email, pw);
-      if (user) {
-        //로그인 성공(따로 프롭스 줄 거 있음 여기서 설정 ㄱㄱ)
-        setIsLogged(true);
-        setName(user.userName);
-        navigate("/Loged", {
-          state: {
-            name: user.userName,
-            id: user.userEmail, //id는 이메일과 동일
-          },
-          //여기에 내 정보 제이슨=user로 하기 지금 그 파일 추가하면 머지하다가 오류남
-        });
-      } else {
-        //로그인 실패
-        setEmail("");
-        setPw("");
-        setError("이메일 또는 비밀번호가 잘못되었습니다.");
-        focusEmailRef.current.focus();
-      }
-    } catch (error) {
+    if (email === "") {
+      focusEmailRef.current.focus();
+      setError("이메일을 입력해주세요.");
+      return;
+    } else if (pw === "") {
+      focusPwRef.current.focus();
+      setError("비밀번호를 입력해주세요.");
+      return;
+    }
+    const user = await loginUser(email, pw);
+    if (user) {
+      //로그인 성공(따로 프롭스 줄 거 있음 여기서 설정 ㄱㄱ)
+      setIsLogged(true);
+      setName(user.userName);
+      navigate("/Loged", {
+        state: {
+          name: user.userName,
+          id: user.userEmail, //id는 이메일과 동일
+        },
+        //여기에 내 정보 제이슨=user로 하기 지금 그 파일 추가하면 머지하다가 오류남
+      });
+    } else {
+      //로그인 실패
       setEmail("");
       setPw("");
-      console.error("An error occurred during login");
-      setError("로그인 중 오류가 발생했습니다.");
-    } finally {
-      setIsLoading(false); //로딩 종료
+      focusEmailRef.current.focus();
     }
-  };
 
-  const user = loginUser(email, pw, navigate);
-  if (user) {
-    setIsLogged(true);
-    // 사용자 정보를 상태로 저장하고 싶다면 여기서 추가 가능
-  } else {
-    setEmail("");
-    setPw("");
-    setError("이메일 또는 비밀번호가 잘못되었습니다.");
-    focusEmailRef.current.focus();
-  }
+    setIsLoading(false); //로딩 종료
+  };
 
   //     const onFocusHandle=(e)=>{ 온포커스 마루리하기
   //         if (e.className) {
