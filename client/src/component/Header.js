@@ -1,12 +1,18 @@
 import styles from "./Header.module.css";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import logo from "../assets/photomory_logo.svg";
 import { faGear, faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-function Header({ isLogged, name }) {
+function Header() {
+  //로그인 여부, 사용자 이름 받기
+  const { isLogged, name } = useAuth();
+
   //로그인에서 받기
   const nav = useNavigate();
+
+  //라우팅 경로 변경 헨들러
   const onclickHandle = (event) => {
     nav(event.target.value);
   };

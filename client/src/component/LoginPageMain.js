@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import styles from "./LoginPage.Main.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -38,12 +39,13 @@ export async function loginUser(email, password, navigate) {
 
     localStorage.setItem("accessToken", data.accessToken);
     localStorage.setItem("refreshToken", data.refreshToken);
+    localStorage.setItem("userName", data.userName);
+    localStorage.setItem("userEmail", data.userEmail);
 
     navigate("/Loged", {
       state: {
         name: data.userName, // "박진오"
         email: data.userEmail, // "jinoh1030@naver.com"
-        password: password, // 사용자가 입력한 pw
       },
     });
     return {
@@ -57,7 +59,7 @@ export async function loginUser(email, password, navigate) {
   }
 }
 
-export default function LoginPageMain({ setIsLogged, setName }) {
+export default function LoginPageMain() {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [error, setError] = useState();
@@ -65,6 +67,8 @@ export default function LoginPageMain({ setIsLogged, setName }) {
   const navigate = useNavigate();
   const focusEmailRef = useRef();
   const focusPwRef = useRef();
+  //로그인 여부, 사용자 이름 상태 변경함수 가져오기
+  const { setIsLogged, setName } = useAuth();
 
   const onChangeHandleEmail = (e) => {
     setEmail(e.target.value);
@@ -74,7 +78,6 @@ export default function LoginPageMain({ setIsLogged, setName }) {
     setPw(e.target.value);
     setError("");
   };
-
   const onClickHandleSignUp = () => {};
 
   const onClickButtonLogin = async () => {
@@ -90,15 +93,14 @@ export default function LoginPageMain({ setIsLogged, setName }) {
     }
     const user = await loginUser(email, pw);
     if (user) {
-      //로그인 성공(따로 프롭스 줄 거 있음 여기서 설정 ㄱㄱ)
-      setIsLogged(true);
-      setName(user.userName);
+      setIsLogged(true); //로그인 활성화
+      setName(user.userName); // 사용자 이름 변경
+
       navigate("/Loged", {
         state: {
           name: user.userName,
           id: user.userEmail, //id는 이메일과 동일
         },
-        //여기에 내 정보 제이슨=user로 하기 지금 그 파일 추가하면 머지하다가 오류남
       });
     } else {
       //로그인 실패
