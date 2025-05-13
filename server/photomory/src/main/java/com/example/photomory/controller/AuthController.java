@@ -1,3 +1,5 @@
+package com.example.photomory.controller;
+
 import com.example.photomory.dto.LoginRequestDto;
 import com.example.photomory.dto.TokenResponseDto;
 import com.example.photomory.entity.UserEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*; // main
+
 
 @CrossOrigin(origins = "https://photomory.o-r.kr", methods = {org.springframework.web.bind.annotation.RequestMethod.POST, org.springframework.web.bind.annotation.RequestMethod.OPTIONS}, allowedHeaders = "*")
 @RestController
