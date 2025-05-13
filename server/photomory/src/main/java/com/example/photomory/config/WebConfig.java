@@ -12,6 +12,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:3000", "https://photomory.o-r.kr") // 운영 환경 도메인 추가
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true); 
+                .allowCredentials(true);
     }
 }
