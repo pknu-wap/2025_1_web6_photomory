@@ -1,0 +1,7 @@
+.logo {
+  background-image: url("../assets/photomory_logo.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 120px;
+  height: 100px;
+}

@@ -27,8 +27,10 @@ public class S3Service {
     private String region;
 
     public String uploadFile(MultipartFile file) throws IOException {
+        System.out.println("🚀 S3에 업로드 시작: " + file.getOriginalFilename());
         String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
 
+        System.out.println("⚙️ content-type: " + file.getContentType());
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(fileName)
@@ -38,6 +40,7 @@ public class S3Service {
 
         s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
 
+        System.out.println("📦 버킷: " + bucket + ", 리전: " + region);
         return "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileName;
     }
 
@@ -51,4 +54,5 @@ public class S3Service {
 
         s3Client.deleteObject(deleteRequest);
     }
+
 }

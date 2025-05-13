@@ -1,0 +1,54 @@
+.signupConfirmBox {
+  display: flex;
+  flex-direction: column;
+  padding: 120px 0;
+  width: 450px;
+  height: 395px;
+  margin: 120px auto;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.1),
+    0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.checkIcon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 24px;
+}
+
+.signupTitle {
+  margin-bottom: 8px;
+}
+
+.signupMessage {
+  margin-bottom: 19px;
+  text-align: center;
+}
+
+.mainLink {
+  background-color: #3b82f6;
+  color: #ffffff;
+  width: 384px;
+  padding: 10px 24px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+}
+
+.loginLink {
+  border: 1px solid #d1d5db;
+  color: #111827;
+  width: 384px;
+  padding: 10px 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+}

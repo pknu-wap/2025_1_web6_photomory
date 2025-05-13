@@ -1,0 +1,93 @@
+.loginPageMainContainer{
+    margin-right: 30px;
+    padding-top: 40px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+.logoImage{
+    margin-right: 20px;
+    padding-bottom: 4px;
+    border-radius: 15px;
+    width: clamp(300px, 30%, 500px);
+    aspect-ratio: 1/1;
+}
+.loginContainer{
+    background-color: rgb(253,253,250);
+    border-radius: 7px;
+    width: clamp(300px, 50%, 500px);
+    height: auto;
+    padding-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: 20px;
+}
+.emailIcon{
+    position: absolute;
+    transform: translate(50%, +200%);
+    color: rgb(128, 128, 128);
+}
+.pwIcon{
+    position: absolute;
+    transform: translate(50%, +220%);
+    color: rgb(128, 128, 128);
+}
+
+.emailContainer,
+.pwContainer{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+.pwText{
+    margin-bottom: 4px;
+}
+.emailInput,
+.pwInput{
+    border: 1.5px solid black;
+    border-radius: 7px;
+}
+.emailInput:focus,
+.pwInput:focus{
+    outline: none;
+    border: none;
+}
+.loginButton{
+    width: 50%;
+    height: auto;
+    margin-bottom: 20px;
+    
+}
+.error {
+    color: #D32F2F;
+}
+
+.signUp{
+    font-weight: 600;
+}
+.loginText{ 
+    font-size: clamp(43px, 45px, 47px);
+    font-weight: 600;
+}
+.loginButton{
+    font-size: clamp(26px, 32px, 38px);
+}
+
+.notAccount
+{
+    font-size: clamp(16px, 19px, 22px);
+}
+.emailInput,
+.pwInput{
+    padding: 12px 25px 10px 10px;
+    font-size: clamp(10px, 14px, 18px);
+}

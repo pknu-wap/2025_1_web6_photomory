@@ -1,0 +1,24 @@
+[
+    {
+        "user_id": 1,
+        "user_name": "철수",
+        "user_password": "hashed_password_123",
+        "user_email": "kwon@example.com",
+        "user_job": "사진작가",
+        "user_field": "자연 풍경",
+        "user_equipment": "Sony A7 IV, 24-70mm 렌즈",
+        "user_introduction": "자연을 사랑하는 사진작가입니다. 주로 산과 바다를 찍습니다.",
+        "is_friend":true
+    },
+    {
+        "user_id": 2,
+        "user_name": "짱구",
+        "user_password": "hashed_password_123",
+        "user_email": "kwon@example.com",
+        "user_job": "사진작가",
+        "user_field": "자연 풍경",
+        "user_equipment": "Sony A7 IV, 24-70mm 렌즈",
+        "user_introduction": "자연을 사랑하는 사진작가입니다. 주로 산과 바다를 찍습니다.",
+        "is_friend":false
+    }
+]

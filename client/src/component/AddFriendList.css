@@ -1,0 +1,75 @@
+.addFriendContainer {
+  width: 500px;
+  height: 818px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 13px;
+  margin-right: 24px;
+}
+
+.addFriendTitle {
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 28px;
+}
+
+.friendList {
+  display: flex;
+  flex: 1;
+  height: 90%;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.friendItem {
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  width: 450px;
+  height: 72px;
+  background: #f3f4f6;
+}
+
+.friendImage {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-right: 16px;
+}
+
+.friendName {
+  font-weight: bold;
+  text-align: center;
+  margin-right: 222px;
+}
+
+.inviteButton {
+  padding: 4px 8px;
+  font-size: 14px;
+  background-color: transparent;
+  color: #000000;
+  cursor: pointer;
+  width: 94px;
+  height: 44px;
+  border-radius: 9999px;
+  border: 2px solid #000000;
+  transition: background-color 0.2s ease;
+}
+
+.inviteButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.noFriends {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  font-size: 16px;
+}
