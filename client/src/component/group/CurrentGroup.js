@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import AddGroupButton from "./AddGroupButton";
-import SelectGroupOptions from "./SelectGroupOptions";
+import AddGroupButton from "../add/AddGroupButton";
+import SelectGroupOptions from "../group/SelectGroupOptions.js";
 import "./CurrentGroup.css";
 
-function CurrentGroupTest({ groupList, setSelectedGroupId, onAddGroup }) {
+function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
   const [selectedGroup, setSelectedGroup] = useState({
     group_id: "",
     group_name: "",
@@ -74,4 +74,4 @@ function CurrentGroupTest({ groupList, setSelectedGroupId, onAddGroup }) {
   );
 }
 
-export default CurrentGroupTest;
+export default CurrentGroup;

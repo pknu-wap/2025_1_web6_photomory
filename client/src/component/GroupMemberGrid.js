@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import PaginationBar from "./PaginationBar";
+import PaginationBar from "../component/common/PaginationBar.js";
 import "./GroupMemberGrid.css";
 
 // 그룹 멤버를 2행 4열 그리드로 렌더링하는 컴포넌트

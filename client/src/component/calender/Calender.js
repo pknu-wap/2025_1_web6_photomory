@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import {
   getAlbumColorMap,
   getAlbumDotColorsMap,
-} from "../utils/albumColors.js";
+} from "../../utils/albumColors.js";
 import dayjs from "dayjs";
 import "./Calender.css";
 import DayCell from "./DayCell.js";
-import AlbumTitleColorList from "./AlbumTitleColorList.js";
-import moveCalenderLeft from "../assets/moveCalenderLeft.svg";
-import moveCalenderRight from "../assets/moveCalenderRight.svg";
+import AlbumTitleColorList from "../album/AlbumTitleColorList.js";
+import moveCalenderLeft from "../../assets/moveCalenderLeft.svg";
+import moveCalenderRight from "../../assets/moveCalenderRight.svg";
 
 // 달력 컴포넌트
 function CalenderTest({

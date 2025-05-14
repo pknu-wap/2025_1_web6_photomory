@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Calender.css"; //Calender 컴포넌트 css사용
 import "./DayCell.css";
-import PhotoModal from "./PhotoModal";
+import PhotoModal from "../photo/PhotoModal";
 
 //달력 안에 들어가 있는 날짜 컴포넌트
 function DayCell({

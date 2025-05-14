@@ -1,10 +1,10 @@
 import { useState } from "react";
-import CommentBox from "./CommentBox";
+import CommentBox from "../CommentBox";
 import dayjs from "dayjs";
 import PhotoModal from "./PhotoModal";
-import PaginationBar from "./PaginationBar";
-import privateIcon from "../assets/privateIcon.svg";
-import PhotoGrid from "../component/PhotoGrid";
+import PaginationBar from "../common/PaginationBar";
+import privateIcon from "../../assets/privateIcon.svg";
+import PhotoGrid from "./PhotoGrid";
 import "./Photos.css";
 function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null); //선택된 이미지 상태

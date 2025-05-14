@@ -1,9 +1,9 @@
 import React from "react";
 import dayjs from "dayjs";
 import "./PhotoModal.css";
-import calenderIcon from "../assets/calenderIcon.svg";
-import modalCancelButton from "../assets/modalCancelButton.svg";
-import discardButton from "../assets/discardButton.svg";
+import calenderIcon from "../../assets/calenderIcon.svg";
+import modalCancelButton from "../../assets/modalCancelButton.svg";
+import discardButton from "../../assets/discardButton.svg";
 
 function PhotoModal({ photo, onClose, onDelete }) {
   if (!photo) return null;

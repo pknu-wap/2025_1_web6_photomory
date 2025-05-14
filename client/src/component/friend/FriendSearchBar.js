@@ -1,5 +1,5 @@
 import { useState } from "react";
-import searchIcon from "../assets/searchIcon.svg";
+import searchIcon from "../../assets/searchIcon.svg";
 import "./FriendSearchBar.css";
 function FriendSearchBar({ onSearch }) {
   const [keyword, setKeyword] = useState(""); //검색어 상태

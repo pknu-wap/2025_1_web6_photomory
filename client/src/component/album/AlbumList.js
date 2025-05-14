@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import PaginationBar from "./PaginationBar";
-import emptyImage from "../assets/emptyImage.svg";
+import PaginationBar from "../common/PaginationBar.js";
+import emptyImage from "../../assets/emptyImage.svg";
 import "./AlbumList.css";
 //개인 앨범, 공유 앨범에서 각 앨범을 보여주는 컴포넌트
 function AlbumList({ albums, type = "", selectedGroupId = "", basePath = "" }) {

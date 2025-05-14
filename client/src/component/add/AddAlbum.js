@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import AlbumTitleList from "./AlbumTitleList";
-import addAlbumButton from "../assets/addAlbumButton.svg";
+import AlbumTitleList from "../album/AlbumTitleList";
+import addAlbumButton from "../../assets/addAlbumButton.svg";
 import "./AddAlbum.css";
 
 const MAX_ALBUM_COUNT = 7; //최대 앨범 갯수

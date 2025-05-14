@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import selectGroupButton from "../assets/selectGroupButton.svg";
+import selectGroupButton from "../../assets/selectGroupButton.svg";
 import "./SelectGroupOption.css";
 function SelectGroupOptions({ groupList, onSelect }) {
   const [isOpen, setIsOpen] = useState(false);

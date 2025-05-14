@@ -2,7 +2,7 @@ import React from "react";
 import dayjs from "dayjs";
 import PhotoModal from "./PhotoModal";
 import "./PhotoGrid.css";
-import emptyImage from "../assets/emptyImage.svg";
+import emptyImage from "../../assets/emptyImage.svg";
 function PhotoGrid({ photoList, photo, onOpenModal, onClose, onDelete }) {
   const totalSlots = 8; // 4행 2열 = 8칸
   const filledPhotos = [...photoList];

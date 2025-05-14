@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { getMyAlbums } from "../api/getMyAlbum";
 import Container from "../component/Container";
-import Calender from "../component/Calender";
+import Calender from "../component/calender/Calender";
 import Header from "../component/Header";
-import AddAlbum from "../component/AddAlbum";
-import AlbumList from "../component/AlbumList";
+import AddAlbum from "../component/add/AddAlbum";
+import AlbumList from "../component/album/AlbumList";
 import Footer from "../component/Footer";
 import privateIcon from "../assets/privateIcon.svg";
 function MyAlbumPage() {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import addGroupButton from "../assets/addGroupButton.svg";
+import addGroupButton from "../../assets/addGroupButton.svg";
 import "./AddGroupButton.css";
 function AddGroupButtonTest({ onAddGroup }) {
   const [showModal, setShowModal] = useState(false); // 모달 표시 여부

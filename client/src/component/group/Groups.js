@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
-import PaginationBar from "./PaginationBar";
-import GroupControlButton from "../assets/groupControlButton.svg";
+import PaginationBar from "../common/PaginationBar";
+import GroupControlButton from "../../assets/groupControlButton.svg";
 import "./Groups.css";
 function GroupsTest({ groupList, selectedGroupId }) {
   const [currentPage, setCurrentPage] = useState(1); //초기 페이지 번호

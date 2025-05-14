@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./PaginationBar.css";
-import leftButton from "../assets/leftButton.svg";
-import rightButton from "../assets/rightButton.svg";
+import leftButton from "../../assets/leftButton.svg";
+import rightButton from "../../assets/rightButton.svg";
 
 function PaginationBar({ currentPage, totalPages, onPageChange }) {
   const [rangeIndex, setRangeIndex] = useState(0); //현재 보여주는 그룹 인덱스

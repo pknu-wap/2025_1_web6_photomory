@@ -1,7 +1,7 @@
 import "./GroupEditor.css";
-import FriendSearchBar from "./FriendSearchBar";
-import AddedMemberList from "./AddedMemberList";
-import AddFriendList from "./AddFriendList";
+import FriendSearchBar from "../friend/FriendSearchBar";
+import AddedMemberList from "../add/AddedMemberList";
+import AddFriendList from "../../component/friend/AddFriendList";
 
 function GroupEditor({
   groupName,

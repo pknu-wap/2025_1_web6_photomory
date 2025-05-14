@@ -4,7 +4,7 @@ import getAlbumById from "../api/getAlbumById";
 import Header from "../component/Header";
 import GroupMemberGrid from "../component/GroupMemberGrid";
 import Container from "../component/Container";
-import Photos from "../component/Photos";
+import Photos from "../component/photo/Photos";
 import { getPhotoPeriod } from "../utils/getPhotoPeriod";
 import PhotoInfo from "../component/PhotoInfo";
 import PhotoSubmit from "../component/PhotoSubmit";
