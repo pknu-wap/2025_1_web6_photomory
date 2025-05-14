@@ -28,7 +28,8 @@ export async function loginUser(email, password, navigate) {
     });
 
     if (!response.ok) {
-      throw new Error("이메일 또는 비밀번호가 잘못되었습니다.");
+      const errorText = await response.text();
+      throw new Error(errorText || "이메일 또는 비밀번호가 잘못되었습니다.");
     }
 
     const data = await response.json();
@@ -47,8 +48,7 @@ export async function loginUser(email, password, navigate) {
       userName: data.userName,
     };
   } catch (error) {
-    console.error("로그인 에러:", error.message);
-    alert("로그인에 실패했습니다. 다시 시도해주세요.");
+    alert(error.message); // 서버에서 보낸 텍스트 그대로 사용자에게 표시
     return null;
   }
 }
