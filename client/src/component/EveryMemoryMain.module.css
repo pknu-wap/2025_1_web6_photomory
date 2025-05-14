@@ -367,6 +367,14 @@
     border-radius: 7px;
     padding: 30px;
 }
+.postImageToolContainer {
+    background-color: rgba(255, 255, 255, 1);
+    transition: all 0.3s ease;
+}
+
+.postImageToolContainer:hover {
+    background-color: rgba(200, 202, 206, 1);
+}
 .cloudIcon{
     width: 90px;
     height: 60px;

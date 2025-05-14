@@ -12,7 +12,7 @@ import twinkle from '../assets/twinkle.svg'
 import WeeklyPopularTag from './WeeklyPopularTag.js'
 import DailyPopularTag from './DailyPopularTag.js'
 import DailyPopularTagModal from './DailyPopularTagModal'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 
 async function fetchUserposts(accessToken) {
     try {
@@ -26,7 +26,7 @@ async function fetchUserposts(accessToken) {
 
         if (!response.ok) {
             if (response.status===401) {
-                throw new Error('Unauthorized'); //토큰 말료
+                throw new Error('Unauthorized'); //토큰 만료료
             }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -245,6 +245,28 @@ export default function EveryMemoryMain(){
         setIsModalOpen(false);
     };
 
+    const fileInputRef= useRef(null);
+    const handleContainerClick=()=>{
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    }
+    const handleFileChange= (e)=>{
+        const file= e.target.files || [];
+        console.log(file)
+        if(file){
+            if(file.size>5*1024**2){
+                alert('파일 크기는 5MB를 초과할 수 없습니다.');
+                return;
+            }
+            const validTypes= ['image/jpg', 'image/png', 'image/heic']
+            if (!validTypes.includes(file.type)) {
+                alert('지원되는 파일 형식: JPG, PNG, HEIC');
+                return;
+            }
+        }
+    }
+
     return (
         <div>
             <div className={styles.mainContainer}>
@@ -381,10 +403,18 @@ export default function EveryMemoryMain(){
                 <div className={styles.postImageContainerInner}>
                     <img src={camera} alt='' className={styles.postImageIconInner}></img>
                     <span className={styles.postImageTextInner}>새로운 풍경 사진 업로드</span>
-                    <div className={styles.postImageToolContainer}>
+                    <div className={styles.postImageToolContainer}
+                    onClick={handleContainerClick}>
                         <img src={cloud} alt='' className={styles.cloudIcon}></img>
                         <p className={styles.postImageToolText}>이곳을 클릭하거나 사진을 드래그하여 업로드하세요.</p>
-                        <p className={styles.ImageInfo}>지원 형식: JPG, PNG, HEIC / 최대 파일 크기: 20MB</p>
+                        <p className={styles.ImageInfo}>지원 형식: JPG, PNG, HEIC / 최대 파일 크기: 5MB</p>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            accept="image/jpeg,image/png,image/heic"
+                            style={{ display: 'none' }}
+                            onChange={handleFileChange}
+                        />
                     </div>
                     <p className={styles.postImageTitle}>제목</p>
                     <input className={styles.inputTitle} 
