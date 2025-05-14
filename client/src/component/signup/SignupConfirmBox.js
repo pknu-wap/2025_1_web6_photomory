@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import greenCheck from "../assets/greenCheck.svg";
+import greenCheck from "../../assets/greenCheck.svg";
 import "./SignupConfirmBox.css";
 function SignupConfirmBox() {
   return (

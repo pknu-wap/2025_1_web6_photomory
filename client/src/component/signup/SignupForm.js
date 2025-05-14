@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SignupForm.css";
-import isValidPassword from "../utils/isValidPassword";
-import signupUser from "../api/signupuser";
+import isValidPassword from "../../utils/isValidPassword";
+import signupUser from "../../api/signupuser";
 //각 옵션들
 const jobOptions = ["디자이너", "개발자", "사진작가", "프리랜서", "학생"];
 const equipmentOptions = ["Canon", "Nikon", "Sony", "핸드폰 카메라"];

@@ -2,12 +2,12 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import getAlbumById from "../api/getAlbumById";
 import Header from "../component/Header";
-import GroupMemberGrid from "../component/GroupMemberGrid";
-import Container from "../component/Container";
+import GroupMemberGrid from "../component/group/GroupMemberGrid";
+import Container from "../component/common/Container";
 import Photos from "../component/photo/Photos";
 import { getPhotoPeriod } from "../utils/getPhotoPeriod";
-import PhotoInfo from "../component/PhotoInfo";
-import PhotoSubmit from "../component/PhotoSubmit";
+import PhotoInfo from "../component/photo/PhotoInfo";
+import PhotoSubmit from "../component/photo/PhotoSubmit";
 import Footer from "../component/Footer";
 function OurAlbumDetailPage() {
   const { groupId, albumId } = useParams();

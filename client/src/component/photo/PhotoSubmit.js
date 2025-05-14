@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import "./PhotoSubmit.css";
-import submitFileImage from "../assets/submitFileImage.svg";
-import { uploadPhoto } from "../api/upLoadPhoto";
+import submitFileImage from "../../assets/submitFileImage.svg";
+import { uploadPhoto } from "../../api/upLoadPhoto";
 function PhotoSubmit({ handleAddPhoto }) {
   const [newPhotoData, setNewPhotoData] = useState({
     imgFile: null,

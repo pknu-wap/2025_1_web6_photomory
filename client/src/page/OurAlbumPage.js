@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "../component/Header";
 import Footer from "../component/Footer";
-import Container from "../component/Container";
+import Container from "../component/common/Container";
 import Calender from "../component/calender/Calender";
 import AddAlbum from "../component/add/AddAlbum";
 import CurrentGroup from "../component/group/CurrentGroup";

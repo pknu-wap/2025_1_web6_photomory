@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import sendIcon from "../assets/sendIcon.svg";
+import sendIcon from "../../assets/sendIcon.svg";
 function CommentBox({ photoId }) {
   const [comment, setComment] = useState(""); //입력할 댓글
   const [comments, setComments] = useState([]); // 댓글 리스트

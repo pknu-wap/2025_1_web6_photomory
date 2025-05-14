@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CommentBox from "../CommentBox";
+import CommentBox from "../common/CommentBox";
 import dayjs from "dayjs";
 import PhotoModal from "./PhotoModal";
 import PaginationBar from "../common/PaginationBar";
