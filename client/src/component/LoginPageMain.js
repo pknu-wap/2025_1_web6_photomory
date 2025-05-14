@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import styles from "./LoginPage.Main.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,8 +12,8 @@ import logo from "../assets/photomory_logo.svg";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-// loginUser.js (API 요청 함수)
-async function loginUser(email, password, navigate) {
+// 로그인 API 함수
+export async function loginUser(email, password, navigate) {
   try {
     const response = await fetch(`${BASE_URL}/api/auth/login`, {
       method: "POST",
@@ -23,14 +24,15 @@ async function loginUser(email, password, navigate) {
         useremail: email,
         password: password,
       }),
+      credentials: "include", //쿠키 방식 인증일 경우 필수
     });
 
     if (!response.ok) {
-      throw new Error("이메일 또는 비밀번호가 잘못되었습니다.");
+      const errorText = await response.text();
+      throw new Error(errorText || "이메일 또는 비밀번호가 잘못되었습니다.");
     }
 
     const data = await response.json();
-
     if (!data.accessToken) {
       alert("❌ accessToken이 없습니다!");
       return null;
@@ -38,26 +40,20 @@ async function loginUser(email, password, navigate) {
 
     localStorage.setItem("accessToken", data.accessToken);
     localStorage.setItem("refreshToken", data.refreshToken);
+    localStorage.setItem("userName", data.userName);
+    localStorage.setItem("userEmail", data.userEmail);
 
-    navigate("/Loged", {
-      state: {
-        name: data.userName, // "박진오"
-        email: data.userEmail, // "jinoh1030@naver.com"
-        password: password, // 사용자가 입력한 pw
-      },
-    });
     return {
-      email: data.userEmail,
-      name: data.userName,
+      userEmail: data.userEmail,
+      userName: data.userName,
     };
   } catch (error) {
-    console.error("로그인 에러:", error.message);
-    alert("로그인에 실패했습니다. 다시 시도해주세요.");
+    alert(error.message); // 서버에서 보낸 텍스트 그대로 사용자에게 표시
     return null;
   }
 }
 
-export default function LoginPageMain({ setIsLogged, setName }) {
+export default function LoginPageMain() {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [error, setError] = useState();
@@ -65,6 +61,8 @@ export default function LoginPageMain({ setIsLogged, setName }) {
   const navigate = useNavigate();
   const focusEmailRef = useRef();
   const focusPwRef = useRef();
+  //로그인 여부, 사용자 이름 상태 변경함수 가져오기
+  const { setIsLogged, setName } = useAuth();
 
   const onChangeHandleEmail = (e) => {
     setEmail(e.target.value);
@@ -74,60 +72,39 @@ export default function LoginPageMain({ setIsLogged, setName }) {
     setPw(e.target.value);
     setError("");
   };
-
   const onClickHandleSignUp = () => {};
 
   const onClickButtonLogin = async () => {
     setIsLoading(true);
-    try {
-      if (email === "") {
-        focusEmailRef.current.focus();
-        setError("이메일을 입력해주세요.");
-        return;
-      } else if (pw === "") {
-        focusPwRef.current.focus();
-        setError("비밀번호를 입력해주세요.");
-        return;
-      }
-      const user = await loginUser(email, pw);
-      if (user) {
-        //로그인 성공(따로 프롭스 줄 거 있음 여기서 설정 ㄱㄱ)
-        setIsLogged(true);
-        setName(user.userName);
-        navigate("/Loged", {
-          state: {
-            name: user.userName,
-            id: user.userEmail, //id는 이메일과 동일
-          },
-          //여기에 내 정보 제이슨=user로 하기 지금 그 파일 추가하면 머지하다가 오류남
-        });
-      } else {
-        //로그인 실패
-        setEmail("");
-        setPw("");
-        setError("이메일 또는 비밀번호가 잘못되었습니다.");
-        focusEmailRef.current.focus();
-      }
-    } catch (error) {
+    if (email === "") {
+      focusEmailRef.current.focus();
+      setError("이메일을 입력해주세요.");
+      return;
+    } else if (pw === "") {
+      focusPwRef.current.focus();
+      setError("비밀번호를 입력해주세요.");
+      return;
+    }
+    const user = await loginUser(email, pw);
+    if (user) {
+      setIsLogged(true); //로그인 활성화
+      setName(user.userName); // 사용자 이름 변경
+
+      navigate("/Loged", {
+        state: {
+          userName: user.userName,
+          userEmail: user.userEmail, //id는 이메일과 동일
+        },
+      });
+    } else {
+      //로그인 실패
       setEmail("");
       setPw("");
-      console.error("An error occurred during login");
-      setError("로그인 중 오류가 발생했습니다.");
-    } finally {
-      setIsLoading(false); //로딩 종료
+      focusEmailRef.current.focus();
     }
-  };
 
-  const user = loginUser(email, pw, navigate);
-  if (user) {
-    setIsLogged(true);
-    // 사용자 정보를 상태로 저장하고 싶다면 여기서 추가 가능
-  } else {
-    setEmail("");
-    setPw("");
-    setError("이메일 또는 비밀번호가 잘못되었습니다.");
-    focusEmailRef.current.focus();
-  }
+    setIsLoading(false); //로딩 종료
+  };
 
   //     const onFocusHandle=(e)=>{ 온포커스 마루리하기
   //         if (e.className) {
