@@ -24,6 +24,7 @@ export async function loginUser(email, password, navigate) {
         useremail: email,
         password: password,
       }),
+      credentials: "include", //쿠키 방식 인증일 경우 필수
     });
 
     if (!response.ok) {
@@ -31,7 +32,6 @@ export async function loginUser(email, password, navigate) {
     }
 
     const data = await response.json();
-
     if (!data.accessToken) {
       alert("❌ accessToken이 없습니다!");
       return null;
@@ -42,15 +42,9 @@ export async function loginUser(email, password, navigate) {
     localStorage.setItem("userName", data.userName);
     localStorage.setItem("userEmail", data.userEmail);
 
-    navigate("/Loged", {
-      state: {
-        name: data.userName, // "박진오"
-        email: data.userEmail, // "jinoh1030@naver.com"
-      },
-    });
     return {
-      email: data.userEmail,
-      name: data.userName,
+      userEmail: data.userEmail,
+      userName: data.userName,
     };
   } catch (error) {
     console.error("로그인 에러:", error.message);
@@ -98,8 +92,8 @@ export default function LoginPageMain() {
 
       navigate("/Loged", {
         state: {
-          name: user.userName,
-          id: user.userEmail, //id는 이메일과 동일
+          userName: user.userName,
+          userEmail: user.userEmail, //id는 이메일과 동일
         },
       });
     } else {
