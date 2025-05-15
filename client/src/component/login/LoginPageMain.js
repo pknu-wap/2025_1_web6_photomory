@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import styles from "./LoginPage.Main.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,7 +8,7 @@ import {
   faLock,
   faRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
-import logo from "../assets/photomory_logo.svg";
+import logo from "../../assets/photomory_logo.svg";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 

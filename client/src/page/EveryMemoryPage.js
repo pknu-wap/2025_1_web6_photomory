@@ -1,4 +1,4 @@
-import Header from "../component/Header";
+import Header from "../component/common/Header";
 import EveryMemoryMain from "../component/EveryMemoryMain";
 import Footer from "../component/Footer";
 export default function everyMemory() {

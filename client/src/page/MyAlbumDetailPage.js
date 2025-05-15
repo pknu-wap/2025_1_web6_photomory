@@ -6,7 +6,7 @@ import { getPhotoPeriod } from "../utils/getPhotoPeriod";
 import PhotoInfo from "../component/photo/PhotoInfo";
 import PhotoSubmit from "../component/photo/PhotoSubmit";
 import getAlbumById from "../api/getAlbumById";
-import Header from "../component/Header";
+import Header from "../component/common/Header";
 import Footer from "../component/Footer";
 function MyAlbumDetailPage() {
   const { albumId } = useParams();

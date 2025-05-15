@@ -1,7 +1,7 @@
 import styles from "./Header.module.css";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import logo from "../assets/photomory_logo.svg";
+import { useAuth } from "../../contexts/AuthContext";
+import logo from "../../assets/photomory_logo.svg";
 import { faGear, faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 

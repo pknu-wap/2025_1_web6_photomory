@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { getMyAlbums } from "../api/getMyAlbum";
 import Container from "../component/common/Container";
 import Calender from "../component/calender/Calender";
-import Header from "../component/Header";
+import Header from "../component/common/Header";
 import AddAlbum from "../component/add/AddAlbum";
 import AlbumList from "../component/album/AlbumList";
 import Footer from "../component/Footer";

@@ -3,7 +3,7 @@ import { getMyGroupById } from "../api/getMyGroupById";
 import { getFriends } from "../api/getFriends";
 import GroupEditor from "../component/group/GroupEditor";
 import { useParams } from "react-router-dom";
-import Header from "../component/Header";
+import Header from "../component/common/Header";
 import Footer from "../component/Footer";
 
 function GroupEditPage() {

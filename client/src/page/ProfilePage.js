@@ -1,4 +1,4 @@
-import Header from "../component/Header.js";
+import Header from "../component/common/Header";
 import ProfileMain from "../component/Profile.Main.js";
 import Footer from "../component/Footer.js";
 import styles from "./Profile.Page.module.css";
@@ -8,7 +8,7 @@ function ProfilePage() {
     <div className={styles.pageContainer}>
       <Header />
       <ProfileMain />
-      <Footer className={styles.footer}/>
+      <Footer className={styles.footer} />
     </div>
   );
 }

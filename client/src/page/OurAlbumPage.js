@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Header from "../component/Header";
+import Header from "../component/common/Header";
 import Footer from "../component/Footer";
 import Container from "../component/common/Container";
 import Calender from "../component/calender/Calender";

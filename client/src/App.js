@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AuthProvider from "./contexts/AuthContext";
 import MainPage from "./page/mainPage.js";
 import LoginPage from "./page/LoginPage.js";
-import Loged from "./component/Loged.js";
+import Loged from "./component/login/Loged.js";
 import ProfilePage from "./page/ProfilePage.js";
 import OurAlbumPage from "./page/OurAlbumPage";
 import OurAlbumDetailPage from "./page/OurAlbumDetailPage";

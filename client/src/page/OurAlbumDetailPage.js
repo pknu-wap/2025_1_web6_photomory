@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import getAlbumById from "../api/getAlbumById";
-import Header from "../component/Header";
+import Header from "../component/common/Header";
 import GroupMemberGrid from "../component/group/GroupMemberGrid";
 import Container from "../component/common/Container";
 import Photos from "../component/photo/Photos";
