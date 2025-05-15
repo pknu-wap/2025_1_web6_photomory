@@ -4,7 +4,7 @@ import com.example.photomory.dto.LoginRequestDto;
 import com.example.photomory.dto.TokenResponseDto;
 import com.example.photomory.entity.UserEntity;
 import com.example.photomory.security.JwtTokenProvider;
-import org.springframework.http.HttpStatus;
+ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
