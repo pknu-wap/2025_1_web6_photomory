@@ -1,6 +1,6 @@
-import Footer from "../component/Footer";
-import Header from "../component/Header";
-import SignupConfirmBox from "../component/SignupConfirmBox";
+import Footer from "../component/common/Footer";
+import Header from "../component/common/Header";
+import SignupConfirmBox from "../component/signup/SignupConfirmBox";
 
 function SignupConfirmPage() {
   return (

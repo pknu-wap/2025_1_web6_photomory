@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import Header from "../component/Header";
-import Footer from "../component/Footer";
-import Container from "../component/Container";
-import Calender from "../component/Calender";
-import AddAlbum from "../component/AddAlbum";
-import CurrentGroup from "../component/CurrentGroup";
-import Groups from "../component/Groups";
-import AlbumList from "../component/AlbumList";
+import Header from "../component/common/Header";
+import Footer from "../component/common/Footer";
+import Container from "../component/common/Container";
+import Calender from "../component/calender/Calender";
+import AddAlbum from "../component/add/AddAlbum";
+import CurrentGroup from "../component/group/CurrentGroup";
+import Groups from "../component/group/Groups";
+import AlbumList from "../component/album/AlbumList";
 import getGroup from "../api/getGroup";
 import getGroupAlbums from "../api/getGroupAlbums";
 
