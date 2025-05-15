@@ -358,7 +358,7 @@
     font-weight: 700;
     font-size: 30px;
 }
-.postImageToolContainer{
+.postImageToolContainer1{
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -367,12 +367,26 @@
     border-radius: 7px;
     padding: 30px;
 }
-.postImageToolContainer {
+.postImageToolContainer2{
+    gap: 10px;
+    border: 2px dashed black;
+    border-radius: 7px;
+    padding: 30px;
+    display: flex;
+}
+.uploadedImage{
+    width: 18%;
+    aspect-ratio: 1/1;
+    border-radius: 7px;
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.postImageToolContainer1 {
     background-color: rgba(255, 255, 255, 1);
     transition: all 0.3s ease;
 }
 
-.postImageToolContainer:hover {
+.postImageToolContainer1:hover {
     background-color: rgba(200, 202, 206, 1);
 }
 .cloudIcon{
