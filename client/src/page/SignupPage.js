@@ -1,6 +1,6 @@
 import React from "react";
 import SignupForm from "../component/signup/SignupForm";
-import Footer from "../component/Footer";
+import Footer from "../component/common/Footer";
 import Header from "../component/common/Header";
 
 function SignupPage() {

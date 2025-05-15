@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Header from "../component/common/Header";
-import Footer from "../component/Footer";
+import Footer from "../component/common/Footer";
 import Container from "../component/common/Container";
 import Calender from "../component/calender/Calender";
 import AddAlbum from "../component/add/AddAlbum";

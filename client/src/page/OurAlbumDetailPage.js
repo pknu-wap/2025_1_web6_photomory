@@ -8,7 +8,7 @@ import Photos from "../component/photo/Photos";
 import { getPhotoPeriod } from "../utils/getPhotoPeriod";
 import PhotoInfo from "../component/photo/PhotoInfo";
 import PhotoSubmit from "../component/photo/PhotoSubmit";
-import Footer from "../component/Footer";
+import Footer from "../component/common/Footer";
 function OurAlbumDetailPage() {
   const { groupId, albumId } = useParams();
   const result = getAlbumById(Number(albumId), "group", Number(groupId));

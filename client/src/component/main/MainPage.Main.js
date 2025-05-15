@@ -7,11 +7,11 @@ import {
   faHeart,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/photomory_logo.svg";
-import image1 from "../assets/mainPageImage1.svg";
-import image2 from "../assets/mainPageImage2.svg";
-import image3 from "../assets/mainPageImage3.svg";
-import image4 from "../assets/mainPageImage4.svg";
+import logo from "../../assets/photomory_logo.svg";
+import image1 from "../../assets/mainPageImage1.svg";
+import image2 from "../../assets/mainPageImage2.svg";
+import image3 from "../../assets/mainPageImage3.svg";
+import image4 from "../../assets/mainPageImage4.svg";
 
 function MainPageMain() {
   const nav = useNavigate();

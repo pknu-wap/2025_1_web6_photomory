@@ -1,6 +1,6 @@
 import Header from "../component/common/Header";
-import ProfileMain from "../component/Profile.Main.js";
-import Footer from "../component/Footer.js";
+import ProfileMain from "../component/profile/Profile.Main.js";
+import Footer from "../component/common/Footer";
 import styles from "./Profile.Page.module.css";
 
 function ProfilePage() {

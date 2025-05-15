@@ -5,7 +5,7 @@ import Calender from "../component/calender/Calender";
 import Header from "../component/common/Header";
 import AddAlbum from "../component/add/AddAlbum";
 import AlbumList from "../component/album/AlbumList";
-import Footer from "../component/Footer";
+import Footer from "../component/common/Footer";
 import privateIcon from "../assets/privateIcon.svg";
 function MyAlbumPage() {
   const [myAlbums, setMyAlbums] = useState([]); //나의 앨범 상태

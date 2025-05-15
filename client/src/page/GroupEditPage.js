@@ -4,7 +4,7 @@ import { getFriends } from "../api/getFriends";
 import GroupEditor from "../component/group/GroupEditor";
 import { useParams } from "react-router-dom";
 import Header from "../component/common/Header";
-import Footer from "../component/Footer";
+import Footer from "../component/common/Footer";
 
 function GroupEditPage() {
   const { groupId } = useParams(); //GroupId 불러오기

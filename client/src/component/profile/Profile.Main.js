@@ -1,7 +1,7 @@
 import styles from "./Profile.Main.module.css";
-import FriendManage from "./Friend.Manage";
-import SearchFriend from "./Search.Friend";
-import GetMy from "../api/GetMy";
+import FriendManage from "../friend/Friend.Manage";
+import SearchFriend from "../friend/Search.Friend";
+import GetMy from "../../api/GetMy";
 import { useEffect, useMemo, useState } from "react";
 
 function ProfileMain() {
