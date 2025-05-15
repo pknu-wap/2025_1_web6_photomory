@@ -26,7 +26,7 @@ async function fetchUserposts(accessToken) {
 
         if (!response.ok) {
             if (response.status===401) {
-                throw new Error('Unauthorized'); //토큰 만료료
+                throw new Error('Unauthorized'); //토큰 만료
             }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -94,7 +94,7 @@ async function updateLikeCommentCount(post_id){
             }
         })
         if(!reponse.ok){
-            if(reponse.ok===401){
+            if(reponse.status===401){
                 throw new Error('Unauthorized')
             }
             throw new Error('Failed to upload count:' `${reponse.status}`)
@@ -164,17 +164,6 @@ export default function EveryMemoryMain(){
                     prevPosts.map((post) =>post.post_id=== post_id
                     ? { ...post, likes_count: updatedPostByLike.likes_count }
                     :post).sort((a, b) => b.likes_count - a.likes_count)
-                );
-                setPosts((prevPosts)=> //낙관적 업뎃
-                    prevPosts.map((post)=>post.post_id===post_id
-                    ? {...post, comments_count: post.comments_count+1}
-                    : post)
-                );
-                const updatedPostByComment= await updateLikeCommentCount(post_id) //서버 업뎃
-                setPosts((prevPosts)=>
-                    prevPosts.map((post)=>post.post_id===post_id
-                    ? {...post, comments_count: updatedPostByComment.comments_count}
-                    : post)
                 );
             }
         catch (error) {
@@ -251,21 +240,56 @@ export default function EveryMemoryMain(){
             fileInputRef.current.click();
         }
     }
-    const handleFileChange= (e)=>{
-        const file= e.target.files || [];
-        console.log(file)
-        if(file){
-            if(file.size>5*1024**2){
+
+    const [fileUrl, setFileUrl]= useState([])
+
+    const handleFileChange = (e) => {
+        if (!e.target.files || e.target.files.length === 0) {
+            alert('파일 업로드를 다시 해주세요.');
+            return;
+        }
+
+        if (e.target.files.length > 5) {
+            alert('한 번에 올릴 수 있는 파일 갯수: 5개');
+            return;
+        }
+
+        const files = Array.from(e.target.files);
+        const selectedFiles = files.filter((file) => {
+            if (file.size > 5 * 1024 ** 2) {
                 alert('파일 크기는 5MB를 초과할 수 없습니다.');
-                return;
+                return false;
             }
-            const validTypes= ['image/jpg', 'image/png', 'image/heic']
+            const validTypes = ['image/jpeg', 'image/png', 'image/heic'];
             if (!validTypes.includes(file.type)) {
                 alert('지원되는 파일 형식: JPG, PNG, HEIC');
-                return;
+                return false;
             }
+            return true;
+        });
+
+        if (selectedFiles.length === 0) {
+            alert('유효한 파일이 없습니다. 파일 업로드를 다시 해주세요.');
+            return;
         }
-    }
+
+        const promises = selectedFiles.map((file) => {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = () => reject(new Error('파일 읽기 중 오류가 발생했습니다.'));
+                reader.readAsDataURL(file);
+            });
+        });
+
+        Promise.all(promises)
+            .then((results) => {
+                setFileUrl(results);
+            })
+            .catch(() => {
+                alert('파일 읽기 중 오류가 발생했습니다.');
+            });
+    };
 
     return (
         <div>
@@ -405,16 +429,29 @@ export default function EveryMemoryMain(){
                     <span className={styles.postImageTextInner}>새로운 풍경 사진 업로드</span>
                     <div className={styles.postImageToolContainer}
                     onClick={handleContainerClick}>
+                    {fileUrl.length>0? 
+                    <div className={styles.postImageToolContainer2}
+                    onClick={handleContainerClick}>
+                        {fileUrl.map((url)=>(
+                            <img className={styles.uploadedImage} src={url} alt=''/>
+                        ))}
+                    </div>
+                    :
+                    <div className={styles.postImageToolContainer1}
+                    onClick={handleContainerClick}>
                         <img src={cloud} alt='' className={styles.cloudIcon}></img>
                         <p className={styles.postImageToolText}>이곳을 클릭하거나 사진을 드래그하여 업로드하세요.</p>
                         <p className={styles.ImageInfo}>지원 형식: JPG, PNG, HEIC / 최대 파일 크기: 5MB</p>
                         <input
-                            type="file"
+                            type='file'
+                            multiple
                             ref={fileInputRef}
                             accept="image/jpeg,image/png,image/heic"
                             style={{ display: 'none' }}
                             onChange={handleFileChange}
                         />
+                    </div>
+                    }
                     </div>
                     <p className={styles.postImageTitle}>제목</p>
                     <input className={styles.inputTitle} 
