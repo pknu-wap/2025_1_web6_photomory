@@ -2,12 +2,9 @@ import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import styles from "./LoginPage.Main.module.css";
+import loginImg from "../../assets/loginImg.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEnvelope,
-  faLock,
-  faRightToBracket,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 import logo from "../../assets/photomory_logo.svg";
 
 const BASE_URL = process.env.REACT_APP_API_URL;
@@ -121,32 +118,36 @@ export default function LoginPageMain() {
 
           {/* 이메일 입력 */}
           <div className={styles.emailContainer}>
-            <span className={styles.emailText}>email</span>
-            <FontAwesomeIcon icon={faEnvelope} className={styles.emailIcon} />
-            <input
-              className={styles.emailInput}
-              placeholder="     이메일을 입력하세요."
-              onChange={onChangeHandleEmail}
-              value={email}
-              disabled={isLoading}
-              ref={focusEmailRef}
-              onFocus={() => {}} // TODO: 원하는 포커스 동작 추가
-            />
+            <span>이메일</span>
+            <div style={{ width: "100%", position: "relative" }}>
+              <FontAwesomeIcon icon={faEnvelope} className={styles.emailIcon} />
+              <input
+                className={styles.emailInput}
+                placeholder="이메일을 입력하세요."
+                onChange={onChangeHandleEmail}
+                value={email}
+                disabled={isLoading}
+                ref={focusEmailRef}
+                onFocus={() => {}}
+              />
+            </div>
           </div>
 
           {/* 비밀번호 입력 */}
           <div className={styles.pwContainer}>
-            <span className={styles.pwText}>password</span>
-            <FontAwesomeIcon icon={faLock} className={styles.pwIcon} />
-            <input
-              className={styles.pwInput}
-              type="password"
-              placeholder="     비밀번호를 입력하세요."
-              onChange={onChangeHandlePw}
-              value={pw}
-              disabled={isLoading}
-              ref={focusPwRef}
-            />
+            <span className={styles.pwText}>비밀번호</span>
+            <div style={{ width: "100%", position: "relative" }}>
+              <FontAwesomeIcon icon={faLock} className={styles.pwIcon} />
+              <input
+                className={styles.pwInput}
+                type="password"
+                placeholder="비밀번호를 입력하세요."
+                onChange={onChangeHandlePw}
+                value={pw}
+                disabled={isLoading}
+                ref={focusPwRef}
+              />
+            </div>
           </div>
 
           {/* 에러 메시지 출력 */}
@@ -158,15 +159,23 @@ export default function LoginPageMain() {
             onClick={onClickButtonLogin}
             disabled={isLoading}
           >
-            <FontAwesomeIcon icon={faRightToBracket} />
-            {isLoading ? "로그인 중..." : "LOGIN"}
+            <img
+              src={loginImg}
+              alt="loginImg"
+              style={{ marginRight: "7px", width: "20px", height: "18px" }}
+            />
+            {isLoading ? "로그인 중..." : "로그인"}
           </button>
 
           {/* 회원가입 안내 */}
-          <span className={styles.notAccount}>계정이 없으신가요?</span>
-          <button className={styles.signUp} onClick={onClickHandleSignUp}>
-            회원가입
-          </button>
+          <div style={{ display: "inline-block" }}>
+            <span className={styles.notAccount} style={{ marginRight: "10px" }}>
+              계정이 없으신가요?
+            </span>
+            <button className={styles.signUp} onClick={onClickHandleSignUp}>
+              회원가입
+            </button>
+          </div>
         </div>
       </div>
     </>
