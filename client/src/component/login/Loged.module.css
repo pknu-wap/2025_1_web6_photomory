@@ -1,45 +1,74 @@
-.forFlex{
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 15px;
+/* 전체 페이지 정중앙 정렬 */
+.forFlex {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
-.logedPageContainer{
-    background-color: white;
-    box-sizing: border-box;
-    width: auto;
-    min-width: 460px;
-    padding: 15px;
-    border-radius: 14px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3), 0 0 10px rgba(0, 0, 0, 0.1);;
-    display: flex;
-    flex-direction: column;
+/* 로그인 완료 박스 */
+.logedPageContainer {
+  background-color: #ffffff;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 600px;
+  padding: 40px 30px;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-.name{
-    font-size: clamp(30px, 10vw, 55px);
-    margin: 0 0 15px 0;
+
+/* 유저 이름 */
+.name {
+  font-size: clamp(28px, 6vw, 48px);
+  font-weight: 700;
+  color: #4b4b4b;
+  margin: 0 0 10px 0;
 }
-.welcome{
-    font-size: clamp(30px, 8vw, 60px);
-    margin: 0 0 15px 0;
+
+/* 환영 문구 */
+.welcome {
+  font-size: clamp(24px, 5.5vw, 40px);
+  font-weight: 600;
+  color: #7b4fff;
+  margin: 0 0 20px 0;
 }
+
+/* 이메일 등 계정 정보 */
 .LogedId,
-.LogedPw{
-    font-size: clamp(30px, 6vw, 40px);
+.LogedPw {
+  font-size: clamp(16px, 4.5vw, 24px);
+  color: #666;
+  margin: 5px 0;
 }
-.LogedPw{
-    margin: 0 0 15px 0;
+
+.LogedPw {
+  margin-bottom: 15px;
 }
-.LogedId{
-    margin: 0 0 5px 0;
+
+.forFlex2 {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
-.forFlex2{
-    display: flex;
-    justify-content: center;
+
+/* 홈 버튼 */
+.homeButton {
+  background-color: #7b4fff;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: clamp(16px, 4vw, 22px);
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
-.homeButton{
-    width: auto;
-    font-size: clamp(20px,5vw, 30px );
+
+.homeButton:hover {
+  background-color: #5c33d4;
+  box-shadow: 0 4px 12px rgba(123, 79, 255, 0.4);
 }
