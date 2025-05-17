@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { getMyAlbums } from "../api/getMyAlbum";
-import Container from "../component/Container";
-import Calender from "../component/Calender";
-import Header from "../component/Header";
-import AddAlbum from "../component/AddAlbum";
-import AlbumList from "../component/AlbumList";
-import Footer from "../component/Footer";
+import Container from "../component/common/Container";
+import Calender from "../component/calender/Calender";
+import Header from "../component/common/Header";
+import AddAlbum from "../component/add/AddAlbum";
+import AlbumList from "../component/album/AlbumList";
+import Footer from "../component/common/Footer";
 import privateIcon from "../assets/privateIcon.svg";
 function MyAlbumPage() {
   const [myAlbums, setMyAlbums] = useState([]); //나의 앨범 상태
