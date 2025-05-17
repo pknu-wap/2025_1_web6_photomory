@@ -86,7 +86,7 @@ async function getUserPosts() {
 async function updateLikeCommentCount(post_id){
     try{
         const accessToken= localStorage.getItem('accessToken')
-        const reponse= await fetch(`${process.env.REACT_APP_API_URL}/posts`,{
+        const response= await fetch(`${process.env.REACT_APP_API_URL}/posts`,{
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json',
@@ -94,13 +94,13 @@ async function updateLikeCommentCount(post_id){
             },
             body: JSON.stringify({post_id})
         })
-        if(!reponse.ok){
-            if(reponse.status===401){
+        if(!response.ok){
+            if(response.status===401){
                 throw new Error('Unauthorized')
             }
-            throw new Error('Failed to upload count:' `${reponse.status}`)
+            throw new Error('Failed to upload count:' `${response.status}`)
         }
-        return await reponse.json();
+        return await response.json();
     }
     catch(error){
         console.error('Error updating count:', error)
@@ -108,14 +108,14 @@ async function updateLikeCommentCount(post_id){
     }
 }
 
-async function uploadingIamge(uploadImage) {
+async function uploadingImage(uploadImage) {
     try{
-        const accessToekn= localStorage.getItem('accessToken')
+        const accessToken= localStorage.getItem('accessToken')
         const response= await fetch(`${process.env.REACT_APP_API_URL}/images/upload`,{
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToekn}`
+                Authorization: `Bearer ${accessToken}`
             },
             body: JSON.stringify({uploadImage})
         })
@@ -123,7 +123,8 @@ async function uploadingIamge(uploadImage) {
             if (response.status===401) {
                 throw new Error('Unauthorized')
             }
-            throw new Error('Failde to upload image:', `${response.status}`)
+            const errorText=response.text()
+            throw new Error(`Failed to upload image: ${response.status} - ${errorText}`)
         }
     }
     catch(error){
@@ -524,7 +525,7 @@ export default function EveryMemoryMain(){
                         <button className={styles.uploadImageButtonContainer}>
                             <img src={twinkle} alt='' className={styles.twinkleIcon2}></img>
                             <span className={styles.upLoadImageText}
-                            onClick={()=>uploadingIamge(uploadImage)}>사진 업로드하기</span>
+                            onClick={()=>uploadingImage(uploadImage)}>사진 업로드하기</span>
                         </button>
                         <button className={styles.cancelButton} onClick={handleCancelButton}>취소하기</button>
                     </div>
