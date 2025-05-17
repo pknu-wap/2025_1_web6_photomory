@@ -1,6 +1,6 @@
-import Header from "../component/Header";
-import MainPageMain from "../component/MainPage.Main";
-import Footer from "../component/Footer";
+import Header from "../component/common/Header";
+import MainPageMain from "../component/main/MainPage.Main";
+import Footer from "../component/common/Footer";
 import "./MainPage.css";
 
 function MainPage() {

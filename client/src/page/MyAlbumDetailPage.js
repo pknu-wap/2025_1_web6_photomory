@@ -1,13 +1,13 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import Container from "../component/Container";
-import Photos from "../component/Photos";
+import Container from "../component/common/Container";
+import Photos from "../component/photo/Photos";
 import { getPhotoPeriod } from "../utils/getPhotoPeriod";
-import PhotoInfo from "../component/PhotoInfo";
-import PhotoSubmit from "../component/PhotoSubmit";
+import PhotoInfo from "../component/photo/PhotoInfo";
+import PhotoSubmit from "../component/photo/PhotoSubmit";
 import getAlbumById from "../api/getAlbumById";
-import Header from "../component/Header";
-import Footer from "../component/Footer";
+import Header from "../component/common/Header";
+import Footer from "../component/common/Footer";
 function MyAlbumDetailPage() {
   const { albumId } = useParams();
   const result = getAlbumById(parseInt(albumId), "private");
