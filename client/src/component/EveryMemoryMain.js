@@ -91,7 +91,8 @@ async function updateLikeCommentCount(post_id){
             headers:{
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`
-            }
+            },
+            body: JSON.stringify({post_id})
         })
         if(!reponse.ok){
             if(reponse.status===401){
@@ -107,6 +108,29 @@ async function updateLikeCommentCount(post_id){
     }
 }
 
+async function uploadingIamge(uploadImage) {
+    try{
+        const accessToekn= localStorage.getItem('accessToken')
+        const response= await fetch(`${process.env.REACT_APP_API_URL}/images/upload`,{
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToekn}`
+            },
+            body: JSON.stringify({uploadImage})
+        })
+        if(!response.ok){
+            if (response.status===401) {
+                throw new Error('Unauthorized')
+            }
+            throw new Error('Failde to upload image:', `${response.status}`)
+        }
+    }
+    catch(error){
+        console.error('Error updating image:', error)
+        throw error;
+    }
+}
 
 export default function EveryMemoryMain(){
     const [posts, setPosts] = useState([]) //모든 태그의 포스트 중 좋아요 순을 위한
@@ -116,6 +140,7 @@ export default function EveryMemoryMain(){
                                                     // 지금은 undefined가 뜨기에 일단 해둠
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPost, setSelectedPost] = useState(null);
+    const [uploadImage, setUploadImage]= useState(null);
 
     const fetchPosts= async ()=>{
         try{
@@ -241,7 +266,7 @@ export default function EveryMemoryMain(){
         }
     }
 
-    const [fileUrl, setFileUrl]= useState([])
+    const [uploadfileUrl, setUploadFileUrl]= useState([])
 
     const handleFileChange = (e) => {
         if (!e.target.files || e.target.files.length === 0) {
@@ -278,21 +303,49 @@ export default function EveryMemoryMain(){
                 const reader = new FileReader();
                 reader.onload = (e) => resolve(e.target.result);
                 reader.onerror = () => reject(new Error('파일 읽기 중 오류가 발생했습니다.'));
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(file); //비동기
             });
         });
 
         Promise.all(promises)
             .then((results) => {
-                setFileUrl(results);
+                setUploadFileUrl(results); //배열.
             })
             .catch(() => {
                 alert('파일 읽기 중 오류가 발생했습니다.');
             });
     };
 
+    const handleCancelButton=()=>{
+        setUploadFileUrl([])
+    }
+    const [uploadFileInfo, setuploadFileInfo]= useState({})
+    const handleOnchangeUploadFileInfo=(e)=>{
+        if(e.target.className==='inputTitle'){
+            setuploadFileInfo((uploadFileInfo)=>({...uploadFileInfo, post_text:e.target.value})) //제목
+            return;
+        }
+        if(e.target.className==='inputExplain'){
+            setuploadFileInfo((uploadFileInfo)=>({ ...uploadFileInfo, post_description: e.target.value })) //설명
+            return;
+        }
+        if(e.target.className==='postImageLocation'){
+            setuploadFileInfo((uploadFileInfo)=>({...uploadFileInfo, post_location:e.target.value})) //설명
+            return;
+        }
+        if(e.target.className==='postImageTagInput'){
+            setuploadFileInfo((uploadFileInfo)=>({...uploadFileInfo, post_tag:e.target.value})) //설명
+            return;
+        }
+    }
+
+    useEffect(() => {
+        const sumUploadImageInfo = { ...uploadFileInfo, images: uploadfileUrl };
+        setUploadImage(sumUploadImageInfo);
+    }, [uploadFileInfo, uploadfileUrl]);
+
     return (
-        <div>
+        <div >
             <div className={styles.mainContainer}>
                 {error && <p className={styles.error}>{error}</p>}
                 <p className={styles.weeklyTag}>
@@ -427,12 +480,10 @@ export default function EveryMemoryMain(){
                 <div className={styles.postImageContainerInner}>
                     <img src={camera} alt='' className={styles.postImageIconInner}></img>
                     <span className={styles.postImageTextInner}>새로운 풍경 사진 업로드</span>
-                    <div className={styles.postImageToolContainer}
-                    onClick={handleContainerClick}>
-                    {fileUrl.length>0? 
-                    <div className={styles.postImageToolContainer2}
-                    onClick={handleContainerClick}>
-                        {fileUrl.map((url)=>(
+                    <div className={styles.postImageToolContainer}>
+                    {uploadfileUrl.length>0? 
+                    <div className={styles.postImageToolContainer2}>
+                        {uploadfileUrl.map((url)=>(
                             <img className={styles.uploadedImage} src={url} alt=''/>
                         ))}
                     </div>
@@ -455,19 +506,27 @@ export default function EveryMemoryMain(){
                     </div>
                     <p className={styles.postImageTitle}>제목</p>
                     <input className={styles.inputTitle} 
-                    placeholder='예: 제주도 성산일출봉의 아름다운 일출'></input>
+                    placeholder='예: 제주도 성산일출봉의 아름다운 일출'
+                    onChange={handleOnchangeUploadFileInfo}></input>
                     <p className={styles.postImageExplain}>설명</p>
                     <textarea className={styles.inputExplain} 
-                    placeholder='사진에 담긴 이야기나 촬영 시 느낀 감정을 자류롭게 작성해주세요.'></textarea>
+                    placeholder='사진에 담긴 이야기나 촬영 시 느낀 감정을 자류롭게 작성해주세요.'
+                    onChange={handleOnchangeUploadFileInfo}></textarea>
                     <p className={styles.postImageLocation}>위치</p>
                     <input className={styles.inputLocation}
-                    placeholder='예: 제주도특별자치도 서귀포시 성산읍'></input>
+                    placeholder='예: 제주도특별자치도 서귀포시 성산읍'
+                    onChange={handleOnchangeUploadFileInfo}></input>
+                    <p className={styles.postImageTag}>태그</p>
+                    <input className={styles.postImageTagInput}
+                    placeholder='#에 의해 나눠집니다. 예: #가족#일본#겨울'
+                    onChange={handleOnchangeUploadFileInfo}></input>
                     <div className={styles.forflexPostImage}>
                         <button className={styles.uploadImageButtonContainer}>
                             <img src={twinkle} alt='' className={styles.twinkleIcon2}></img>
-                            <span className={styles.upLoadImageText}>사진 업로드하기</span>
+                            <span className={styles.upLoadImageText}
+                            onClick={()=>uploadingIamge(uploadImage)}>사진 업로드하기</span>
                         </button>
-                        <button className={styles.cancleButton}>취소하기</button>
+                        <button className={styles.cancelButton} onClick={handleCancelButton}>취소하기</button>
                     </div>
                 </div>
             </div>
