@@ -15,18 +15,26 @@
   left: 50%;
   transform: translate(-50%, 0%);
   grid-column: 1/3;
-  width: 200px !important;
-  height: 200px !important;
+  width: 200px ;
+  height: 200px ;
   object-fit: fill;
   border-radius: 20px;
 }
-.myMemoryContainer{
+.myMemoryContainer,
+.ourMemoryContainer,
+.morePictureContainer {
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background-color: white;
+}
+.myMemoryContainer {
     padding: 10px;
+    display: flex;
     border-radius: 6px;
     flex-direction: column;
     align-items: center;
     display: flex;
-    flex-direction: column;
 }
 
 .myMemoryText{
@@ -60,10 +68,9 @@
 
 .icon {
   font-size: clamp(30px, 35px, 40px);
-
   margin-top: 20px;
 }
-.ourMemoryContainer{
+.ourMemoryContainer {
     padding: 10px;
     border-radius: 6px;
     flex-direction: column;
@@ -72,7 +79,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center
+    align-items: center;
 }
 .ourMemoryText {
   margin: 5px;
@@ -129,7 +136,6 @@
 
 .weeklyMemoryContainer1 {
   grid-column: 1/3;
-
   border-radius: 6px;
   display: grid;
   grid-template-rows: 3.5fr 0.5fr 0.5fr;
@@ -180,23 +186,29 @@
 .weeklyMemoryImageText3 {
   font-size: clamp(14px, 16px, 18px);
 }
-
-.morePictureContainer {
-  padding: 7px;
-  grid-column: 1/3;
+.forFlexMorePictureContainer{
+  width: 100%;
   display: flex;
+  grid-column: 1/3;
   align-items: center;
   justify-content: center;
 }
-.morePicture {
-  border-radius: 7px;
-  padding: 5px;
-  display: inline-block;
+.morePictureContainer {
+    padding: 7px;
+    grid-column: 1/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    width: fit-content;
+    position: relative;
+    background-color: black;
 }
-.myMemoryContainer:hover,
-.ourMemoryContainer:hover,
-.morePicture:hover {
-  box-shadow: rgba(100, 100, 100, 0.2) 0px 0px 30px 10px;
+.morePicture {
+    border-radius: 7px;
+    padding: 5px;
+    display: inline-block;
+    color: white;
 }
 .myMemoryContainer,
 .ourMemoryContainer,
@@ -205,4 +217,22 @@
 .weeklyMemoryContainer2,
 .weeklyMemoryContainer3{
     background-color: white;
+}
+.morePictureContainer:hover{
+  transform: scale(1.05);
+}
+.myMemoryContainer:hover,
+.ourMemoryContainer:hover,
+.morePictureContainer:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: rgba(100, 100, 100, 0.2) 0px 0px 30px 10px;
+}
+.myMemoryContainer:active,
+.ourMemoryContainer:active,
+.morePictureContainer:active {
+    transform: scale(0.98);
+    box-shadow: rgba(100, 100, 100, 0.1) 0px 0px 15px 5px;
+}
+.morePictureTrophy{
+  margin-right: 7.5px;
 }
