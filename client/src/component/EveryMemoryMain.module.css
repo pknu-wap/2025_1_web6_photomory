@@ -460,7 +460,6 @@
 .inputTitle:focus,
 .postImageTagInput:focus {
     outline: none; 
-    background: linear-gradient(136deg, #dbeafe 0%, #f3e8ff 49%, #fce7f3 99%) !important;
 }
 .forflexPostImage{
     display: flex;
