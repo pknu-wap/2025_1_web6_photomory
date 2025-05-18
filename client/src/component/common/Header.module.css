@@ -5,6 +5,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .headerContainer2 {
 width: 95%;
@@ -26,24 +27,99 @@ align-items: center;
     height: 50px;
     border-radius: 10px;
 }
-.home{
-    font-weight: 500;
-}
+.home,
 .myMemory,
 .ourMemory,
-.everyMemory{
-    color: rgb(150, 150, 150);
+.everyMemory {
+    position: relative;
+    font-weight: 500;
+    padding: 8px 12px;
+    transition: all 0.3s ease;
+    color: rgb(100, 100, 100);
 }
-.signIn{
+
+.home::after, /*가상 요소 생성성*/
+.myMemory::after,
+.ourMemory::after,
+.everyMemory::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: black;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.home:hover::after,/*가상 요소 애니매 설정*/
+.myMemory:hover::after,
+.ourMemory:hover::after,
+.everyMemory:hover::after {
+    width: 80%;
+}
+
+.home:hover,
+.myMemory:hover,
+.ourMemory:hover,
+.everyMemory:hover {
+    color: black;
+    transform: translateY(-2px);
+}
+
+.home:active,
+.myMemory:active,
+.ourMemory:active,
+.everyMemory:active {
+    transform: translateY(0) scale(0.95);
+}
+
+/* 활성화된 메뉴 스타일 */
+.home.active,
+.myMemory.active,
+.ourMemory.active,
+.everyMemory.active {
+    color: black;
+}
+
+.home.active::after, /*클래스가 제거될 때 사라짐(js)*/
+.myMemory.active::after,
+.ourMemory.active::after,
+.everyMemory.active::after {
+    width: 80%;
+}
+
+/* 로그인/회원가입 버튼 스타일 */
+.signIn,
+.signUp {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    padding: 8px 16px;
+}
+
+.signIn {
     background-color: black;
     color: white;
-    padding: 5px 10px;
 }
-.signUp{
+
+.signUp {
     background-color: white;
     color: black;
-    padding: 5px 10px;
     border: 1px solid black;
+}
+
+.signIn:hover,
+.signUp:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.signIn:active,
+.signUp:active {
+    transform: translateY(0) scale(0.95);
 }
 
 .headerContainerRight {
