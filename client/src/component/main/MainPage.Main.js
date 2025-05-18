@@ -13,11 +13,79 @@ import image2 from "../../assets/mainPageImage2.svg";
 import image3 from "../../assets/mainPageImage3.svg";
 import image4 from "../../assets/mainPageImage4.svg";
 
+async function fetchUserposts(accessToken) {
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/user/posts`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            if (response.status===401) {
+                throw new Error('Unauthorized'); //토큰 만료
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const posts = await response.json();
+        return posts;
+    } catch (error) {
+        console.error('Error fetching user posts:', error);
+        throw error;
+    }
+}
+
+async function refreshAccessToken(refreshToken) {
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/refresh-token`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({refreshToken})
+        });
+
+        if (!response.ok) {
+            throw new Error(`Token refredh failed status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.accessToken;
+    }
+    catch (error) {
+        console.error('Error fetching token:', error);
+        return null;
+    }
+}
+
+async function getUserPosts() {
+    let accessToken= localStorage.getItem('accessToken');
+    const refreshToken= localStorage.getItem('refreshToken');
+    try{
+        const posts = await fetchUserposts(accessToken)
+        return posts
+    }
+    catch (error){
+        if (error.message === 'Unauthorized' && refreshToken) { //리프토큰 없으면 요청 안 되게게
+            accessToken=await refreshAccessToken(refreshToken);
+            if (accessToken) {
+                localStorage.setItem('accessToken', accessToken);
+                const posts = await fetchUserposts(accessToken);
+                return posts
+            }
+        }
+        console.log('Failed to fetch user posts')
+        return null
+    }
+} //여까지 리프, 엑세 토큰 및 유저 포스트 가져오기 여기가 먼저 드가지니, 에브리에 포스트로 순위 매기는 건 여기서 처리하고 넘겨주는 게 좋을 듯
+
+
 function MainPageMain() {
   const nav = useNavigate();
-  const onClickHandle = (event) => {
-    nav(event.currentTarget.dataset.value);
-  };
+  const onClickHandle = (event) => nav(event.currentTarget.dataset.value);
 
   const weeklyImage = "./Image.png";
 
@@ -59,7 +127,7 @@ function MainPageMain() {
         <div className={styles.weeklyMemoryTitleText}>
           #이번_주의_추억&nbsp;
           <span className={styles.weeklyMemoryTitleTextSmall}>
-            태그의 인기 사진 TOP 3{" "}
+            태그의 인기 사진 TOP 3
             <FontAwesomeIcon icon={faTrophy} style={{ color: "#FFD43B" }} />
           </span>
         </div>
@@ -121,13 +189,19 @@ function MainPageMain() {
           <span>9999</span>
         </div>
       </div>
-      <div className={styles.morePictureContainer}>
-        <div
-          className={styles.morePicture}
-          onClick={onClickHandle}
-          data-value="/everyMemory"
-        >
-          모두의 추억
+      <div className={styles.forFlexMorePictureContainer}>
+        <div className={styles.morePictureContainer}>
+          <div
+            className={styles.morePicture}
+            onClick={onClickHandle}
+            data-value="/everyMemory"> 
+          <FontAwesomeIcon
+            icon={faTrophy}
+            style={{ color: "#FFD43B" }}
+            className={styles.morePictureTrophy}
+          />
+            모두의 추억 인기 사진 보기
+          </div>
         </div>
       </div>
     </div>
