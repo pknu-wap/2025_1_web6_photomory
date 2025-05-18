@@ -1,17 +1,6 @@
 package com.example.photomory.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Table;
-import java.util.List;
-import com.example.photomory.entity.Like;
-
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "POST")
@@ -29,19 +18,43 @@ public class Post {
     private Integer likesCount;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @OneToMany(mappedBy = "post")
-    private List<Tag> tags;
+    // 기본 생성자
+    public Post() {}
 
-    @OneToMany(mappedBy = "post")
-    private List<Photo> photos;
+    // getter/setter
 
-    @OneToMany(mappedBy = "post")
-    private List<Like> likes;
+    public Integer getPostId() {
+        return postId;
+    }
 
-    @OneToMany(mappedBy = "post")
-    private List<Album> albums;
+    public void setPostId(Integer postId) {
+        this.postId = postId;
+    }
 
+    public String getPostText() {
+        return postText;
+    }
+
+    public void setPostText(String postText) {
+        this.postText = postText;
+    }
+
+    public Integer getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(Integer likesCount) {
+        this.likesCount = likesCount;
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
 }

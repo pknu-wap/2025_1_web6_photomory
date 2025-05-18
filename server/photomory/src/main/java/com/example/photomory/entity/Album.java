@@ -33,7 +33,72 @@ public class Album {
     private List<Comment> comments;
 
     @ManyToOne
-    @JoinColumn(name = "myalbum_id") // FK 컬럼명 실제 DB에 맞게 조정 필요
+    @JoinColumn(name = "myalbum_id")
     private MyAlbum myAlbum;
 
+    // Getter & Setter 추가
+
+    public Integer getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(Integer albumId) {
+        this.albumId = albumId;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    public String getAlbumName() {
+        return albumName;
+    }
+
+    public void setAlbumName(String albumName) {
+        this.albumName = albumName;
+    }
+
+    public String getAlbumTag() {
+        return albumTag;
+    }
+
+    public void setAlbumTag(String albumTag) {
+        this.albumTag = albumTag;
+    }
+
+    public LocalDateTime getAlbumMakingTime() {
+        return albumMakingTime;
+    }
+
+    public void setAlbumMakingTime(LocalDateTime albumMakingTime) {
+        this.albumMakingTime = albumMakingTime;
+    }
+
+    public String getAlbumDescription() {
+        return albumDescription;
+    }
+
+    public void setAlbumDescription(String albumDescription) {
+        this.albumDescription = albumDescription;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public MyAlbum getMyAlbum() {
+        return myAlbum;
+    }
+
+    public void setMyAlbum(MyAlbum myAlbum) {
+        this.myAlbum = myAlbum;
+    }
 }
