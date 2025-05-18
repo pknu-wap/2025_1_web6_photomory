@@ -254,11 +254,9 @@ export default function EveryMemoryMain(){
     }
 
     const weeklyPosts= randomPosts.slice(0,3); //아 여기선 먼저 useState([])에서[]로 됐다가 다시 비동기로 값을 받는다 usestate에서 useState() 그냥 이렇게 하면 비동기라서 이 코드가 먼저 실행될 떄 undefined가 떠서 타입 오류가 뜬다. slice는 undefined이면 오류가 뜬다. 따라서 []을 쓴다. 그 후 값이 들어온다.
-    console.log(weeklyPosts)
 
     const weeklyPostIds = useMemo(() => new Set(weeklyPosts.map((weeklyPost) => weeklyPost.post_id)), [weeklyPosts]);
     const dailyPosts = useMemo(() => posts.filter((post) => !weeklyPostIds.has(post.post_id)), [posts, weeklyPostIds]); //has는 Set,Map에 사용하는 include,some보다 빠르게 작동함.
-
 
     const [nextPage, setNextPage] = useState([0,1,2,3,4,5]);
     const onClickNextPage=(value)=>{ 
