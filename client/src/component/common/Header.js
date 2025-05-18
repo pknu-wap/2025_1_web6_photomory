@@ -1,5 +1,5 @@
 import styles from "./Header.module.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import logo from "../../assets/photomory_logo.svg";
 import { faGear, faBell } from "@fortawesome/free-solid-svg-icons";
@@ -11,11 +11,17 @@ function Header() {
 
   //로그인에서 받기
   const nav = useNavigate();
+  const location = useLocation();
 
   //라우팅 경로 변경 헨들러
   const onclickHandle = (event) => {
-    nav(event.target.value);
+    const path = event.target.dataset.path || event.target.value; // data-path 우선, 없으면 value
+    nav(path);
   };
+
+  const isActive = (path) => {
+    return location.pathname === path ? styles.active : '';
+  }; //현재 경로가 헤더의 경로랑 같으으면 styles.active반환. 쉽게 말해 현재 경로랑 같으면 계속 active상태
 
   return (
     <div className={styles.headerContainer}>
@@ -25,27 +31,33 @@ function Header() {
             src={logo}
             alt="Photomory Logo"
             className={styles.headerTopLogo}
+            onClick={onclickHandle}
+            data-path='/'
           />
-          <button className={styles.home} onClick={onclickHandle} value="/">
+          <button 
+            className={`${styles.home} ${isActive('/')}`} //현재 경로가 /면 styles.active반환
+            onClick={onclickHandle} 
+            value="/"
+          >
             홈
           </button>
           <div className={styles.memoryContainer}>
             <button
-              className={styles.myMemory}
+              className={`${styles.myMemory} ${isActive('/my-album')}`}
               onClick={onclickHandle}
               value="/my-album"
             >
               나만의 추억
             </button>
             <button
-              className={styles.ourMemory}
+              className={`${styles.ourMemory} ${isActive('/our-album')}`}
               onClick={onclickHandle}
               value="/our-album"
             >
               우리의 추억
             </button>
             <button
-              className={styles.everyMemory}
+              className={`${styles.everyMemory} ${isActive('/everyMemory')}`}
               onClick={onclickHandle}
               value="/everyMemory"
             >
