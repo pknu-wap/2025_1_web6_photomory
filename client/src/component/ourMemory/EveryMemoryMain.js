@@ -86,7 +86,7 @@ async function getUserPosts() {
 async function updateLikeCommentCount(post_id){
     try{
         const accessToken= localStorage.getItem('accessToken')
-        const response= await fetch(`${process.env.REACT_APP_API_URL}/posts`,{
+        const response= await fetch(`${process.env.REACT_APP_API_URL}/posts`,{/* 이거 엔드포인트 뭐임..?*/
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json',
