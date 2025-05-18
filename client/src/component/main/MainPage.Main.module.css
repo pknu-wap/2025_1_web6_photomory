@@ -180,11 +180,22 @@
 }
 
 .weeklyMemoryImageText1 {
-  font-size: clamp(16px, 18px, 20px);
+  font-size: clamp(20px, 22px, 24px);
+  font-weight: 700;
+  height: fit-content;
+}
+.weeklyMemoryImageTrophy1,
+.weeklyMemoryImageTrophy2,
+.weeklyMemoryImageTrophy3{
+  margin-right: 5px;
+}
+.weeklyMemoryTitleTrophy{
+  margin-left: 5px;
 }
 .weeklyMemoryImageText2,
 .weeklyMemoryImageText3 {
-  font-size: clamp(14px, 16px, 18px);
+  font-size: clamp(20px, 22px, 24px);
+  font-weight: 700;
 }
 .forFlexMorePictureContainer{
   width: 100%;
