@@ -94,7 +94,10 @@
     border-radius: 10px;
     background-color: white;
 }
-
+.weeklyTagContainer{
+    box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.1),
+    0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
 .weeklyTagImage{
     width: 100%;
     height: clamp(150px, 38vw, 300px);
@@ -220,7 +223,10 @@
     display: flex;
     flex-direction: row;
     background-color: white;
-
+}
+.todayTagContainer{
+    box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.1),
+    0px 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 .todayTagImage{
     height: 100%;
@@ -312,6 +318,8 @@
 .postImageIconOutter{
     width: 24px;
     height: 24px;
+    position: relative;
+    transform: translate(0, +5%);
 }
 .twinkleIcon2{
     width: 40px;
@@ -326,10 +334,6 @@
     border-radius: 20px;
     padding: 5px 10px;
 }
-.postImageIconOutter{
-    position: relative;
-    transform: translate(0, +10%);
-}
 .postImageTextOutter{
     font-weight: 700;
     font-size: 24px;
@@ -343,7 +347,9 @@
     transform: translate(-50%, 0);
     padding: 20px;
     margin-top: 30px;
+    margin-bottom: 70px;
     border-radius: 10px;
+    box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.1),0px 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 .postImageIconInner{
     width: 30px;
@@ -358,21 +364,35 @@
     font-weight: 700;
     font-size: 30px;
 }
-.postImageToolContainer{
+.postImageToolContainer1{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 2px dashed black;
+    border: 3px dashed black;
     border-radius: 7px;
     padding: 30px;
 }
-.postImageToolContainer {
+.postImageToolContainer2{
+    gap: 10px;
+    border: 2px dashed black;
+    border-radius: 7px;
+    padding: 30px;
+    display: flex;
+}
+.uploadedImage{
+    width: 18%;
+    aspect-ratio: 1/1;
+    border-radius: 7px;
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.postImageToolContainer1 {
     background-color: rgba(255, 255, 255, 1);
     transition: all 0.3s ease;
 }
 
-.postImageToolContainer:hover {
+.postImageToolContainer1:hover {
     background-color: rgba(200, 202, 206, 1);
 }
 .cloudIcon{
@@ -419,9 +439,27 @@
     margin: 15px 0px 5px 0px;
 }
 .inputLocation{
+    padding: 10px 10px 8px 10px;
     width: 100%;
     border-radius: 7px;
     border: 1px solid #CCCCCC;
+}
+.postImageTagInput{
+    padding: 10px 10px 8px 10px;
+    width: 100%;
+    border-radius: 7px;
+    border: 1px solid #CCCCCC;
+}
+.postImageTag{
+    font-weight: 500;
+    color: #374151;
+    margin: 15px 0px 5px 0px;
+}
+.inputLocation:focus,
+.inputExplain:focus,
+.inputTitle:focus,
+.postImageTagInput:focus {
+    outline: none; 
 }
 .forflexPostImage{
     display: flex;
@@ -435,14 +473,29 @@
     align-items: center;
     color: white;
     background-color: black;
+    transition: all 0.2s ease;
 }
-.cancleButton{
+.uploadImageButtonContainer:hover{
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+    transform: scale(1.05);
+}
+.cancelButton{
     flex: 1;
     border: 1px solid #CCCCCC;
     height: 40px;
     margin-left: 15px;
+    transition: all 0.2s ease;
 }
-
+.cancelButton:hover {
+    background-color: #FF4040; 
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+}
+.cancelButton:active,
+.uploadImageButtonContainer:active{
+    transform: scale(0.95);
+}
 .heartIconContainer:hover .heartIcon {
     transform: scale(1.2) rotate(5deg);
     color: #ff4d4d;
@@ -453,4 +506,7 @@
 }
 .forModalContainer{
     display: contents;
+}
+.postImageTagInput{
+    width: 100%;
 }
