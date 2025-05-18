@@ -109,27 +109,69 @@ async function updateLikeCommentCount(post_id){
 }
 
 async function uploadingImage(uploadImage) {
-    try{
-        const accessToken= localStorage.getItem('accessToken')
-        const response= await fetch(`${process.env.REACT_APP_API_URL}/images/upload`,{
+    try {
+        if (!uploadImage || !uploadImage.images || uploadImage.images.length === 0) {
+            throw new Error('이미지를 선택해주세요.');
+        }
+
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+            throw new Error('로그인이 필요합니다.');
+        }
+        if (
+            uploadImage.post_text==='' ||
+            uploadImage.post_description==='' ||
+            uploadImage.post_location==='' ||
+            uploadImage.post_location==='' || false
+        ) {
+            throw new Error('사진의 정보를 완성해주세요.')
+        }
+        const formData = new FormData();
+        // 이미지 데이터를 FormData에 추가
+        uploadImage.images.forEach((image, index) => { //base64는 data:image/jpeg;base64,실제데이터 이렇게 생김
+            // Base64 이미지를 Blob으로 변환
+            const byteString = atob(image.split(',')[1]); //실제 데이터를 디코딩(?)한다(바이너리 문자열{바이트 문자열})
+            const mimeString = image.split(',')[0].split(':')[1].split(';')[0];//image/jpeg 타입 저장, 이는 나중에 blob만들 때 필요.
+            const ab = new ArrayBuffer(byteString.length);// ArrayBuffer은 byteString.length 만큼의 크기로 바이너리 데이터를 저장할 수 있는 메모리 공간 
+            const ia = new Uint8Array(ab); //Uint8Array는 ArrayBuffer를 8비트(0~255) 배열로 다룰 수 있게 해준다.
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i); //charCodeAt 유니코드
+            }
+            const blob = new Blob([ab], { type: mimeString });
+            formData.append('photo_url', blob, `image${index}.${mimeString.split('/')[1]}`);
+        });
+
+        // 다른 데이터 추가
+        formData.append('post_text', uploadImage.post_text || '');
+        formData.append('post_description', uploadImage.post_description || '');
+        formData.append('post_location', uploadImage.post_location || '');
+        formData.append('post_tag', uploadImage.post_tag || '');
+
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/images/upload`, {
             method: 'POST',
             headers:{
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`
+                'Authorization': `Bearer ${accessToken}`
             },
-            body: JSON.stringify({uploadImage})
-        })
+            body: formData
+        });
+
+
+
+
         if(!response.ok){
             if (response.status===401) {
                 throw new Error('Unauthorized')
             }
-            const errorText=response.text()
-            throw new Error(`Failed to upload image: ${response.status} - ${errorText}`)
+            const errorText = await response.text();
+            throw new Error(`이미지 업로드 실패: ${response.status} - ${errorText}`);
         }
-    }
-    catch(error){
-        console.error('Error updating image:', error)
-        throw error;
+
+        const result = await response.json();
+        alert('이미지가 성공적으로 업로드되었습니다.');
+        return result;
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        alert(error.message);
     }
 }
 
@@ -138,7 +180,7 @@ export default function EveryMemoryMain(){
     const [error, setError] = useState();
     const [randomTagText, setRandomTagText] = useState();
     const [randomPosts, setRandomPosts]= useState([]); //랜덤 태그에 해당하는 포스트 중 좋아요 순을 위한
-                                                    // 지금은 undefined가 뜨기에 일단 해둠
+    // 지금은 undefined가 뜨기에 일단 해둠
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPost, setSelectedPost] = useState(null);
     const [uploadImage, setUploadImage]= useState(null);
@@ -179,19 +221,19 @@ export default function EveryMemoryMain(){
 
     const handleLikeClick =async(post_id)=>{
         try{
-                setPosts((prevPosts) => //낙관적 업뎃
-                    prevPosts.map((post)=> post.post_id=== post_id
+            setPosts((prevPosts) => //낙관적 업뎃
+                prevPosts.map((post)=> post.post_id=== post_id
                     ? { ...post, likes_count: post.likes_count + 1 } //이미 {}여기엔 속성이라 post.을 안 붙임
                     : post).sort((a, b) => b.likes_count - a.likes_count)
-                );
-                
-                const updatedPostByLike = await updateLikeCommentCount(post_id); //서버 업뎃
-                setPosts((prevPosts) =>
-                    prevPosts.map((post) =>post.post_id=== post_id
+            );
+
+            const updatedPostByLike = await updateLikeCommentCount(post_id); //서버 업뎃
+            setPosts((prevPosts) =>
+                prevPosts.map((post) =>post.post_id=== post_id
                     ? { ...post, likes_count: updatedPostByLike.likes_count }
                     :post).sort((a, b) => b.likes_count - a.likes_count)
-                );
-            }
+            );
+        }
         catch (error) {
             console.error('Error uploading like count', error);
         }
@@ -201,13 +243,13 @@ export default function EveryMemoryMain(){
             setPosts((prevPosts)=> //낙관적 업뎃
                 prevPosts.map((post)=>post.post_id===post_id
                 ? {...post, comments_count: post.comments_count+1}
-                : post)
+                    : post)
             );
             const updatedPostByComment= await updateLikeCommentCount(post_id) //서버 업뎃
             setPosts((prevPosts)=>
                 prevPosts.map((post)=>post.post_id===post_id
                 ? {...post, comments_count: updatedPostByComment.comments_count}
-                : post)
+                    : post)
             );
         }
         catch(error){
@@ -218,9 +260,9 @@ export default function EveryMemoryMain(){
     const weeklyPosts= randomPosts.slice(0,3); //아 여기선 먼저 useState([])에서[]로 됐다가 다시 비동기로 값을 받는다 usestate에서 useState() 그냥 이렇게 하면 비동기라서 이 코드가 먼저 실행될 떄 undefined가 떠서 타입 오류가 뜬다. slice는 undefined이면 오류가 뜬다. 따라서 []을 쓴다. 그 후 값이 들어온다.
     console.log(weeklyPosts)
 
-    const weeklyPostIds = useMemo(() => new Set(weeklyPosts.map((weeklyPost) => weeklyPost.post_id)), [weeklyPosts]); 
+    const weeklyPostIds = useMemo(() => new Set(weeklyPosts.map((weeklyPost) => weeklyPost.post_id)), [weeklyPosts]);
     const dailyPosts = useMemo(() => posts.filter((post) => !weeklyPostIds.has(post.post_id)), [posts, weeklyPostIds]); //has는 Set,Map에 사용하는 include,some보다 빠르게 작동함.
-    
+
 
     const [nextPage, setNextPage] = useState([0,1,2,3,4,5]);
     const onClickNextPage=(value)=>{ 
@@ -363,21 +405,21 @@ export default function EveryMemoryMain(){
                 </div>
                 <div className={styles.forFlexweeklyTag1}>
                     <WeeklyPopularTag
-                    post= {[weeklyPosts[0]]}
-                    handleLikeClick={handleLikeClick}
-                    handleCommentClick={handleCommentClick}
+                        post= {[weeklyPosts[0]]}
+                        handleLikeClick={handleLikeClick}
+                        handleCommentClick={handleCommentClick}
                     />
                     {/*------*/}
                     <WeeklyPopularTag
-                    post= {[weeklyPosts[1]]}
-                    handleLikeClick={handleLikeClick}
-                    handleCommentClick={handleCommentClick}
+                        post= {[weeklyPosts[1]]}
+                        handleLikeClick={handleLikeClick}
+                        handleCommentClick={handleCommentClick}
                     />
                     {/*------*/}
                     <WeeklyPopularTag
-                    post= {[weeklyPosts[2]]}
-                    handleLikeClick={handleLikeClick}
-                    handleCommentClick={handleCommentClick}
+                        post= {[weeklyPosts[2]]}
+                        handleLikeClick={handleLikeClick}
+                        handleCommentClick={handleCommentClick}
                     />
                     {/*------*/}
                 </div>
@@ -387,9 +429,9 @@ export default function EveryMemoryMain(){
                 </div>
                 <div className={styles.todayTagAllContainer}>
                     <div className={styles.forModalContainer}
-                    onClick={() => {
-                        handleTagClick(dailyPosts[nextPage[0]]);
-                    }}>
+                        onClick={() => {
+                            handleTagClick(dailyPosts[nextPage[0]]);
+                        }}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeClick={handleLikeClick}
@@ -405,9 +447,9 @@ export default function EveryMemoryMain(){
                     />
                     {/*-------*/}
                     <div className={styles.forModalContainer}
-                    onClick={() => {
-                        handleTagClick(dailyPosts[nextPage[0]]);
-                    }}>
+                        onClick={() => {
+                            handleTagClick(dailyPosts[nextPage[0]]);
+                        }}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeClick={handleLikeClick}
@@ -416,9 +458,9 @@ export default function EveryMemoryMain(){
                     </div>
                     {/*--------*/}
                     <div className={styles.forModalContainer}
-                    onClick={() => {
-                        handleTagClick(dailyPosts[nextPage[0]]);
-                    }}>
+                        onClick={() => {
+                            handleTagClick(dailyPosts[nextPage[0]]);
+                        }}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeClick={handleLikeClick}
@@ -427,9 +469,9 @@ export default function EveryMemoryMain(){
                     </div>
                     {/*--------*/}
                     <div className={styles.forModalContainer}
-                    onClick={() => {
-                        handleTagClick(dailyPosts[nextPage[0]]);
-                    }}>
+                        onClick={() => {
+                            handleTagClick(dailyPosts[nextPage[0]]);
+                        }}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeClick={handleLikeClick}
@@ -438,9 +480,9 @@ export default function EveryMemoryMain(){
                     </div>
                     {/*--------*/}
                     <div className={styles.forModalContainer}
-                    onClick={() => {
-                        handleTagClick(dailyPosts[nextPage[0]]);
-                    }}>
+                        onClick={() => {
+                            handleTagClick(dailyPosts[nextPage[0]]);
+                        }}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeClick={handleLikeClick}
@@ -449,9 +491,9 @@ export default function EveryMemoryMain(){
                     </div>
                     {/*--------*/}
                     <div className={styles.forModalContainer}
-                    onClick={() => {
-                        handleTagClick(dailyPosts[nextPage[0]]);
-                    }}>
+                        onClick={() => {
+                            handleTagClick(dailyPosts[nextPage[0]]);
+                        }}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeClick={handleLikeClick}
@@ -461,18 +503,18 @@ export default function EveryMemoryMain(){
                     {/*--------*/}
                 </div>
                 <div className={styles.forFlexButton}>
-                    <img alt='' src={leftButton} className={styles.leftButton} 
-                    onClick={()=>onClickNextPage('<')}/>
-                    <img alt='' src={num1} className={styles.num1Icon} 
-                    onClick={()=>onClickNextPage(0)}/>
-                    <img alt='' src={num2} className={styles.num2Icon} 
-                    onClick={()=>onClickNextPage(1)}/>
-                    <img alt='' src={num3} className={styles.num3Icon} 
-                    onClick={()=>onClickNextPage(2)}/>
-                    <img alt='' src={num4} className={styles.num4Icon} 
-                    onClick={()=>onClickNextPage(3)}/>
-                    <img alt='' src={rightButton} className={styles.rightButton} 
-                    onClick={()=>onClickNextPage('>')}/>
+                    <img alt='' src={leftButton} className={styles.leftButton}
+                        onClick={()=>onClickNextPage('<')}/>
+                    <img alt='' src={num1} className={styles.num1Icon}
+                        onClick={()=>onClickNextPage(0)}/>
+                    <img alt='' src={num2} className={styles.num2Icon}
+                        onClick={()=>onClickNextPage(1)}/>
+                    <img alt='' src={num3} className={styles.num3Icon}
+                        onClick={()=>onClickNextPage(2)}/>
+                    <img alt='' src={num4} className={styles.num4Icon}
+                        onClick={()=>onClickNextPage(3)}/>
+                    <img alt='' src={rightButton} className={styles.rightButton}
+                        onClick={()=>onClickNextPage('>')}/>
                 </div>
                 <div className={styles.postImageContainerOutter}>
                     <img src={camera} alt='' className={styles.postImageIconOutter}></img>
@@ -483,44 +525,44 @@ export default function EveryMemoryMain(){
                     <span className={styles.postImageTextInner}>새로운 풍경 사진 업로드</span>
                     <div className={styles.postImageToolContainer}>
                     {uploadfileUrl.length>0? 
-                    <div className={styles.postImageToolContainer2}>
+                            <div className={styles.postImageToolContainer2}>
                         {uploadfileUrl.map((url)=>(
                             <img className={styles.uploadedImage} src={url} alt=''/>
-                        ))}
-                    </div>
-                    :
-                    <div className={styles.postImageToolContainer1}
-                    onClick={handleContainerClick}>
-                        <img src={cloud} alt='' className={styles.cloudIcon}></img>
-                        <p className={styles.postImageToolText}>이곳을 클릭하거나 사진을 드래그하여 업로드하세요.</p>
-                        <p className={styles.ImageInfo}>지원 형식: JPG, PNG, HEIC / 최대 파일 크기: 5MB</p>
-                        <input
-                            type='file'
-                            multiple
-                            ref={fileInputRef}
-                            accept="image/jpeg,image/png,image/heic"
-                            style={{ display: 'none' }}
-                            onChange={handleFileChange}
-                        />
-                    </div>
-                    }
+                                ))}
+                            </div>
+                            :
+                            <div className={styles.postImageToolContainer1}
+                                onClick={handleContainerClick}>
+                                <img src={cloud} alt='' className={styles.cloudIcon}></img>
+                                <p className={styles.postImageToolText}>이곳을 클릭하거나 사진을 드래그하여 업로드하세요.</p>
+                                <p className={styles.ImageInfo}>지원 형식: JPG, PNG, HEIC / 최대 파일 크기: 5MB</p>
+                                <input
+                                    type='file'
+                                    multiple
+                                    ref={fileInputRef}
+                                    accept="image/jpeg,image/png,image/heic"
+                                    style={{ display: 'none' }}
+                                    onChange={handleFileChange}
+                                />
+                            </div>
+                        }
                     </div>
                     <p className={styles.postImageTitle}>제목</p>
-                    <input className={styles.inputTitle} 
-                    placeholder='예: 제주도 성산일출봉의 아름다운 일출'
-                    onChange={handleOnchangeUploadFileInfo}></input>
+                    <input className={styles.inputTitle}
+                        placeholder='예: 제주도 성산일출봉의 아름다운 일출'
+                        onChange={handleOnchangeUploadFileInfo}></input>
                     <p className={styles.postImageExplain}>설명</p>
-                    <textarea className={styles.inputExplain} 
-                    placeholder='사진에 담긴 이야기나 촬영 시 느낀 감정을 자류롭게 작성해주세요.'
-                    onChange={handleOnchangeUploadFileInfo}></textarea>
+                    <textarea className={styles.inputExplain}
+                        placeholder='사진에 담긴 이야기나 촬영 시 느낀 감정을 자류롭게 작성해주세요.'
+                        onChange={handleOnchangeUploadFileInfo}></textarea>
                     <p className={styles.postImageLocation}>위치</p>
                     <input className={styles.inputLocation}
-                    placeholder='예: 제주도특별자치도 서귀포시 성산읍'
-                    onChange={handleOnchangeUploadFileInfo}></input>
+                        placeholder='예: 제주도특별자치도 서귀포시 성산읍'
+                        onChange={handleOnchangeUploadFileInfo}></input>
                     <p className={styles.postImageTag}>태그</p>
                     <input className={styles.postImageTagInput}
-                    placeholder='#에 의해 나눠집니다. 예: #가족#일본#겨울'
-                    onChange={handleOnchangeUploadFileInfo}></input>
+                        placeholder='#에 의해 나눠집니다. 예: #가족#일본#겨울'
+                        onChange={handleOnchangeUploadFileInfo}></input>
                     <div className={styles.forflexPostImage}>
                         <button className={styles.uploadImageButtonContainer}>
                             <img src={twinkle} alt='' className={styles.twinkleIcon2}></img>
