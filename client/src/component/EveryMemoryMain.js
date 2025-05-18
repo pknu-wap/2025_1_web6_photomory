@@ -154,10 +154,6 @@ async function uploadingImage(uploadImage) {
             },
             body: formData
         });
-
-
-
-
         if(!response.ok){
             if (response.status===401) {
                 throw new Error('Unauthorized')
