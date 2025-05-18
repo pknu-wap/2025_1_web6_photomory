@@ -1,6 +1,7 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "POST")
@@ -14,18 +15,25 @@ public class Post {
     @Column(name = "post_text", nullable = false)
     private String postText;
 
+    @Column(name = "post_description", nullable = false)
+    private String postDescription;
+
+    @Column(name = "location", nullable = false)
+    private String location;
+
     @Column(name = "likes_count", nullable = false)
     private Integer likesCount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    // 기본 생성자
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<EveryPhoto> photos;
+
     public Post() {}
 
-    // getter/setter
-
+    // Getter/Setter
     public Integer getPostId() {
         return postId;
     }
@@ -42,6 +50,22 @@ public class Post {
         this.postText = postText;
     }
 
+    public String getPostDescription() {
+        return postDescription;
+    }
+
+    public void setPostDescription(String postDescription) {
+        this.postDescription = postDescription;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public Integer getLikesCount() {
         return likesCount;
     }
@@ -56,5 +80,13 @@ public class Post {
 
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    public List<EveryPhoto> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(List<EveryPhoto> photos) {
+        this.photos = photos;
     }
 }

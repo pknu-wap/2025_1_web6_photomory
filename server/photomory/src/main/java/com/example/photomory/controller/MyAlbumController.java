@@ -24,11 +24,19 @@ public class MyAlbumController {
             @RequestParam String myalbumDescription,
             @RequestParam("photos") List<MultipartFile> photoFiles
     ) throws IOException {
-        return ResponseEntity.ok(myAlbumService.createMyAlbum(userId, myalbumName, myalbumDescription, photoFiles));
+        return ResponseEntity.ok(
+                myAlbumService.createMyAlbum(userId, myalbumName, myalbumDescription, photoFiles)
+        );
     }
 
     @GetMapping("/{myalbumId}")
     public ResponseEntity<MyAlbumDetailDto> getMyAlbumDetail(@PathVariable Long myalbumId) {
         return ResponseEntity.ok(myAlbumService.getMyAlbum(myalbumId));
+    }
+
+    // ✅ 추가: userId로 대표 마이앨범 조회
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<MyAlbumDetailDto> getMyAlbumByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(myAlbumService.getMyAlbumDetailByUserId(userId));
     }
 }
