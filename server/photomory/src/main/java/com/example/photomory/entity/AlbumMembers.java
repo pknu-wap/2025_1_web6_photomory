@@ -10,14 +10,25 @@ import java.util.Objects;
 public class AlbumMembers {
 
     @Id
-    @Column(name = "user_id")
+    @Column(name = "user_id", insertable = false, updatable = false)
     private Integer userId;
 
     @Id
-    @Column(name = "group_id")
+    @Column(name = "group_id", insertable = false, updatable = false)
     private Integer groupId;
 
-    // Getters and setters
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity userEntity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id", nullable = false)
+    private MyAlbum myAlbum;
+
+    // 기본 생성자
+    public AlbumMembers() {}
+
+    // getter/setter
     public Integer getUserId() {
         return userId;
     }
@@ -32,6 +43,22 @@ public class AlbumMembers {
 
     public void setGroupId(Integer groupId) {
         this.groupId = groupId;
+    }
+
+    public UserEntity getUserEntity() {
+        return userEntity;
+    }
+
+    public void setUserEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
+    }
+
+    public MyAlbum getMyAlbum() {
+        return myAlbum;
+    }
+
+    public void setMyAlbum(MyAlbum myAlbum) {
+        this.myAlbum = myAlbum;
     }
 
     // Composite key class

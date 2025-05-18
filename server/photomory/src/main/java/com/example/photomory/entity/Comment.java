@@ -10,11 +10,16 @@ import java.util.Objects;
 public class Comment {
 
     @Id
-    @Column(name = "album_id")
+    @Column(name = "album_id", nullable = false)
     private Integer albumId;
 
+    @MapsId("albumId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "album_id", insertable = false, updatable = false)
+    private Album album;
+
     @Id
-    @Column(name = "post_id")
+    @Column(name = "post_id", nullable = false)
     private Integer postId;
 
     @Column(name = "user_id", nullable = false)
@@ -26,13 +31,23 @@ public class Comment {
     @Column(name = "comment_count", nullable = false)
     private Integer commentCount;
 
-    // Getters and setters
+    public Comment() {}
+
+    // getter, setter
     public Integer getAlbumId() {
         return albumId;
     }
 
     public void setAlbumId(Integer albumId) {
         this.albumId = albumId;
+    }
+
+    public Album getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(Album album) {
+        this.album = album;
     }
 
     public Integer getPostId() {
@@ -67,9 +82,9 @@ public class Comment {
         this.commentCount = commentCount;
     }
 
-    // Composite key class
+    // Composite Key Class
     public static class CommentId implements Serializable {
-        private Integer albumId;
+        private Integer albumId;  // Integer로 맞춤
         private Integer postId;
 
         public CommentId() {}
