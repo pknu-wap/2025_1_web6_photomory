@@ -23,29 +23,38 @@ public class MyAlbumService {
     private final MyPhotoRepository myPhotoRepository;
     private final S3Service s3Service;
 
-    public MyAlbumDetailDto createMyAlbum(Long userId, String myalbumName, String myalbumDescription, List<MultipartFile> photos) throws IOException {
+    // 앨범 생성
+    public MyAlbumDetailDto createMyAlbum(Long userId, String myalbumName, String myalbumDescription, List<MultipartFile> photos, List<String> mytags) throws IOException {
         MyAlbum album = new MyAlbum();
-        album.setUserId(userId);
+        album.setUserId(userId.intValue());
         album.setMyalbumName(myalbumName);
         album.setMyalbumDescription(myalbumDescription);
         album.setMyalbumMakingtime(LocalDateTime.now());
+
+        // 태그를 ","로 이어붙여 저장
+        String tagString = String.join(",", mytags);
+        album.setMyalbumTag(tagString);
 
         MyAlbum saved = myAlbumRepository.save(album);
 
         List<MyPhotoDto> photoDtos = new ArrayList<>();
         for (MultipartFile file : photos) {
             String url = s3Service.uploadFile(file);
+
             MyPhoto photo = new MyPhoto();
             photo.setMyalbum(saved);
             photo.setMyphotoUrl(url);
+            photo.setMyphotoName(file.getOriginalFilename());
+            photo.setMycomment("");
+            photo.setMyphotoMakingtime(LocalDateTime.now());
             myPhotoRepository.save(photo);
 
             photoDtos.add(MyPhotoDto.builder()
                     .myphotoId(photo.getMyphotoId().longValue())
                     .myphotoUrl(photo.getMyphotoUrl())
-                    .myphotoName(file.getOriginalFilename())
-                    .mycomment("")
-                    .myphotoMakingtime(LocalDateTime.now())
+                    .myphotoName(photo.getMyphotoName())
+                    .mycomment(photo.getMycomment())
+                    .myphotoMakingtime(photo.getMyphotoMakingtime())
                     .build());
         }
 
@@ -56,24 +65,29 @@ public class MyAlbumService {
                 .myalbumDescription(saved.getMyalbumDescription())
                 .myalbumMakingtime(saved.getMyalbumMakingtime())
                 .myphotos(photoDtos)
-                .mytags(saved.getMyalbumTag() != null ?
-                        List.of(saved.getMyalbumTag().split(",")) : Collections.emptyList())
+                .mytags(mytags)
                 .build();
     }
 
+    // 앨범 조회
     public MyAlbumDetailDto getMyAlbum(Long myalbumId) {
         MyAlbum album = myAlbumRepository.findById(myalbumId)
-                .orElseThrow(() -> new RuntimeException("앨범이 존재하지 않습니다."));
+                .orElseThrow(() -> new RuntimeException("앨범을 찾을 수 없습니다."));
 
-        List<MyPhotoDto> photoDtos = album.getPhotos().stream()
-                .map(p -> MyPhotoDto.builder()
-                        .myphotoId(p.getMyphotoId().longValue())
-                        .myphotoUrl(p.getMyphotoUrl())
-                        .myphotoName("사진")
-                        .mycomment("")
-                        .myphotoMakingtime(LocalDateTime.now())
-                        .build())
-                .collect(Collectors.toList());
+        List<MyPhoto> photoList = myPhotoRepository.findByMyalbum(album);
+        List<MyPhotoDto> photoDtos = photoList.stream().map(photo -> MyPhotoDto.builder()
+                .myphotoId(photo.getMyphotoId().longValue())
+                .myphotoUrl(photo.getMyphotoUrl())
+                .myphotoName(photo.getMyphotoName())
+                .mycomment(photo.getMycomment())
+                .myphotoMakingtime(photo.getMyphotoMakingtime())
+                .build()).collect(Collectors.toList());
+
+        // 태그 문자열 → 리스트로 변환
+        List<String> mytags = new ArrayList<>();
+        if (album.getMyalbumTag() != null && !album.getMyalbumTag().isBlank()) {
+            mytags = Arrays.asList(album.getMyalbumTag().split(","));
+        }
 
         return MyAlbumDetailDto.builder()
                 .myalbumId(album.getMyalbumId().longValue())
@@ -82,8 +96,7 @@ public class MyAlbumService {
                 .myalbumDescription(album.getMyalbumDescription())
                 .myalbumMakingtime(album.getMyalbumMakingtime())
                 .myphotos(photoDtos)
-                .mytags(album.getMyalbumTag() != null ?
-                        List.of(album.getMyalbumTag().split(",")) : Collections.emptyList())
+                .mytags(mytags)
                 .build();
     }
 }

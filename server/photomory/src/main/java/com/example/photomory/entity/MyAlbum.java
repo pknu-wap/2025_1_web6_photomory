@@ -6,12 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "MYALBUM")
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 public class MyAlbum {
 
@@ -21,14 +20,12 @@ public class MyAlbum {
 
     private String myalbumName;
 
-    private String myalbumTag;
+    @Column(name = "myalbum_tag")
+    private String myalbumTag; // "자연,풍경,감성" 형식으로 저장
 
     private LocalDateTime myalbumMakingtime;
 
     private String myalbumDescription;
 
-    private Long userId;
-
-    @OneToMany(mappedBy = "myalbum", cascade = CascadeType.ALL)
-    private List<MyPhoto> photos = new ArrayList<>();
+    private Integer userId;
 }
