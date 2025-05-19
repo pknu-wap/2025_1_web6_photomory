@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-<<<<<<< Updated upstream
-=======
 import java.util.*;
->>>>>>> Stashed changes
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/images")
@@ -25,12 +23,6 @@ public class ImageController {
 
     // ✅ 업로드: 한 번에 한 장 또는 여러 장 (title + date 1세트)
     @PostMapping("/upload")
-<<<<<<< Updated upstream
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
-        String imageUrl = s3Service.uploadFile(file);
-        imageRepository.save(new ImageEntity(imageUrl));
-        return ResponseEntity.ok(imageUrl);
-=======
     public ResponseEntity<List<Map<String, String>>> uploadImages(
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("title") String title,
@@ -51,7 +43,6 @@ public class ImageController {
         }
 
         return ResponseEntity.ok(uploadedImages);
->>>>>>> Stashed changes
     }
 
     // ✅ 조회: 특정 title + date 조건으로 조회
@@ -81,9 +72,12 @@ public class ImageController {
 
     // ✅ 삭제: 이미지 URL로 삭제
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteImage(@RequestParam("url") String imageUrl) {
+    public ResponseEntity<Map<String, String>> deleteImage(@RequestParam("url") String imageUrl) {
         s3Service.deleteFile(imageUrl);
         imageRepository.deleteByImageUrl(imageUrl);
-        return ResponseEntity.ok("삭제 완료");
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "삭제 완료");
+        return ResponseEntity.ok(response);
     }
 }

@@ -1,0 +1,81 @@
+.calendar {
+  width: 1376px;
+  height: 720px;
+  border-radius: 8px;
+  opacity: 1;
+  margin: 0px auto;
+
+  /* Smart layout */
+  display: flex;
+  flex-direction: column;
+  gap: 0px 10px;
+  flex-wrap: wrap;
+
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.001), rgba(0, 0, 0, 0.001)),
+    #ffffff;
+
+  box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.1),
+    0px 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  z-index: 1;
+}
+
+.calenderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  margin: 32px 32px 16px 32px;
+}
+
+.calendarTitle {
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0px;
+
+  color: #000000;
+}
+
+.yearMonth {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0px;
+
+  color: #000000;
+}
+
+.moveMonth {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.weekdays,
+.days {
+  margin: 0px auto;
+  display: grid;
+  grid-template-columns: repeat(7, 173.72px);
+  text-align: center;
+}
+
+.day {
+  border-radius: 8px;
+  padding: 8px;
+  min-height: 80px;
+  box-sizing: border-box;
+  width: 173.72px;
+  height: 88px;
+}
+
+.day,
+.weekday {
+  padding: 10px;
+  border: none;
+}
+
+.empty {
+  background-color: #f5f5f5;
+}

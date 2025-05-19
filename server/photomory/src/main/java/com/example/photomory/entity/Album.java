@@ -1,35 +1,104 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "album")
-@Getter
-@NoArgsConstructor
+@Table(name = "ALBUM")
 public class Album {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long albumId;
+    @Column(name = "album_id")
+    private Integer albumId;
 
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false, referencedColumnName = "post_id")
+    private Post post;
+
+    @Column(name = "album_name", nullable = false)
     private String albumName;
-    private String albumDescription;
+
+    @Column(name = "album_tag")
+    private String albumTag;
+
+    @Column(name = "album_makingtime", nullable = false)
     private LocalDateTime albumMakingTime;
 
-    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL)
-    private List<Photo> photos = new ArrayList<>();
+    @Column(name = "album_description", nullable = false)
+    private String albumDescription;
 
-    @ManyToMany
-    @JoinTable(
-            name = "album_tag",
-            joinColumns = @JoinColumn(name = "album_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-    private List<Tag> tags = new ArrayList<>();
+    @OneToMany(mappedBy = "album")
+    private List<Comment> comments;
+
+    @ManyToOne
+    @JoinColumn(name = "myalbum_id")
+    private MyAlbum myAlbum;
+
+    // Getter & Setter 추가
+
+    public Integer getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(Integer albumId) {
+        this.albumId = albumId;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    public String getAlbumName() {
+        return albumName;
+    }
+
+    public void setAlbumName(String albumName) {
+        this.albumName = albumName;
+    }
+
+    public String getAlbumTag() {
+        return albumTag;
+    }
+
+    public void setAlbumTag(String albumTag) {
+        this.albumTag = albumTag;
+    }
+
+    public LocalDateTime getAlbumMakingTime() {
+        return albumMakingTime;
+    }
+
+    public void setAlbumMakingTime(LocalDateTime albumMakingTime) {
+        this.albumMakingTime = albumMakingTime;
+    }
+
+    public String getAlbumDescription() {
+        return albumDescription;
+    }
+
+    public void setAlbumDescription(String albumDescription) {
+        this.albumDescription = albumDescription;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public MyAlbum getMyAlbum() {
+        return myAlbum;
+    }
+
+    public void setMyAlbum(MyAlbum myAlbum) {
+        this.myAlbum = myAlbum;
+    }
 }

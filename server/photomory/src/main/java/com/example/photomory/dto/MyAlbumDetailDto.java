@@ -8,11 +8,11 @@ import java.util.List;
 @Data
 @Builder
 public class MyAlbumDetailDto {
-    private Long albumId;
+    private Long myalbumId;
     private Long userId;
-    private String albumName;
-    private String albumDescription;
-    private LocalDateTime albumMakingTime;
-    private List<MyPhotoDto> photos;
-    private List<String> tags;
+    private String myalbumName;
+    private String myalbumDescription;
+    private LocalDateTime myalbumMakingtime;
+    private List<MyPhotoDto> myphotos;
+    private List<String> mytags;
 }

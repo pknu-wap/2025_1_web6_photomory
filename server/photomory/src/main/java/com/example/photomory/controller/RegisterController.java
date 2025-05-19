@@ -2,24 +2,24 @@ package com.example.photomory.controller;
 
 import com.example.photomory.dto.RegisterRequestDto;
 import com.example.photomory.service.RegisterService;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.Map;
+
 @RestController
+@RequestMapping("/api/auth") // 경로: /api/auth/register
 public class RegisterController {
 
-    private final RegisterService userService;
+    private final RegisterService registerService;
 
-    public RegisterController(RegisterService userService) { //spring이 자동으로 userService를 넣어 @Service로 인해서.
-        this.userService = userService;
+    public RegisterController(RegisterService registerService) {
+        this.registerService = registerService;
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody RegisterRequestDto userRequestDto) {
-        String message = userService.register(userRequestDto); // new로 하면
-        return message;
+    public ResponseEntity<Map<String, String>> register(@RequestBody RegisterRequestDto userRequestDto) {
+        String message = registerService.register(userRequestDto);
+        return ResponseEntity.ok(Map.of("message", message));
     }
 }

@@ -1,14 +1,17 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
-@Getter
-@NoArgsConstructor
 @Table(name = "USERS")
-public class UserEntity {
+public class UserEntity implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
@@ -38,6 +41,8 @@ public class UserEntity {
     @Column(name = "user_field", nullable = false)
     private String userField;
 
+    public UserEntity() {}
+
     public UserEntity(
             String userEmail,
             String userName,
@@ -61,4 +66,68 @@ public class UserEntity {
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
+
+    // ✅ 추가된 getter
+    public String getUserPassword() {
+        return this.userPassword;
+    }
+
+    public String getUserName() {
+        return this.userName;
+    }
+
+    public String getUserEmail() {
+        return this.userEmail;
+    }
+
+    public String getUserPhotourl() {
+        return this.userPhotourl;
+    }
+
+    public String getUserEquipment() {
+        return this.userEquipment;
+    }
+
+    public String getUserIntroduction() {
+        return this.userIntroduction;
+    }
+
+    public String getUserJob() {
+        return this.userJob;
+    }
+
+    public String getUserField() {
+        return this.userField;
+    }
+
+    public int getUserId() {
+        return this.userId;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + userJob));
+    }
+
+    @Override
+    public String getPassword() {
+        return this.userPassword;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.userEmail;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+
+    @Override
+    public boolean isEnabled() { return true; }
 }

@@ -1,0 +1,90 @@
+.photoModalBackColor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+}
+
+.modalImageCard {
+  position: fixed;
+  width: 1152px;
+  height: 658px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ffffff;
+  border-radius: 8px;
+  z-index: 1001;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.modalImage {
+  width: 864px;
+  height: 658px;
+  border-radius: 8px;
+}
+
+.modalImageInfo {
+  margin: 24px 0 0 24px;
+  width: 288px;
+  text-align: left;
+}
+
+.infoHeader {
+  width: 240px;
+  margin-bottom: 16px;
+  border-bottom: solid 1px #e5e7eb;
+}
+
+.imageTitle {
+  text-align: left;
+  margin-bottom: 8px;
+  width: 300px;
+  height: 32px;
+  opacity: 1;
+
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 32px;
+  letter-spacing: 0px;
+
+  color: #000000;
+}
+
+.createdDay {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.albumTitleCard {
+  font-size: 15px;
+  color: #000000;
+  margin: 16px 0px 400px;
+}
+
+.deleteButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 116px;
+  height: 40px;
+  padding: 8px 12px;
+  background-color: #ff5a5a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 24px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.delete-button:hover {
+  background-color: #e54848; /* 약간 어두운 빨강 */
+}

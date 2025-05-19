@@ -28,15 +28,10 @@ public class S3Service {
     private String region;
 
     public String uploadFile(MultipartFile file) throws IOException {
-<<<<<<< Updated upstream
-        String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
-
-=======
         System.out.println("🚀 S3에 업로드 시작: " + file.getOriginalFilename());
 
         String fileName = "images/" + UUID.randomUUID() + "-" + file.getOriginalFilename(); // images/ 디렉토리 추가
 
->>>>>>> Stashed changes
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(fileName)
