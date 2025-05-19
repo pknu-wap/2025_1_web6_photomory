@@ -17,4 +17,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
     //hw-친추할때 추가
     void deleteByFromUserIdAndToUserId(Long fromUserId, Long toUserId);
 
+    //jy
+    boolean existsByFromUserIdAndToUserId(Long fromUserId, Long toUserId);
 }
