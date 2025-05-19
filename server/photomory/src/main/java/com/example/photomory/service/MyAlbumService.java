@@ -23,10 +23,9 @@ public class MyAlbumService {
     private final MyPhotoRepository myPhotoRepository;
     private final S3Service s3Service;
 
-    // ✅ 1. 마이앨범 생성
     public MyAlbumDetailDto createMyAlbum(Long userId, String myalbumName, String myalbumDescription, List<MultipartFile> photos) throws IOException {
         MyAlbum album = new MyAlbum();
-        album.setUserId(userId);
+        album.setUserId(userId.intValue());
         album.setMyalbumName(myalbumName);
         album.setMyalbumDescription(myalbumDescription);
         album.setMyalbumMakingtime(LocalDateTime.now());
@@ -52,17 +51,15 @@ public class MyAlbumService {
 
         return MyAlbumDetailDto.builder()
                 .myalbumId(saved.getMyalbumId().longValue())
-                .userId(saved.getUserId().longValue())
+                .userId(userId)
                 .myalbumName(saved.getMyalbumName())
                 .myalbumDescription(saved.getMyalbumDescription())
                 .myalbumMakingtime(saved.getMyalbumMakingtime())
                 .myphotos(photoDtos)
-                .mytags(saved.getMyalbumTag() != null ?
-                        List.of(saved.getMyalbumTag().split(",")) : Collections.emptyList())
+                .mytags(saved.getMyalbumTag() != null ? List.of(saved.getMyalbumTag().split(",")) : Collections.emptyList())
                 .build();
     }
 
-    // ✅ 2. myalbumId로 앨범 조회
     public MyAlbumDetailDto getMyAlbum(Long myalbumId) {
         MyAlbum album = myAlbumRepository.findById(myalbumId)
                 .orElseThrow(() -> new RuntimeException("앨범이 존재하지 않습니다."));
@@ -84,14 +81,12 @@ public class MyAlbumService {
                 .myalbumDescription(album.getMyalbumDescription())
                 .myalbumMakingtime(album.getMyalbumMakingtime())
                 .myphotos(photoDtos)
-                .mytags(album.getMyalbumTag() != null ?
-                        List.of(album.getMyalbumTag().split(",")) : Collections.emptyList())
+                .mytags(album.getMyalbumTag() != null ? List.of(album.getMyalbumTag().split(",")) : Collections.emptyList())
                 .build();
     }
 
-    // ✅ 3. userId로 대표 마이앨범 조회 (⭐추가된 기능⭐)
     public MyAlbumDetailDto getMyAlbumByUserId(Long userId) {
-        MyAlbum album = myAlbumRepository.findByUserId(userId)
+        MyAlbum album = myAlbumRepository.findByUserId(userId.intValue())
                 .orElseThrow(() -> new RuntimeException("사용자의 마이앨범이 존재하지 않습니다."));
 
         List<MyPhotoDto> photoDtos = album.getPhotos().stream()
@@ -106,13 +101,12 @@ public class MyAlbumService {
 
         return MyAlbumDetailDto.builder()
                 .myalbumId(album.getMyalbumId().longValue())
-                .userId(album.getUserId().longValue())
+                .userId(userId)
                 .myalbumName(album.getMyalbumName())
                 .myalbumDescription(album.getMyalbumDescription())
                 .myalbumMakingtime(album.getMyalbumMakingtime())
                 .myphotos(photoDtos)
-                .mytags(album.getMyalbumTag() != null ?
-                        List.of(album.getMyalbumTag().split(",")) : Collections.emptyList())
+                .mytags(album.getMyalbumTag() != null ? List.of(album.getMyalbumTag().split(",")) : Collections.emptyList())
                 .build();
     }
 }
