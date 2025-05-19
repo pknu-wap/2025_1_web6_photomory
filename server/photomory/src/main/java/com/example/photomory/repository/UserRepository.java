@@ -2,6 +2,7 @@ package com.example.photomory.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.photomory.entity.UserEntity;
+import org.springframework.data.repository.query.Param;
 
 
 import java.util.List;
@@ -13,8 +14,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     List<UserEntity> findByUserNameContaining(String keyword);
 
     //hw-알림창jwt연동할때이메일필요해서 추가
-    Optional<Object> findByUserEmail(String userEmail);
-    Optional<UserEntity> findByUserEmailAsUserEntity(String userEmail);
+    Optional<UserEntity> findByUserEmail(String userEmail);
 }
 
 

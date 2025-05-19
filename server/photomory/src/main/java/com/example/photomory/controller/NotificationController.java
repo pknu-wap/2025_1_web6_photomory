@@ -41,7 +41,7 @@ public class NotificationController {
     public SseEmitter subscribe(@RequestParam("token") String token) {
         String email = jwtTokenProvider.extractUsername(token); // JWT로부터 이메일 추출
 
-        UserEntity user = userRepository.findByUserEmailAsUserEntity(email)
+        UserEntity user = userRepository.findByUserEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         int userIdInt = user.getUserId();
@@ -58,7 +58,7 @@ public class NotificationController {
     @GetMapping
     public List<NotificationResponse> getNotifications(@RequestParam("token") String token) {
         String email = jwtTokenProvider.extractUsername(token);
-        UserEntity user = userRepository.findByUserEmailAsUserEntity(email)
+        UserEntity user = userRepository.findByUserEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         int userIdInt = user.getUserId();
