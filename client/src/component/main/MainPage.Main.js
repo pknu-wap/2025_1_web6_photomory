@@ -83,37 +83,37 @@ async function getUserPosts() {
     }
 } //여까지 리프, 엑세 토큰 및 유저 포스트 가져오기 여기가 먼저 드가지니, 에브리에 포스트로 순위 매기는 건 여기서 처리하고 넘겨주는 게 좋을 듯
 
-async function updateLikeCommentCount(postId){
-    try{
-        const accessToken= localStorage.getItem('accessToken')
-        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{
-            method: 'POST',
-            headers:{
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`
-            },
-            body: JSON.stringify({postId})
-        })
-        if(!response.ok){
-            if(response.status===401){
-                throw new Error('Unauthorized')
-            }
-            throw new Error('Failed to upload count:' `${response.status}`)
-        }
-        return await response.json();
-    }
-    catch(error){
-        console.error('Error updating count:', error)
-        throw error;
-    }
-}
+// async function updateLikeCommentCount(postId){
+//     try{
+//         const accessToken= localStorage.getItem('accessToken')
+//         const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{
+//             method: 'POST',
+//             headers:{
+//                 'Content-Type': 'application/json',
+//                 Authorization: `Bearer ${accessToken}`
+//             },
+//             body: JSON.stringify({postId})
+//         })
+//         if(!response.ok){
+//             if(response.status===401){
+//                 throw new Error('Unauthorized')
+//             }
+//             throw new Error('Failed to upload count:' `${response.status}`)
+//         }
+//         return await response.json();
+//     }
+//     catch(error){
+//         console.error('Error updating count:', error)
+//         throw error;
+//     }
+// }
 
 function MainPageMain() {
   const [posts, setPosts]= useState([])
   const [error, setError]= useState();
   const [randomTagText, setRandomTagText]= useState()
   const [randomPosts, setRandomPosts]= useState([])
-
+  console.log(error)
 
   const fetchPosts = async () => {
     try {
@@ -147,55 +147,55 @@ function MainPageMain() {
     }
   }, [posts]);
 
-  const handleLikeClick = async (postId) => {
-    try {
-      setPosts((prevPosts) => // 낙관적 업뎃
-        prevPosts
-          .map((post) =>
-            post.postId === postId
-              ? { ...post, likesCount: post.likesCount + 1 } // 이미 {}여기엔 속성이라 post.을 안 붙임
-              : post
-          )
-          .sort((a, b) => b.likesCount - a.likesCount)
-      );
+  // const handleLikeClick = async (postId) => {
+  //   try {
+  //     setPosts((prevPosts) => // 낙관적 업뎃
+  //       prevPosts
+  //         .map((post) =>
+  //           post.postId === postId
+  //             ? { ...post, likesCount: post.likesCount + 1 } // 이미 {}여기엔 속성이라 post.을 안 붙임
+  //             : post
+  //         )
+  //         .sort((a, b) => b.likesCount - a.likesCount)
+  //     );
 
-      const updatedPostByLike = await updateLikeCommentCount(postId); // 서버 업뎃
-      setPosts((prevPosts) =>
-        prevPosts
-          .map((post) =>
-            post.postId === postId
-              ? { ...post, likesCount: updatedPostByLike.likesCount }
-              : post
-          )
-          .sort((a, b) => b.likesCount - a.likesCount)
-      );
-    } catch (error) {
-      console.error('Error uploading like count', error);
-    }
-  };
+  //     const updatedPostByLike = await updateLikeCommentCount(postId); // 서버 업뎃
+  //     setPosts((prevPosts) =>
+  //       prevPosts
+  //         .map((post) =>
+  //           post.postId === postId
+  //             ? { ...post, likesCount: updatedPostByLike.likesCount }
+  //             : post
+  //         )
+  //         .sort((a, b) => b.likesCount - a.likesCount)
+  //     );
+  //   } catch (error) {
+  //     console.error('Error uploading like count', error);
+  //   }
+  // };
 
-  const handleCommentClick = async (postId) => {
-    try {
-      setPosts((prevPosts) => // 낙관적 업뎃
-        prevPosts.map((post) =>
-          post.postId === postId
-            ? { ...post, commentsCount: post.commentsCount + 1 }
-            : post
-        )
-      );
+  // const handleCommentClick = async (postId) => {
+  //   try {
+  //     setPosts((prevPosts) => // 낙관적 업뎃
+  //       prevPosts.map((post) =>
+  //         post.postId === postId
+  //           ? { ...post, commentsCount: post.commentsCount + 1 }
+  //           : post
+  //       )
+  //     );
 
-      const updatedPostByComment = await updateLikeCommentCount(postId); // 서버 업뎃
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post.postId === postId
-            ? { ...post, commentsCount: updatedPostByComment.commentsCount }
-            : post
-        )
-      );
-    } catch (error) {
-      console.error('Error uploading like count', error);
-    }
-  };
+  //     const updatedPostByComment = await updateLikeCommentCount(postId); // 서버 업뎃
+  //     setPosts((prevPosts) =>
+  //       prevPosts.map((post) =>
+  //         post.postId === postId
+  //           ? { ...post, commentsCount: updatedPostByComment.commentsCount }
+  //           : post
+  //       )
+  //     );
+  //   } catch (error) {
+  //     console.error('Error uploading like count', error);
+  //   }
+  // };
 
     const weeklyPosts= randomPosts.slice(0,3); //아 여기선 먼저 useState([])에서[]로 됐다가 다시 비동기로 값을 받는다 usestate에서 useState() 그냥 이렇게 하면 비동기라서 이 코드가 먼저 실행될 떄 undefined가 떠서 타입 오류가 뜬다. slice는 undefined이면 오류가 뜬다. 따라서 []을 쓴다. 그 후 값이 들어온다.
 
