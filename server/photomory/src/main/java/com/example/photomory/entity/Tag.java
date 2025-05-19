@@ -14,5 +14,18 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tagId;
 
+    @Column(nullable = false)
     private String tagName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
+
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
 }
