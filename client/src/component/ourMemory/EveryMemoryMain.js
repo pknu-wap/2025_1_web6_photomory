@@ -318,8 +318,8 @@ export default function EveryMemoryMain(){
 
         const files = Array.from(e.target.files);
         const selectedFiles = files.filter((file) => {
-            if (file.size > 5 * 1024 ** 2) {
-                alert('파일 크기는 5MB를 초과할 수 없습니다.');
+            if (file.size > 20 * 1024 ** 2) {
+                alert('파일 크기는 20MB를 초과할 수 없습니다.');
                 return false;
             }
             const validTypes = ['image/jpeg', 'image/png', 'image/heic'];
