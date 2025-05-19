@@ -38,7 +38,7 @@ public class OurAlbumService {
         }
 
         // 2. 요청 유저가 앨범 그룹 멤버인지 확인
-        boolean isGroupMember = albumMembersRepository.existsByUserUserIdAndMyAlbumMyalbumId(requestUserId, album.getMyAlbum().getMyalbumId());
+        boolean isGroupMember = albumMembersRepository.existsByUserEntityUserIdAndMyAlbumMyalbumId(requestUserId, album.getMyAlbum().getMyalbumId());
         if (!isGroupMember) {
             throw new SecurityException("그룹 멤버만 접근할 수 있습니다.");
         }
