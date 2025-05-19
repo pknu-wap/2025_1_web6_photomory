@@ -147,7 +147,7 @@ async function uploadingImage(uploadImage) {
         formData.append('postLocation', uploadImage.postLocation || '');
         formData.append('postTag', uploadImage.postTag || '');
 
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/images/upload`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/images/upload`, {
             method: 'POST',
             headers:{
                 'Authorization': `Bearer ${accessToken}`
