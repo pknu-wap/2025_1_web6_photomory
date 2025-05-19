@@ -1,9 +1,13 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "POST")
+@Table(name = "post")
+@Getter
+@NoArgsConstructor
 public class Post {
 
     @Id
@@ -17,41 +21,31 @@ public class Post {
     @Column(name = "likes_count", nullable = false)
     private Integer likesCount;
 
+    @Column(name = "post_description", nullable = false)
+    private String postDescription;
+
+    @Column(name = "location", nullable = false)
+    private String location;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    // 기본 생성자
-    public Post() {}
-
-    // getter/setter
-
-    public Integer getPostId() {
-        return postId;
-    }
-
-    public void setPostId(Integer postId) {
-        this.postId = postId;
-    }
-
-    public String getPostText() {
-        return postText;
-    }
-
+    // 🔧 Setter
     public void setPostText(String postText) {
         this.postText = postText;
-    }
-
-    public Integer getLikesCount() {
-        return likesCount;
     }
 
     public void setLikesCount(Integer likesCount) {
         this.likesCount = likesCount;
     }
 
-    public UserEntity getUser() {
-        return user;
+    public void setPostDescription(String postDescription) {
+        this.postDescription = postDescription;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public void setUser(UserEntity user) {

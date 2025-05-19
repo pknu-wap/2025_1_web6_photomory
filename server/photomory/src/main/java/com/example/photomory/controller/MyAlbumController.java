@@ -17,16 +17,21 @@ public class MyAlbumController {
 
     private final MyAlbumService myAlbumService;
 
+    // 나만의 추억 앨범 생성
     @PostMapping("/create")
     public ResponseEntity<MyAlbumDetailDto> createMyAlbum(
             @RequestParam Long userId,
             @RequestParam String myalbumName,
             @RequestParam String myalbumDescription,
-            @RequestParam("photos") List<MultipartFile> photoFiles
+            @RequestParam("photos") List<MultipartFile> photoFiles,
+            @RequestParam("mytags") List<String> mytags // 추가된 부분
     ) throws IOException {
-        return ResponseEntity.ok(myAlbumService.createMyAlbum(userId, myalbumName, myalbumDescription, photoFiles));
+        return ResponseEntity.ok(
+                myAlbumService.createMyAlbum(userId, myalbumName, myalbumDescription, photoFiles, mytags)
+        );
     }
 
+    // 나만의 추억 앨범 단건 조회
     @GetMapping("/{myalbumId}")
     public ResponseEntity<MyAlbumDetailDto> getMyAlbumDetail(@PathVariable Long myalbumId) {
         return ResponseEntity.ok(myAlbumService.getMyAlbum(myalbumId));
