@@ -17,7 +17,6 @@ public class MyAlbumController {
 
     private final MyAlbumService myAlbumService;
 
-
     @PostMapping("/create")
     public ResponseEntity<MyAlbumDetailDto> createMyAlbum(
             @RequestParam Long userId,
@@ -31,10 +30,5 @@ public class MyAlbumController {
     @GetMapping("/{myalbumId}")
     public ResponseEntity<MyAlbumDetailDto> getMyAlbumDetail(@PathVariable Long myalbumId) {
         return ResponseEntity.ok(myAlbumService.getMyAlbum(myalbumId));
-    }
-
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<MyAlbumDetailDto> getMyAlbumByUserId(@PathVariable Long userId) {
-        return ResponseEntity.ok(myAlbumService.getMyAlbumByUserId(userId));
     }
 }

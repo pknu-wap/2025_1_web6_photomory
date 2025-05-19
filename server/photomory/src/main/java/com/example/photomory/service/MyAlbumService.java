@@ -25,7 +25,7 @@ public class MyAlbumService {
 
     public MyAlbumDetailDto createMyAlbum(Long userId, String myalbumName, String myalbumDescription, List<MultipartFile> photos) throws IOException {
         MyAlbum album = new MyAlbum();
-        album.setUserId(userId.intValue());
+        album.setUserId(userId);
         album.setMyalbumName(myalbumName);
         album.setMyalbumDescription(myalbumDescription);
         album.setMyalbumMakingtime(LocalDateTime.now());
@@ -51,12 +51,13 @@ public class MyAlbumService {
 
         return MyAlbumDetailDto.builder()
                 .myalbumId(saved.getMyalbumId().longValue())
-                .userId(userId)
+                .userId(saved.getUserId().longValue())
                 .myalbumName(saved.getMyalbumName())
                 .myalbumDescription(saved.getMyalbumDescription())
                 .myalbumMakingtime(saved.getMyalbumMakingtime())
                 .myphotos(photoDtos)
-                .mytags(saved.getMyalbumTag() != null ? List.of(saved.getMyalbumTag().split(",")) : Collections.emptyList())
+                .mytags(saved.getMyalbumTag() != null ?
+                        List.of(saved.getMyalbumTag().split(",")) : Collections.emptyList())
                 .build();
     }
 
@@ -81,32 +82,8 @@ public class MyAlbumService {
                 .myalbumDescription(album.getMyalbumDescription())
                 .myalbumMakingtime(album.getMyalbumMakingtime())
                 .myphotos(photoDtos)
-                .mytags(album.getMyalbumTag() != null ? List.of(album.getMyalbumTag().split(",")) : Collections.emptyList())
-                .build();
-    }
-
-    public MyAlbumDetailDto getMyAlbumByUserId(Long userId) {
-        MyAlbum album = myAlbumRepository.findByUserId(userId.intValue())
-                .orElseThrow(() -> new RuntimeException("사용자의 마이앨범이 존재하지 않습니다."));
-
-        List<MyPhotoDto> photoDtos = album.getPhotos().stream()
-                .map(p -> MyPhotoDto.builder()
-                        .myphotoId(p.getMyphotoId().longValue())
-                        .myphotoUrl(p.getMyphotoUrl())
-                        .myphotoName("사진")
-                        .mycomment("")
-                        .myphotoMakingtime(LocalDateTime.now())
-                        .build())
-                .collect(Collectors.toList());
-
-        return MyAlbumDetailDto.builder()
-                .myalbumId(album.getMyalbumId().longValue())
-                .userId(userId)
-                .myalbumName(album.getMyalbumName())
-                .myalbumDescription(album.getMyalbumDescription())
-                .myalbumMakingtime(album.getMyalbumMakingtime())
-                .myphotos(photoDtos)
-                .mytags(album.getMyalbumTag() != null ? List.of(album.getMyalbumTag().split(",")) : Collections.emptyList())
+                .mytags(album.getMyalbumTag() != null ?
+                        List.of(album.getMyalbumTag().split(",")) : Collections.emptyList())
                 .build();
     }
 }
