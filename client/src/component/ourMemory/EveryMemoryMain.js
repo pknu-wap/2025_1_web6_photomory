@@ -41,7 +41,7 @@ async function fetchUserposts(accessToken) {
 
 async function refreshAccessToken(refreshToken) {
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/refresh-token`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/refresh-token`, { //이건 벡엔드에서 추후 변경 예정
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
