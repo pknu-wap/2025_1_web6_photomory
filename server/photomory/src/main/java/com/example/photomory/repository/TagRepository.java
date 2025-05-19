@@ -1,10 +1,11 @@
 package com.example.photomory.repository;
 
 import com.example.photomory.entity.Tag;
+import com.example.photomory.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface TagRepository extends JpaRepository<Tag, Long> {
-    Optional<Tag> findByTagName(String tagName);
+    List<Tag> findByPost(Post post);
 }

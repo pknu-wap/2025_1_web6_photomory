@@ -15,8 +15,9 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-
 public class S3Service {
+
+    //전체적으로..2차로 수정할때 다 수정해버린듯
 
     private final S3Client s3Client;
 
@@ -28,9 +29,9 @@ public class S3Service {
 
     public String uploadFile(MultipartFile file) throws IOException {
         System.out.println("🚀 S3에 업로드 시작: " + file.getOriginalFilename());
-        String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
 
-        System.out.println("⚙️ content-type: " + file.getContentType());
+        String fileName = "images/" + UUID.randomUUID() + "-" + file.getOriginalFilename(); // images/ 디렉토리 추가
+
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(fileName)
@@ -40,19 +41,18 @@ public class S3Service {
 
         s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
 
-        System.out.println("📦 버킷: " + bucket + ", 리전: " + region);
         return "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileName;
     }
 
     public void deleteFile(String imageUrl) {
-        String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        // "https://bucket.s3.region.amazonaws.com/images/abc.jpg" → "images/abc.jpg"
+        String fileKey = imageUrl.substring(imageUrl.indexOf(".com/") + 5);
 
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
                 .bucket(bucket)
-                .key(fileName)
+                .key(fileKey)
                 .build();
 
         s3Client.deleteObject(deleteRequest);
     }
-
 }
