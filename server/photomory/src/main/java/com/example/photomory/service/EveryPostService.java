@@ -57,7 +57,7 @@ public class EveryPostService {
                     .map(comment -> {
                         EveryCommentDto cdto = new EveryCommentDto();
 
-                 
+
                         Long commenterId = comment.getUserId() != null ? comment.getUserId().longValue() : null;
                         UserEntity commenter = commenterId != null ? userRepository.findById(commenterId).orElse(null) : null;
 
