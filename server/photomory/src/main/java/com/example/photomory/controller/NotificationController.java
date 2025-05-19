@@ -6,7 +6,6 @@ import com.example.photomory.entity.UserEntity;
 import com.example.photomory.repository.UserRepository;
 import com.example.photomory.security.JwtTokenProvider;
 import com.example.photomory.service.NotificationService;
-import com.example.photomory.service.SseEmitters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -19,24 +18,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NotificationController {
 
-    //얘네는 친구추가하면서
-    private final SseEmitters emitters;
-
-    @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter subscribe(@RequestParam Long userId) {
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        emitters.add(userId, emitter);
-        emitter.onTimeout(() -> emitters.remove(userId));
-        emitter.onCompletion(() -> emitters.remove(userId));
-        return emitter;
-    }
-
-    //여기부터 1차
     private final NotificationService notificationService;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // ✅ 쿼리 파라미터로 토큰을 받아 이메일 → userId 추출
+    // ✅ 토큰 기반 구독
     @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(@RequestParam("token") String token) {
         String email = jwtTokenProvider.extractUsername(token); // JWT로부터 이메일 추출
@@ -50,11 +36,13 @@ public class NotificationController {
         return notificationService.subscribe(userId);
     }
 
+    // 알림 전송
     @PostMapping("/send")
     public void send(@RequestBody NotificationRequest request) {
         notificationService.send(request);
     }
 
+    // 알림 전체 조회 + 읽음 처리
     @GetMapping
     public List<NotificationResponse> getNotifications(@RequestParam("token") String token) {
         String email = jwtTokenProvider.extractUsername(token);
