@@ -15,8 +15,9 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-
 public class S3Service {
+
+    //전체적으로..2차로 수정할때 다 수정해버린듯
 
     private final S3Client s3Client;
 
@@ -27,8 +28,15 @@ public class S3Service {
     private String region;
 
     public String uploadFile(MultipartFile file) throws IOException {
+<<<<<<< Updated upstream
         String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
 
+=======
+        System.out.println("🚀 S3에 업로드 시작: " + file.getOriginalFilename());
+
+        String fileName = "images/" + UUID.randomUUID() + "-" + file.getOriginalFilename(); // images/ 디렉토리 추가
+
+>>>>>>> Stashed changes
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(fileName)
@@ -42,11 +50,12 @@ public class S3Service {
     }
 
     public void deleteFile(String imageUrl) {
-        String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        // "https://bucket.s3.region.amazonaws.com/images/abc.jpg" → "images/abc.jpg"
+        String fileKey = imageUrl.substring(imageUrl.indexOf(".com/") + 5);
 
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
                 .bucket(bucket)
-                .key(fileName)
+                .key(fileKey)
                 .build();
 
         s3Client.deleteObject(deleteRequest);

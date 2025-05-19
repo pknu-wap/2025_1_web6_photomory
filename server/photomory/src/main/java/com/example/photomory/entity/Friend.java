@@ -22,4 +22,11 @@ public class Friend {
 
     @Column(name = "are_we_friend")
     private Boolean areWeFriend;
+
+    //hw-친구추가할때 추가
+    public Friend(Long fromUserId, Long toUserId, Boolean areWeFriend) {
+        this.fromUserId = fromUserId;
+        this.toUserId = toUserId;
+        this.areWeFriend = areWeFriend;
+    }
 }
