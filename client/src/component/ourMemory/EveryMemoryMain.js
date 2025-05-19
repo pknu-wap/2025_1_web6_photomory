@@ -16,7 +16,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 
 async function fetchUserposts(accessToken) {
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/user/posts`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -83,16 +83,16 @@ async function getUserPosts() {
     }
 }
 
-async function updateLikeCommentCount(post_id){
+async function updateLikeCommentCount(postId){
     try{
         const accessToken= localStorage.getItem('accessToken')
-        const response= await fetch(`${process.env.REACT_APP_API_URL}/posts`,{/* 이거 엔드포인트 뭐임..?*/
+        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{/* 이거 엔드포인트 뭐임..?*/
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`
             },
-            body: JSON.stringify({post_id})
+            body: JSON.stringify({postId})
         })
         if(!response.ok){
             if(response.status===401){
@@ -119,10 +119,10 @@ async function uploadingImage(uploadImage) {
             throw new Error('로그인이 필요합니다.');
         }
         if (
-            uploadImage.post_text==='' ||
-            uploadImage.post_description==='' ||
-            uploadImage.post_location==='' ||
-            uploadImage.post_location==='' || false
+            uploadImage.postText==='' ||
+            uploadImage.postDescription==='' ||
+            uploadImage.postLocation==='' ||
+            uploadImage.postTag==='' || false
         ) {
             throw new Error('사진의 정보를 완성해주세요.')
         }
@@ -138,14 +138,14 @@ async function uploadingImage(uploadImage) {
                 ia[i] = byteString.charCodeAt(i); //charCodeAt 유니코드
             }
             const blob = new Blob([ab], { type: mimeString });
-            formData.append('photo_url', blob, `image${index}.${mimeString.split('/')[1]}`);
+            formData.append('photoUrl', blob, `image${index}.${mimeString.split('/')[1]}`);
         });
 
         // 다른 데이터 추가
-        formData.append('post_text', uploadImage.post_text || '');
-        formData.append('post_description', uploadImage.post_description || '');
-        formData.append('post_location', uploadImage.post_location || '');
-        formData.append('post_tag', uploadImage.post_tag || '');
+        formData.append('postText', uploadImage.postText || '');
+        formData.append('postDescription', uploadImage.postDescription || '');
+        formData.append('postLocation', uploadImage.postLocation || '');
+        formData.append('postTag', uploadImage.postTag || '');
 
         const response = await fetch(`${process.env.REACT_APP_API_URL}/images/upload`, {
             method: 'POST',
@@ -185,7 +185,7 @@ export default function EveryMemoryMain(){
         try{
             const posts= await getUserPosts();
             if (posts && Array.isArray(posts)) {
-                const sortedPosts = [...posts].sort((a,b)=>b.likes_count-a.likes_count);
+                const sortedPosts = [...posts].sort((a,b)=>b.likesCount-a.likesCount);
                 setPosts(sortedPosts); // 태그 상관 없이 좋아요 내림차순으로 posts 객체 정리
             }
             else{
@@ -215,36 +215,36 @@ export default function EveryMemoryMain(){
         }
     }, [posts]); //뭔가 posts말고 posts 좋아요 순서가 바뀐다면으로 하는 게 더 좋을 거 같은데..
 
-    const handleLikeClick =async(post_id)=>{
+    const handleLikeClick =async(postId)=>{
         try{
             setPosts((prevPosts) => //낙관적 업뎃
-                prevPosts.map((post)=> post.post_id=== post_id
-                    ? { ...post, likes_count: post.likes_count + 1 } //이미 {}여기엔 속성이라 post.을 안 붙임
-                    : post).sort((a, b) => b.likes_count - a.likes_count)
+                prevPosts.map((post)=> post.postId=== postId
+                    ? { ...post, likesCount: post.likesCount + 1 } //이미 {}여기엔 속성이라 post.을 안 붙임
+                    : post).sort((a, b) => b.likesCount - a.likesCount)
             );
 
-            const updatedPostByLike = await updateLikeCommentCount(post_id); //서버 업뎃
+            const updatedPostByLike = await updateLikeCommentCount(postId); //서버 업뎃
             setPosts((prevPosts) =>
-                prevPosts.map((post) =>post.post_id=== post_id
-                    ? { ...post, likes_count: updatedPostByLike.likes_count }
-                    :post).sort((a, b) => b.likes_count - a.likes_count)
+                prevPosts.map((post) =>post.postId=== postId
+                    ? { ...post, likesCount: updatedPostByLike.likesCount }
+                    :post).sort((a, b) => b.likesCount - a.likesCount)
             );
         }
         catch (error) {
             console.error('Error uploading like count', error);
         }
     }
-    const handleCommentClick=async(post_id)=>{
+    const handleCommentClick=async(postId)=>{
         try{
             setPosts((prevPosts)=> //낙관적 업뎃
-                prevPosts.map((post)=>post.post_id===post_id
-                ? {...post, comments_count: post.comments_count+1}
+                prevPosts.map((post)=>post.postId===postId
+                ? {...post, commentsCount: post.commentsCount+1}
                     : post)
             );
-            const updatedPostByComment= await updateLikeCommentCount(post_id) //서버 업뎃
+            const updatedPostByComment= await updateLikeCommentCount(postId) //서버 업뎃
             setPosts((prevPosts)=>
-                prevPosts.map((post)=>post.post_id===post_id
-                ? {...post, comments_count: updatedPostByComment.comments_count}
+                prevPosts.map((post)=>post.postId===postId
+                ? {...post, commentsCount: updatedPostByComment.commentsCount}
                     : post)
             );
         }
@@ -255,8 +255,8 @@ export default function EveryMemoryMain(){
 
     const weeklyPosts= randomPosts.slice(0,3); //아 여기선 먼저 useState([])에서[]로 됐다가 다시 비동기로 값을 받는다 usestate에서 useState() 그냥 이렇게 하면 비동기라서 이 코드가 먼저 실행될 떄 undefined가 떠서 타입 오류가 뜬다. slice는 undefined이면 오류가 뜬다. 따라서 []을 쓴다. 그 후 값이 들어온다.
 
-    const weeklyPostIds = useMemo(() => new Set(weeklyPosts.map((weeklyPost) => weeklyPost.post_id)), [weeklyPosts]);
-    const dailyPosts = useMemo(() => posts.filter((post) => !weeklyPostIds.has(post.post_id)), [posts, weeklyPostIds]); //has는 Set,Map에 사용하는 include,some보다 빠르게 작동함.
+    const weeklyPostIds = useMemo(() => new Set(weeklyPosts.map((weeklyPost) => weeklyPost.postId)), [weeklyPosts]);
+    const dailyPosts = useMemo(() => posts.filter((post) => !weeklyPostIds.has(post.postId)), [posts, weeklyPostIds]); //has는 Set,Map에 사용하는 include,some보다 빠르게 작동함.
 
     const [nextPage, setNextPage] = useState([0,1,2,3,4,5]);
     const onClickNextPage=(value)=>{ 
@@ -359,19 +359,19 @@ export default function EveryMemoryMain(){
     const [uploadFileInfo, setuploadFileInfo]= useState({})
     const handleOnchangeUploadFileInfo=(e)=>{
         if(e.target.className==='inputTitle'){
-            setuploadFileInfo((uploadFileInfo)=>({...uploadFileInfo, post_text:e.target.value})) //제목
+            setuploadFileInfo((uploadFileInfo)=>({...uploadFileInfo, postText:e.target.value})) //제목
             return;
         }
         if(e.target.className==='inputExplain'){
-            setuploadFileInfo((uploadFileInfo)=>({ ...uploadFileInfo, post_description: e.target.value })) //설명
+            setuploadFileInfo((uploadFileInfo)=>({ ...uploadFileInfo, postDescription: e.target.value })) //설명
             return;
         }
         if(e.target.className==='postImageLocation'){
-            setuploadFileInfo((uploadFileInfo)=>({...uploadFileInfo, post_location:e.target.value})) //설명
+            setuploadFileInfo((uploadFileInfo)=>({...uploadFileInfo, postLocation:e.target.value})) //설명
             return;
         }
         if(e.target.className==='postImageTagInput'){
-            setuploadFileInfo((uploadFileInfo)=>({...uploadFileInfo, post_tag:e.target.value})) //설명
+            setuploadFileInfo((uploadFileInfo)=>({...uploadFileInfo, postTag:e.target.value})) //설명
             return;
         }
     }

@@ -16,7 +16,7 @@ import { useState, useEffect } from "react";
 
 async function fetchUserposts(accessToken) {
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/user/posts`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -83,16 +83,16 @@ async function getUserPosts() {
     }
 } //여까지 리프, 엑세 토큰 및 유저 포스트 가져오기 여기가 먼저 드가지니, 에브리에 포스트로 순위 매기는 건 여기서 처리하고 넘겨주는 게 좋을 듯
 
-async function updateLikeCommentCount(post_id){
+async function updateLikeCommentCount(postId){
     try{
         const accessToken= localStorage.getItem('accessToken')
-        const response= await fetch(`${process.env.REACT_APP_API_URL}/posts`,{/* 이거 엔드포인트 뭐임..?*/
+        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`
             },
-            body: JSON.stringify({post_id})
+            body: JSON.stringify({postId})
         })
         if(!response.ok){
             if(response.status===401){
@@ -119,7 +119,7 @@ function MainPageMain() {
     try {
       const posts = await getUserPosts();
       if (posts && Array.isArray(posts)) {
-        const sortedPosts = [...posts].sort((a, b) => b.likes_count - a.likes_count);
+        const sortedPosts = [...posts].sort((a, b) => b.likesCount - a.likesCount);
         setPosts(sortedPosts); // 태그 상관 없이 좋아요 내림차순으로 posts 객체 정리
       } else {
         setError('데이터를 불러오지 못했습니다.');
@@ -128,7 +128,7 @@ function MainPageMain() {
       console.log('Error in fetchPosts', error);
       setError('서버 오류가 발생했습니다. 나중에 다시 시도해주세요.');
     }
-  };
+  }; 
 
   useEffect(() => {
     fetchPosts();
@@ -147,48 +147,48 @@ function MainPageMain() {
     }
   }, [posts]);
 
-  const handleLikeClick = async (post_id) => {
+  const handleLikeClick = async (postId) => {
     try {
       setPosts((prevPosts) => // 낙관적 업뎃
         prevPosts
           .map((post) =>
-            post.post_id === post_id
-              ? { ...post, likes_count: post.likes_count + 1 } // 이미 {}여기엔 속성이라 post.을 안 붙임
+            post.postId === postId
+              ? { ...post, likesCount: post.likesCount + 1 } // 이미 {}여기엔 속성이라 post.을 안 붙임
               : post
           )
-          .sort((a, b) => b.likes_count - a.likes_count)
+          .sort((a, b) => b.likesCount - a.likesCount)
       );
 
-      const updatedPostByLike = await updateLikeCommentCount(post_id); // 서버 업뎃
+      const updatedPostByLike = await updateLikeCommentCount(postId); // 서버 업뎃
       setPosts((prevPosts) =>
         prevPosts
           .map((post) =>
-            post.post_id === post_id
-              ? { ...post, likes_count: updatedPostByLike.likes_count }
+            post.postId === postId
+              ? { ...post, likesCount: updatedPostByLike.likesCount }
               : post
           )
-          .sort((a, b) => b.likes_count - a.likes_count)
+          .sort((a, b) => b.likesCount - a.likesCount)
       );
     } catch (error) {
       console.error('Error uploading like count', error);
     }
   };
 
-  const handleCommentClick = async (post_id) => {
+  const handleCommentClick = async (postId) => {
     try {
       setPosts((prevPosts) => // 낙관적 업뎃
         prevPosts.map((post) =>
-          post.post_id === post_id
-            ? { ...post, comments_count: post.comments_count + 1 }
+          post.postId === postId
+            ? { ...post, commentsCount: post.commentsCount + 1 }
             : post
         )
       );
 
-      const updatedPostByComment = await updateLikeCommentCount(post_id); // 서버 업뎃
+      const updatedPostByComment = await updateLikeCommentCount(postId); // 서버 업뎃
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
-          post.post_id === post_id
-            ? { ...post, comments_count: updatedPostByComment.comments_count }
+          post.postId === postId
+            ? { ...post, commentsCount: updatedPostByComment.commentsCount }
             : post
         )
       );
@@ -264,7 +264,7 @@ function MainPageMain() {
             className={styles.weeklyMemoryLikes1}
           />
           &nbsp;
-          <span>{weeklyPosts[0]?.likes_count || '1.4k'}</span>
+          <span>{weeklyPosts[0]?.likesCount || '1.4k'}</span>
         </div>
       </div>
       <div className={styles.weeklyMemoryContainer2} onClick={onClickHandle}>
@@ -284,7 +284,7 @@ function MainPageMain() {
             className={styles.weeklyMemoryLikes2}
           />
           &nbsp;
-          <span>{weeklyPosts[1]?.likes_count || '1.4k'}</span>
+          <span>{weeklyPosts[1]?.likesCount || '1.4k'}</span>
         </div>
       </div>
       <div className={styles.weeklyMemoryContainer3} onClick={onClickHandle}>
@@ -304,7 +304,7 @@ function MainPageMain() {
             className={styles.weeklyMemoryLikes2}
           />
           &nbsp;
-          <span>{weeklyPosts[2]?.likes_count || '1.4k'}</span>
+          <span>{weeklyPosts[2]?.likesCount || '1.4k'}</span>
         </div>
       </div>
       <div className={styles.forFlexMorePictureContainer}>
