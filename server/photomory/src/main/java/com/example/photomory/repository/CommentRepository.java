@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Comment.CommentId> {
     List<Comment> findByPostId(Integer postId);
+    List<Comment> findByAlbumIdAndPostId(Integer albumId, Integer postId);
 }
