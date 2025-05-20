@@ -50,7 +50,8 @@ public class EveryPostService {
                     .toList();
             dto.setTags(tags);
 
-            List<EveryCommentDto> commentDtos = commentRepository.findByPostId(post.getPostId()).stream()
+            // 여기서 findByPost_PostId로 정확하게 메서드명 수정
+            List<EveryCommentDto> commentDtos = commentRepository.findByPost_PostId(post.getPostId()).stream()
                     .map(comment -> {
                         EveryCommentDto cdto = new EveryCommentDto();
 

@@ -1,31 +1,24 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
-import java.io.Serializable;
+
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @Table(name = "COMMENTS")
-@IdClass(Comment.CommentId.class)
 public class Comment {
 
     @Id
-    @Column(name = "album_id", nullable = false)
-    private Integer albumId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id")
+    private Long commentId;  // ✅ 고유 ID 필드
 
-    @MapsId("albumId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "album_id", insertable = false, updatable = false)
+    @JoinColumn(name = "album_id", nullable = false)
     private Album album;
 
-    @Id
-    @Column(name = "post_id", nullable = false)
-    private Integer postId;
-
-    // 추가: post 필드 매핑
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", insertable = false, updatable = false)
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,21 +31,21 @@ public class Comment {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public Comment() {}
+    public Comment() {
+    }
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 
-    // getters & setters
-
-    public Integer getAlbumId() {
-        return albumId;
+    // ✅ Getters & Setters
+    public Long getCommentId() {
+        return commentId;
     }
 
-    public void setAlbumId(Integer albumId) {
-        this.albumId = albumId;
+    public void setCommentId(Long commentId) {
+        this.commentId = commentId;
     }
 
     public Album getAlbum() {
@@ -61,20 +54,8 @@ public class Comment {
 
     public void setAlbum(Album album) {
         this.album = album;
-        if (album != null) {
-            this.albumId = album.getAlbumId();
-        }
     }
 
-    public Integer getPostId() {
-        return postId;
-    }
-
-    public void setPostId(Integer postId) {
-        this.postId = postId;
-    }
-
-    // 추가: post getter/setter
     public Post getPost() {
         return post;
     }
@@ -101,32 +82,5 @@ public class Comment {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    // Composite Key Class
-    public static class CommentId implements Serializable {
-        private Integer albumId;
-        private Integer postId;
-
-        public CommentId() {}
-
-        public CommentId(Integer albumId, Integer postId) {
-            this.albumId = albumId;
-            this.postId = postId;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof CommentId)) return false;
-            CommentId that = (CommentId) o;
-            return Objects.equals(albumId, that.albumId) &&
-                    Objects.equals(postId, that.postId);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(albumId, postId);
-        }
     }
 }

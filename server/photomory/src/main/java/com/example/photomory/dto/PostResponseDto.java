@@ -4,28 +4,27 @@ import com.example.photomory.entity.Post;
 
 public class PostResponseDto {
     private Integer postId;
-    private String content; // title 없으면 content만 써도 됨
+    private String postText;  // 필드명 실제 Post 엔티티와 맞춤
 
     public static PostResponseDto fromEntity(Post post) {
         PostResponseDto dto = new PostResponseDto();
         dto.postId = post.getPostId();
-        dto.content = post.getPostText();  // 실제 필드명으로 바꿔야 함
+        dto.postText = post.getPostText();  // 실제 필드명 반영
         return dto;
     }
 
+    // Getter & Setter
     public Integer getPostId() {
         return postId;
     }
-
     public void setPostId(Integer postId) {
         this.postId = postId;
     }
 
-    public String getContent() {
-        return content;
+    public String getPostText() {
+        return postText;
     }
-
-    public void setContent(String content) {
-        this.content = content;
+    public void setPostText(String postText) {
+        this.postText = postText;
     }
 }
