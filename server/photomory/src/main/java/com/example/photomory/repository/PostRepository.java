@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Integer> {
 
-    // 특정 앨범에 속한 모든 포스트 조회용 메서드 추가
+    // 특정 앨범에 속한 모든 포스트 조회 메서드
     List<Post> findByAlbum_AlbumId(Integer albumId);
 }

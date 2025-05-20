@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AlbumRepository extends JpaRepository<Album, Integer> {
-    // 기본 CRUD 메서드는 JpaRepository에 이미 포함됨
+    // 기본 CRUD 기능은 JpaRepository가 이미 제공함
 }
