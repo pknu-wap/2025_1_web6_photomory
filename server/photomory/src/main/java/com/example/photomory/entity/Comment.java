@@ -2,6 +2,7 @@ package com.example.photomory.entity;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -20,6 +21,7 @@ public class Comment {
 
     @Id
     @Column(name = "post_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // postId를 자동생성 하려면 필요 (필요 없으면 제거)
     private Integer postId;
 
     @Column(name = "user_id", nullable = false)
@@ -28,10 +30,15 @@ public class Comment {
     @Column(name = "comments_text", nullable = false)
     private String commentsText;
 
-    @Column(name = "comment_count", nullable = false)
-    private Integer commentCount;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     public Comment() {}
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     // getter, setter
     public Integer getAlbumId() {
@@ -74,17 +81,13 @@ public class Comment {
         this.commentsText = commentsText;
     }
 
-    public Integer getCommentCount() {
-        return commentCount;
-    }
-
-    public void setCommentCount(Integer commentCount) {
-        this.commentCount = commentCount;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     // Composite Key Class
     public static class CommentId implements Serializable {
-        private Integer albumId;  // Integer로 맞춤
+        private Integer albumId;
         private Integer postId;
 
         public CommentId() {}
