@@ -27,5 +27,5 @@ public class MyAlbum {
 
     private String myalbumDescription;
 
-    private Integer userId;
+    private Long userId;
 }

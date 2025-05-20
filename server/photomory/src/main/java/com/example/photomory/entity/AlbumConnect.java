@@ -15,7 +15,7 @@ public class AlbumConnect {
 
     @Id
     @Column(name = "user_id2")
-    private Integer userId2;
+    private Long userId2;
 
     // Getters and setters
     public Integer getAlbumId2() {
@@ -26,22 +26,22 @@ public class AlbumConnect {
         this.albumId2 = albumId2;
     }
 
-    public Integer getUserId2() {
+    public Long getUserId2() {
         return userId2;
     }
 
-    public void setUserId2(Integer userId2) {
+    public void setUserId2(Long userId2) {
         this.userId2 = userId2;
     }
 
     // Composite key class
     public static class AlbumConnectId implements Serializable {
         private Integer albumId2;
-        private Integer userId2;
+        private Long userId2;
 
         public AlbumConnectId() {}
 
-        public AlbumConnectId(Integer albumId2, Integer userId2) {
+        public AlbumConnectId(Integer albumId2, Long userId2) {
             this.albumId2 = albumId2;
             this.userId2 = userId2;
         }

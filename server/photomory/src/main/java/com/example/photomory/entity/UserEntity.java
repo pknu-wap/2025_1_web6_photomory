@@ -15,7 +15,7 @@ public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private int userId;
+    private Long userId;
 
     @Column(name = "user_name", nullable = false)
     private String userName;
@@ -100,7 +100,7 @@ public class UserEntity implements UserDetails {
         return this.userField;
     }
 
-    public int getUserId() {
+    public Long getUserId() {
         return this.userId;
     }
 

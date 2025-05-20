@@ -6,12 +6,12 @@ public class CommentResponseDto {
 
     private Integer albumId;
     private Integer postId;
-    private Integer userId;
+    private Long userId;             // Integer -> Long 변경
     private String commentsText;
 
     public CommentResponseDto() {}
 
-    public CommentResponseDto(Integer albumId, Integer postId, Integer userId, String commentsText) {
+    public CommentResponseDto(Integer albumId, Integer postId, Long userId, String commentsText) {
         this.albumId = albumId;
         this.postId = postId;
         this.userId = userId;
@@ -45,11 +45,11 @@ public class CommentResponseDto {
         this.postId = postId;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {            // Long으로 변경
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) { // Long으로 변경
         this.userId = userId;
     }
 

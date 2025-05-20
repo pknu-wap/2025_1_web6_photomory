@@ -40,7 +40,7 @@ public class OurAlbumController {
         }
 
         UserEntity user = (UserEntity) authentication.getPrincipal();
-        Integer userId = user.getUserId();
+        Long userId = user.getUserId();
 
         try {
             OurAlbumResponseDto response = ourAlbumService.getAlbumDetails(albumId, userId);
