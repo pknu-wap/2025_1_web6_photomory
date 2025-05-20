@@ -21,9 +21,9 @@ public class CommentResponseDto {
     // Entity -> DTO 변환 메서드
     public static CommentResponseDto fromEntity(Comment comment) {
         return new CommentResponseDto(
-                comment.getAlbumId(),
-                comment.getPostId(),
-                comment.getUserId(),
+                comment.getAlbum() != null ? comment.getAlbum().getAlbumId() : null,
+                comment.getPost() != null ? comment.getPost().getPostId() : null,
+                comment.getUser() != null ? comment.getUser().getUserId() : null,
                 comment.getCommentsText()
         );
     }

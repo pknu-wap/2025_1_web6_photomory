@@ -23,6 +23,11 @@ public class Comment {
     @Column(name = "post_id", nullable = false)
     private Integer postId;
 
+    // 추가: post 필드 매핑
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", insertable = false, updatable = false)
+    private Post post;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
@@ -67,6 +72,15 @@ public class Comment {
 
     public void setPostId(Integer postId) {
         this.postId = postId;
+    }
+
+    // 추가: post getter/setter
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     public UserEntity getUser() {
