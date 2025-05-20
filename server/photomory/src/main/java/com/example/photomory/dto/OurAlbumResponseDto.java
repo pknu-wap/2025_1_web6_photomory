@@ -28,15 +28,20 @@ public class OurAlbumResponseDto {
             dto.setAlbumMakingTime(album.getAlbumMakingTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         }
 
-        Post post = album.getPost();
-        if (post != null && post.getUser() != null) {
-            dto.setUserName(post.getUser().getUserName());
-            dto.setUserPhotoUrl(post.getUser().getUserPhotourl());
+        // posts 리스트에서 대표 post 첫 번째 꺼를 사용
+        if (album.getPosts() != null && !album.getPosts().isEmpty()) {
+            Post post = album.getPosts().get(0);
+            if (post.getUser() != null) {
+                dto.setUserName(post.getUser().getUserName());
+                dto.setUserPhotoUrl(post.getUser().getUserPhotourl());
+            }
         }
+
         return dto;
     }
 
     // getters/setters
+
     public Integer getAlbumId() { return albumId; }
     public void setAlbumId(Integer albumId) { this.albumId = albumId; }
     public String getAlbumName() { return albumName; }
