@@ -21,11 +21,11 @@ public class Comment {
 
     @Id
     @Column(name = "post_id", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // postId를 자동생성 하려면 필요 (필요 없으면 제거)
     private Integer postId;
 
-    @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
     @Column(name = "comments_text", nullable = false)
     private String commentsText;
@@ -40,7 +40,8 @@ public class Comment {
         this.createdAt = LocalDateTime.now();
     }
 
-    // getter, setter
+    // getters & setters
+
     public Integer getAlbumId() {
         return albumId;
     }
@@ -55,6 +56,9 @@ public class Comment {
 
     public void setAlbum(Album album) {
         this.album = album;
+        if (album != null) {
+            this.albumId = album.getAlbumId();
+        }
     }
 
     public Integer getPostId() {
@@ -65,12 +69,12 @@ public class Comment {
         this.postId = postId;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public UserEntity getUser() {
+        return user;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
     public String getCommentsText() {
