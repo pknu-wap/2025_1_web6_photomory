@@ -50,5 +50,4 @@ public class Post {
     // 한 게시물에 여러 댓글이 있을 경우
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments;
-
 }
