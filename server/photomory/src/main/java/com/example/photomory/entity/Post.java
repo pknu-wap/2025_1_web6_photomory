@@ -3,10 +3,14 @@ package com.example.photomory.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Table(name = "post")
 @Getter
+@Setter
 @NoArgsConstructor
 public class Post {
 
@@ -35,29 +39,16 @@ public class Post {
     @JoinColumn(name = "album_id", nullable = false)
     private Album album;
 
-    // Setter
+    // 한 게시물에 여러 사진이 있을 경우
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Photo> photos;
 
-    public void setPostText(String postText) {
-        this.postText = postText;
-    }
+    // 한 게시물에 여러 태그가 있을 경우
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Tag> tags;
 
-    public void setLikesCount(Integer likesCount) {
-        this.likesCount = likesCount;
-    }
+    // 한 게시물에 여러 댓글이 있을 경우
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Comment> comments;
 
-    public void setPostDescription(String postDescription) {
-        this.postDescription = postDescription;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-    public void setAlbum(Album album) {
-        this.album = album;
-    }
 }
