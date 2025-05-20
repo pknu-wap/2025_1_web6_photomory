@@ -13,10 +13,6 @@ public class Album {
     @Column(name = "album_id")
     private Integer albumId;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false, referencedColumnName = "post_id")
-    private Post post;
-
     @Column(name = "album_name", nullable = false)
     private String albumName;
 
@@ -29,14 +25,17 @@ public class Album {
     @Column(name = "album_description", nullable = false)
     private String albumDescription;
 
-    @OneToMany(mappedBy = "album")
+    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts;
+
+    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "myalbum_id")
     private MyAlbum myAlbum;
 
-    // Getter & Setter 추가
+    // Getter & Setter
 
     public Integer getAlbumId() {
         return albumId;
@@ -44,14 +43,6 @@ public class Album {
 
     public void setAlbumId(Integer albumId) {
         this.albumId = albumId;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
     }
 
     public String getAlbumName() {
@@ -84,6 +75,14 @@ public class Album {
 
     public void setAlbumDescription(String albumDescription) {
         this.albumDescription = albumDescription;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
     }
 
     public List<Comment> getComments() {

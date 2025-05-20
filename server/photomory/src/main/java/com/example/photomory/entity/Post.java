@@ -27,17 +27,16 @@ public class Post {
     @Column(name = "location", nullable = false)
     private String location;
 
-    // User와 ManyToOne 연관관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    // Album과 ManyToOne 연관관계 추가
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "album_id", nullable = false)
     private Album album;
 
-    // 🔧 Setter
+    // Setter
+
     public void setPostText(String postText) {
         this.postText = postText;
     }
