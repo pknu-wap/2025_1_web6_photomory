@@ -9,7 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/ouralbum")  // 여기 수정
 public class OurAlbumController {
 
     private final OurAlbumService ourAlbumService;
