@@ -4,93 +4,54 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modalContent {
-  background: #fff;
-  border-radius: 12px;
-  padding: 24px;
-  min-width: 320px;
-  max-width: 90vw;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
   position: relative;
+  width: fit-content;
+  height: fit-content;
+  max-width: 1200px;
+  max-height: 800px;
+  animation: zoomIn 0.2s ease-out;
 }
 
-.modalHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
+@keyframes zoomIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-.modalHeader h2 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #333;
-}
-
-.closeButton {
-  background: none;
-  border: none;
-  font-size: 2rem;
-  cursor: pointer;
-  color: #666;
-  padding: 0;
-  line-height: 1;
-}
-
-.closeButton:hover {
-  color: #333;
-}
-
-.modalBody {
-  margin-top: 16px;
-}
-
-.modalImage {
+.ModalContainer {
   width: 100%;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  object-fit: cover;
-  max-height: 60vh;
-}
-
-.postInfo {
-  margin-top: 16px;
-}
-
-.description {
-  color: #666;
-  line-height: 1.5;
-  margin-bottom: 16px;
-}
-
-.interactionContainer {
+  height: 100%;
   display: flex;
-  gap: 16px;
-  margin-top: 8px;
-}
-
-.heartContainer,
-.commentContainer {
-  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 4px;
-  cursor: pointer;
 }
 
-.heartIcon,
-.commentIcon {
-  font-size: 1.5rem;
+.image {
+  width: clamp(320px, 90%, 1259px);
+  height: clamp(220px, 60%, 658px);
+  object-fit: cover;
+  border-radius: 8px;
 }
-
-.heartNum,
-.commentNum {
-  color: #666;
-  font-size: 0.9rem;
-} 
