@@ -42,26 +42,22 @@ public class EveryPostService {
             dto.setLikesCount(post.getLikesCount());
             dto.setLocation(post.getLocation());
 
-
             Photo photo = photoRepository.findByPost(post).orElse(null);
             dto.setPhotoUrl(photo != null ? photo.getPhotoUrl() : null);
-
 
             List<String> tags = tagRepository.findByPost(post).stream()
                     .map(Tag::getTagName)
                     .toList();
             dto.setTags(tags);
 
-
-            List<EveryCommentDto> commentDtos = commentRepository.findByPostId(post.getPostId()).stream()
+            // 여기서 findByPost_PostId로 정확하게 메서드명 수정
+            List<EveryCommentDto> commentDtos = commentRepository.findByPost_PostId(post.getPostId()).stream()
                     .map(comment -> {
                         EveryCommentDto cdto = new EveryCommentDto();
 
+                        UserEntity commenter = comment.getUser();
 
-                        Long commenterId = comment.getUserId() != null ? comment.getUserId().longValue() : null;
-                        UserEntity commenter = commenterId != null ? userRepository.findById(commenterId).orElse(null) : null;
-
-                        cdto.setUserId(comment.getUserId());
+                        cdto.setUserId(commenter != null ? commenter.getUserId() : null);
                         cdto.setUserName(commenter != null ? commenter.getUserName() : "알 수 없음");
                         cdto.setUserPhotourl(commenter != null ? commenter.getUserPhotourl() : null);
                         cdto.setCommentText(comment.getCommentsText());

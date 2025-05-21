@@ -3,10 +3,14 @@ package com.example.photomory.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Table(name = "post")
 @Getter
+@Setter
 @NoArgsConstructor
 public class Post {
 
@@ -27,28 +31,23 @@ public class Post {
     @Column(name = "location", nullable = false)
     private String location;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    // 🔧 Setter
-    public void setPostText(String postText) {
-        this.postText = postText;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "album_id", nullable = false)
+    private Album album;
 
-    public void setLikesCount(Integer likesCount) {
-        this.likesCount = likesCount;
-    }
+    // 한 게시물에 여러 사진이 있을 경우
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Photo> photos;
 
-    public void setPostDescription(String postDescription) {
-        this.postDescription = postDescription;
-    }
+    // 한 게시물에 여러 태그가 있을 경우
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Tag> tags;
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
+    // 한 게시물에 여러 댓글이 있을 경우
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Comment> comments;
 }

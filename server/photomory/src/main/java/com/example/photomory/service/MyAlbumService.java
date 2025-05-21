@@ -26,7 +26,7 @@ public class MyAlbumService {
     // 앨범 생성
     public MyAlbumDetailDto createMyAlbum(Long userId, String myalbumName, String myalbumDescription, List<MultipartFile> photos, List<String> mytags) throws IOException {
         MyAlbum album = new MyAlbum();
-        album.setUserId(userId.intValue());
+        album.setUserId(userId);
         album.setMyalbumName(myalbumName);
         album.setMyalbumDescription(myalbumDescription);
         album.setMyalbumMakingtime(LocalDateTime.now());
