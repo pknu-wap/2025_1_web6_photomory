@@ -6,14 +6,6 @@ import send from '../../assets/send.svg'
 const CommentModal = ({ isOpen, onClose, handleCommentNum }) => { //post 추가해야 함 지금은 안 써서 안 씀
     if (!isOpen) return null;
 
-    const formatDate = () => {
-        const now = new Date();
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-        const seconds = now.getSeconds();
-        return `${hours}.${minutes}.${seconds}`;
-    };
-
     const post={
         "post_id": 1,
         "user_id": 4,
@@ -42,6 +34,13 @@ const CommentModal = ({ isOpen, onClose, handleCommentNum }) => { //post 추가�
         ]
     }
 
+    const formatDate = () => {
+        const now = new Date();
+        const year = now.getFullYear(); 
+        const month = now.getMonth() + 1; 
+        const day = now.getDate(); 
+        return `${year}.${month}.${day}`;
+    };
 return (
     <div className={styles.modalOverlay} onClick={onClose}>
         <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
@@ -68,7 +67,7 @@ return (
             <div className={styles.uploadCommentContainer}>
                 <input className={styles.uploadComment} placeholder='댓글 작성...'/>
                 <img src={send} alt='' className={styles.uploadButton}
-                    onClick={handleCommentNum}
+                    onClick={handleCommentNum} //클릭하면 추가되는 기능 추가하기
                 />
             </div>
         </div>
