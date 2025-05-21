@@ -407,11 +407,11 @@ export default function EveryMemoryMain(){
                     </div>
                 </div>
                 <div className={styles.forFlexweeklyTag1}>
-                        <WeeklyPopularTag
-                            post= {[weeklyPosts[0]]}
-                            handleLikeNum={handleLikeNum}
-                            handleCommentClickForModal={handleCommentClickForModal}
-                            handleImageClick={handleImageClick}
+                    <WeeklyPopularTag
+                        post= {[weeklyPosts[0]]}
+                        handleLikeNum={handleLikeNum}
+                        handleCommentClickForModal={handleCommentClickForModal}
+                        handleImageClick={handleImageClick}
                         />
                     {/*------*/}
                     <WeeklyPopularTag

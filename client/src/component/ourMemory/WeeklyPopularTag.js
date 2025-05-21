@@ -10,7 +10,9 @@ export default function WeeklyPopularTag({
   handleLikeClick,
   handleCommentClickForModal,
   handleImageClick
-}) {
+}) 
+
+{
   return (
     <div className={styles.weeklyTagContainer}
       onClick={()=>{
