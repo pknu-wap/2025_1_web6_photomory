@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/OurAlbum")
+@RequestMapping("/api/our-album")
 public class OurAlbumController {
 
     private final OurAlbumService ourAlbumService;
