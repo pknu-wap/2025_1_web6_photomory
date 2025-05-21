@@ -148,7 +148,7 @@ async function uploadingImage(uploadImage) {
         formData.append('postLocation', uploadImage.postLocation || '');
         formData.append('postTag', uploadImage.postTag || '');
 
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/images/upload`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`, {
             method: 'POST',
             headers:{
                 'Authorization': `Bearer ${accessToken}`
@@ -581,10 +581,12 @@ export default function EveryMemoryMain(){
                 <CommentModal
                     isOpen={isCommentModalOpen}
                     onClose={handleCloseCommentModal}
-                    post={selectedPostForModal ? [selectedPostForModal] : []} //데일리, 위클리에서 받아옴
-                    handleCommentNum={()=>{
-                        handleCommentNum(selectedPostForModal.post_id)
-                    }} //댓글 갯수 업뎃
+                    post={selectedPostForModal ? [selectedPostForModal] : []}
+                    handleCommentNum={() => {
+                        if (selectedPostForModal && selectedPostForModal.post_id) {
+                            handleCommentNum(selectedPostForModal.post_id);
+                        }
+                    }}
                 />
         </div>
     )
