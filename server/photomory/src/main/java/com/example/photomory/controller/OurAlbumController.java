@@ -7,9 +7,10 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/ouralbum")  // 여기 수정
+@RequestMapping("/api/ouralbum")
 public class OurAlbumController {
 
     private final OurAlbumService ourAlbumService;
@@ -61,11 +62,12 @@ public class OurAlbumController {
         }
     }
 
-    // 3. 게시물 생성
-    @PostMapping("/albums/{albumId}/posts")
+    // 3. 게시물 생성 (사진 업로드 포함)
+    @PostMapping(value = "/albums/{albumId}/posts", consumes = {"multipart/form-data"})
     public ResponseEntity<?> createPost(
             @PathVariable Integer albumId,
-            @RequestBody PostCreateRequestDto requestDto,
+            @RequestPart("post") PostCreateRequestDto requestDto,
+            @RequestPart(value = "photo", required = false) MultipartFile photoFile,
             Authentication authentication) {
 
         if (!isAuthenticated(authentication)) {
@@ -75,7 +77,7 @@ public class OurAlbumController {
         UserEntity user = getAuthenticatedUser(authentication);
 
         try {
-            PostResponseDto response = ourAlbumService.createPost(albumId, requestDto, user);
+            PostResponseDto response = ourAlbumService.createPost(albumId, requestDto, photoFile, user);
             return ResponseEntity.ok(response);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(404).body(e.getMessage());

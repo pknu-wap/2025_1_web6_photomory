@@ -4,13 +4,17 @@ import com.example.photomory.dto.*;
 import com.example.photomory.entity.*;
 import com.example.photomory.repository.*;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class OurAlbumService {
 
     private final AlbumRepository albumRepository;
@@ -19,33 +23,18 @@ public class OurAlbumService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final MyAlbumRepository myAlbumRepository;
+    private final S3Service s3Service;  // S3Service 주입
 
-    public OurAlbumService(
-            AlbumRepository albumRepository,
-            AlbumMembersRepository albumMembersRepository,
-            FriendRepository friendRepository,
-            PostRepository postRepository,
-            CommentRepository commentRepository,
-            MyAlbumRepository myAlbumRepository) {
-        this.albumRepository = albumRepository;
-        this.albumMembersRepository = albumMembersRepository;
-        this.friendRepository = friendRepository;
-        this.postRepository = postRepository;
-        this.commentRepository = commentRepository;
-        this.myAlbumRepository = myAlbumRepository;
-    }
-
-    // ✅ 1. 그룹 생성
+    // 1. 그룹 생성
     @Transactional
     public MyAlbumResponseDto createGroup(MyAlbumCreateRequestDto requestDto, UserEntity user) {
         MyAlbum myAlbum = new MyAlbum();
-        myAlbum.setMyalbumName(requestDto.getGroupName());               // 엔티티 필드명에 맞춤
-        myAlbum.setMyalbumDescription(requestDto.getGroupDescription());  // 엔티티 필드명에 맞춤
-        myAlbum.setUserId(user.getUserId());                              // userId 직접 세팅 (MyAlbum에 UserEntity 관계 없으면)
+        myAlbum.setMyalbumName(requestDto.getGroupName());
+        myAlbum.setMyalbumDescription(requestDto.getGroupDescription());
+        myAlbum.setUserId(user.getUserId());
 
         MyAlbum savedGroup = myAlbumRepository.save(myAlbum);
 
-        // 그룹 생성 시 생성자도 멤버로 등록
         AlbumMembers member = new AlbumMembers();
         member.setMyAlbum(savedGroup);
         member.setUserEntity(user);
@@ -54,7 +43,7 @@ public class OurAlbumService {
         return MyAlbumResponseDto.fromEntity(savedGroup);
     }
 
-    // ✅ 2. 앨범 생성
+    // 2. 앨범 생성
     @Transactional
     public AlbumResponseDto createAlbum(Long groupId, AlbumCreateRequestDto requestDto, UserEntity user) {
         MyAlbum group = myAlbumRepository.findById(groupId)
@@ -71,29 +60,30 @@ public class OurAlbumService {
         return AlbumResponseDto.fromEntity(savedAlbum);
     }
 
-    // ✅ 3. 게시물 생성
+    // 3. 게시물 생성 (사진 업로드 포함)
     @Transactional
-    public PostResponseDto createPost(Integer albumId, PostCreateRequestDto requestDto, UserEntity user) {
+    public PostResponseDto createPost(Integer albumId, PostCreateRequestDto requestDto, MultipartFile photoFile, UserEntity user) throws IOException {
         Album album = albumRepository.findById(albumId)
                 .orElseThrow(() -> new EntityNotFoundException("앨범을 찾을 수 없습니다."));
 
         Post post = new Post();
         post.setAlbum(album);
         post.setUser(user);
-
-        // 엔티티 필드명에 맞춰 DTO 필드와 매핑
-        post.setPostText(requestDto.getPostContent());       // postText 필드 사용
+        post.setPostText(requestDto.getPostContent());
         post.setPostDescription(requestDto.getPostDescription() != null ? requestDto.getPostDescription() : "");
-        // 사진 URL, 시간 등 필드가 Post에 정의되어 있지 않다면 엔티티에 추가하거나 DTO 맞춤 필요
-
-        // 예시로 likesCount 0으로 초기화
         post.setLikesCount(0);
+
+        // 사진 파일이 있으면 S3에 업로드 후 URL 저장
+        if (photoFile != null && !photoFile.isEmpty()) {
+            String photoUrl = s3Service.uploadFile(photoFile);
+            post.setPhotoUrl(photoUrl); // Post 엔티티에 photoUrl 필드가 있어야 합니다.
+        }
 
         Post savedPost = postRepository.save(post);
         return PostResponseDto.fromEntity(savedPost);
     }
 
-    // ✅ 4. 앨범 전체 조회
+    // 4. 앨범 전체 조회
     @Transactional(readOnly = true)
     public OurAlbumFullResponseDto getAlbumFullDetails(Integer albumId, Long requestUserId) {
         Album album = albumRepository.findById(albumId)
@@ -126,7 +116,7 @@ public class OurAlbumService {
         return OurAlbumFullResponseDto.from(album, postDtos);
     }
 
-    // ✅ 5. 댓글 생성
+    // 5. 댓글 생성
     @Transactional
     public CommentResponseDto createComment(Integer albumId, Integer postId, UserEntity user, String text) {
         Album album = albumRepository.findById(albumId)
