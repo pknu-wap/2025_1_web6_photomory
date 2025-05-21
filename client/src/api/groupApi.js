@@ -1,6 +1,6 @@
 const BASE_URL = process.env.REACT_APP_API_URL;
 //그룹 추가 api 연동함수
-export async function addNewGroup({ groupName, groupDescription }) {
+export async function addNewGroup({ groupName }) {
   try {
     const accessToken = localStorage.getItem("accessToken");
 
@@ -12,7 +12,6 @@ export async function addNewGroup({ groupName, groupDescription }) {
       },
       body: JSON.stringify({
         groupName,
-        groupDescription,
       }),
     });
 

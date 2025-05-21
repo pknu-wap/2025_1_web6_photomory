@@ -9,6 +9,7 @@ import Groups from "../component/group/Groups";
 import AlbumList from "../component/album/AlbumList";
 import getGroup from "../api/getGroup";
 import getGroupAlbums from "../api/getGroupAlbums";
+//import { addNewGroup } from "../api/groupApi"; //서버 연동 준비용
 
 function OurAlbumPage() {
   const [groupList, setGroupList] = useState([]); // 그룹명과 해당 그룹 멤버들의 리스트
@@ -27,7 +28,6 @@ function OurAlbumPage() {
     //   } catch (error) {
     //     console.error("그룹 리스트 불러오기 실패:", error);
     //   }
-    // })();
 
     const groups = getGroup(); // 그룹 데이터 불러오기
 
