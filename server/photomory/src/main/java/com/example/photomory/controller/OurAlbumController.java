@@ -30,7 +30,7 @@ public class OurAlbumController {
     // 1. 그룹 생성
     @PostMapping("/groups")
     public ResponseEntity<?> createGroup(
-            @RequestBody MyAlbumCreateRequestDto requestDto,
+            @RequestBody GroupCreateRequestDto requestDto,
             Authentication authentication) {
 
         if (!isAuthenticated(authentication)) {

@@ -27,7 +27,7 @@ public class OurAlbumService {
 
     // 1. 그룹 생성
     @Transactional
-    public MyAlbumResponseDto createGroup(MyAlbumCreateRequestDto requestDto, UserEntity user) {
+    public MyAlbumResponseDto createGroup(GroupCreateRequestDto requestDto, UserEntity user) {
         MyAlbum myAlbum = new MyAlbum();
         myAlbum.setMyalbumName(requestDto.getGroupName());
         myAlbum.setMyalbumDescription(requestDto.getGroupDescription());

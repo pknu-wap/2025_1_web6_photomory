@@ -1,11 +1,11 @@
 package com.example.photomory.dto;
 
-public class MyAlbumCreateRequestDto {
+public class GroupCreateRequestDto {
 
     private String groupName;
     private String groupDescription;
 
-    public MyAlbumCreateRequestDto() {}
+    public GroupCreateRequestDto() {}
 
     public String getGroupName() {
         return groupName;
