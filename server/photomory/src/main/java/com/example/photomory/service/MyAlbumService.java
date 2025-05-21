@@ -4,6 +4,7 @@ import com.example.photomory.dto.MyAlbumDetailDto;
 import com.example.photomory.dto.MyPhotoDto;
 import com.example.photomory.entity.MyAlbum;
 import com.example.photomory.entity.MyPhoto;
+import com.example.photomory.entity.UserEntity;
 import com.example.photomory.repository.MyAlbumRepository;
 import com.example.photomory.repository.MyPhotoRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +24,15 @@ public class MyAlbumService {
     private final MyPhotoRepository myPhotoRepository;
     private final S3Service s3Service;
 
-    // 앨범 생성
-    public MyAlbumDetailDto createMyAlbum(Long userId, String myalbumName, String myalbumDescription, List<MultipartFile> photos, List<String> mytags) throws IOException {
+    public MyAlbumDetailDto createMyAlbum(UserEntity user, String myalbumName, String myalbumDescription,
+                                          List<MultipartFile> photos, List<String> mytags) throws IOException {
+
         MyAlbum album = new MyAlbum();
-        album.setUserId(userId.intValue());
+        album.setUserId(user.getUserId());
         album.setMyalbumName(myalbumName);
         album.setMyalbumDescription(myalbumDescription);
         album.setMyalbumMakingtime(LocalDateTime.now());
 
-        // 태그를 ","로 이어붙여 저장
         String tagString = String.join(",", mytags);
         album.setMyalbumTag(tagString);
 
@@ -69,11 +70,21 @@ public class MyAlbumService {
                 .build();
     }
 
-    // 앨범 조회
     public MyAlbumDetailDto getMyAlbum(Long myalbumId) {
         MyAlbum album = myAlbumRepository.findById(myalbumId)
                 .orElseThrow(() -> new RuntimeException("앨범을 찾을 수 없습니다."));
 
+        return convertToDto(album);
+    }
+
+    public List<MyAlbumDetailDto> getAllMyAlbums(Long userId) {
+        List<MyAlbum> albums = myAlbumRepository.findByUserId(userId);
+        return albums.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    private MyAlbumDetailDto convertToDto(MyAlbum album) {
         List<MyPhoto> photoList = myPhotoRepository.findByMyalbum(album);
         List<MyPhotoDto> photoDtos = photoList.stream().map(photo -> MyPhotoDto.builder()
                 .myphotoId(photo.getMyphotoId().longValue())
@@ -83,7 +94,6 @@ public class MyAlbumService {
                 .myphotoMakingtime(photo.getMyphotoMakingtime())
                 .build()).collect(Collectors.toList());
 
-        // 태그 문자열 → 리스트로 변환
         List<String> mytags = new ArrayList<>();
         if (album.getMyalbumTag() != null && !album.getMyalbumTag().isBlank()) {
             mytags = Arrays.asList(album.getMyalbumTag().split(","));
