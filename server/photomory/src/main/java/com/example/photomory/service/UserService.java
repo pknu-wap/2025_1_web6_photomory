@@ -2,6 +2,7 @@ package com.example.photomory.service;
 
 import com.example.photomory.dto.FriendResponse;
 import com.example.photomory.dto.UserProfileResponse;
+import com.example.photomory.dto.UserProfileUpdateRequest;
 import com.example.photomory.entity.Friend;
 import com.example.photomory.entity.UserEntity;
 import com.example.photomory.repository.FriendRepository;
@@ -22,6 +23,7 @@ public class UserService {
 
     @Autowired
     private FriendRepository friendRepository;
+
 
     public UserProfileResponse getUserProfile(UserEntity userEntity) {
         Long userId = (long) userEntity.getUserId();  // int → long 변환
@@ -45,5 +47,17 @@ public class UserService {
                 userEntity.getUserJob(),
                 friendList
         );
+    }
+
+
+    public void updateUserProfile(UserEntity userEntity, UserProfileUpdateRequest dto) {
+        userEntity.setUserName(dto.getUser_name());
+        userEntity.setUserIntroduction(dto.getUser_introduction());
+        userEntity.setUserJob(dto.getUser_job());
+        userEntity.setUserEquipment(dto.getUser_equipment());
+        userEntity.setUserField(dto.getUser_field());
+        userEntity.setUserPhotourl(dto.getUser_photourl());
+
+        userRepository.save(userEntity); // 저장
     }
 }

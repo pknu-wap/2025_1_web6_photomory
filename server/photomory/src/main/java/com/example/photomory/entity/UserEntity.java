@@ -63,47 +63,59 @@ public class UserEntity implements UserDetails {
         this.userField = userField;
     }
 
+    // ✅ Getter
+    public int getUserId() { return this.userId; }
+
+    public String getUserName() { return this.userName; }
+
+    public String getUserEmail() { return this.userEmail; }
+
+    public String getUserPassword() { return this.userPassword; }
+
+    public String getUserPhotourl() { return this.userPhotourl; }
+
+    public String getUserEquipment() { return this.userEquipment; }
+
+    public String getUserIntroduction() { return this.userIntroduction; }
+
+    public String getUserJob() { return this.userJob; }
+
+    public String getUserField() { return this.userField; }
+
+    // ✅ Setter
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
 
-    // ✅ 추가된 getter
-    public String getUserPassword() {
-        return this.userPassword;
+    public void setUserPhotourl(String userPhotourl) {
+        this.userPhotourl = userPhotourl;
     }
 
-    public String getUserName() {
-        return this.userName;
+    public void setUserEquipment(String userEquipment) {
+        this.userEquipment = userEquipment;
     }
 
-    public String getUserEmail() {
-        return this.userEmail;
+    public void setUserIntroduction(String userIntroduction) {
+        this.userIntroduction = userIntroduction;
     }
 
-    public String getUserPhotourl() {
-        return this.userPhotourl;
+    public void setUserJob(String userJob) {
+        this.userJob = userJob;
     }
 
-    public String getUserEquipment() {
-        return this.userEquipment;
+    public void setUserField(String userField) {
+        this.userField = userField;
     }
 
-    public String getUserIntroduction() {
-        return this.userIntroduction;
-    }
-
-    public String getUserJob() {
-        return this.userJob;
-    }
-
-    public String getUserField() {
-        return this.userField;
-    }
-
-    public int getUserId() {
-        return this.userId;
-    }
-
+    // ✅ UserDetails interface 구현
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + userJob));

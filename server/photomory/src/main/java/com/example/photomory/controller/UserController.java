@@ -1,6 +1,7 @@
 package com.example.photomory.controller;
 
 import com.example.photomory.dto.UserProfileResponse;
+import com.example.photomory.dto.UserProfileUpdateRequest;
 import com.example.photomory.entity.UserEntity;
 import com.example.photomory.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,5 +19,14 @@ public class UserController {
     @GetMapping("/profile")
     public ResponseEntity<UserProfileResponse> getUserProfile(@AuthenticationPrincipal UserEntity user) {
         return ResponseEntity.ok(userService.getUserProfile(user));
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<String> updateProfile(
+            @AuthenticationPrincipal UserEntity user,
+            @RequestBody UserProfileUpdateRequest dto
+    ) {
+        userService.updateUserProfile(user, dto);
+        return ResponseEntity.ok("프로필이 성공적으로 수정되었습니다.");
     }
 }
