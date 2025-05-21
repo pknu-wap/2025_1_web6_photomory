@@ -23,7 +23,25 @@ export async function addNewGroup({ groupName, groupDescription }) {
     const result = await response.json();
     return result;
   } catch (error) {
-    console.error("그룹 생성 중 오류 발생:", error);
+    console.error(error);
     throw error;
+  }
+}
+
+export async function getGroupList() {
+  try {
+    const accessToken = localStorage.getItem("accessToken");
+
+    const response = await fetch(`${BASE_URL}/api/ouralbum/groups`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new error("그룹 리스트 조회 실패!");
+    }
+  } catch (error) {
+    console.error("그룹 리스트 :", error);
   }
 }
