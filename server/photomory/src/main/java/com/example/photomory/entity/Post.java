@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDateTime;
 
 import java.util.List;
 
@@ -30,6 +31,10 @@ public class Post {
 
     @Column(name = "location", nullable = false)
     private String location;
+
+    @Column(name = "post_making_time", nullable = false)
+    private LocalDateTime postMakingTime;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

@@ -3,139 +3,105 @@ package com.example.photomory.controller;
 import com.example.photomory.dto.*;
 import com.example.photomory.entity.UserEntity;
 import com.example.photomory.service.OurAlbumService;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/ouralbum")
+@RequiredArgsConstructor
+@RequestMapping("/api/our-album")
 public class OurAlbumController {
 
     private final OurAlbumService ourAlbumService;
 
-    public OurAlbumController(OurAlbumService ourAlbumService) {
-        this.ourAlbumService = ourAlbumService;
-    }
-
-    private boolean isAuthenticated(Authentication authentication) {
-        return authentication != null && authentication.getPrincipal() instanceof UserEntity;
-    }
-
-    private UserEntity getAuthenticatedUser(Authentication authentication) {
-        return (UserEntity) authentication.getPrincipal();
-    }
-
     // 1. 그룹 생성
-    @PostMapping("/groups")
-    public ResponseEntity<?> createGroup(
-            @RequestBody GroupCreateRequestDto requestDto,
-            Authentication authentication) {
-
-        if (!isAuthenticated(authentication)) {
-            return ResponseEntity.status(401).body("인증이 필요합니다.");
-        }
-
-        UserEntity user = getAuthenticatedUser(authentication);
-        MyAlbumResponseDto response = ourAlbumService.createGroup(requestDto, user);
-        return ResponseEntity.ok(response);
+    @PostMapping("/group")
+    public MyAlbumResponseDto createGroup(@RequestBody GroupCreateRequestDto requestDto,
+                                          @AuthenticationPrincipal UserEntity user) {
+        return ourAlbumService.createGroup(requestDto, user);
     }
 
-    // 2. 앨범 생성
-    @PostMapping("/groups/{groupId}/albums")
-    public ResponseEntity<?> createAlbum(
-            @PathVariable Long groupId,
-            @RequestBody AlbumCreateRequestDto requestDto,
-            Authentication authentication) {
-
-        if (!isAuthenticated(authentication)) {
-            return ResponseEntity.status(401).body("인증이 필요합니다.");
-        }
-
-        UserEntity user = getAuthenticatedUser(authentication);
-        try {
-            AlbumResponseDto response = ourAlbumService.createAlbum(groupId, requestDto, user);
-            return ResponseEntity.ok(response);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        }
+    // 2. 그룹 정보 조회
+    @GetMapping("/group/{groupId}")
+    public GroupInfoResponseDto getGroupInfo(@PathVariable Long groupId) {
+        return ourAlbumService.getGroupInfo(groupId);
     }
 
-    // 3. 게시물 생성 (사진 업로드 포함)
-    @PostMapping(value = "/albums/{albumId}/posts", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> createPost(
-            @PathVariable Integer albumId,
-            @RequestPart("post") PostCreateRequestDto requestDto,
-            @RequestPart(value = "photo", required = false) MultipartFile photoFile,
-            Authentication authentication) {
-
-        if (!isAuthenticated(authentication)) {
-            return ResponseEntity.status(401).body("인증이 필요합니다.");
-        }
-
-        UserEntity user = getAuthenticatedUser(authentication);
-
-        try {
-            PostResponseDto response = ourAlbumService.createPost(albumId, requestDto, photoFile, user);
-            return ResponseEntity.ok(response);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("게시물 생성 중 오류가 발생했습니다.");
-        }
+    // 3. 앨범 생성
+    @PostMapping("/group/{groupId}/album")
+    public AlbumResponseDto createAlbum(@PathVariable Long groupId,
+                                        @RequestBody AlbumCreateRequestDto requestDto,
+                                        @AuthenticationPrincipal UserEntity user) {
+        return ourAlbumService.createAlbum(groupId, requestDto, user);
     }
 
-    // 4. 앨범 전체 조회 (상세 + 게시물 + 댓글 포함)
-    @GetMapping("/albums/{albumId}")
-    public ResponseEntity<?> getAlbumFullDetails(
-            @PathVariable Integer albumId,
-            Authentication authentication) {
-
-        if (!isAuthenticated(authentication)) {
-            return ResponseEntity.status(401).body("인증이 필요합니다.");
-        }
-
-        UserEntity user = getAuthenticatedUser(authentication);
-        Long userId = user.getUserId();
-
-        try {
-            OurAlbumFullResponseDto response = ourAlbumService.getAlbumFullDetails(albumId, userId);
-            return ResponseEntity.ok(response);
-        } catch (SecurityException se) {
-            return ResponseEntity.status(403).body(se.getMessage());
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("서버 오류가 발생했습니다.");
-        }
+    // 4. 앨범 게시글 목록 조회 (페이징)
+    @GetMapping("/album/{albumId}/posts")
+    public List<PostResponseDto> getAlbumPosts(@PathVariable Integer albumId,
+                                               @RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "10") int size) {
+        return ourAlbumService.getAlbumPosts(albumId, page, size);
     }
 
-    // 5. 댓글 작성
-    @PostMapping("/albums/{albumId}/comments")
-    public ResponseEntity<?> createComment(
-            @PathVariable Integer albumId,
-            @RequestBody CommentCreateRequestDto requestDto,
-            Authentication authentication) {
+    // 5. 게시글 생성 (파일 포함)
+    @PostMapping("/album/{albumId}/post")
+    public PostResponseDto createPost(@PathVariable Integer albumId,
+                                      @RequestPart PostCreateRequestDto requestDto,
+                                      @RequestPart(required = false) MultipartFile photo,
+                                      @AuthenticationPrincipal UserEntity user) throws IOException {
+        return ourAlbumService.createPost(albumId, requestDto, photo, user);
+    }
 
-        if (!isAuthenticated(authentication)) {
-            return ResponseEntity.status(401).body("인증이 필요합니다.");
-        }
+    // 6. 앨범 전체 조회 (포스트 + 댓글 포함)
+    @GetMapping("/album/{albumId}/detail")
+    public OurAlbumFullResponseDto getAlbumFullDetails(@PathVariable Integer albumId,
+                                                       @AuthenticationPrincipal UserEntity user) {
+        return ourAlbumService.getAlbumFullDetails(albumId, user.getUserId());
+    }
 
-        UserEntity user = getAuthenticatedUser(authentication);
+    // 7. 게시글 상세 조회
+    @GetMapping("/post/{postId}")
+    public PostDetailResponseDto getPostDetail(@PathVariable Long postId) {
+        return ourAlbumService.getPostDetail(postId);
+    }
 
-        try {
-            CommentResponseDto savedComment = ourAlbumService.createComment(
-                    albumId,
-                    requestDto.getPostId(),
-                    user,
-                    requestDto.getCommentsText()
-            );
-            return ResponseEntity.ok(savedComment);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(404).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("댓글 저장 중 오류가 발생했습니다.");
-        }
+    // 8. 댓글 생성
+    @PostMapping("/album/{albumId}/post/{postId}/comment")
+    public CommentResponseDto createComment(@PathVariable Integer albumId,
+                                            @PathVariable Integer postId,
+                                            @RequestBody String text,
+                                            @AuthenticationPrincipal UserEntity user) {
+        return ourAlbumService.createComment(albumId, postId, user, text);
+    }
+
+    // 9. 달력 태그 조회
+    @GetMapping("/group/{groupId}/calendar-tags")
+    public List<CalendarTagResponseDto> getCalendarTags(@PathVariable Long groupId) {
+        return ourAlbumService.getCalendarTags(groupId);
+    }
+
+    // 10. 그룹 멤버 조회
+    @GetMapping("/group/{groupId}/members")
+    public List<UserSummaryDto> getGroupMembers(@PathVariable Long groupId) {
+        return ourAlbumService.getGroupMembers(groupId);
+    }
+
+    // 11. 초대 가능한 친구 목록 조회
+    @GetMapping("/group/{groupId}/invitable-friends")
+    public List<UserSummaryDto> getInvitableFriends(@PathVariable Long groupId,
+                                                    @AuthenticationPrincipal UserEntity user) {
+        return ourAlbumService.getFriendsExcludingGroup(groupId, user.getUserId());
+    }
+
+    // 12. 친구를 그룹에 초대
+    @PostMapping("/group/{groupId}/invite")
+    public void inviteToGroup(@PathVariable Long groupId,
+                              @RequestBody List<Long> friendIds,
+                              @AuthenticationPrincipal UserEntity inviter) {
+        ourAlbumService.inviteToGroup(groupId, inviter, friendIds);
     }
 }

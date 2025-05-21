@@ -10,11 +10,11 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     // 특정 게시물(postId)에 달린 댓글 조회
-    List<Comment> findByPost_PostId(Integer postId);
+    List<Comment> findByPost_PostId(Long postId);
 
     // 특정 앨범(albumId) 내 특정 게시물(postId)의 댓글 조회
-    List<Comment> findByAlbum_AlbumIdAndPost_PostId(Integer albumId, Integer postId);
+    List<Comment> findByAlbum_AlbumIdAndPost_PostId(Long albumId, Long postId);
 
-    List<Comment> findByPost_PostIdIn(List<Integer> postIds);
+    List<Comment> findByPost_PostIdIn(List<Long> postIds);
 
 }

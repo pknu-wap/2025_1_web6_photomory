@@ -11,7 +11,7 @@ public class Album {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "album_id")
-    private Integer albumId;
+    private Long albumId;
 
     @Column(name = "album_name", nullable = false)
     private String albumName;
@@ -37,11 +37,11 @@ public class Album {
 
     // Getter & Setter
 
-    public Integer getAlbumId() {
+    public Long getAlbumId() {
         return albumId;
     }
 
-    public void setAlbumId(Integer albumId) {
+    public void setAlbumId(Long albumId) {
         this.albumId = albumId;
     }
 

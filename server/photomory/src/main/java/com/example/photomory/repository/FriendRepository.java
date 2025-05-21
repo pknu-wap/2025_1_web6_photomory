@@ -2,6 +2,9 @@ package com.example.photomory.repository;
 
 import com.example.photomory.entity.Friend;
 import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.photomory.entity.UserEntity;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,4 +22,7 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     //jy
     boolean existsByFromUserIdAndToUserId(Long fromUserId, Long toUserId);
+
+    @Query("SELECT f.toUser FROM Friend f WHERE f.fromUser.userId = :userId")
+    List<UserEntity> findFriendsByUserId(@Param("userId") Long userId);
 }

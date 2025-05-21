@@ -19,6 +19,8 @@ public class AlbumMembers {
     @JoinColumn(name = "group_id", nullable = false)
     private MyAlbum myAlbum;
 
+
+
     // 기본 생성자
     public AlbumMembers() {}
 
