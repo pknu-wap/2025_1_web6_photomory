@@ -9,14 +9,26 @@ import Groups from "../component/group/Groups";
 import AlbumList from "../component/album/AlbumList";
 import getGroup from "../api/getGroup";
 import getGroupAlbums from "../api/getGroupAlbums";
+//import { addNewGroup } from "../api/groupApi"; //서버 연동 준비용
 
 function OurAlbumPage() {
   const [groupList, setGroupList] = useState([]); // 그룹명과 해당 그룹 멤버들의 리스트
   const [selectedGroupId, setSelectedGroupId] = useState(""); // 선택된 그룹 ID를 App에서 관리
   const [groupAlbums, setGroupAlbums] = useState([]); // 그룹별 앨범 리스트
   const [albumTitlesByGroup, setAlbumTitlesByGroup] = useState({}); //그룹ID에 대한 앨범 목록 객체
+
   //초기 그룹 정보, 앨범 가져오기
   useEffect(() => {
+    // 서버 연동 예정
+    // (async () => {
+    //   try {
+    //     const groups = await getGroupList(); // ← 서버에서 그룹 리스트 받아오기
+    //     setGroupList(groups);
+    //     ...
+    //   } catch (error) {
+    //     console.error("그룹 리스트 불러오기 실패:", error);
+    //   }
+
     const groups = getGroup(); // 그룹 데이터 불러오기
 
     setGroupList(groups);

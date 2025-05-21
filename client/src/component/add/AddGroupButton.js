@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import addGroupButton from "../../assets/addGroupButton.svg";
 import "./AddGroupButton.css";
+//import { addNewGroup } from "../../api/groupApi"; //서버 연동 준비용
 function AddGroupButtonTest({ onAddGroup }) {
   const [showModal, setShowModal] = useState(false); // 모달 표시 여부
   const [groupName, setGroupName] = useState(""); // 입력한 그룹 이름
@@ -17,8 +18,18 @@ function AddGroupButtonTest({ onAddGroup }) {
   };
 
   // 그룹명 제출 핸들러
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (groupName.trim() === "") return alert("그룹명을 입력해주세요.");
+
+    // 서버 연동 준비용 코드 (주석 처리)
+    // try {
+    //   const result = await addNewGroup({ groupName: groupName.trim() }); // 서버에 그룹 추가 요청
+    //   onAddGroup(result); // 서버 응답 데이터를 상위로 전달
+    // } catch (error) {
+    //   console.error("그룹 생성 실패:", error);
+    //   alert("그룹 생성 중 오류가 발생했습니다.");
+    //   return;
+    // }
 
     // 그룹 객체 생성 (멤버는 나중에 추가한다고 가정)
     const newGroup = {
