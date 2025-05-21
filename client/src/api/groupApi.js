@@ -1,5 +1,5 @@
 const BASE_URL = process.env.REACT_APP_API_URL;
-
+//그룹 추가 api 연동함수
 export async function addNewGroup({ groupName, groupDescription }) {
   try {
     const accessToken = localStorage.getItem("accessToken");
@@ -28,6 +28,7 @@ export async function addNewGroup({ groupName, groupDescription }) {
   }
 }
 
+//그룹 리스트 조회 api 연동함수
 export async function getGroupList() {
   try {
     const accessToken = localStorage.getItem("accessToken");
@@ -39,9 +40,13 @@ export async function getGroupList() {
     });
 
     if (!response.ok) {
-      throw new error("그룹 리스트 조회 실패!");
+      throw new Error("그룹 리스트 조회 실패!");
     }
+
+    const result = await response.json();
+    return result;
   } catch (error) {
-    console.error("그룹 리스트 :", error);
+    console.error(error);
+    throw error;
   }
 }
