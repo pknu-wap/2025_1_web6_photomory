@@ -6,7 +6,7 @@ import emptyImage from "../../assets/emptyImage.svg";
 export default function DailyPopularTag({
   post,
   handleLikeClick,
-  handleCommentClick,
+  handleCommentClickForModal,
 }) {
   return (
     <div className={styles.todayTagContainer}>
@@ -27,14 +27,21 @@ export default function DailyPopularTag({
           {/*설명 받기*/}
         </p>
         <div className={styles.forFlexTodayTag3}>
-          <div className={styles.heartContainer} onClick={handleLikeClick}>
+          <div className={styles.heartContainer} onClick={(e) => {
+            e.stopPropagation();
+            handleLikeClick();
+          }}>
             <img src={heart} alt="" className={styles.todayTagHeartIcon}></img>
             <span className={styles.todayTagheartText}>
               {post?.likes_count || "3.2k"}
               {/*하트 갯수 받기*/}
             </span>
           </div>
-          <div className={styles.commentContainer} onClick={handleCommentClick}>
+          <div className={styles.commentContainer} 
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCommentClickForModal(post);
+          }}>
             <img
               src={comment}
               alt=""

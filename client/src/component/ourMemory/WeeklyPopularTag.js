@@ -8,10 +8,14 @@ import emptyImage from "../../assets/emptyImage.svg";
 export default function WeeklyPopularTag({
   post,
   handleLikeClick,
-  handleCommentClick,
+  handleCommentClickForModal,
+  handleImageClick
 }) {
   return (
-    <div className={styles.weeklyTagContainer}>
+    <div className={styles.weeklyTagContainer}
+      onClick={()=>{
+        handleImageClick(post)
+    }}>
       <div
         className={styles.weeklyTagImage}
         style={{ backgroundImage: `url(${post?.photo_url || { emptyImage }})` }}
@@ -30,12 +34,13 @@ export default function WeeklyPopularTag({
         ></div>
         <div className={styles.userName}>{post.user_name}</div>
       </div>
-      <div className={styles.forFlexweeklyTag2}>
+      <div className={styles.forFlexweeklyTag2}
+      onClick={e => e.stopPropagation()}>
         <div className={styles.heartContainer} onClick={handleLikeClick}>
           <img src={heart} alt="" className={styles.heartIcon} />
           <p className={styles.heartNum}>{post?.likes_count || "1.2k"}</p>
         </div>
-        <div className={styles.commentContainer} onClick={handleCommentClick}>
+        <div className={styles.commentContainer} onClick={handleCommentClickForModal}>
           <img src={comment} alt="" className={styles.commentIcon}></img>
           <p className={styles.commentNum}>{post?.comments_count || "80"}</p>
         </div>

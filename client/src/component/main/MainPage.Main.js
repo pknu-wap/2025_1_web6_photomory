@@ -174,30 +174,7 @@ function MainPageMain() {
     }
   };
 
-  const handleCommentClick = async (postId) => {
-    try {
-      setPosts((prevPosts) => // 낙관적 업뎃
-        prevPosts.map((post) =>
-          post.postId === postId
-            ? { ...post, commentsCount: post.commentsCount + 1 }
-            : post
-        )
-      );
-
-      const updatedPostByComment = await updateLikeCommentCount(postId); // 서버 업뎃
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post.postId === postId
-            ? { ...post, commentsCount: updatedPostByComment.commentsCount }
-            : post
-        )
-      );
-    } catch (error) {
-      console.error('Error uploading like count', error);
-    }
-  };
-
-    const weeklyPosts= randomPosts.slice(0,3); //아 여기선 먼저 useState([])에서[]로 됐다가 다시 비동기로 값을 받는다 usestate에서 useState() 그냥 이렇게 하면 비동기라서 이 코드가 먼저 실행될 떄 undefined가 떠서 타입 오류가 뜬다. slice는 undefined이면 오류가 뜬다. 따라서 []을 쓴다. 그 후 값이 들어온다.
+  const weeklyPosts= randomPosts.slice(0,3); //아 여기선 먼저 useState([])에서[]로 됐다가 다시 비동기로 값을 받는다 usestate에서 useState() 그냥 이렇게 하면 비동기라서 이 코드가 먼저 실행될 떄 undefined가 떠서 타입 오류가 뜬다. slice는 undefined이면 오류가 뜬다. 따라서 []을 쓴다. 그 후 값이 들어온다.
 
   const nav = useNavigate();
   const onClickHandle = (event) => nav(event.currentTarget.dataset.value);
