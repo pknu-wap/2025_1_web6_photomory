@@ -9,11 +9,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import com.example.photomory.dto.PostZoomDetailResponseDto;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor
@@ -85,7 +84,7 @@ public class OurAlbumService {
     public AlbumWithPostsResponseDto getAlbumWithPosts(Long albumId, int page, int size) {
         Integer albumIdInt = albumId.intValue();
 
-        Album album = albumRepository.findById(albumId)
+        Album album = albumRepository.findById(albumIdInt)
                 .orElseThrow(() -> new EntityNotFoundException("앨범을 찾을 수 없습니다."));
 
         List<Post> posts = postRepository.findByAlbum_AlbumId(albumIdInt, PageRequest.of(page, size))
@@ -99,7 +98,7 @@ public class OurAlbumService {
     public PostResponseDto createPost(Long albumId, PostCreateRequestDto requestDto, MultipartFile photoFile, UserEntity user) throws IOException {
         Integer albumIdInt = albumId.intValue();
 
-        Album album = albumRepository.findById(albumId)
+        Album album = albumRepository.findById(albumIdInt)
                 .orElseThrow(() -> new EntityNotFoundException("앨범을 찾을 수 없습니다."));
 
         Post post = new Post();
@@ -135,7 +134,7 @@ public class OurAlbumService {
         Integer albumIdInt = albumId.intValue();
         Integer postIdInt = postId.intValue();
 
-        Album album = albumRepository.findById(albumId)
+        Album album = albumRepository.findById(albumIdInt)
                 .orElseThrow(() -> new EntityNotFoundException("앨범을 찾을 수 없습니다."));
         Post post = postRepository.findById(postIdInt)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
@@ -150,36 +149,46 @@ public class OurAlbumService {
         return CommentResponseDto.fromEntity(saved);
     }
 
-
     @Transactional(readOnly = true)
     public List<CalendarTagResponseDto> getCalendarTags(Long groupId) {
-        myAlbumRepository.findById(groupId)
+        Integer groupIdInt = groupId.intValue();
+
+        MyAlbum group = myAlbumRepository.findById(groupId)
                 .orElseThrow(() -> new EntityNotFoundException("그룹을 찾을 수 없습니다."));
 
         List<Post> posts = postRepository.findByAlbum_MyAlbum_MyalbumId(groupId);
 
         return posts.stream()
                 .map(post -> new CalendarTagResponseDto(
-                        post.getPostMakingTime(),  // 필드 이름은 Post entity에 맞게 수정하세요
+                        post.getPostMakingTime(),
                         post.getPhotoUrl(),
                         post.getPostDescription()
                 ))
                 .collect(Collectors.toList());
     }
 
-
     // 친구 중에서 그룹에 없는 사람만 필터링하여 초대하기
     @Transactional(readOnly = true)
     public List<UserSummaryDto> getFriendsExcludingGroup(Long groupId, Long userId) {
         Integer groupIdInt = groupId.intValue();
 
-        List<UserEntity> friends = friendRepository.findFriendsByUserId(userId);
+        // Friend 엔티티 리스트에서 친구 상태 true인 친구 목록 조회
+        List<Friend> friends = friendRepository.findByFromUserIdAndAreWeFriendTrue(userId);
+
+        // Friend.toUserId 로 UserEntity 조회
+        List<UserEntity> friendUsers = friends.stream()
+                .map(friend -> userRepository.findById(friend.getToUserId()).orElse(null))
+                .filter(user -> user != null)
+                .collect(Collectors.toList());
+
+        // 그룹 멤버 조회
         List<UserEntity> groupMembers = albumMembersRepository.findByMyAlbum_MyalbumId(groupIdInt)
                 .stream()
                 .map(AlbumMembers::getUserEntity)
                 .collect(Collectors.toList());
 
-        return friends.stream()
+        // 그룹에 없는 친구만 필터링해서 DTO 변환 후 반환
+        return friendUsers.stream()
                 .filter(friend -> !groupMembers.contains(friend))
                 .map(UserSummaryDto::fromEntity)
                 .collect(Collectors.toList());
@@ -189,16 +198,13 @@ public class OurAlbumService {
     @Transactional
     public void inviteToGroup(Long groupId, UserEntity inviter, List<Long> friendIds) {
         Integer groupIdInt = groupId.intValue();
-        Long groupIdLong = groupIdInt.longValue();
 
-        MyAlbum group = myAlbumRepository.findById(groupIdLong)
+        MyAlbum group = myAlbumRepository.findById(groupId)
                 .orElseThrow(() -> new EntityNotFoundException("그룹을 찾을 수 없습니다."));
 
-
-        // userId는 Long 타입 유지
         List<Long> existingMemberUserIds = albumMembersRepository.findByMyAlbum_MyalbumId(groupIdInt)
                 .stream()
-                .map(am -> am.getUserEntity().getUserId()) // Long 유지
+                .map(am -> am.getUserEntity().getUserId())
                 .collect(Collectors.toList());
 
         for (Long friendId : friendIds) {

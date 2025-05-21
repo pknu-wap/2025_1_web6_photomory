@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 public class PostDetailResponseDto {
-    private Long postId;
+    private Integer postId;
     private String postText;
     private String postDescription;
     private String photoUrl;

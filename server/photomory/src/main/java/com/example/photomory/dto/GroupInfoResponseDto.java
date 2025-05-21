@@ -18,7 +18,7 @@ public class GroupInfoResponseDto {
 
     public static GroupInfoResponseDto fromEntity(MyAlbum myAlbum) {
         return GroupInfoResponseDto.builder()
-                .groupId(myAlbum.getMyalbumId())
+                .groupId(myAlbum.getMyalbumId() != null ? myAlbum.getMyalbumId().longValue() : null)
                 .groupName(myAlbum.getMyalbumName())
                 .groupDescription(myAlbum.getMyalbumDescription())
                 .ownerId(myAlbum.getUserId())

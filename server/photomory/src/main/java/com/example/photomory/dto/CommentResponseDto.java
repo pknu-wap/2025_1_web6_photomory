@@ -4,19 +4,19 @@ import com.example.photomory.entity.Comment;
 
 import java.time.format.DateTimeFormatter;
 
-public class CommentResponseDto{
+public class CommentResponseDto {
 
-    private Long commentId;         // ✅ 댓글 고유 ID
+    private Integer commentId;       // ✅ 댓글 고유 ID
     private Integer albumId;
     private Integer postId;
     private Long userId;
-    private String userName;        // 유저 이름
+    private String userName;         // 유저 이름
     private String commentsText;
-    private String createdAt;       // 작성 시간
+    private String createdAt;        // 작성 시간
 
     public CommentResponseDto() {}
 
-    public CommentResponseDto(Long commentId, Integer albumId, Integer postId, Long userId,
+    public CommentResponseDto(Integer commentId, Integer albumId, Integer postId, Long userId,
                               String userName, String commentsText, String createdAt) {
         this.commentId = commentId;
         this.albumId = albumId;
@@ -31,7 +31,7 @@ public class CommentResponseDto{
     public static CommentResponseDto fromEntity(Comment comment) {
         return new CommentResponseDto(
                 comment.getCommentId(),
-                comment.getAlbum() != null ? comment.getAlbum().getAlbumId() : null,
+                comment.getAlbum() != null ? comment.getAlbum().getAlbumId().intValue() : null,
                 comment.getPost() != null ? comment.getPost().getPostId() : null,
                 comment.getUser() != null ? comment.getUser().getUserId() : null,
                 comment.getUser() != null ? comment.getUser().getUserName() : null,
@@ -43,11 +43,11 @@ public class CommentResponseDto{
     }
 
     // Getters & Setters
-    public Long getCommentId() {
+    public Integer getCommentId() {
         return commentId;
     }
 
-    public void setCommentId(Long commentId) {
+    public void setCommentId(Integer commentId) {
         this.commentId = commentId;
     }
 

@@ -36,7 +36,7 @@ public class OurAlbumFullResponseDto {
 
     public static OurAlbumFullResponseDto from(Album album, List<PostWithCommentsResponseDto> posts) {
         OurAlbumFullResponseDto dto = new OurAlbumFullResponseDto();
-        dto.setAlbumId(album.getAlbumId());
+        dto.setAlbumId(album.getAlbumId().intValue());
         dto.setAlbumTitle(album.getAlbumName());
         dto.setPosts(posts);
         return dto;

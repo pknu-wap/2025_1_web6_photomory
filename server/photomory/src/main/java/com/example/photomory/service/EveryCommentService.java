@@ -22,9 +22,9 @@ public class EveryCommentService {
     private final PostRepository postRepository;  // 추가
 
     public void addComment(CommentRequestDto dto) {
-        Integer albumId = dto.getAlbumId();
-        Integer postId = dto.getPostId();
-        Long userId = dto.getUserId();
+        Integer albumId = dto.getAlbumId(); // Integer
+        Integer postId = dto.getPostId();   // Integer
+        Long userId = dto.getUserId();      // Long
 
         Album album = albumRepository.findById(albumId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 앨범이 존재하지 않습니다."));

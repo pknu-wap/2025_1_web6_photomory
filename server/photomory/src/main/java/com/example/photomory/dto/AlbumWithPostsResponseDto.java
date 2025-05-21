@@ -5,14 +5,17 @@ import com.example.photomory.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import java.util.Collections;
 
+
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 public class AlbumWithPostsResponseDto {
-    private Long albumId;
+    private Integer albumId;
     private String albumName;
     private String albumTag;
     private String albumDescription;
@@ -21,15 +24,17 @@ public class AlbumWithPostsResponseDto {
 
     public static AlbumWithPostsResponseDto from(Album album, List<Post> posts) {
         List<PostWithCommentsResponseDto> postDtos = posts.stream()
-                .map(post -> PostWithCommentsResponseDto.fromEntity(post))
+                .map(post -> PostWithCommentsResponseDto.fromEntity(post, Collections.emptyList()))
                 .toList();
 
         return AlbumWithPostsResponseDto.builder()
-                .albumId(album.getAlbumId().longValue())
+                .albumId(album.getAlbumId())
                 .albumName(album.getAlbumName())
                 .albumTag(album.getAlbumTag())
                 .albumDescription(album.getAlbumDescription())
-                .albumMakingTime(album.getAlbumMakingTime())
+                .albumMakingTime(album.getAlbumMakingTime() != null
+                        ? album.getAlbumMakingTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                        : null)
                 .posts(postDtos)
                 .build();
     }

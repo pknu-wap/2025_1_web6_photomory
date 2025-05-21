@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
-
 import java.util.List;
 
 @Entity
@@ -35,7 +34,6 @@ public class Post {
     @Column(name = "post_making_time", nullable = false)
     private LocalDateTime postMakingTime;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
@@ -44,19 +42,15 @@ public class Post {
     @JoinColumn(name = "album_id", nullable = false)
     private Album album;
 
-    // 한 게시물에 여러 사진이 있을 경우
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Photo> photos;
 
-    // 한 게시물에 여러 태그가 있을 경우
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Tag> tags;
 
-    // 한 게시물에 여러 댓글이 있을 경우
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments;
 
     @Column(length = 1000)
     private String photoUrl;
-
 }

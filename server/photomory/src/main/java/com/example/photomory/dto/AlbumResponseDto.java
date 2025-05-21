@@ -48,7 +48,7 @@ public class AlbumResponseDto {
     // 엔티티 → DTO 변환 메서드
     public static AlbumResponseDto fromEntity(Album album) {
         AlbumResponseDto dto = new AlbumResponseDto();
-        dto.setAlbumId(album.getAlbumId());
+        dto.setAlbumId(album.getAlbumId() != null ? album.getAlbumId().intValue() : null);
         dto.setAlbumName(album.getAlbumName());
         dto.setAlbumTag(album.getAlbumTag());
         dto.setAlbumMakingTime(album.getAlbumMakingTime());

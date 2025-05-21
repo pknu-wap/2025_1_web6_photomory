@@ -1,6 +1,6 @@
 package com.example.photomory.dto;
 
-import com.example.photomory.entity.Comment; // Comment 엔티티 경로 확인
+import com.example.photomory.entity.Comment;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,19 +11,19 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class EveryCommentResponseDto {
-    private Long commentId;
+    private Integer commentId;
     private String commentsText;
-    private LocalDateTime commentMakingTime; // 엔티티에 필드가 있다고 가정
+    private LocalDateTime commentMakingTime;
     private Long userId;
-    private String userNickname; // UserEntity에 nickname 필드가 있다고 가정
+    private String userName;  // 닉네임 대신 userName
 
     public static EveryCommentResponseDto fromEntity(Comment comment) {
         return EveryCommentResponseDto.builder()
                 .commentId(comment.getCommentId())
                 .commentsText(comment.getCommentsText())
-                .commentMakingTime(comment.getCommentMakingTime())
+                .commentMakingTime(comment.getCreatedAt())
                 .userId(comment.getUser() != null ? comment.getUser().getUserId() : null)
-                .userNickname(comment.getUser() != null ? comment.getUser().getNickname() : null)
+                .userName(comment.getUser() != null ? comment.getUser().getUserName() : null) // userName으로 수정
                 .build();
     }
 }

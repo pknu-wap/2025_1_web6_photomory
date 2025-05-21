@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class OurAlbumResponseDto {
 
-    private Integer albumId;
+    private Integer albumId;  // Integer 유지
     private String albumName;
     private String albumDescription;
     private String albumTag;
@@ -25,7 +25,7 @@ public class OurAlbumResponseDto {
 
     public static OurAlbumResponseDto fromEntity(Album album) {
         OurAlbumResponseDto dto = new OurAlbumResponseDto();
-        dto.setAlbumId(album.getAlbumId());
+        dto.setAlbumId(album.getAlbumId().intValue());  // Long -> Integer 변환
         dto.setAlbumName(album.getAlbumName());
         dto.setAlbumDescription(album.getAlbumDescription());
         dto.setAlbumTag(album.getAlbumTag());
@@ -107,21 +107,21 @@ public class OurAlbumResponseDto {
 
     // 댓글 DTO
     public static class CommentDto {
-        private Long commentId;          // Long으로 변경
+        private Integer commentId;          // Integer로 변경
         private String commentsText;
         private String userName;
 
         public static CommentDto fromEntity(Comment comment) {
             CommentDto dto = new CommentDto();
-            dto.setCommentId(comment.getCommentId());
+            dto.setCommentId(comment.getCommentId());  // Integer 그대로 사용
             dto.setCommentsText(comment.getCommentsText());
             dto.setUserName(comment.getUser().getUserName());
             return dto;
         }
 
         // Getters / Setters
-        public Long getCommentId() { return commentId; }
-        public void setCommentId(Long commentId) { this.commentId = commentId; }
+        public Integer getCommentId() { return commentId; }
+        public void setCommentId(Integer commentId) { this.commentId = commentId; }
         public String getCommentsText() { return commentsText; }
         public void setCommentsText(String commentsText) { this.commentsText = commentsText; }
         public String getUserName() { return userName; }
