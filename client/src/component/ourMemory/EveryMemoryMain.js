@@ -450,7 +450,7 @@ export default function EveryMemoryMain(){
                     />
                     {/*------*/}
                     <WeeklyPopularTag
-                        post= {[weeklyPosts[2]]}
+                        post= {[weeklyPosts[2]]} 
                         handleLikeNum={handleLikeNum}
                         handleCommentClickForModal={handleCommentClickForModal}
                         handleImageClick={handleImageClick}
@@ -503,7 +503,6 @@ export default function EveryMemoryMain(){
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeNum={handleLikeNum}
                             handleCommentClickForModal={handleCommentClickForModal}
-
                         />
                     </div>
                     {/*--------*/}
@@ -618,7 +617,8 @@ export default function EveryMemoryMain(){
                                     user_name: selectedPostForModal.commets.user_name,
                                     user_photourl: selectedPostForModal.commets.user_photourl,
                                     comment_text: comment_text
-                                }); //코멘트모달에서 코멘트텍스트만 받고 다른 건 에브리에서 통괄
+                                } //코멘트모달에서 코멘트텍스트만 받고 다른 건 에브리에서 통괄
+                            );
                         }
                     }}
                 />

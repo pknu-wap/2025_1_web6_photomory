@@ -5,7 +5,7 @@ import emptyImage from "../../assets/emptyImage.svg";
 
 export default function DailyPopularTag({
   post,
-  handleLikeClick,
+  handleLikeNum,
   handleCommentClickForModal,
 }) {
   return (
@@ -29,7 +29,7 @@ export default function DailyPopularTag({
         <div className={styles.forFlexTodayTag3}>
           <div className={styles.heartContainer} onClick={(e) => {
             e.stopPropagation();
-            handleLikeClick();
+            handleLikeNum();
           }}>
             <img src={heart} alt="" className={styles.todayTagHeartIcon}></img>
             <span className={styles.todayTagheartText}>
