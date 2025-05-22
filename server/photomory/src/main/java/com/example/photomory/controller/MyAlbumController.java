@@ -1,6 +1,7 @@
 package com.example.photomory.controller;
 
 import com.example.photomory.dto.MyAlbumDetailDto;
+import com.example.photomory.dto.MyAlbumUpdateRequest;
 import com.example.photomory.entity.UserEntity;
 import com.example.photomory.service.MyAlbumService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,6 @@ import java.util.List;
 public class MyAlbumController {
 
     private final MyAlbumService myAlbumService;
-
 
     @GetMapping
     public ResponseEntity<MyAlbumDetailDto> getMyAlbum(@AuthenticationPrincipal UserEntity user) {
@@ -50,4 +50,25 @@ public class MyAlbumController {
         List<MyAlbumDetailDto> albums = myAlbumService.getAllMyAlbums(userId);
         return ResponseEntity.ok(albums);
     }
+
+    @PutMapping(value = "/{albumId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MyAlbumDetailDto> updateMyAlbum(
+            @PathVariable Long albumId,
+            @AuthenticationPrincipal UserEntity user,
+            @RequestBody MyAlbumUpdateRequest request
+    ) {
+        MyAlbumDetailDto updated = myAlbumService.updateMyAlbum(albumId, user, request);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{albumId}")
+    public ResponseEntity<String> deleteMyAlbum(
+            @PathVariable Long albumId,
+            @AuthenticationPrincipal UserEntity user
+    ) {
+        myAlbumService.deleteMyAlbum(albumId, user);
+        return ResponseEntity.ok("앨범이 삭제되었습니다.");
+    }
+
+
 }

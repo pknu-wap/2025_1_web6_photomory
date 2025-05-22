@@ -1,6 +1,7 @@
 package com.example.photomory.service;
 
 import com.example.photomory.dto.MyAlbumDetailDto;
+import com.example.photomory.dto.MyAlbumUpdateRequest;
 import com.example.photomory.dto.MyPhotoDto;
 import com.example.photomory.entity.MyAlbum;
 import com.example.photomory.entity.MyPhoto;
@@ -73,7 +74,6 @@ public class MyAlbumService {
     public MyAlbumDetailDto getMyAlbum(Long myalbumId) {
         MyAlbum album = myAlbumRepository.findById(myalbumId)
                 .orElseThrow(() -> new RuntimeException("앨범을 찾을 수 없습니다."));
-
         return convertToDto(album);
     }
 
@@ -82,6 +82,22 @@ public class MyAlbumService {
         return albums.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    public MyAlbumDetailDto updateMyAlbum(Long albumId, UserEntity user, MyAlbumUpdateRequest request) {
+        MyAlbum album = myAlbumRepository.findById(albumId)
+                .orElseThrow(() -> new RuntimeException("앨범이 존재하지 않습니다."));
+
+        if (!album.getUserId().equals(user.getUserId())) {
+            throw new RuntimeException("수정 권한이 없습니다.");
+        }
+
+        album.setMyalbumName(request.getMyalbumName());
+        album.setMyalbumDescription(request.getMyalbumDescription());
+        album.setMyalbumTag(String.join(",", request.getMytags()));
+
+        myAlbumRepository.save(album);
+        return convertToDto(album);
     }
 
     private MyAlbumDetailDto convertToDto(MyAlbum album) {
@@ -109,4 +125,22 @@ public class MyAlbumService {
                 .mytags(mytags)
                 .build();
     }
+    public void deleteMyAlbum(Long albumId, UserEntity user) {
+        MyAlbum album = myAlbumRepository.findById(albumId)
+                .orElseThrow(() -> new RuntimeException("앨범을 찾을 수 없습니다."));
+
+        if (!album.getUserId().equals(user.getUserId())) {
+            throw new RuntimeException("삭제 권한이 없습니다.");
+        }
+
+        List<MyPhoto> photos = myPhotoRepository.findByMyalbum(album);
+
+        for (MyPhoto photo : photos) {
+            s3Service.deleteFile(photo.getMyphotoUrl());
+            myPhotoRepository.delete(photo);
+        }
+
+        myAlbumRepository.delete(album);
+    }
+
 }
