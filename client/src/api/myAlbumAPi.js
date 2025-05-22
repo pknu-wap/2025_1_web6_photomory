@@ -60,6 +60,7 @@ export async function getMyMemoryAlbums() {
   }
 }
 
+//나만의 추억 앨범 수정 api함수
 export async function updateMyMemoryAlbum(
   albumId,
   myalbumName,
@@ -92,6 +93,30 @@ export async function updateMyMemoryAlbum(
     return result;
   } catch (error) {
     console.error("앨범 수정 중 오류 발생:", error);
+    throw error;
+  }
+}
+
+//나만의 추억 앨범 삭제 api함수
+export async function deleteMyMemoryAlbum(albumId) {
+  const accessToken = localStorage.getItem("accessToken");
+
+  try {
+    const response = await fetch(`/api/my-albums/${albumId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`삭제 실패: ${response.status}`);
+    }
+
+    const result = await response.text(); // 서버에서 텍스트 응답인 경우
+    return result;
+  } catch (error) {
+    console.error("앨범 삭제 중 오류 발생:", error);
     throw error;
   }
 }
