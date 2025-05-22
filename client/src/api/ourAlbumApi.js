@@ -21,10 +21,35 @@ export async function createGroup({ groupName, groupDescription }) {
       throw new Error("그룹 생성 실패: " + response.status);
     }
 
-    const result = await response.json(); // 예: { myalbumId: 1, ... }
+    const result = await response.json();
     return result;
   } catch (error) {
     console.error("그룹 생성 중 오류 발생:", error);
+    throw error;
+  }
+}
+
+//그룹 정보 불러오기 api함수
+export async function fetchGroupInfo(groupId) {
+  const token = localStorage.getItem("accessToken"); // 필요시 사용
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/our-album/group/${groupId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("그룹 정보 불러오기 실패: " + response.status);
+    }
+
+    const data = await response.json();
+    return data; // 그룹 정보 + members 배열
+  } catch (error) {
+    console.error("그룹 조회 중 에러:", error);
     throw error;
   }
 }
