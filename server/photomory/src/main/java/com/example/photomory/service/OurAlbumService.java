@@ -223,4 +223,22 @@ public class OurAlbumService {
             }
         }
     }
+    @Transactional
+    public void removeMemberFromGroup(Long groupId, Long userIdToRemove) {
+        Integer groupIdInt = groupId.intValue();
+
+        // 그룹 존재 여부 확인 (MyAlbum 엔티티는 Long ID를 사용하므로 Long으로 조회)
+        MyAlbum group = myAlbumRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("그룹을 찾을 수 없습니다."));
+
+        // 그룹 멤버 엔티티 조회
+        // groupIdInt (Integer)와 userIdToRemove (Long)를 사용하여 AlbumMembers를 찾습니다.
+        // AlbumMembersRepository에 다음과 같은 쿼리 메서드가 필요할 수 있습니다.
+        // findByMyAlbum_MyalbumIdAndUserEntity_UserId(Integer myalbumId, Long userId)
+        AlbumMembers memberToRemove = albumMembersRepository.findByMyAlbum_MyalbumIdAndUserEntity_UserId(groupIdInt, userIdToRemove)
+                .orElseThrow(() -> new EntityNotFoundException("그룹에서 해당 멤버를 찾을 수 없습니다."));
+
+        // 멤버 삭제
+        albumMembersRepository.delete(memberToRemove);
+    }
 }

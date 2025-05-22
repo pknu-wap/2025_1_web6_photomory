@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.List;
@@ -113,4 +115,12 @@ public class OurAlbumController {
         return "친구 초대가 완료되었습니다.";
     }
 
+    @DeleteMapping("/{groupId}/member/{userIdToRemove}")
+    public ResponseEntity<Void> removeMemberFromGroup(
+            @PathVariable Long groupId,
+            @PathVariable Long userIdToRemove
+    ) {
+        ourAlbumService.removeMemberFromGroup(groupId, userIdToRemove);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 성공 시 204 No Content 반환
+    }
 }
