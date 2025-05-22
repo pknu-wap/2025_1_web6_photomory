@@ -84,7 +84,7 @@ async function getUserPosts() {
     }
 }
 
-async function updateLikeCommentCount(post_id){
+async function updateLikeCount(post_id){ //좋아요 수 관리
     try{
         const accessToken= localStorage.getItem('accessToken')
         const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{/* 이거 엔드포인트 뭐임..?*/
@@ -93,7 +93,7 @@ async function updateLikeCommentCount(post_id){
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`
             },
-            body: JSON.stringify({post_id})
+            body: JSON.stringify(post_id)
         })
         if(!response.ok){
             if(response.status===401){
@@ -109,6 +109,30 @@ async function updateLikeCommentCount(post_id){
     }
 }
 
+async function updateComment(post_id, comment){ //댓글 수, 댓글 내용 관리.
+    try{
+        const accessToken= localStorage.getItem('accessToken')
+        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{/* 이거 엔드포인트 뭐임..?*/
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({ post_id, user_id: comment.user_id, comment_text: comment.comment_text })
+        })
+        if(!response.ok){
+            if(response.status===401){
+                throw new Error('Unauthorized')
+            }
+            throw new Error('Failed to upload count:' `${response.status}`)
+        }
+        return await response.json();
+    }
+    catch(error){
+        console.error('Error updating count:', error)
+        throw error;
+    }
+}
 async function uploadingImage(uploadImage) {
     try {
         if (!uploadImage || !uploadImage.images || uploadImage.images.length === 0) {
@@ -225,7 +249,7 @@ export default function EveryMemoryMain(){
                     : post).sort((a, b) => b.likes_count - a.likes_count)
             );
 
-            const updatedPostByLike = await updateLikeCommentCount(post_id); //서버 업뎃
+            const updatedPostByLike = await updateLikeCount(post_id); //서버 업뎃
             setPosts((prevPosts) =>
                 prevPosts.map((post) =>post.post_id=== post_id
                     ? { ...post, likes_count: updatedPostByLike.likes_count }
@@ -236,16 +260,20 @@ export default function EveryMemoryMain(){
             console.error('Error uploading like count', error);
         }
     }
-    const handleCommentNum=async(post_id)=>{
+    const handleCommentNum=async(modalPost, comment)=>{ //댓글 수, 내용.
         try{
             setPosts((prevPosts)=> //낙관적 업뎃
-                prevPosts.map((post)=>post.post_id===post_id
-                ? {...post, comments_count: post.comments_count+1}
+                prevPosts.map((post)=>post.post_id===modalPost.post_id
+                ? {
+                    ...post,
+                    comments_count: post.comments_count + 1,
+                    comments:[...post.comments, comment] //코멘트에선 코멘트 텍스트와 유저 아이디만 준다.
+                }
                     : post)
             );
-            const updatedPostByComment= await updateLikeCommentCount(post_id) //서버 업뎃
+            const updatedPostByComment= await updateComment(modalPost.post_id, comment) //서버 업뎃
             setPosts((prevPosts)=>
-                prevPosts.map((post)=>post.post_id===post_id
+                prevPosts.map((post)=>post.post_id===modalPost.post_id
                 ? {...post, comments_count: updatedPostByComment.comments_count}
                     : post)
             );
@@ -582,9 +610,15 @@ export default function EveryMemoryMain(){
                     isOpen={isCommentModalOpen}
                     onClose={handleCloseCommentModal}
                     post={selectedPostForModal ? [selectedPostForModal] : []}
-                    handleCommentNum={() => {
-                        if (selectedPostForModal && selectedPostForModal.post_id) {
-                            handleCommentNum(selectedPostForModal.post_id);
+                    handleCommentNum={(comment_text) => {
+                        if (selectedPostForModal && selectedPostForModal.post_id) { //먼저 selected 안 해주고 .post_id하면 오류날 수 있어 먼저 .이 없는 걸로
+                            handleCommentNum(selectedPostForModal, 
+                                { //위에서 comment로 받을 거.
+                                    user_id: selectedPostForModal.commets.user_id,
+                                    user_name: selectedPostForModal.commets.user_name,
+                                    user_photourl: selectedPostForModal.commets.user_photourl,
+                                    comment_text: comment_text
+                                }); //코멘트모달에서 코멘트텍스트만 받고 다른 건 에브리에서 통괄
                         }
                     }}
                 />

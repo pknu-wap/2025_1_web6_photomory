@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './CommentModal.module.css';
 import profile from '../../assets/defaultProfileIcon.svg'
 import send from '../../assets/send.svg'
 
 const CommentModal = ({ isOpen, onClose, handleCommentNum }) => { //post 추가해야 함 지금은 안 써서 안 씀
+    const [commentInput, setCommentInput]= useState('')
     if (!isOpen) return null;
 
     const post={
@@ -34,6 +35,23 @@ const CommentModal = ({ isOpen, onClose, handleCommentNum }) => { //post 추가�
         ]
     }
 
+    const handleCommentInput=(e)=>{
+        setCommentInput(e.target.value)
+    }
+
+    const checkComment = () => {
+        if (commentInput.trim()) {  // 빈 댓글은 전송하지 않음
+            handleCommentNum(commentInput);
+            setCommentInput('');  // 댓글 전송 후 입력창 초기화
+        }
+    }
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            checkComment();
+        }
+    }
+
     const formatDate = () => {
         const now = new Date();
         const year = now.getFullYear(); 
@@ -41,38 +59,48 @@ const CommentModal = ({ isOpen, onClose, handleCommentNum }) => { //post 추가�
         const day = now.getDate(); 
         return `${year}.${month}.${day}`;
     };
-return (
-    <div className={styles.modalOverlay} onClick={onClose}>
-        <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-            {post.comments ? ( 
-            post.comments.map((commentInfo) => (
-                <div className={styles.commentContainer}>
-                    <img
-                        className={styles.userImage}
-                        src={profile || ''} //commentInfo.user_photourl
-                        alt=""
-                    />
-                    <div className={styles.forFlex}>
-                        <div className={styles.forFlex2}>
-                            <div className={styles.userName}>{commentInfo.user_name || '권동욱'}</div>
-                            <div className={styles.date}>{formatDate()}</div>
+
+    return (
+        <div className={styles.modalOverlay} onClick={onClose}>
+            <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+                {post.comments ? ( 
+                post.comments.map((commentInfo) => (
+                    <div className={styles.commentContainer} key={commentInfo.user_id}>
+                        <img
+                            className={styles.userImage}
+                            src={profile || ''} //commentInfo.user_photourl
+                            alt=""
+                        />
+                        <div className={styles.forFlex}>
+                            <div className={styles.forFlex2}>
+                                <div className={styles.userName}>{commentInfo.user_name || '권동욱'}</div>
+                                <div className={styles.date}>{formatDate()}</div>
+                            </div>
+                            <div className={styles.commentText}>{commentInfo.comment_text || ''}</div>
                         </div>
-                        <div className={styles.commentText}>{commentInfo.comment_text || ''}</div>
                     </div>
+                ))
+                ) : (
+                <div className={styles.nopost}>댓글이 없습니다 🥺</div>
+                )}
+                <div className={styles.uploadCommentContainer}>
+                    <input 
+                        className={styles.uploadComment} 
+                        placeholder='댓글 작성...'
+                        value={commentInput}
+                        onChange={handleCommentInput}
+                        onKeyPress={handleKeyPress}
+                    />
+                    <img 
+                        src={send} 
+                        alt='' 
+                        className={styles.uploadButton}
+                        onClick={checkComment}
+                    />
                 </div>
-            ))
-            ) : (
-            <div className={styles.nopost}>댓글이 없습니다 🥺</div>
-            )}
-            <div className={styles.uploadCommentContainer}>
-                <input className={styles.uploadComment} placeholder='댓글 작성...'/>
-                <img src={send} alt='' className={styles.uploadButton}
-                    onClick={handleCommentNum} //클릭하면 추가되는 기능 추가하기
-                />
             </div>
         </div>
-    </div>
-);
+    );
 };
 
 export default CommentModal;
