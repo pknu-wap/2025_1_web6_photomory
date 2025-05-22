@@ -4,21 +4,21 @@ import com.example.photomory.entity.MyAlbum;
 
 import java.time.LocalDateTime;
 
-public class MyAlbumResponseDto {
+public class GroupResponseDto {
 
-    private Integer myAlbumId;
+    private Integer groupId;
     private String groupName;
     private String groupDescription;
     private LocalDateTime createdAt;
 
-    public MyAlbumResponseDto() {}
+    public GroupResponseDto() {}
 
-    public Integer getMyAlbumId() {
-        return myAlbumId;
+    public Integer getGroupId() {
+        return groupId;
     }
 
-    public void setMyAlbumId(Integer myAlbumId) {
-        this.myAlbumId = myAlbumId;
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
     }
 
     public String getGroupName() {
@@ -45,12 +45,12 @@ public class MyAlbumResponseDto {
         this.createdAt = createdAt;
     }
 
-    public static MyAlbumResponseDto fromEntity(MyAlbum myAlbum) {
-        MyAlbumResponseDto dto = new MyAlbumResponseDto();
-        dto.setMyAlbumId(myAlbum.getMyalbumId());
-        dto.setGroupName(myAlbum.getMyalbumName());          // myalbumName 필드 매칭
-        dto.setGroupDescription(myAlbum.getMyalbumDescription());  // myalbumDescription 필드 매칭
-        dto.setCreatedAt(myAlbum.getMyalbumMakingtime());     // myalbumMakingtime 필드 매칭
+    public static GroupResponseDto fromEntity(MyAlbum myAlbum) {
+        GroupResponseDto dto = new GroupResponseDto();
+        dto.setGroupId(myAlbum.getMyalbumId());
+        dto.setGroupName(myAlbum.getMyalbumName());
+        dto.setGroupDescription(myAlbum.getMyalbumDescription());
+        dto.setCreatedAt(myAlbum.getMyalbumMakingtime());
         return dto;
     }
 }

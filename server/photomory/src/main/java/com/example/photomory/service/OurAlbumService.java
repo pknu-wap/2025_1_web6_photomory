@@ -29,7 +29,7 @@ public class OurAlbumService {
 
     // 그룹 생성
     @Transactional
-    public MyAlbumResponseDto createGroup(GroupCreateRequestDto requestDto, UserEntity user) {
+    public GroupResponseDto createGroup(GroupCreateRequestDto requestDto, UserEntity user) {
         MyAlbum myAlbum = new MyAlbum();
         myAlbum.setMyalbumName(requestDto.getGroupName());
         myAlbum.setMyalbumDescription(requestDto.getGroupDescription());
@@ -41,7 +41,7 @@ public class OurAlbumService {
         member.setUserEntity(user);
         albumMembersRepository.save(member);
 
-        return MyAlbumResponseDto.fromEntity(savedGroup);
+        return GroupResponseDto.fromEntity(savedGroup);
     }
 
     // 그룹 정보 + 구성원 반환
@@ -107,6 +107,11 @@ public class OurAlbumService {
         post.setPostText(requestDto.getPostContent());
         post.setPostDescription(requestDto.getPostDescription() != null ? requestDto.getPostDescription() : "");
         post.setLikesCount(0);
+
+        // --- 여기에 두 줄을 추가해야 합니다 ---
+        post.setLocation(requestDto.getLocation());
+        post.setPostMakingTime(requestDto.getPostTime());
+        // ------------------------------------
 
         if (photoFile != null && !photoFile.isEmpty()) {
             String photoUrl = s3Service.uploadFile(photoFile);

@@ -2,7 +2,9 @@ package com.example.photomory.controller;
 
 import com.example.photomory.dto.*;
 import com.example.photomory.entity.UserEntity;
+import com.example.photomory.security.CustomUserDetails;
 import com.example.photomory.service.OurAlbumService;
+import com.fasterxml.jackson.databind.ObjectMapper; // <--- 이 임포트 추가
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +19,13 @@ import java.util.List;
 public class OurAlbumController {
 
     private final OurAlbumService ourAlbumService;
+    private final ObjectMapper objectMapper; // <--- 이 필드 추가
 
     // 1. 그룹 생성
     @PostMapping("/group")
-    public MyAlbumResponseDto createGroup(@RequestBody GroupCreateRequestDto requestDto,
-                                          @AuthenticationPrincipal UserEntity user) {
+    public GroupResponseDto createGroup(@RequestBody GroupCreateRequestDto requestDto,
+                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        UserEntity user = userDetails.getUser();
         return ourAlbumService.createGroup(requestDto, user);
     }
 
@@ -35,7 +39,8 @@ public class OurAlbumController {
     @PostMapping("/group/{groupId}/album")
     public AlbumResponseDto createAlbum(@PathVariable Long groupId,
                                         @RequestBody AlbumCreateRequestDto requestDto,
-                                        @AuthenticationPrincipal UserEntity user) {
+                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        UserEntity user = userDetails.getUser();
         return ourAlbumService.createAlbum(groupId, requestDto, user);
     }
 
@@ -49,25 +54,38 @@ public class OurAlbumController {
 
     // 5. 게시물 생성 (파일 포함)
     @PostMapping("/album/{albumId}/post")
-    public PostResponseDto createPost(@PathVariable Long albumId, // Integer -> Long
-                                      @RequestPart PostCreateRequestDto requestDto,
-                                      @RequestPart(required = false) MultipartFile photo,
-                                      @AuthenticationPrincipal UserEntity user) throws IOException {
+    public PostResponseDto createPost(@PathVariable Long albumId,
+                                      @RequestPart String requestDtoJson, // DTO를 JSON 문자열로 받습니다.
+                                      @RequestPart(required = false) MultipartFile photo, // 파일은 그대로 MultipartFile로 받습니다.
+                                      @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
+        UserEntity user = userDetails.getUser();
+
+        // JSON 문자열을 PostCreateRequestDto 객체로 변환
+        PostCreateRequestDto requestDto = null;
+        try {
+            requestDto = objectMapper.readValue(requestDtoJson, PostCreateRequestDto.class);
+        } catch (Exception e) {
+            // JSON 파싱 실패 시 처리 (예: BadRequest 예외를 던져 클라이언트에게 알려줌)
+            // 실제 운영 환경에서는 더 구체적인 예외 처리 로직이 필요합니다.
+            throw new IllegalArgumentException("Invalid PostCreateRequestDto JSON: " + e.getMessage(), e);
+        }
+
         return ourAlbumService.createPost(albumId, requestDto, photo, user);
     }
 
     // 6. 게시물 클릭 시 상세 보기 (사진 확대, 댓글, 좋아요 수)
     @GetMapping("/post/{postId}/detail")
-    public PostZoomDetailResponseDto getPostZoomDetail(@PathVariable Long postId) { // Integer -> Long
+    public PostZoomDetailResponseDto getPostZoomDetail(@PathVariable Long postId) {
         return ourAlbumService.getPostZoomDetail(postId);
     }
 
     // 7. 댓글 작성
     @PostMapping("/album/{albumId}/post/{postId}/comment")
-    public CommentResponseDto createComment(@PathVariable Long albumId, // Integer -> Long
-                                            @PathVariable Long postId, // Integer -> Long
+    public CommentResponseDto createComment(@PathVariable Long albumId,
+                                            @PathVariable Long postId,
                                             @RequestBody String text,
-                                            @AuthenticationPrincipal UserEntity user) {
+                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        UserEntity user = userDetails.getUser();
         return ourAlbumService.createComment(albumId, postId, user, text);
     }
 
@@ -80,7 +98,8 @@ public class OurAlbumController {
     // 9. 초대 가능한 친구 목록 조회 (그룹 멤버 제외)
     @GetMapping("/group/{groupId}/invitable-friends")
     public List<UserSummaryDto> getInvitableFriends(@PathVariable Long groupId,
-                                                    @AuthenticationPrincipal UserEntity user) {
+                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
+        UserEntity user = userDetails.getUser();
         return ourAlbumService.getFriendsExcludingGroup(groupId, user.getUserId());
     }
 
@@ -88,8 +107,9 @@ public class OurAlbumController {
     @PostMapping("/group/{groupId}/invite")
     public String inviteToGroup(@PathVariable Long groupId,
                                 @RequestBody List<Long> friendIds,
-                                @AuthenticationPrincipal UserEntity inviter) {
+                                @AuthenticationPrincipal CustomUserDetails userDetails) {
+        UserEntity inviter = userDetails.getUser();
         ourAlbumService.inviteToGroup(groupId, inviter, friendIds);
-        return "친구 초대가 완료되었습니다."; // void 타입이므로 성공 메시지 반환
+        return "친구 초대가 완료되었습니다.";
     }
 }

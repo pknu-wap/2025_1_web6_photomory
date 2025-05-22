@@ -3,25 +3,22 @@ package com.example.photomory.controller;
 import com.example.photomory.dto.LoginRequestDto;
 import com.example.photomory.dto.TokenResponseDto;
 import com.example.photomory.entity.UserEntity;
+import com.example.photomory.security.CustomUserDetails;
 import com.example.photomory.security.JwtTokenProvider;
- import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.CrossOrigin; // 추가 (develop-BE)
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.*; // main
+import org.springframework.web.bind.annotation.*;
 
-
-@CrossOrigin(origins = "https://photomory.o-r.kr", methods = {org.springframework.web.bind.annotation.RequestMethod.POST, org.springframework.web.bind.annotation.RequestMethod.OPTIONS}, allowedHeaders = "*")
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(
+        origins = "https://photomory.o-r.kr",
+        methods = {RequestMethod.POST, RequestMethod.OPTIONS},
+        allowedHeaders = "*"
+)
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -49,7 +46,10 @@ public class AuthController {
 
             System.out.println("✅ [AuthController] 인증 성공: " + authentication.getName());
 
-            UserEntity user = (UserEntity) authentication.getPrincipal();
+            // ✅ 안전하게 CustomUserDetails로 변환
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            UserEntity user = userDetails.getUser();
+
             String userName = user.getUserName();
             String userEmail = user.getUserEmail();
 
@@ -67,4 +67,3 @@ public class AuthController {
         }
     }
 }
-
