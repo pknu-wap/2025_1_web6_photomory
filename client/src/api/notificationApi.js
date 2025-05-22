@@ -76,3 +76,28 @@ export function subscribeToNotifications(token, onMessageCallback) {
 
   return eventSource; // 나중에 수동으로 닫고 싶을 때 사용
 }
+
+//알림 목록 조회 api함수
+export async function notificationList() {
+  const token = localStorage.getItem("accessToken"); // 또는 context 등에서
+
+  try {
+    const response = await fetch("/api/notifications", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("알림 목록 불러오기 실패: " + response.status);
+    }
+
+    const data = await response.json();
+    return data; // 알림 목록 배열
+  } catch (error) {
+    console.error("알림 목록 요청 중 에러:", error);
+    throw error;
+  }
+}
