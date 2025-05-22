@@ -94,6 +94,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-around;
   border-top: 1px solid #eee;
   padding-top: 16px;
   animation: slideUp 0.3s ease-out;
@@ -138,7 +139,6 @@
 .uploadButton:hover {
   cursor: pointer;
   transform: scale(1.1);
-  background-color: #F3F4F6;
 }
 .uploadButton:active{
   transform: scale(0.95);
