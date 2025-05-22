@@ -15,7 +15,7 @@ export async function createMyMemoryAlbum({
   };
 
   try {
-    const response = await fetch("/api/my-albums", {
+    const response = await fetch(`${BASE_URL}/api/my-albums`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -41,7 +41,7 @@ export async function getMyMemoryAlbums() {
   const accessToken = localStorage.getItem("accessToken");
 
   try {
-    const response = await fetch("/api/my-albums/all", {
+    const response = await fetch(`${BASE_URL}/api/my-albums/all`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -76,7 +76,7 @@ export async function updateMyMemoryAlbum(
   };
 
   try {
-    const response = await fetch(`/api/my-albums/${albumId}`, {
+    const response = await fetch(`${BASE_URL}/api/my-albums/${albumId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -102,7 +102,7 @@ export async function deleteMyMemoryAlbum(albumId) {
   const accessToken = localStorage.getItem("accessToken");
 
   try {
-    const response = await fetch(`/api/my-albums/${albumId}`, {
+    const response = await fetch(`${BASE_URL}/api/my-albums/${albumId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -117,6 +117,67 @@ export async function deleteMyMemoryAlbum(albumId) {
     return result;
   } catch (error) {
     console.error("앨범 삭제 중 오류 발생:", error);
+    throw error;
+  }
+}
+
+//나만의 추억 사진 추가 api함수
+export async function addPhotosToMyAlbum(albumId, photos, photoData) {
+  const accessToken = localStorage.getItem("accessToken");
+
+  const formData = new FormData();
+
+  // 이미지 파일들 추가
+  photos.forEach((file) => {
+    formData.append("photos", file);
+  });
+
+  formData.append("photoData", JSON.stringify(photoData));
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/api/my-albums/${albumId}/photos`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`사진 추가 실패: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("사진 추가 중 오류:", error);
+    throw error;
+  }
+}
+
+//나만의 추억 사진 삭제 api함수
+export async function deleteMyAlbumPhoto(photoId) {
+  const accessToken = localStorage.getItem("accessToken");
+
+  try {
+    const response = await fetch(`/api/my-albums/photos/${photoId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`삭제 실패: ${response.status}`);
+    }
+
+    const result = await response.text(); // 서버가 문자열 응답하는 경우
+    return result;
+  } catch (error) {
+    console.error("사진 삭제 중 오류 발생:", error);
     throw error;
   }
 }
