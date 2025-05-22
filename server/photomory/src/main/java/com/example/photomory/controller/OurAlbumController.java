@@ -112,4 +112,5 @@ public class OurAlbumController {
         ourAlbumService.inviteToGroup(groupId, inviter, friendIds);
         return "친구 초대가 완료되었습니다.";
     }
+
 }
