@@ -56,7 +56,7 @@ export async function fetchReceivedFriendRequests(userId) {
   }
 }
 
-//SSE 구독 함수수
+//SSE 구독 함수
 export function subscribeToNotifications(token, onMessageCallback) {
   const url = `${BASE_URL}/api/notifications/subscribe?token=${token}`;
 
