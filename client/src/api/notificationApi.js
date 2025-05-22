@@ -82,7 +82,7 @@ export async function notificationList() {
   const token = localStorage.getItem("accessToken"); // 또는 context 등에서
 
   try {
-    const response = await fetch("/api/notifications", {
+    const response = await fetch(`${BASE_URL}/api/notifications`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -98,6 +98,36 @@ export async function notificationList() {
     return data; // 알림 목록 배열
   } catch (error) {
     console.error("알림 목록 요청 중 에러:", error);
+    throw error;
+  }
+}
+
+//알림 전송 api함수
+export async function sendNotification({ receiverId, message, type }) {
+  const token = localStorage.getItem("accessToken");
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/notifications/send`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        receiverId,
+        message,
+        type,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("알림 전송 실패: " + response.status);
+    }
+
+    const result = await response.json(); // 성공 응답
+    return result;
+  } catch (error) {
+    console.error("알림 전송 중 에러 발생:", error);
     throw error;
   }
 }
