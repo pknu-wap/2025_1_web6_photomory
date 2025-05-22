@@ -40,24 +40,26 @@ public class MyAlbumService {
         MyAlbum saved = myAlbumRepository.save(album);
 
         List<MyPhotoDto> photoDtos = new ArrayList<>();
-        for (MultipartFile file : photos) {
-            String url = s3Service.uploadFile(file);
+        if (photos != null) {
+            for (MultipartFile file : photos) {
+                String url = s3Service.uploadFile(file);
 
-            MyPhoto photo = new MyPhoto();
-            photo.setMyalbum(saved);
-            photo.setMyphotoUrl(url);
-            photo.setMyphotoName(file.getOriginalFilename());
-            photo.setMycomment("");
-            photo.setMyphotoMakingtime(LocalDateTime.now());
-            myPhotoRepository.save(photo);
+                MyPhoto photo = new MyPhoto();
+                photo.setMyalbum(saved);
+                photo.setMyphotoUrl(url);
+                photo.setMyphotoName(file.getOriginalFilename());
+                photo.setMycomment("");
+                photo.setMyphotoMakingtime(LocalDateTime.now());
+                myPhotoRepository.save(photo);
 
-            photoDtos.add(MyPhotoDto.builder()
-                    .myphotoId(photo.getMyphotoId().longValue())
-                    .myphotoUrl(photo.getMyphotoUrl())
-                    .myphotoName(photo.getMyphotoName())
-                    .mycomment(photo.getMycomment())
-                    .myphotoMakingtime(photo.getMyphotoMakingtime())
-                    .build());
+                photoDtos.add(MyPhotoDto.builder()
+                        .myphotoId(photo.getMyphotoId().longValue())
+                        .myphotoUrl(photo.getMyphotoUrl())
+                        .myphotoName(photo.getMyphotoName())
+                        .mycomment(photo.getMycomment())
+                        .myphotoMakingtime(photo.getMyphotoMakingtime())
+                        .build());
+            }
         }
 
         return MyAlbumDetailDto.builder()
@@ -100,6 +102,24 @@ public class MyAlbumService {
         return convertToDto(album);
     }
 
+    public void deleteMyAlbum(Long albumId, UserEntity user) {
+        MyAlbum album = myAlbumRepository.findById(albumId)
+                .orElseThrow(() -> new RuntimeException("앨범을 찾을 수 없습니다."));
+
+        if (!album.getUserId().equals(user.getUserId())) {
+            throw new RuntimeException("삭제 권한이 없습니다.");
+        }
+
+        List<MyPhoto> photos = myPhotoRepository.findByMyalbum(album);
+
+        for (MyPhoto photo : photos) {
+            s3Service.deleteFile(photo.getMyphotoUrl());
+            myPhotoRepository.delete(photo);
+        }
+
+        myAlbumRepository.delete(album);
+    }
+
     private MyAlbumDetailDto convertToDto(MyAlbum album) {
         List<MyPhoto> photoList = myPhotoRepository.findByMyalbum(album);
         List<MyPhotoDto> photoDtos = photoList.stream().map(photo -> MyPhotoDto.builder()
@@ -125,22 +145,37 @@ public class MyAlbumService {
                 .mytags(mytags)
                 .build();
     }
-    public void deleteMyAlbum(Long albumId, UserEntity user) {
+    public MyAlbumDetailDto addPhotosToAlbum(Long albumId, UserEntity user, List<MultipartFile> photos) throws IOException {
         MyAlbum album = myAlbumRepository.findById(albumId)
-                .orElseThrow(() -> new RuntimeException("앨범을 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("앨범이 존재하지 않습니다."));
 
         if (!album.getUserId().equals(user.getUserId())) {
-            throw new RuntimeException("삭제 권한이 없습니다.");
+            throw new RuntimeException("사진 추가 권한이 없습니다.");
         }
 
-        List<MyPhoto> photos = myPhotoRepository.findByMyalbum(album);
+        List<MyPhotoDto> newPhotos = new ArrayList<>();
+        for (MultipartFile file : photos) {
+            String url = s3Service.uploadFile(file);
 
-        for (MyPhoto photo : photos) {
-            s3Service.deleteFile(photo.getMyphotoUrl());
-            myPhotoRepository.delete(photo);
+            MyPhoto photo = new MyPhoto();
+            photo.setMyalbum(album);
+            photo.setMyphotoUrl(url);
+            photo.setMyphotoName(file.getOriginalFilename());
+            photo.setMycomment("");
+            photo.setMyphotoMakingtime(LocalDateTime.now());
+
+            myPhotoRepository.save(photo);
+
+            newPhotos.add(MyPhotoDto.builder()
+                    .myphotoId(photo.getMyphotoId().longValue())
+                    .myphotoUrl(photo.getMyphotoUrl())
+                    .myphotoName(photo.getMyphotoName())
+                    .mycomment(photo.getMycomment())
+                    .myphotoMakingtime(photo.getMyphotoMakingtime())
+                    .build());
         }
 
-        myAlbumRepository.delete(album);
+        return convertToDto(album);
     }
 
 }

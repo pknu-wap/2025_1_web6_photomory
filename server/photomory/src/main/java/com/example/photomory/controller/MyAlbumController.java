@@ -35,7 +35,7 @@ public class MyAlbumController {
             @RequestPart("myalbumName") String myalbumName,
             @RequestPart("myalbumDescription") String myalbumDescription,
             @RequestPart("mytags") String mytags,
-            @RequestPart("photos") List<MultipartFile> photos
+            @RequestPart(value = "photos", required = false) List<MultipartFile> photos
     ) throws IOException {
         List<String> tagList = Arrays.asList(mytags.split(","));
         MyAlbumDetailDto dto = myAlbumService.createMyAlbum(
@@ -70,5 +70,14 @@ public class MyAlbumController {
         return ResponseEntity.ok("앨범이 삭제되었습니다.");
     }
 
+    @PatchMapping(value = "/{albumId}/photos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MyAlbumDetailDto> addPhotos(
+            @PathVariable Long albumId,
+            @AuthenticationPrincipal UserEntity user,
+            @RequestPart("photos") List<MultipartFile> photos
+    ) throws IOException {
+        MyAlbumDetailDto updatedAlbum = myAlbumService.addPhotosToAlbum(albumId, user, photos);
+        return ResponseEntity.ok(updatedAlbum);
+    }
 
 }
