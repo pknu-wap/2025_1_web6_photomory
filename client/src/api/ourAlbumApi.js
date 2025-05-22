@@ -90,3 +90,32 @@ export async function createGroupAlbum(
     throw error;
   }
 }
+
+//우리의 추억 댓글 전송 api함수
+export async function writeComment({ albumId, postId, content }) {
+  const token = localStorage.getItem("accessToken");
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/api/our-album/album/${albumId}/post/${postId}/comment`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // 필요 없다면 제거 가능
+        },
+        body: JSON.stringify(content),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("댓글 작성 실패: " + response.status);
+    }
+
+    const result = await response.json(); // 작성된 댓글 정보
+    return result;
+  } catch (error) {
+    console.error("댓글 작성 중 에러:", error);
+    throw error;
+  }
+}
