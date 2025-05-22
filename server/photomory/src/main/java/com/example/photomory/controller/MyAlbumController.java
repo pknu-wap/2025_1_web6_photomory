@@ -1,9 +1,9 @@
 package com.example.photomory.controller;
 
-import com.example.photomory.dto.MyAlbumDetailDto;
-import com.example.photomory.dto.MyAlbumUpdateRequest;
+import com.example.photomory.dto.*;
 import com.example.photomory.entity.UserEntity;
 import com.example.photomory.service.MyAlbumService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -74,10 +75,33 @@ public class MyAlbumController {
     public ResponseEntity<MyAlbumDetailDto> addPhotos(
             @PathVariable Long albumId,
             @AuthenticationPrincipal UserEntity user,
+            @RequestPart("photoData") String photoDataJson,
             @RequestPart("photos") List<MultipartFile> photos
     ) throws IOException {
-        MyAlbumDetailDto updatedAlbum = myAlbumService.addPhotosToAlbum(albumId, user, photos);
-        return ResponseEntity.ok(updatedAlbum);
+
+        ObjectMapper mapper = new ObjectMapper();
+        MyPhotoUploadRequest[] requests = mapper.readValue(photoDataJson, MyPhotoUploadRequest[].class);
+
+        if (photos.size() != requests.length) {
+            throw new IllegalArgumentException("사진 개수와 photoData 수가 일치하지 않습니다.");
+        }
+
+        List<MyPhotoUploadRequest> photoList = new ArrayList<>();
+        for (int i = 0; i < photos.size(); i++) {
+            requests[i].setFile(photos.get(i));
+            photoList.add(requests[i]);
+        }
+
+        MyAlbumDetailDto updated = myAlbumService.addPhotosToAlbum(albumId, user, photoList);
+        return ResponseEntity.ok(updated);
     }
+    @DeleteMapping("/photos/{photoId}")
+    public ResponseEntity<String> deletePhoto(
+            @PathVariable int photoId,
+            @AuthenticationPrincipal UserEntity user) {
+        myAlbumService.deletePhoto(photoId, user);
+        return ResponseEntity.ok("사진이 삭제되었습니다.");
+    }
+
 
 }

@@ -1,11 +1,7 @@
 package com.example.photomory.service;
 
-import com.example.photomory.dto.MyAlbumDetailDto;
-import com.example.photomory.dto.MyAlbumUpdateRequest;
-import com.example.photomory.dto.MyPhotoDto;
-import com.example.photomory.entity.MyAlbum;
-import com.example.photomory.entity.MyPhoto;
-import com.example.photomory.entity.UserEntity;
+import com.example.photomory.dto.*;
+import com.example.photomory.entity.*;
 import com.example.photomory.repository.MyAlbumRepository;
 import com.example.photomory.repository.MyPhotoRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -120,6 +117,30 @@ public class MyAlbumService {
         myAlbumRepository.delete(album);
     }
 
+    public MyAlbumDetailDto addPhotosToAlbum(Long albumId, UserEntity user, List<MyPhotoUploadRequest> photos) throws IOException {
+        MyAlbum album = myAlbumRepository.findById(albumId)
+                .orElseThrow(() -> new RuntimeException("앨범이 존재하지 않습니다."));
+
+        if (!album.getUserId().equals(user.getUserId())) {
+            throw new RuntimeException("사진 추가 권한이 없습니다.");
+        }
+
+        for (MyPhotoUploadRequest request : photos) {
+            String url = s3Service.uploadFile(request.getFile());
+
+            MyPhoto photo = new MyPhoto();
+            photo.setMyalbum(album);
+            photo.setMyphotoUrl(url);
+            photo.setMyphotoName(request.getName());
+            photo.setMycomment("");
+            photo.setMyphotoMakingtime(LocalDate.parse(request.getDate()).atStartOfDay());
+
+            myPhotoRepository.save(photo);
+        }
+
+        return convertToDto(album);
+    }
+
     private MyAlbumDetailDto convertToDto(MyAlbum album) {
         List<MyPhoto> photoList = myPhotoRepository.findByMyalbum(album);
         List<MyPhotoDto> photoDtos = photoList.stream().map(photo -> MyPhotoDto.builder()
@@ -145,37 +166,15 @@ public class MyAlbumService {
                 .mytags(mytags)
                 .build();
     }
-    public MyAlbumDetailDto addPhotosToAlbum(Long albumId, UserEntity user, List<MultipartFile> photos) throws IOException {
-        MyAlbum album = myAlbumRepository.findById(albumId)
-                .orElseThrow(() -> new RuntimeException("앨범이 존재하지 않습니다."));
+    public void deletePhoto(int photoId, UserEntity user) {
+        MyPhoto photo = myPhotoRepository.findById(photoId)
+                .orElseThrow(() -> new RuntimeException("사진이 존재하지 않습니다."));
 
-        if (!album.getUserId().equals(user.getUserId())) {
-            throw new RuntimeException("사진 추가 권한이 없습니다.");
+        if (!photo.getMyalbum().getUserId().equals(user.getUserId())) {
+            throw new RuntimeException("삭제 권한이 없습니다.");
         }
-
-        List<MyPhotoDto> newPhotos = new ArrayList<>();
-        for (MultipartFile file : photos) {
-            String url = s3Service.uploadFile(file);
-
-            MyPhoto photo = new MyPhoto();
-            photo.setMyalbum(album);
-            photo.setMyphotoUrl(url);
-            photo.setMyphotoName(file.getOriginalFilename());
-            photo.setMycomment("");
-            photo.setMyphotoMakingtime(LocalDateTime.now());
-
-            myPhotoRepository.save(photo);
-
-            newPhotos.add(MyPhotoDto.builder()
-                    .myphotoId(photo.getMyphotoId().longValue())
-                    .myphotoUrl(photo.getMyphotoUrl())
-                    .myphotoName(photo.getMyphotoName())
-                    .mycomment(photo.getMycomment())
-                    .myphotoMakingtime(photo.getMyphotoMakingtime())
-                    .build());
-        }
-
-        return convertToDto(album);
+        s3Service.deleteFile(photo.getMyphotoUrl());
+        myPhotoRepository.delete(photo);
     }
 
 }
