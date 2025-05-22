@@ -112,10 +112,40 @@ export async function writeComment({ albumId, postId, content }) {
       throw new Error("댓글 작성 실패: " + response.status);
     }
 
-    const result = await response.json(); // 작성된 댓글 정보
+    const result = await response.json();
     return result;
   } catch (error) {
     console.error("댓글 작성 중 에러:", error);
+    throw error;
+  }
+}
+
+//초대 가능 친구 목록 불러오기 api함수
+export async function getInvitableFriends(groupId) {
+  const token = localStorage.getItem("accessToken");
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/api/our-album/group/${groupId}/invitable-friends`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        "초대 가능한 친구 목록 불러오기 실패: " + response.status
+      );
+    }
+
+    const data = await response.json(); // 친구 목록 배열
+    return data;
+  } catch (error) {
+    console.error("초대 가능한 친구 조회 중 에러:", error);
     throw error;
   }
 }
