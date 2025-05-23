@@ -21,7 +21,14 @@ import java.util.List;
 public class OurAlbumController {
 
     private final OurAlbumService ourAlbumService;
-    private final ObjectMapper objectMapper; // <--- 이 필드 추가
+    private final ObjectMapper objectMapper;
+
+    // 0. 기본 우리의 추억에서 보내줄 데이터
+    @GetMapping("")
+    public OurAlbumResponseDefaultDto getOurAlbum(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        UserEntity user = userDetails.getUser();
+        return ourAlbumService.getOurAlbumData(user.getUserId());
+    }
 
     // 1. 그룹 생성
     @PostMapping("/group")

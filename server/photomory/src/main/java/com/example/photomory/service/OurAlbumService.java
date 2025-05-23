@@ -18,15 +18,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OurAlbumService {
 
-    private final AlbumRepository albumRepository;
-    private final AlbumMembersRepository albumMembersRepository;
+    private final AlbumRepository albumRepository;               // Album ID: Integer
+    private final AlbumMembersRepository albumMembersRepository; // MyAlbum ID: Integer
     private final FriendRepository friendRepository;
-    private final PostRepository postRepository;
+    private final PostRepository postRepository;                 // Post ID: Integer
     private final CommentRepository commentRepository;
-    private final MyAlbumRepository myAlbumRepository;
+    private final MyAlbumRepository myAlbumRepository;           // MyAlbum ID: Integer
     private final S3Service s3Service;
-    private final UserRepository userRepository;
-    private final TagRepository tagRepository;
+    private final UserRepository userRepository;                 // User ID: Long
 
     // 그룹 생성
     @Transactional
@@ -61,27 +60,20 @@ public class OurAlbumService {
         return GroupFullInfoResponseDto.from(group, members);
     }
 
-    // 앨범 생성 (수정)
+    // 앨범 생성
     @Transactional
     public AlbumResponseDto createAlbum(Long groupId, AlbumCreateRequestDto requestDto, UserEntity user) {
+        Integer groupIdInt = groupId.intValue();
+
         MyAlbum group = myAlbumRepository.findById(groupId)
                 .orElseThrow(() -> new EntityNotFoundException("그룹을 찾을 수 없습니다."));
 
         Album album = new Album();
         album.setAlbumName(requestDto.getAlbumName());
+        album.setAlbumTag(requestDto.getAlbumTag());
         album.setAlbumMakingTime(requestDto.getAlbumMakingTime());
         album.setAlbumDescription(requestDto.getAlbumDescription());
         album.setMyAlbum(group);
-
-        // 해시태그 처리 로직 추가
-        if (requestDto.getAlbumTags() != null && !requestDto.getAlbumTags().isEmpty()) {
-            for (String tagName : requestDto.getAlbumTags()) {
-                // 기존 태그가 있으면 가져오고, 없으면 새로 생성하여 저장
-                Tag tag = tagRepository.findByTagName(tagName)
-                        .orElseGet(() -> tagRepository.save(new Tag(tagName)));
-                album.addTag(tag); // 앨범에 태그 추가 (Album 엔티티에 addTag 메서드 필요)
-            }
-        }
 
         Album savedAlbum = albumRepository.save(album);
         return AlbumResponseDto.fromEntity(savedAlbum);
@@ -116,8 +108,10 @@ public class OurAlbumService {
         post.setPostDescription(requestDto.getPostDescription() != null ? requestDto.getPostDescription() : "");
         post.setLikesCount(0);
 
+        // --- 여기에 두 줄을 추가해야 합니다 ---
         post.setLocation(requestDto.getLocation());
-        post.setMakingTime(requestDto.getPostTime()); // <<< 이 부분을 수정했습니다.
+        post.setPostMakingTime(requestDto.getPostTime());
+        // ------------------------------------
 
         if (photoFile != null && !photoFile.isEmpty()) {
             String photoUrl = s3Service.uploadFile(photoFile);
@@ -128,7 +122,7 @@ public class OurAlbumService {
         return PostResponseDto.fromEntity(savedPost);
     }
 
-    // 게시물 클릭 시 상세 보기 (사진 확대, 댓글) (좋아요 수 제거 반영)
+    // 게시물 클릭 시 상세 보기 (사진 확대, 댓글, 좋아요 수)
     @Transactional(readOnly = true)
     public PostZoomDetailResponseDto getPostZoomDetail(Long postId) {
         Integer postIdInt = postId.intValue();
@@ -171,7 +165,7 @@ public class OurAlbumService {
 
         return posts.stream()
                 .map(post -> new CalendarTagResponseDto(
-                        post.getMakingTime(), // <<< 이 부분을 수정했습니다.
+                        post.getPostMakingTime(),
                         post.getPhotoUrl(),
                         post.getPostDescription()
                 ))
@@ -239,6 +233,8 @@ public class OurAlbumService {
 
         // 그룹 멤버 엔티티 조회
         // groupIdInt (Integer)와 userIdToRemove (Long)를 사용하여 AlbumMembers를 찾습니다.
+        // AlbumMembersRepository에 다음과 같은 쿼리 메서드가 필요할 수 있습니다.
+        // findByMyAlbum_MyalbumIdAndUserEntity_UserId(Integer myalbumId, Long userId)
         AlbumMembers memberToRemove = albumMembersRepository.findByMyAlbum_MyalbumIdAndUserEntity_UserId(groupIdInt, userIdToRemove)
                 .orElseThrow(() -> new EntityNotFoundException("그룹에서 해당 멤버를 찾을 수 없습니다."));
 
