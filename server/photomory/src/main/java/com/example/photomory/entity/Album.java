@@ -1,11 +1,25 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "ALBUM")
+@Table(name = "album")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Album {
 
     @Id
@@ -13,91 +27,50 @@ public class Album {
     @Column(name = "album_id")
     private Integer albumId;
 
-    @Column(name = "album_name", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+
+    @Column(name = "album_name", nullable = false, length = 100)
     private String albumName;
 
-    @Column(name = "album_tag")
-    private String albumTag;
-
-    @Column(name = "album_makingtime", nullable = false)
-    private LocalDateTime albumMakingTime;
-
-    @Column(name = "album_description", nullable = false)
+    @Column(name = "album_description", length = 500)
     private String albumDescription;
 
-    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Post> posts;
+    @Column(name = "album_making_time", nullable = false)
+    private LocalDateTime albumMakingTime;
 
     @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
+    private List<Post> posts = new ArrayList<>();
 
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "album_tags",
+            joinColumns = @JoinColumn(name = "album_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> albumTags = new HashSet<>();
+
+    // ========== 여기를 추가합니다. MyAlbum과의 관계 ==========
+    // Album이 MyAlbum에 속한다면 ManyToOne 관계
+    // MyAlbum 엔티티가 존재하고, DB의 album 테이블에 myalbum_id (또는 group_id) 컬럼이 있다고 가정합니다.
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "myalbum_id")
-    private MyAlbum myAlbum;
+    @JoinColumn(name = "myalbum_id") // DB의 album 테이블에 MyAlbum 엔티티의 ID를 참조하는 FK 컬럼 이름
+    private MyAlbum myAlbum; // 'myAlbum' 필드 이름을 사용합니다.
+    // ===================================================
 
-    // Getter & Setter
-
-    public Integer getAlbumId() {
-        return albumId;
+    // 편의 메서드 (기존에 유지)
+    public void addTag(Tag tag) {
+        this.albumTags.add(tag);
+        if (tag.getAlbums() != null) {
+            tag.getAlbums().add(this);
+        }
     }
 
-    public void setAlbumId(Integer albumId) {
-        this.albumId = albumId;
-    }
-
-    public String getAlbumName() {
-        return albumName;
-    }
-
-    public void setAlbumName(String albumName) {
-        this.albumName = albumName;
-    }
-
-    public String getAlbumTag() {
-        return albumTag;
-    }
-
-    public void setAlbumTag(String albumTag) {
-        this.albumTag = albumTag;
-    }
-
-    public LocalDateTime getAlbumMakingTime() {
-        return albumMakingTime;
-    }
-
-    public void setAlbumMakingTime(LocalDateTime albumMakingTime) {
-        this.albumMakingTime = albumMakingTime;
-    }
-
-    public String getAlbumDescription() {
-        return albumDescription;
-    }
-
-    public void setAlbumDescription(String albumDescription) {
-        this.albumDescription = albumDescription;
-    }
-
-    public List<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public MyAlbum getMyAlbum() {
-        return myAlbum;
-    }
-
-    public void setMyAlbum(MyAlbum myAlbum) {
-        this.myAlbum = myAlbum;
+    public void removeTag(Tag tag) {
+        this.albumTags.remove(tag);
+        if (tag.getAlbums() != null) {
+            tag.getAlbums().remove(this);
+        }
     }
 }

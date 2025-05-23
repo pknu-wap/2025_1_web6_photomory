@@ -2,16 +2,24 @@ package com.example.photomory.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "post")
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Post {
 
     @Id
@@ -19,38 +27,48 @@ public class Post {
     @Column(name = "post_id")
     private Integer postId;
 
-    @Column(name = "post_text", nullable = false)
-    private String postText;
-
-    @Column(name = "likes_count", nullable = false)
-    private Integer likesCount;
-
-    @Column(name = "post_description", nullable = false)
-    private String postDescription;
-
-    @Column(name = "location", nullable = false)
-    private String location;
-
-    @Column(name = "post_making_time", nullable = false)
-    private LocalDateTime postMakingTime;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "album_id", nullable = false)
+    @JoinColumn(name = "album_id")
     private Album album;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Photo> photos;
+    @Column(name = "post_text", length = 500)
+    private String postText;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Tag> tags;
+    @Column(name = "post_description", length = 500)
+    private String postDescription;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Comment> comments;
+    @Column(name = "photo_url", length = 255)
+    private String photoUrl; // Post 엔티티에 직접 photoUrl 필드 존재
 
-    @Column(length = 1000)
-    private String photoUrl;
+    @Column(name = "likes_count", nullable = false)
+    private Integer likesCount = 0;
+
+    @Column(name = "location", length = 255)
+    private String location;
+
+    @Column(name = "making_time", nullable = false)
+    private LocalDateTime makingTime;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    // Post와 Tag의 One-to-Many 관계
+    // Tag 엔티티의 'post' 필드(ManyToOne)에 의해 매핑됩니다.
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Tag> tags = new HashSet<>(); // 이 게시물에 연결된 Tag 레코드들
+
+    // 편의 메서드
+    public void addTag(Tag tag) {
+        this.tags.add(tag);
+        tag.setPost(this); // 태그 레코드에 이 게시물을 연결
+    }
+
+    public void removeTag(Tag tag) {
+        this.tags.remove(tag);
+        tag.setPost(null); // 태그 레코드에서 이 게시물 연결 해제
+    }
 }

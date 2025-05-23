@@ -1,86 +1,64 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "COMMENTS")
+@Table(name = "comment")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
-    private Integer commentId;  // ✅ 고유 ID 필드
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "album_id", nullable = false)
-    private Album album;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    private Integer commentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @Column(name = "comments_text", nullable = false)
-    private String commentsText;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    // Comment가 Album에 직접 연결될 수 있도록 추가 (DTO의 albumId를 위함)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "album_id") // DB의 comment 테이블에 album_id 컬럼이 있어야 합니다.
+    private Album album;
 
-    public Comment() {
+    @Column(name = "comment_text", length = 500)
+    private String commentsText; // DTO와 필드명 일치
+
+    @Column(name = "comment_time", nullable = false) // DB 컬럼명과 일치
+    private LocalDateTime commentTime; // DTO와 타입 일치
+
+    // Comment와 Tag의 One-to-Many 관계
+    // Tag 엔티티의 'comment' 필드(ManyToOne)에 의해 매핑됩니다.
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Tag> tags = new HashSet<>(); // 이 댓글에 연결된 Tag 레코드들
+
+    // 편의 메서드
+    public void addTag(Tag tag) {
+        this.tags.add(tag);
+        tag.setComment(this); // 태그 레코드에 이 댓글을 연결
     }
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    // ✅ Getters & Setters
-    public Integer getCommentId() {
-        return commentId;
-    }
-
-    public void setCommentId(Integer commentId) {
-        this.commentId = commentId;
-    }
-
-    public Album getAlbum() {
-        return album;
-    }
-
-    public void setAlbum(Album album) {
-        this.album = album;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-    public String getCommentsText() {
-        return commentsText;
-    }
-
-    public void setCommentsText(String commentsText) {
-        this.commentsText = commentsText;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public void removeTag(Tag tag) {
+        this.tags.remove(tag);
+        tag.setComment(null); // 태그 레코드에서 이 댓글 연결 해제
     }
 }
