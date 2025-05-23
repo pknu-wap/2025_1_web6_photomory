@@ -74,6 +74,8 @@ align-items: center;
 .ourMemory:active,
 .everyMemory:active {
     transform: translateY(0) scale(0.95);
+    box-shadow: rgba(100, 100, 100, 0.1) 0px 0px 10px 3px;
+
 }
 
 /* 활성화된 메뉴 스타일 */
@@ -115,12 +117,13 @@ align-items: center;
 .signIn:hover,
 .signUp:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .signIn:active,
 .signUp:active {
     transform: translateY(0) scale(0.95);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .headerContainerRight {
