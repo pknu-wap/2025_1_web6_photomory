@@ -1,5 +1,7 @@
-import final_my_album_data from "./final_my_album_data.json";
+import my_album_data_with_updated_photo from "./my_album_data_with_updated_photo_urls.json";
+import { normalizeMyAlbumData } from "./normalizers";
 
+// 정규화 후 리턴
 export function getMyAlbums() {
-  return final_my_album_data;
+  return my_album_data_with_updated_photo.map(normalizeMyAlbumData);
 }
