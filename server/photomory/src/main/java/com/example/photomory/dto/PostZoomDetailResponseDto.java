@@ -16,7 +16,7 @@ public class PostZoomDetailResponseDto {
     private String postText;
     private String postDescription;
     private String photoUrl;
-    private Integer likesCount;
+    // private Integer likesCount; // 좋아요 수 필드 제거
     private List<CommentResponseDto> comments;
 
     public static PostZoomDetailResponseDto from(Post post, List<Comment> comments) {
@@ -25,7 +25,7 @@ public class PostZoomDetailResponseDto {
         dto.setPostText(post.getPostText());
         dto.setPostDescription(post.getPostDescription());
         dto.setPhotoUrl(post.getPhotoUrl());
-        dto.setLikesCount(post.getLikesCount());
+        // dto.setLikesCount(post.getLikesCount()); // 좋아요 수 설정 라인 제거
         dto.setComments(comments.stream()
                 .map(CommentResponseDto::fromEntity)
                 .collect(Collectors.toList()));
