@@ -1,4 +1,5 @@
 const BASE_URL = process.env.REACT_APP_API_URL;
+import { normalizeMyAlbumData } from "../utils/normalizers"; // 정규화 함수 불러오기
 
 //나만의 추억 앨범 생성 api함수
 export async function createMyMemoryAlbum({
@@ -53,7 +54,10 @@ export async function getMyMemoryAlbums() {
     }
 
     const result = await response.json();
-    return result;
+    //정규화 처리
+    const normalized = result.map(normalizeMyAlbumData);
+
+    return normalized;
   } catch (error) {
     console.error("앨범 조회 실패:", error);
     throw error;
