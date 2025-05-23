@@ -167,7 +167,7 @@ function MainPageMain() {
   const [error, setError]= useState();
   const [randomTagText, setRandomTagText]= useState()
   const [randomPosts, setRandomPosts]= useState([])
-  const [isopen, setIsopen]= useState(false);
+  const [isOpen, setIsOpen]= useState(false);
   const [imageForModal, setImageForModal]= useState('')
   console.log(error)
 
@@ -240,14 +240,14 @@ function MainPageMain() {
   const nav = useNavigate();
   const onClickHandle = (event) => nav(event.currentTarget.dataset.value);
 
-  const imageModalOpen = (e, post > { // 모달 안 뜨는 거 수정하기 일부러 오류 냄
-    e.stopPropagation(); // 이벤트 전파 중단
-    setIsopen(true);
+  const imageModalOpen = (e, post)=> {
+    setIsOpen(true);
     setImageForModal(post?.photoUrl || '');
+    e.stopPropagation(); // 이벤트 전파 중단
   };
 
   const imageModalclose=()=>{
-    setIsopen(false);
+    setIsOpen(false);
   }
 
   return (
@@ -264,10 +264,10 @@ function MainPageMain() {
           나만 볼 수 있는 특별한 순간을 안전하게 보관하세요
         </p>
         <div className={styles.myMemoryImageContainer}>
-          <img src={image1} alt="" className={styles.myMemoryImage1}
-          onClick={(e) => imageModalOpen(e, myAlbums[0]?.myphotos[0])}></img>
-          <img src={image2} alt="" className={styles.myMemoryImage2}
-          onClick={(e) => imageModalOpen(e, myAlbums[1]?.myphotos[0])}></img>
+          <img src={myAlbums[0]?.myphotos[0] || image1} alt="" className={styles.myMemoryImage1} //이미지도 가꼬 와야 한다.
+          onClick={(e) => imageModalOpen(e, myAlbums[0]?.myphotos[0] || '')}/>
+          <img src={myAlbums[0]?.myphotos[0] || image2} alt="" className={styles.myMemoryImage2}
+          onClick={(e) => imageModalOpen(e, myAlbums[0]?.myphotos[1] || '')}/>
         </div>
       </div>
       <div
@@ -281,18 +281,10 @@ function MainPageMain() {
           특별한 순간을 다른 사람들과 함께 나누고 소통하세요
         </p>
         <div className={styles.ourMemoryImageContainer}>
-          <img 
-            src={image3} 
-            alt="" 
-            className={styles.ourMemoryImage1}
-            onClick={(e) => imageModalOpen(e, ourAlbums[0]?.posts[0])}
-          ></img>
-          <img 
-            src={image4} 
-            alt="" 
-            className={styles.ourMemoryImage2}
-            onClick={(e) => imageModalOpen(e, ourAlbums[0]?.posts[1])}
-          ></img>
+          <img src={ourAlbums[0]?.posts[0] || image1} alt="" className={styles.ourMemoryImage1}
+          onClick={(e) => imageModalOpen(e, ourAlbums[0]?.posts[0] || '')}/>
+          <img src={ourAlbums[0]?.posts[0] || image2} alt="" className={styles.ourMemoryImage2}
+          onClick={(e) => imageModalOpen(e, ourAlbums[0]?.posts[1] || '')}/>
         </div>
       </div>
       <div className={styles.weeklyMemoryTitleContainer}>
@@ -307,7 +299,7 @@ function MainPageMain() {
       </div>
       <div className={styles.weeklyMemoryContainer1}>
         <img
-          src={weeklyPosts[0]?.photo_url || ''}
+          src={weeklyPosts[0]?.photo_url || ''} 
           alt=""
           className={styles.weeklyMemoryImage1}
           onClick={(e) => imageModalOpen(e, weeklyPosts[0])}
@@ -362,7 +354,7 @@ function MainPageMain() {
         ></img>
         <div className={styles.weeklyMemoryImageText3}>
           <FontAwesomeIcon icon={faTrophy} style={{ color: "#CD7F32" }} className={styles.weeklyMemoryImageTrophy2}/>
-          {randomTagText? randomTagText : '느낌 좋은 사진'} 부문 3등!! by @id
+          {randomTagText? randomTagText : '느낌 좋은 사진'} 부문 3등!! by @{weeklyPosts[2]?.user_name || ''}
         </div>
         <div className={styles.weeklyMemoryLikesContainer2}
         onClick={()=>{
@@ -393,7 +385,7 @@ function MainPageMain() {
         </div>
       </div>
       <DailyPopularTagModal
-      isopen={isopen}
+      isOpen={isOpen}
       onClose={imageModalclose}
       imageForModal={imageForModal}/>
     </div>
