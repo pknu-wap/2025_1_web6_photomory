@@ -39,6 +39,7 @@
     transition: all 0.3s ease;
     cursor: pointer;
     background-color: white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 .myMemoryContainer {
     padding: 10px;
@@ -46,7 +47,6 @@
     border-radius: 6px;
     flex-direction: column;
     align-items: center;
-    display: flex;
 }
 
 .myMemoryText{
@@ -73,9 +73,12 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 80%;
-  height: 80%;
+  width: auto;
+  height: auto;
+  max-width: 80%;
+  max-height: 80%;
   border-radius: 7px;
+  transition: all 0.3s ease;
 }
 
 .icon {
@@ -85,12 +88,8 @@
 .ourMemoryContainer {
     padding: 10px;
     border-radius: 6px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
 }
 .ourMemoryText {
@@ -104,6 +103,7 @@
 }
 
 .ourMemoryImageContainer {
+  position: relative;
   width: 100%;
   height: 100%;
   display: grid;
@@ -118,9 +118,19 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 80%;
-  height: 80%;
+  width: auto;
+  height: auto;
+  max-width: 80%;
+  max-height: 80%;
   border-radius: 7px;
+  transition: all 0.3s ease;
+  outline: none;
+}
+.myMemoryImage1:hover,
+.myMemoryImage2:hover,
+.ourMemoryImage1:hover,
+.ourMemoryImage2:hover{
+  box-shadow: 0 10px 20px rgba(0, 0, 0,0.3);
 }
 
 .weeklyMemoryTitleContainer {
@@ -154,6 +164,8 @@
   grid-template-columns: 1fr;
   padding: 20px;
   align-items: center;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .weeklyMemoryContainer2 {
@@ -163,6 +175,8 @@
   grid-template-rows: 5.5fr 0.5fr 1fr;
   grid-template-columns: 1fr;
   align-items: center;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .weeklyMemoryContainer3 {
@@ -170,6 +184,8 @@
   border-radius: 6px;
   display: grid;
   grid-template-rows: 5.5fr 0.5fr 0.5fr;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .weeklyMemoryLikesContainer1,
@@ -220,6 +236,7 @@
   border-radius: 7px;
   margin-bottom: 5px;
   background-color: rgb(230, 230, 230);
+  transition: all 0.3s ease;
 }
 
 .weeklyMemoryImageText1 {
@@ -278,13 +295,19 @@
 }
 .myMemoryContainer:hover,
 .ourMemoryContainer:hover,
-.morePictureContainer:hover {
+.morePictureContainer:hover,
+.weeklyMemoryImage1:hover,
+.weeklyMemoryImage2:hover,
+.weeklyMemoryImage3:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0,0.3);
 }
-.myMemoryContainer:active,
+.myMemoryContainer:active, 
 .ourMemoryContainer:active,
-.morePictureContainer:active {
+.morePictureContainer:active,
+.weeklyMemoryImage1:active,
+.weeklyMemoryImage2:active,
+.weeklyMemoryImage3:active{
     transform: scale(0.98);
     box-shadow: rgba(100, 100, 100, 0.1) 0px 0px 15px 5px;
 }
