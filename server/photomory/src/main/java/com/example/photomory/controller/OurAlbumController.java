@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.List;
@@ -99,7 +101,6 @@ public class OurAlbumController {
     }
 
 
-
     // 9. 초대 가능한 친구 목록 조회 (그룹 멤버 제외)
     @GetMapping("/group/{groupId}/invitable-friends")
     public List<UserSummaryDto> getInvitableFriends(@PathVariable Long groupId,
@@ -127,6 +128,7 @@ public class OurAlbumController {
         ourAlbumService.removeMemberFromGroup(groupId, userIdToRemove);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 성공 시 204 No Content 반환
     }
+
     // 12. 특정 앨범에서 게시글 삭제
     @DeleteMapping("/album/{albumId}/post/{postId}") // 앨범 ID와 게시글 ID를 모두 받음
     public ResponseEntity<Void> deletePostInAlbum(@PathVariable Long albumId, // 앨범 ID (Long으로 받되, 서비스에서 Integer 변환)
@@ -136,5 +138,13 @@ public class OurAlbumController {
         // 서비스 메소드 호출 시 앨범 ID도 함께 전달
         ourAlbumService.deletePostInAlbum(albumId, postId, currentUser);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+    // 13. 앨범삭제
+    @DeleteMapping("/album/{albumId}") // 앨범 ID만 받음
+    public ResponseEntity<Void> deleteAlbum(@PathVariable Long albumId, // 앨범 ID (Long으로 받되, 서비스에서 Integer 변환)
+                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        UserEntity currentUser = userDetails.getUser();
+        ourAlbumService.deleteAlbum(albumId, currentUser);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204 No Content 반환
     }
 }

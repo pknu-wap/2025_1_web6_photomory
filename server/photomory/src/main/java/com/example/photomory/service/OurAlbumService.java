@@ -159,7 +159,6 @@ public class OurAlbumService {
         postRepository.delete(post);
     }
 
-
     // 게시물 클릭 시 상세 보기 (사진 확대, 댓글, 좋아요 수)
     @Transactional(readOnly = true)
     public PostZoomDetailResponseDto getPostZoomDetail(Long postId) {
@@ -245,6 +244,7 @@ public class OurAlbumService {
             }
         }
     }
+
     @Transactional
     public void removeMemberFromGroup(Long groupId, Long userIdToRemove) {
         Integer groupIdInt = groupId.intValue();
@@ -257,5 +257,40 @@ public class OurAlbumService {
 
         // 멤버 삭제
         albumMembersRepository.delete(memberToRemove);
+    }
+
+    // 앨범 삭제
+    @Transactional
+    public void deleteAlbum(Long albumId, UserEntity currentUser) {
+        // ID 타입 변환 (Long -> Integer)
+        Integer albumIdInt = albumId.intValue();
+
+        // 1. 앨범 존재 여부 확인
+        Album album = albumRepository.findById(albumIdInt)
+                .orElseThrow(() -> new EntityNotFoundException("해당 앨범을 찾을 수 없습니다."));
+
+        // 2. 앨범 삭제 권한 확인 (앨범 생성자만 삭제 가능하도록)
+        if (!album.getMyAlbum().getUserId().equals(currentUser.getUserId())) {
+            throw new IllegalArgumentException("앨범 삭제 권한이 없습니다. (앨범을 생성한 그룹의 관리자만 삭제 가능)");
+        }
+
+        // 3. 앨범에 속한 모든 게시글을 찾아서 삭제 (중요: cascade가 없으면 수동 삭제)
+        List<Post> postsToDelete = postRepository.findByAlbum_AlbumId(albumIdInt);
+
+        for (Post post : postsToDelete) {
+            // 해당 게시글에 달린 모든 댓글 삭제
+            // CommentRepository는 Post ID를 Long으로 받으므로, post.getPostId()를 Long으로 변환 (Post의 ID는 Integer)
+            commentRepository.deleteByPost_PostId(post.getPostId().longValue()); // post.getPostId()가 Integer이므로 longValue() 호출
+
+            // S3에 저장된 사진이 있다면 삭제
+            if (post.getPhotoUrl() != null && !post.getPhotoUrl().isEmpty()) {
+                s3Service.deleteFile(post.getPhotoUrl());
+            }
+            // 게시글 삭제 (PostRepository는 Integer ID를 기대)
+            postRepository.delete(post);
+        }
+
+        // 4. 앨범 자체 삭제
+        albumRepository.delete(album);
     }
 }
