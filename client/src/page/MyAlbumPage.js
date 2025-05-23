@@ -4,6 +4,7 @@ import Container from "../component/common/Container";
 import Calender from "../component/calender/Calender";
 import Header from "../component/common/Header";
 import AddAlbum from "../component/add/AddAlbum";
+import AllAlbumTags from "../component/tag/AllalbumTags";
 import AlbumList from "../component/album/AlbumList";
 import Footer from "../component/common/Footer";
 import privateIcon from "../assets/privateIcon.svg";
@@ -18,6 +19,9 @@ function MyAlbumPage() {
 
   //앨범 제목만 따로 추출한 배열
   const albumTitles = myAlbums.map((album) => album.album_name);
+
+  // 모든 태그 중복 없이 추출
+  const allTags = Array.from(new Set(myAlbums.flatMap((album) => album.tags)));
 
   return (
     <>
@@ -36,13 +40,19 @@ function MyAlbumPage() {
           myAlbums={myAlbums}
         />
 
-        {/* 앨범 추가 오른쪽 영역을 가로 배치 */}
         <div style={{ display: "flex", gap: "24px", marginTop: "32px" }}>
-          <AddAlbum
-            type="private"
-            albumTitles={albumTitles}
-            setMyAlbums={setMyAlbums}
-          />
+          {/* 왼쪽 영역: 앨범 생성 + 태그 */}
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "24px" }}
+          >
+            <AddAlbum
+              type="private"
+              albumTitles={albumTitles}
+              setMyAlbums={setMyAlbums}
+            />
+            <AllAlbumTags tags={allTags} />
+          </div>
+
           {/* 오른쪽 영역 */}
           <div style={{ flex: 1 }}>
             <div
