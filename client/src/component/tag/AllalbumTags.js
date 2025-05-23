@@ -1,23 +1,20 @@
-import React from "react";
+import "./AllalbumTags.css";
 
-function AllAlbumTags({ tags }) {
+function AllAlbumTags({ tags, selectedTags, onTagClick }) {
   return (
-    <div style={{ marginTop: "24px" }}>
-      <h3 style={{ fontSize: "16px", marginBottom: "12px" }}>전체 태그 목록</h3>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+    <div className="allAlbumTagsContainer">
+      <h3 className="allAlbumTagsTitle">전체 태그 목록</h3>
+      <div className="allAlbumTagsList">
         {tags.map((tag) => (
-          <span
+          <button
             key={tag}
-            style={{
-              backgroundColor: "#f0f0f0",
-              color: "#333",
-              padding: "6px 12px",
-              borderRadius: "20px",
-              fontSize: "14px",
-            }}
+            className={`allAlbumTagItem ${
+              selectedTags.includes(tag) ? "active" : ""
+            }`}
+            onClick={() => onTagClick(tag)}
           >
             #{tag}
-          </span>
+          </button>
         ))}
       </div>
     </div>

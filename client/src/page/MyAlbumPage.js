@@ -10,6 +10,23 @@ import Footer from "../component/common/Footer";
 import privateIcon from "../assets/privateIcon.svg";
 function MyAlbumPage() {
   const [myAlbums, setMyAlbums] = useState([]); //나의 앨범 상태
+  const [selectedTags, setSelectedTags] = useState([]); //선택된 태그 배열 상태
+
+  //태그 선택 헨들러
+  const handleTagClick = (tag) => {
+    setSelectedTags(
+      (prev) =>
+        prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag] //이미 선택된 태그 제거 or 태그 추가
+    );
+  };
+
+  //선택된 앨범태그에 따른 앨범 필터링
+  const filteredAlbums =
+    selectedTags.length === 0
+      ? myAlbums
+      : myAlbums.filter((album) =>
+          selectedTags.every((tag) => album.tags.includes(tag))
+        );
 
   //초기 렌더링시 배열로 앨범과 각 사진정보 받기
   useEffect(() => {
@@ -40,6 +57,7 @@ function MyAlbumPage() {
           myAlbums={myAlbums}
         />
 
+        {/* 앨범 추가 오른쪽 영역을 가로 배치 */}
         <div style={{ display: "flex", gap: "24px", marginTop: "32px" }}>
           {/* 왼쪽 영역: 앨범 생성 + 태그 */}
           <div
@@ -50,7 +68,11 @@ function MyAlbumPage() {
               albumTitles={albumTitles}
               setMyAlbums={setMyAlbums}
             />
-            <AllAlbumTags tags={allTags} />
+            <AllAlbumTags
+              tags={allTags}
+              selectedTags={selectedTags}
+              onTagClick={handleTagClick}
+            />
           </div>
 
           {/* 오른쪽 영역 */}
@@ -83,7 +105,7 @@ function MyAlbumPage() {
             <div>
               {/*개인 앨범 목록을 보여주는 컴포넌트*/}
               <AlbumList
-                albums={myAlbums}
+                albums={filteredAlbums}
                 type="private"
                 basePath="/my-album"
               />
