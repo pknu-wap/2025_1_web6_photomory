@@ -41,9 +41,11 @@
   }
 }
 
-.ModalContainer {
+.modalContent {
   width: 100%;
+  max-width: fit-content;
   height: 100%;
+  max-height: fit-content;
   display: flex;
   justify-content: center;
   align-items: center;
