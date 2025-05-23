@@ -50,7 +50,7 @@ public class Post {
     @Column(name = "location", length = 255)
     private String location;
 
-    @Column(name = "making_time", nullable = false)
+    @Column(name = "post_making_time")
     private LocalDateTime makingTime;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)

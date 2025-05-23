@@ -23,13 +23,6 @@ public class OurAlbumController {
     private final OurAlbumService ourAlbumService;
     private final ObjectMapper objectMapper;
 
-    // 0. 기본 우리의 추억에서 보내줄 데이터
-    @GetMapping("")
-    public OurAlbumResponseDefaultDto getOurAlbum(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        UserEntity user = userDetails.getUser();
-        return ourAlbumService.getOurAlbumData(user.getUserId());
-    }
-
     // 1. 그룹 생성
     @PostMapping("/group")
     public GroupResponseDto createGroup(@RequestBody GroupCreateRequestDto requestDto,
@@ -98,11 +91,6 @@ public class OurAlbumController {
         return ourAlbumService.createComment(albumId, postId, user, text);
     }
 
-    // 8. 달력 태그 조회
-    @GetMapping("/group/{groupId}/calendar-tags")
-    public List<CalendarTagResponseDto> getCalendarTags(@PathVariable Long groupId) {
-        return ourAlbumService.getCalendarTags(groupId);
-    }
 
     // 9. 초대 가능한 친구 목록 조회 (그룹 멤버 제외)
     @GetMapping("/group/{groupId}/invitable-friends")

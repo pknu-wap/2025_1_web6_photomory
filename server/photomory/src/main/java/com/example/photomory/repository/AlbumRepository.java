@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AlbumRepository extends JpaRepository<Album, Long> {
+public interface AlbumRepository extends JpaRepository<Album, Integer> {
     // 그룹ID로 앨범 목록 조회
-    List<Album> findByGroupId(Long groupId);
+    List<Album> findByMyAlbum_MyalbumId(Integer groupId);
 }

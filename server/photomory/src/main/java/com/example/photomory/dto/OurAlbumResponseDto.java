@@ -31,19 +31,15 @@ public class OurAlbumResponseDto {
 
     public OurAlbumResponseDto() {}
 
-    // fromEntity 메서드의 시그니처 변경: posts 목록과 UserEntity를 추가로 받습니다.
-    // Album 엔티티는 Posts를 직접 포함하지 않으므로, 서비스에서 조회한 Posts를 넘겨줘야 합니다.
     public static OurAlbumResponseDto fromEntity(Album album, List<Post> posts, UserEntity albumCreator) {
         OurAlbumResponseDto dto = new OurAlbumResponseDto();
         dto.setAlbumId(album.getAlbumId());
         dto.setAlbumName(album.getAlbumName());
         dto.setAlbumDescription(album.getAlbumDescription());
 
-        // album.getAlbumTags()는 Set<Tag>를 반환하므로, 이를 List<String>으로 변환합니다.
-        if (album.getAlbumTags() != null) {
-            dto.setAlbumTags(album.getAlbumTags().stream()
-                    .map(Tag::getTagName)
-                    .collect(Collectors.toList()));
+        // 단일 albumTag를 리스트로 변환 (null 체크 포함)
+        if (album.getAlbumTag() != null && !album.getAlbumTag().isEmpty()) {
+            dto.setAlbumTags(List.of(album.getAlbumTag()));
         } else {
             dto.setAlbumTags(Collections.emptyList());
         }
@@ -69,6 +65,7 @@ public class OurAlbumResponseDto {
 
         return dto;
     }
+
 
     // Getters / Setters (Lombok @Getter/@Setter 사용 시 필요 없음, 하지만 요청에 따라 유지)
     public Integer getAlbumId() { return albumId; }

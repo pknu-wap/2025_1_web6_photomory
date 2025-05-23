@@ -47,9 +47,11 @@ public class OurAlbumService {
     // 그룹 정보 + 구성원 반환
     @Transactional(readOnly = true)
     public GroupFullInfoResponseDto getGroupFullInfo(Long groupId) {
+        // MyAlbum ID가 Integer이므로, Long 타입의 groupId를 Integer로 변환하여 사용합니다.
         Integer groupIdInt = groupId.intValue();
 
-        MyAlbum group = myAlbumRepository.findById(groupId)
+        // 수정: MyAlbum ID는 Integer이므로 groupIdInt를 사용합니다.
+        MyAlbum group = myAlbumRepository.findById(groupIdInt) // 이제 MyAlbumRepository는 Integer를 기대합니다.
                 .orElseThrow(() -> new EntityNotFoundException("그룹을 찾을 수 없습니다."));
 
         List<UserSummaryDto> members = albumMembersRepository.findByMyAlbum_MyalbumId(groupIdInt)
@@ -63,9 +65,11 @@ public class OurAlbumService {
     // 앨범 생성
     @Transactional
     public AlbumResponseDto createAlbum(Long groupId, AlbumCreateRequestDto requestDto, UserEntity user) {
+        // Long 타입의 groupId를 Integer로 변환합니다. MyAlbum ID는 Integer이기 때문입니다.
         Integer groupIdInt = groupId.intValue();
 
-        MyAlbum group = myAlbumRepository.findById(groupId)
+        // 수정: MyAlbumRepository는 Integer ID를 기대하므로 groupIdInt를 사용합니다.
+        MyAlbum group = myAlbumRepository.findById(groupIdInt) // 이제 groupIdInt (Integer)를 사용합니다.
                 .orElseThrow(() -> new EntityNotFoundException("그룹을 찾을 수 없습니다."));
 
         Album album = new Album();
@@ -106,11 +110,9 @@ public class OurAlbumService {
         post.setUser(user);
         post.setPostText(requestDto.getPostContent());
         post.setPostDescription(requestDto.getPostDescription() != null ? requestDto.getPostDescription() : "");
-        post.setLikesCount(0);
 
-        // --- 여기에 두 줄을 추가해야 합니다 ---
         post.setLocation(requestDto.getLocation());
-        post.setPostMakingTime(requestDto.getPostTime());
+        post.setMakingTime(requestDto.getPostTime());
         // ------------------------------------
 
         if (photoFile != null && !photoFile.isEmpty()) {
@@ -154,23 +156,6 @@ public class OurAlbumService {
         return CommentResponseDto.fromEntity(saved);
     }
 
-    @Transactional(readOnly = true)
-    public List<CalendarTagResponseDto> getCalendarTags(Long groupId) {
-        Integer groupIdInt = groupId.intValue();
-
-        MyAlbum group = myAlbumRepository.findById(groupId)
-                .orElseThrow(() -> new EntityNotFoundException("그룹을 찾을 수 없습니다."));
-
-        List<Post> posts = postRepository.findByAlbum_MyAlbum_MyalbumId(groupId);
-
-        return posts.stream()
-                .map(post -> new CalendarTagResponseDto(
-                        post.getPostMakingTime(),
-                        post.getPhotoUrl(),
-                        post.getPostDescription()
-                ))
-                .collect(Collectors.toList());
-    }
 
     // 친구 중에서 그룹에 없는 사람만 필터링하여 초대하기
     @Transactional(readOnly = true)
@@ -202,9 +187,11 @@ public class OurAlbumService {
     // 그룹에 친구 초대
     @Transactional
     public void inviteToGroup(Long groupId, UserEntity inviter, List<Long> friendIds) {
+        // Long 타입의 groupId를 Integer로 변환합니다. MyAlbum ID는 Integer이기 때문입니다.
         Integer groupIdInt = groupId.intValue();
 
-        MyAlbum group = myAlbumRepository.findById(groupId)
+        // 수정: MyAlbumRepository는 Integer ID를 기대하므로 groupIdInt를 사용합니다.
+        MyAlbum group = myAlbumRepository.findById(groupIdInt) // groupId 대신 groupIdInt를 사용합니다.
                 .orElseThrow(() -> new EntityNotFoundException("그룹을 찾을 수 없습니다."));
 
         List<Long> existingMemberUserIds = albumMembersRepository.findByMyAlbum_MyalbumId(groupIdInt)
@@ -227,14 +214,9 @@ public class OurAlbumService {
     public void removeMemberFromGroup(Long groupId, Long userIdToRemove) {
         Integer groupIdInt = groupId.intValue();
 
-        // 그룹 존재 여부 확인 (MyAlbum 엔티티는 Long ID를 사용하므로 Long으로 조회)
-        MyAlbum group = myAlbumRepository.findById(groupId)
+        MyAlbum group = myAlbumRepository.findById(groupIdInt) // groupId 대신 groupIdInt를 사용합니다.
                 .orElseThrow(() -> new EntityNotFoundException("그룹을 찾을 수 없습니다."));
 
-        // 그룹 멤버 엔티티 조회
-        // groupIdInt (Integer)와 userIdToRemove (Long)를 사용하여 AlbumMembers를 찾습니다.
-        // AlbumMembersRepository에 다음과 같은 쿼리 메서드가 필요할 수 있습니다.
-        // findByMyAlbum_MyalbumIdAndUserEntity_UserId(Integer myalbumId, Long userId)
         AlbumMembers memberToRemove = albumMembersRepository.findByMyAlbum_MyalbumIdAndUserEntity_UserId(groupIdInt, userIdToRemove)
                 .orElseThrow(() -> new EntityNotFoundException("그룹에서 해당 멤버를 찾을 수 없습니다."));
 

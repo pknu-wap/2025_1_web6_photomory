@@ -9,6 +9,8 @@ import lombok.Data;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors; // Collectors 임포트 추가
+import java.util.Arrays;
+
 
 import java.time.format.DateTimeFormatter;
 
@@ -27,20 +29,21 @@ public class AlbumWithPostsResponseDto {
     public static AlbumWithPostsResponseDto from(Album album, List<Post> posts) {
         List<PostWithCommentsResponseDto> postDtos = posts.stream()
                 .map(post -> PostWithCommentsResponseDto.fromEntity(post, Collections.emptyList()))
-                .toList();
+                .collect(Collectors.toList());
 
-        // Album 엔티티의 getAlbumTags()에서 List<String>으로 변환
-        List<String> tags = album.getAlbumTags() != null ?
-                album.getAlbumTags().stream()
-                        .map(Tag::getTagName)
-                        .collect(Collectors.toList()) :
-                Collections.emptyList(); // null이 아닌 빈 리스트 반환
+        List<String> tags;
+        if (album.getAlbumTag() != null && !album.getAlbumTag().isEmpty()) {
+            tags = Arrays.stream(album.getAlbumTag().split(","))
+                    .map(String::trim)
+                    .collect(Collectors.toList());
+        } else {
+            tags = Collections.emptyList();
+        }
 
         return AlbumWithPostsResponseDto.builder()
                 .albumId(album.getAlbumId())
                 .albumName(album.getAlbumName())
-                // .albumTag(album.getAlbumTag()) // 이 줄 제거
-                .albumTags(tags) // 수정된 필드와 로직 사용
+                .albumTags(tags)  // 콤마로 구분된 문자열을 리스트로 변환해서 전달
                 .albumDescription(album.getAlbumDescription())
                 .albumMakingTime(album.getAlbumMakingTime() != null
                         ? album.getAlbumMakingTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
