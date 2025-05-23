@@ -57,11 +57,15 @@ function MyAlbumPage() {
           myAlbums={myAlbums}
         />
 
-        {/* 앨범 추가 오른쪽 영역을 가로 배치 */}
         <div style={{ display: "flex", gap: "24px", marginTop: "32px" }}>
           {/* 왼쪽 영역: 앨범 생성 + 태그 */}
           <div
-            style={{ display: "flex", flexDirection: "column", gap: "24px" }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "24px",
+              width: "256px",
+            }}
           >
             <AddAlbum
               type="private"
@@ -108,6 +112,7 @@ function MyAlbumPage() {
                 albums={filteredAlbums}
                 type="private"
                 basePath="/my-album"
+                allAlbumsCount={myAlbums.length}
               />
             </div>
           </div>
