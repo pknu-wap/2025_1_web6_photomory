@@ -75,7 +75,7 @@ public class OurAlbumController {
         return ourAlbumService.createPost(albumId, requestDto, photo, user);
     }
 
-    // 6. 게시물 클릭 시 상세 보기 (사진 확대, 댓글, 좋아요 수)
+    // 6. 게시물 클릭 시 상세 보기 (사진 확대, 댓글)
     @GetMapping("/post/{postId}/detail")
     public PostZoomDetailResponseDto getPostZoomDetail(@PathVariable Long postId) {
         return ourAlbumService.getPostZoomDetail(postId);
@@ -83,13 +83,21 @@ public class OurAlbumController {
 
     // 7. 댓글 작성
     @PostMapping("/album/{albumId}/post/{postId}/comment")
-    public CommentResponseDto createComment(@PathVariable Long albumId,
-                                            @PathVariable Long postId,
-                                            @RequestBody String text,
+    public CommentResponseDto createComment(@PathVariable Integer albumId,
+                                            @PathVariable Integer postId,
+                                            @RequestBody CommentRequestDto requestDto,
                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
         UserEntity user = userDetails.getUser();
-        return ourAlbumService.createComment(albumId, postId, user, text);
+
+        // DTO에 들어온 albumId, postId와 pathVariable이 다르면 예외 처리하는 게 좋음
+        if (!albumId.equals(requestDto.getAlbumId()) || !postId.equals(requestDto.getPostId())) {
+            throw new IllegalArgumentException("Path variables and request body IDs do not match");
+        }
+
+        // userId는 인증된 유저 정보와 비교하거나 무시해도 됨
+        return ourAlbumService.createComment(albumId, postId, user, requestDto.getCommentsText());
     }
+
 
 
     // 9. 초대 가능한 친구 목록 조회 (그룹 멤버 제외)
@@ -110,6 +118,7 @@ public class OurAlbumController {
         return "친구 초대가 완료되었습니다.";
     }
 
+    // 11. 친구 그룹에서 삭제
     @DeleteMapping("/{groupId}/member/{userIdToRemove}")
     public ResponseEntity<Void> removeMemberFromGroup(
             @PathVariable Long groupId,
@@ -117,5 +126,15 @@ public class OurAlbumController {
     ) {
         ourAlbumService.removeMemberFromGroup(groupId, userIdToRemove);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 성공 시 204 No Content 반환
+    }
+    // 12. 특정 앨범에서 게시글 삭제
+    @DeleteMapping("/album/{albumId}/post/{postId}") // 앨범 ID와 게시글 ID를 모두 받음
+    public ResponseEntity<Void> deletePostInAlbum(@PathVariable Long albumId, // 앨범 ID (Long으로 받되, 서비스에서 Integer 변환)
+                                                  @PathVariable Long postId,  // 게시글 ID (Long으로 받되, 서비스에서 Integer 변환)
+                                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
+        UserEntity currentUser = userDetails.getUser();
+        // 서비스 메소드 호출 시 앨범 ID도 함께 전달
+        ourAlbumService.deletePostInAlbum(albumId, postId, currentUser);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

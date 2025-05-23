@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import java.time.LocalDateTime;
 
 import java.io.IOException;
 import java.util.List;
@@ -123,6 +124,41 @@ public class OurAlbumService {
         Post savedPost = postRepository.save(post);
         return PostResponseDto.fromEntity(savedPost);
     }
+    // 특정앨범에서 게시글 삭제
+    @Transactional
+    public void deletePostInAlbum(Long albumId, Long postId, UserEntity currentUser) {
+        // ID 타입 변환 (Long -> Integer)
+        Integer albumIdInt = albumId.intValue();
+        Integer postIdInt = postId.intValue();
+
+        // 1. 앨범 존재 여부 확인 (선택 사항: 앨범 존재 확인이 꼭 필요한지는 요구사항에 따라 다름)
+        Album album = albumRepository.findById(albumIdInt)
+                .orElseThrow(() -> new EntityNotFoundException("해당 앨범을 찾을 수 없습니다."));
+
+        // 2. 게시글 존재 여부 확인
+        Post post = postRepository.findById(postIdInt)
+                .orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다."));
+
+        // 3. 게시글이 해당 앨범에 속하는지 확인
+        // (post.getAlbum().getAlbumId()가 Integer 타입인지 확인 필요)
+        if (!post.getAlbum().getAlbumId().equals(albumIdInt)) {
+            throw new IllegalArgumentException("요청된 게시글이 해당 앨범에 속하지 않습니다.");
+        }
+
+        // 4. 게시글 삭제 권한 확인 (작성자만 삭제 가능하도록)
+        if (!post.getUser().getUserId().equals(currentUser.getUserId())) {
+            throw new IllegalArgumentException("게시글 삭제 권한이 없습니다. (작성자만 삭제 가능)");
+        }
+
+        // 5. S3에 저장된 사진이 있다면 삭제
+        if (post.getPhotoUrl() != null && !post.getPhotoUrl().isEmpty()) {
+            s3Service.deleteFile(post.getPhotoUrl());
+        }
+
+        // 6. 게시글 삭제
+        postRepository.delete(post);
+    }
+
 
     // 게시물 클릭 시 상세 보기 (사진 확대, 댓글, 좋아요 수)
     @Transactional(readOnly = true)
@@ -137,13 +173,10 @@ public class OurAlbumService {
 
     // 댓글 작성
     @Transactional
-    public CommentResponseDto createComment(Long albumId, Long postId, UserEntity user, String text) {
-        Integer albumIdInt = albumId.intValue();
-        Integer postIdInt = postId.intValue();
-
-        Album album = albumRepository.findById(albumIdInt)
+    public CommentResponseDto createComment(Integer albumId, Integer postId, UserEntity user, String text) {
+        Album album = albumRepository.findById(albumId)
                 .orElseThrow(() -> new EntityNotFoundException("앨범을 찾을 수 없습니다."));
-        Post post = postRepository.findById(postIdInt)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
         Comment comment = new Comment();
@@ -152,10 +185,12 @@ public class OurAlbumService {
         comment.setUser(user);
         comment.setCommentsText(text);
 
+        // 이 줄을 추가해야 합니다!
+        comment.setCommentTime(LocalDateTime.now()); // 현재 시간을 설정
+
         Comment saved = commentRepository.save(comment);
         return CommentResponseDto.fromEntity(saved);
     }
-
 
     // 친구 중에서 그룹에 없는 사람만 필터링하여 초대하기
     @Transactional(readOnly = true)
