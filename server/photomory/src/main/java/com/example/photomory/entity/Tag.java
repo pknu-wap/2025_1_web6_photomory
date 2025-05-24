@@ -26,8 +26,7 @@ public class Tag {
     @ManyToMany(mappedBy = "tags")
     private Set<Post> posts = new HashSet<>();
 
-    // 기존에 있던 post, comment ManyToOne 관계 삭제
-
+    // 생성자 추가 (필요에 따라)
     public Tag(String tagName) {
         this.tagName = tagName;
     }
