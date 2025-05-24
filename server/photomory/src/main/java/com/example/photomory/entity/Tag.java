@@ -23,24 +23,12 @@ public class Tag {
     @Column(name = "tag_name", nullable = false)
     private String tagName;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "post_id")
-    private Post post;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "comment_id")
-    private Comment comment;
-
     @ManyToMany(mappedBy = "tags")
-    private Set<Album> albums = new HashSet<>();
+    private Set<Post> posts = new HashSet<>();
+
+    // 기존에 있던 post, comment ManyToOne 관계 삭제
 
     public Tag(String tagName) {
         this.tagName = tagName;
-    }
-
-    public Tag(String tagName, Post post, Comment comment) {
-        this.tagName = tagName;
-        this.post = post;
-        this.comment = comment;
     }
 }

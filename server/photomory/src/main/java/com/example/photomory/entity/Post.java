@@ -54,7 +54,7 @@ public class Post {
 
     @ManyToMany
     @JoinTable(
-            name = "post_tag", // 중간 테이블 이름
+            name = "post_tag",  // 중간 테이블 이름
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
