@@ -1,5 +1,6 @@
-const BASE_URL = process.env.REACT_APP_API_URL;
 import { normalizeMyAlbumData } from "../utils/normalizers"; // 정규화 함수 불러오기
+
+const BASE_URL = process.env.REACT_APP_API_URL;
 
 //나만의 추억 앨범 생성 api함수
 export async function createMyMemoryAlbum({
@@ -126,17 +127,8 @@ export async function deleteMyMemoryAlbum(albumId) {
 }
 
 //나만의 추억 사진 추가 api함수
-export async function addPhotosToMyAlbum(albumId, photos, photoData) {
+export async function addPhotosToMyAlbum(albumId, formData) {
   const accessToken = localStorage.getItem("accessToken");
-
-  const formData = new FormData();
-
-  // 이미지 파일들 추가
-  photos.forEach((file) => {
-    formData.append("photos", file);
-  });
-
-  formData.append("photoData", JSON.stringify(photoData));
 
   try {
     const response = await fetch(
