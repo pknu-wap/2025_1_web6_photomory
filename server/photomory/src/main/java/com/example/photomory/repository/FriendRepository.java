@@ -19,6 +19,4 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     //jy
     boolean existsByFromUserIdAndToUserId(Long fromUserId, Long toUserId);
-
-    
 }

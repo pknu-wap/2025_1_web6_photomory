@@ -1,46 +1,31 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.HashSet;
-import java.util.Set;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "tag")
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "tag_id")
-    private Integer tagId;
+    private Long tagId;
 
-    @Column(name = "tag_name", nullable = false)
+    @Column(nullable = false)
     private String tagName;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "post_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "comment_id")
-    private Comment comment;
-
-    @ManyToMany(mappedBy = "tags")
-    private Set<Album> albums = new HashSet<>();
-
-    public Tag(String tagName) {
+    public void setTagName(String tagName) {
         this.tagName = tagName;
     }
 
-    public Tag(String tagName, Post post, Comment comment) {
-        this.tagName = tagName;
+    public void setPost(Post post) {
         this.post = post;
-        this.comment = comment;
     }
 }

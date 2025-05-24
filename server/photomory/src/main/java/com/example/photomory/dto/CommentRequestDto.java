@@ -8,6 +8,6 @@ import lombok.Setter;
 public class CommentRequestDto {
     private Integer albumId;
     private Integer postId;
-    private Long userId;
+    private Integer userId;
     private String commentsText;
 }

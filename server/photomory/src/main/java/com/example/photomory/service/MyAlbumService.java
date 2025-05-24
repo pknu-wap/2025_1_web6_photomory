@@ -26,7 +26,7 @@ public class MyAlbumService {
     // 앨범 생성
     public MyAlbumDetailDto createMyAlbum(Long userId, String myalbumName, String myalbumDescription, List<MultipartFile> photos, List<String> mytags) throws IOException {
         MyAlbum album = new MyAlbum();
-        album.setUserId(userId);
+        album.setUserId(userId.intValue());
         album.setMyalbumName(myalbumName);
         album.setMyalbumDescription(myalbumDescription);
         album.setMyalbumMakingtime(LocalDateTime.now());
@@ -71,11 +71,7 @@ public class MyAlbumService {
 
     // 앨범 조회
     public MyAlbumDetailDto getMyAlbum(Long myalbumId) {
-        // Long 타입의 myalbumId를 Integer로 변환합니다. MyAlbum ID는 Integer이기 때문입니다.
-        Integer myalbumIdInt = myalbumId.intValue();
-
-        // 수정: MyAlbumRepository는 Integer ID를 기대하므로 myalbumIdInt를 사용합니다.
-        MyAlbum album = myAlbumRepository.findById(myalbumIdInt) // myalbumId 대신 myalbumIdInt를 사용합니다.
+        MyAlbum album = myAlbumRepository.findById(myalbumId)
                 .orElseThrow(() -> new RuntimeException("앨범을 찾을 수 없습니다."));
 
         List<MyPhoto> photoList = myPhotoRepository.findByMyalbum(album);
@@ -95,7 +91,7 @@ public class MyAlbumService {
 
         return MyAlbumDetailDto.builder()
                 .myalbumId(album.getMyalbumId().longValue())
-                .userId(album.getUserId().longValue()) // User ID는 Long인 것이 맞으므로 이대로 둡니다.
+                .userId(album.getUserId().longValue())
                 .myalbumName(album.getMyalbumName())
                 .myalbumDescription(album.getMyalbumDescription())
                 .myalbumMakingtime(album.getMyalbumMakingtime())
