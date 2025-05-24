@@ -52,7 +52,6 @@ public class OurAlbumService {
         // MyAlbum ID가 Integer이므로, Long 타입의 groupId를 Integer로 변환하여 사용합니다.
         Integer groupIdInt = groupId.intValue();
 
-        // 수정: MyAlbum ID는 Integer이므로 groupIdInt를 사용합니다.
         MyAlbum group = myAlbumRepository.findById(groupIdInt) // 이제 MyAlbumRepository는 Integer를 기대합니다.
                 .orElseThrow(() -> new EntityNotFoundException("그룹을 찾을 수 없습니다."));
 
@@ -84,6 +83,7 @@ public class OurAlbumService {
         Album savedAlbum = albumRepository.save(album);
         return AlbumResponseDto.fromEntity(savedAlbum);
     }
+
 
     // 앨범 상세정보 + 포스트 목록 (페이징 적용)
     @Transactional(readOnly = true)
