@@ -1,111 +1,64 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
-import java.io.Serializable;
-import java.util.Objects;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "COMMENTS")
-@IdClass(Comment.CommentId.class)
+@Table(name = "comment")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Comment {
 
     @Id
-    @Column(name = "album_id", nullable = false)
-    private Integer albumId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id")
+    private Integer commentId;
 
-    @MapsId("albumId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "album_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
+
+    // Comment가 Album에 직접 연결될 수 있도록 추가 (DTO의 albumId를 위함)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "album_id") // DB의 comment 테이블에 album_id 컬럼이 있어야 합니다.
     private Album album;
 
-    @Id
-    @Column(name = "post_id", nullable = false)
-    private Integer postId;
+    @Column(name = "comment_text", length = 500)
+    private String commentsText; // DTO와 필드명 일치
 
-    @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    @Column(name = "comment_time", nullable = false) // DB 컬럼명과 일치
+    private LocalDateTime commentTime; // DTO와 타입 일치
 
-    @Column(name = "comments_text", nullable = false)
-    private String commentsText;
+    // Comment와 Tag의 One-to-Many 관계
+    // Tag 엔티티의 'comment' 필드(ManyToOne)에 의해 매핑됩니다.
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Tag> tags = new HashSet<>(); // 이 댓글에 연결된 Tag 레코드들
 
-    @Column(name = "comment_count", nullable = false)
-    private Integer commentCount;
-
-    public Comment() {}
-
-    // getter, setter
-    public Integer getAlbumId() {
-        return albumId;
+    // 편의 메서드
+    public void addTag(Tag tag) {
+        this.tags.add(tag);
+        tag.setComment(this); // 태그 레코드에 이 댓글을 연결
     }
 
-    public void setAlbumId(Integer albumId) {
-        this.albumId = albumId;
-    }
-
-    public Album getAlbum() {
-        return album;
-    }
-
-    public void setAlbum(Album album) {
-        this.album = album;
-    }
-
-    public Integer getPostId() {
-        return postId;
-    }
-
-    public void setPostId(Integer postId) {
-        this.postId = postId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getCommentsText() {
-        return commentsText;
-    }
-
-    public void setCommentsText(String commentsText) {
-        this.commentsText = commentsText;
-    }
-
-    public Integer getCommentCount() {
-        return commentCount;
-    }
-
-    public void setCommentCount(Integer commentCount) {
-        this.commentCount = commentCount;
-    }
-
-    // Composite Key Class
-    public static class CommentId implements Serializable {
-        private Integer albumId;  // Integer로 맞춤
-        private Integer postId;
-
-        public CommentId() {}
-
-        public CommentId(Integer albumId, Integer postId) {
-            this.albumId = albumId;
-            this.postId = postId;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof CommentId)) return false;
-            CommentId that = (CommentId) o;
-            return Objects.equals(albumId, that.albumId) &&
-                    Objects.equals(postId, that.postId);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(albumId, postId);
-        }
+    public void removeTag(Tag tag) {
+        this.tags.remove(tag);
+        tag.setComment(null); // 태그 레코드에서 이 댓글 연결 해제
     }
 }
