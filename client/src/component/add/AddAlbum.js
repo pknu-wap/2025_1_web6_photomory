@@ -36,7 +36,7 @@ function AddAlbum({
   // 새 태그 추가
   const handleAddNewTag = () => {
     const trimmed = newTagInput.trim();
-    //이미 추가된 태그에 포함되지 않았을 때때
+    //이미 추가된 태그에 포함되지 않았을 때
     if (trimmed && !newAlbumData.tags.includes(trimmed)) {
       setNewAlbumData((prev) => ({
         ...prev,
@@ -89,7 +89,6 @@ function AddAlbum({
       album_description,
       album_makingtime: new Date().toISOString().slice(0, 10),
       tags,
-      photos: [],
     };
     //
     if (type === "group") {
