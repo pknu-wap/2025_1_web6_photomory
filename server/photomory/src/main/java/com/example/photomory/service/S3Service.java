@@ -1,5 +1,6 @@
 package com.example.photomory.service;
 
+import com.example.photomory.entity.Photo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -44,9 +45,9 @@ public class S3Service {
         return "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileName;
     }
 
-    public void deleteFile(String imageUrl) {
+    public void deleteFile(String photoUrl) {
         // "https://bucket.s3.region.amazonaws.com/images/abc.jpg" → "images/abc.jpg"
-        String fileKey = imageUrl.substring(imageUrl.indexOf(".com/") + 5);
+        String fileKey = photoUrl.substring(photoUrl.indexOf(".com/") + 5);
 
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
                 .bucket(bucket)
