@@ -25,6 +25,14 @@ public class OurAlbumController {
     private final OurAlbumService ourAlbumService;
     private final ObjectMapper objectMapper;
 
+    // 0. 기본 페이지 데이터
+    @GetMapping // /api/our-album 에 대한 GET 요청 처리
+    public ResponseEntity<List<OurAlbumResponseDefaultDto>> getAllUserGroupsDefaultData(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        UserEntity user = userDetails.getUser();
+        List<OurAlbumResponseDefaultDto> userGroupsDetail = ourAlbumService.getAllGroupsDetailForUser(user.getUserId());
+        return ResponseEntity.ok(userGroupsDetail);
+    }
+
     // 1. 그룹 생성
     @PostMapping("/group")
     public GroupResponseDto createGroup(@RequestBody GroupCreateRequestDto requestDto,

@@ -71,6 +71,4 @@ public class OurAlbumResponseDefaultDto {
         private Long userId;
         private String commentText;
     }
-
-    // --- 중첩 클래스 정의 끝 ---
 }

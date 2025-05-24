@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import java.io.IOException;
 import java.util.List;
@@ -292,5 +293,87 @@ public class OurAlbumService {
 
         // 4. 앨범 자체 삭제
         albumRepository.delete(album);
+    }
+
+    // 우리의 추억 페이지 기본 데이터 반환
+    @Transactional(readOnly = true)
+    public List<OurAlbumResponseDefaultDto> getAllGroupsDetailForUser(Long userId) {
+        // 1. 해당 사용자가 멤버로 속한 모든 MyAlbum (그룹) 조회
+        List<AlbumMembers> albumMemberships = albumMembersRepository.findByUserEntity_UserId(userId);
+
+        List<OurAlbumResponseDefaultDto> allGroupDetails = new ArrayList<>();
+
+        for (AlbumMembers membership : albumMemberships) {
+            MyAlbum myAlbum = membership.getMyAlbum();
+            Integer groupIdInt = myAlbum.getMyalbumId();
+
+            // 1.1. 그룹 멤버 정보 가져오기
+            List<OurAlbumResponseDefaultDto.Member> membersDto = albumMembersRepository.findByMyAlbum_MyalbumId(groupIdInt)
+                    .stream()
+                    .map(member -> OurAlbumResponseDefaultDto.Member.builder()
+                            .userId(member.getUserEntity().getUserId())
+                            .userName(member.getUserEntity().getUserName())
+                            .userPhotourl(member.getUserEntity().getUserPhotourl())
+                            .build())
+                    .collect(Collectors.toList());
+
+            // 1.2. 그룹에 속한 모든 앨범 정보 가져오기
+            // AlbumRepository에 findByMyAlbum_MyalbumId(Integer myAlbumId) 메소드가 필요합니다.
+            List<Album> albums = albumRepository.findByMyAlbum_MyalbumId(groupIdInt);
+
+            List<OurAlbumResponseDefaultDto.Album> albumsDto = new ArrayList<>();
+            for (Album album : albums) {
+                // 1.2.1. 각 앨범에 속한 게시글(사진) 정보 가져오기
+                List<Post> posts = postRepository.findByAlbum_AlbumId(album.getAlbumId());
+
+                List<OurAlbumResponseDefaultDto.Photo> photosDto = posts.stream()
+                        .map(post -> OurAlbumResponseDefaultDto.Photo.builder()
+                                .photoId(post.getPostId() != null ? post.getPostId().longValue() : null) // Integer -> Long
+                                .photoUrl(post.getPhotoUrl())
+                                .photoName(post.getPostDescription()) // postDescription을 photo_name으로 사용
+                                .postId(post.getPostId() != null ? post.getPostId().longValue() : null) // Integer -> Long
+                                .photoMakingtime(post.getMakingTime() != null ? post.getMakingTime().toLocalDate().toString() : null) // LocalDateTime -> String
+                                .build())
+                        .collect(Collectors.toList());
+
+                // 1.2.2. 각 앨범에 속한 모든 댓글 정보 가져오기
+                List<Long> postIdsInAlbum = posts.stream()
+                        .map(Post::getPostId)
+                        .map(Integer::longValue) // PostId는 Integer, CommentRepository는 Long을 받으므로 변환
+                        .collect(Collectors.toList());
+
+                List<Comment> commentsInAlbum = new ArrayList<>();
+                if (!postIdsInAlbum.isEmpty()) {
+                    commentsInAlbum = commentRepository.findByPost_PostIdIn(postIdsInAlbum);
+                }
+
+                List<OurAlbumResponseDefaultDto.Comment> commentsDto = commentsInAlbum.stream()
+                        .map(comment -> OurAlbumResponseDefaultDto.Comment.builder()
+                                .albumId(comment.getAlbum() != null ? comment.getAlbum().getAlbumId().longValue() : null) // Integer -> Long
+                                .photoId(comment.getPost() != null ? comment.getPost().getPostId().longValue() : null) // Integer -> Long
+                                .userId(comment.getUser() != null ? comment.getUser().getUserId() : null)
+                                .commentText(comment.getCommentsText())
+                                .build())
+                        .collect(Collectors.toList());
+
+                albumsDto.add(OurAlbumResponseDefaultDto.Album.builder()
+                        .albumId(album.getAlbumId() != null ? album.getAlbumId().longValue() : null) // Integer -> Long
+                        .albumName(album.getAlbumName())
+                        .albumDescription(album.getAlbumDescription())
+                        .albumTag(album.getAlbumTag())
+                        .albumMakingtime(album.getAlbumMakingTime() != null ? album.getAlbumMakingTime().toLocalDate().toString() : null) // LocalDateTime -> String
+                        .photos(photosDto)
+                        .comments(commentsDto)
+                        .build());
+            }
+
+            allGroupDetails.add(OurAlbumResponseDefaultDto.builder()
+                    .groupId(myAlbum.getMyalbumId() != null ? myAlbum.getMyalbumId().longValue() : null) // Integer -> Long
+                    .groupName(myAlbum.getMyalbumName())
+                    .members(membersDto)
+                    .albums(albumsDto)
+                    .build());
+        }
+        return allGroupDetails;
     }
 }
