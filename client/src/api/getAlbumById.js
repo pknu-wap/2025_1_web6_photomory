@@ -1,6 +1,7 @@
 import final_group_album_data from "./final_group_album_data";
 import my_album_data_with_updated_photo from "./my_album_data_with_updated_photo_urls.json";
 import { normalizeMyAlbumData } from "../utils/normalizers";
+// import { getMyMemoryAlbums } from "./myAlbumApi";
 
 // album_id + type을 받아서 앨범 찾아오는 함수
 export default function getAlbumById(album_id, type, group_id) {
@@ -31,6 +32,16 @@ export default function getAlbumById(album_id, type, group_id) {
       };
     }
   }
+
+  // TODO: 서버 연동이 완료되면 아래처럼 수정 예정
+  // const allAlbums = await getMyMemoryAlbums();
+  // const myAlbum = allAlbums.find((a) => a.album_id === album_id);
+  // if (myAlbum) {
+  //   return {
+  //     album: myAlbum,
+  //     description: myAlbum.album_description,
+  //   };
+  // }
 
   return null;
 }
