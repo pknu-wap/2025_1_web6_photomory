@@ -1,13 +1,35 @@
 package com.example.photomory.dto;
 
+import com.example.photomory.entity.Comment;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class EveryCommentDto {
-    private Integer userId;
+    private Integer commentId;
+    private Integer postId;
+    private Integer albumId;
+    private String comment;
     private String userName;
+    private Long userId;
     private String userPhotourl;
-    private String commentText;
+    private LocalDateTime createdAt;
+
+    public static EveryCommentDto from(Comment comment, String userName) {
+        return EveryCommentDto.builder()
+                .commentId(comment.getCommentId())
+                .postId(comment.getPostId())
+                .albumId(comment.getAlbumId())
+                .comment(comment.getCommentsText())
+                .createdAt(comment.getCreatedAt())
+                .userName(userName)
+                .build();
+    }
 }

@@ -1,32 +1,25 @@
 package com.example.photomory.service;
 
-import com.example.photomory.dto.CommentRequestDto;
-import com.example.photomory.entity.Album;
 import com.example.photomory.entity.Comment;
-import com.example.photomory.repository.AlbumRepository;
-import com.example.photomory.repository.CommentRepository;
-import lombok.RequiredArgsConstructor;
+import com.example.photomory.repository.EveryCommentRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-@RequiredArgsConstructor
 public class EveryCommentService {
 
-    private final CommentRepository commentRepository;
-    private final AlbumRepository albumRepository;
+    private final EveryCommentRepository commentRepository;
 
-    public void addComment(CommentRequestDto dto) {
-        Album album = albumRepository.findById(dto.getAlbumId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 앨범이 존재하지 않습니다."));
+    public EveryCommentService(EveryCommentRepository commentRepository) {
+        this.commentRepository = commentRepository;
+    }
 
-        Comment comment = new Comment();
-        comment.setAlbumId(dto.getAlbumId());
-        comment.setPostId(dto.getPostId());
-        comment.setAlbum(album);
-        comment.setUserId(dto.getUserId());
-        comment.setCommentsText(dto.getCommentsText());
-        comment.setCommentCount(1);
+    public Comment saveComment(Comment comment) {
+        return commentRepository.save(comment);
+    }
 
-        commentRepository.save(comment);
+    public List<Comment> getCommentsByPostId(Integer postId) {
+        return commentRepository.findByPostId(postId);
     }
 }

@@ -1,6 +1,8 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
 @Table(name = "photo")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Photo {
 
     @Id

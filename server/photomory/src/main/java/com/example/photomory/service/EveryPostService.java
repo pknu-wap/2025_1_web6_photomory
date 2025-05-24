@@ -1,6 +1,7 @@
 package com.example.photomory.service;
 
 import com.example.photomory.dto.EveryPostResponseDto;
+import com.example.photomory.dto.EveryPostRequestDto;
 import com.example.photomory.dto.EveryCommentDto;
 import com.example.photomory.entity.Photo;
 import com.example.photomory.entity.Post;
@@ -41,6 +42,7 @@ public class EveryPostService {
             dto.setPostDescription(post.getPostDescription());
             dto.setLikesCount(post.getLikesCount());
             dto.setLocation(post.getLocation());
+            dto.setCreatedAt(post.getCreatedAt());
 
 
             Photo photo = photoRepository.findByPost(post).orElse(null);
@@ -55,23 +57,59 @@ public class EveryPostService {
 
             List<EveryCommentDto> commentDtos = commentRepository.findByPostId(post.getPostId()).stream()
                     .map(comment -> {
-                        EveryCommentDto cdto = new EveryCommentDto();
-
-
                         Long commenterId = comment.getUserId() != null ? comment.getUserId().longValue() : null;
-                        UserEntity commenter = commenterId != null ? userRepository.findById(commenterId).orElse(null) : null;
+                        UserEntity commenter = commenterId != null
+                                ? userRepository.findById(commenterId).orElse(null)
+                                : null;
 
-                        cdto.setUserId(comment.getUserId());
-                        cdto.setUserName(commenter != null ? commenter.getUserName() : "알 수 없음");
-                        cdto.setUserPhotourl(commenter != null ? commenter.getUserPhotourl() : null);
-                        cdto.setCommentText(comment.getCommentsText());
-                        return cdto;
-                    }).toList();
+                        return EveryCommentDto.builder()
+                                .userId(commenterId)
+                                .userName(commenter != null ? commenter.getUserName() : "알 수 없음")
+                                .userPhotourl(commenter != null ? commenter.getUserPhotourl() : null)
+                                .comment(comment.getCommentsText())
+                                .createdAt(comment.getCreatedAt())  // createdAt이 comment 엔티티에 있어야 함
+                                .build();
+                    })
+                    .toList();
 
             dto.setComments(commentDtos);
             dto.setCommentCount(commentDtos.size());
 
+
             return dto;
         }).toList();
     }
+    public void createPost(EveryPostRequestDto dto) {
+        UserEntity user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+
+
+        Post post = Post.builder()
+                .user(user)
+                .postText(dto.getPostText())
+                .postDescription(dto.getPostDescription())
+                .location(dto.getLocation())
+                .likesCount(0)
+                .build();
+        postRepository.save(post);
+
+        Photo photo = Photo.builder()
+                .post(post)
+                .photoUrl(dto.getPhotoUrl())
+                .photoName(dto.getPhotoName())
+                .photoComment(dto.getPhotoComment())
+                .photoMakingTime(dto.getPhotoMakingTime())
+                .build();
+        photoRepository.save(photo);
+
+        for (String tagName : dto.getTags()) {
+            Tag tag = Tag.builder()
+                    .post(post)
+                    .tagName(tagName)
+                    .build();
+            tagRepository.save(tag);
+        }
+    }
+
+
 }
