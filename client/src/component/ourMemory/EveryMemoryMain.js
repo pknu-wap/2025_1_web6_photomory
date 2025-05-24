@@ -462,69 +462,57 @@ export default function EveryMemoryMain(){
                     <span className={styles.todayTag}>오늘의 태그 인기 사진</span>
                 </div>
                 <div className={styles.todayTagAllContainer}>
-                    <div className={styles.forModalContainer}
-                        onClick={() => {
-                            handleImageClick(dailyPosts[nextPage[0]]);
-                        }}>
+                    <div className={styles.forModalContainer}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeNum={handleLikeNum}
                             handleCommentClickForModal={handleCommentClickForModal}
+                            handleImageClick={()=>{handleImageClick(dailyPosts[nextPage[0]])}}
                         />
                     </div>
                     {/*-------*/}
-                    <div className={styles.forModalContainer}
-                        onClick={() => {
-                            handleImageClick(dailyPosts[nextPage[0]]);
-                        }}>
+                    <div className={styles.forModalContainer}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeNum={handleLikeNum}
                             handleCommentClickForModal={handleCommentClickForModal}
+                            handleImageClick={()=>{handleImageClick(dailyPosts[nextPage[0]])}}
                         />
                     </div>
                     {/*--------*/}
-                    <div className={styles.forModalContainer}
-                        onClick={() => {
-                            handleImageClick(dailyPosts[nextPage[0]]);
-                        }}>
+                    <div className={styles.forModalContainer}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeNum={handleLikeNum}
                             handleCommentClickForModal={handleCommentClickForModal}
+                            handleImageClick={()=>{handleImageClick(dailyPosts[nextPage[0]])}}
                         />
                     </div>
                     {/*--------*/}
-                    <div className={styles.forModalContainer}
-                        onClick={() => {
-                            handleImageClick(dailyPosts[nextPage[0]]);
-                        }}>
+                    <div className={styles.forModalContainer}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeNum={handleLikeNum}
                             handleCommentClickForModal={handleCommentClickForModal}
+                            handleImageClick={()=>{handleImageClick(dailyPosts[nextPage[0]])}}
                         />
                     </div>
                     {/*--------*/}
-                    <div className={styles.forModalContainer}
-                        onClick={() => {
-                            handleImageClick(dailyPosts[nextPage[0]]);
-                        }}>
+                    <div className={styles.forModalContainer}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeNum={handleLikeNum}
                             handleCommentClickForModal={handleCommentClickForModal}
+                            handleImageClick={()=>{handleImageClick(dailyPosts[nextPage[0]])}}
                         />
                     </div>
                     {/*--------*/}
-                    <div className={styles.forModalContainer}
-                        onClick={() => {
-                            handleImageClick(dailyPosts[nextPage[0]]);
-                        }}>
+                    <div className={styles.forModalContainer}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeNum={handleLikeNum}
                             handleCommentClickForModal={handleCommentClickForModal}
+                            handleImageClick={()=>{handleImageClick(dailyPosts[nextPage[0]])}}
                         />
                     </div>
                     {/*--------*/}

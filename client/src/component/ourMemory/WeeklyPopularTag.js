@@ -14,13 +14,13 @@ export default function WeeklyPopularTag({
 
 {
   return (
-    <div className={styles.weeklyTagContainer}
-      onClick={()=>{
-        handleImageClick(post)
-    }}>
+    <div className={styles.weeklyTagContainer}>
       <div
         className={styles.weeklyTagImage}
         style={{ backgroundImage: `url(${post?.photo_url || { emptyImage }})` }}
+        onClick={()=>{
+          handleImageClick(post)
+        }}
       ></div>
       <div className={styles.forPadding}>
         <img src={trophy} alt="" className={styles.trophyIcon}></img>
@@ -30,11 +30,8 @@ export default function WeeklyPopularTag({
           <div
             className={styles.userImage}
             style={{
-              backgroundImage: `url(${
-              post.user_photourl || { defaultProfileIcon }
-              })`,
-            }}
-          ></div>
+              backgroundImage: `url(${post.user_photourl || { defaultProfileIcon }})`,
+            }}></div>
           <div className={styles.userName}>{post.user_name}</div>
         </div>
         <div className={styles.forFlexweeklyTag2}

@@ -7,13 +7,14 @@ export default function DailyPopularTag({
   post,
   handleLikeNum,
   handleCommentClickForModal,
+  handleImageClick
 }) {
   return (
     <div className={styles.todayTagContainer}>
       <span
         className={styles.todayTagImage}
         style={{ backgroundImage: `url(${post?.photo_url || { emptyImage }})` }}
-      ></span>
+        onClick={handleImageClick}></span>
       <div className={styles.forFlexTodayTag1}>
         <div className={styles.forFlexTodayTag2}>
           {/*여기 아이콘은 빼야 할 듯*/}
