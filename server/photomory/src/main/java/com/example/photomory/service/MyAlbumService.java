@@ -27,6 +27,7 @@ public class MyAlbumService {
 
         MyAlbum album = new MyAlbum();
         album.setUserId(user.getUserId());
+
         album.setMyalbumName(myalbumName);
         album.setMyalbumDescription(myalbumDescription);
         album.setMyalbumMakingtime(LocalDateTime.now());
@@ -71,7 +72,11 @@ public class MyAlbumService {
     }
 
     public MyAlbumDetailDto getMyAlbum(Long myalbumId) {
-        MyAlbum album = myAlbumRepository.findById(myalbumId)
+        // Long 타입의 myalbumId를 Integer로 변환합니다. MyAlbum ID는 Integer이기 때문입니다.
+        Integer myalbumIdInt = myalbumId.intValue();
+
+        // 수정: MyAlbumRepository는 Integer ID를 기대하므로 myalbumIdInt를 사용합니다.
+        MyAlbum album = myAlbumRepository.findById(myalbumIdInt) // myalbumId 대신 myalbumIdInt를 사용합니다.
                 .orElseThrow(() -> new RuntimeException("앨범을 찾을 수 없습니다."));
         return convertToDto(album);
     }
@@ -158,7 +163,7 @@ public class MyAlbumService {
 
         return MyAlbumDetailDto.builder()
                 .myalbumId(album.getMyalbumId().longValue())
-                .userId(album.getUserId().longValue())
+                .userId(album.getUserId().longValue()) // User ID는 Long인 것이 맞으므로 이대로 둡니다.
                 .myalbumName(album.getMyalbumName())
                 .myalbumDescription(album.getMyalbumDescription())
                 .myalbumMakingtime(album.getMyalbumMakingtime())

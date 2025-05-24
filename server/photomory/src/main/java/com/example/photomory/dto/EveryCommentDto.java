@@ -13,10 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EveryCommentDto {
-    private Integer commentId;
-    private Integer postId;
-    private Integer albumId;
-    private String comment;
     private String userName;
     private Long userId;
     private String userPhotourl;

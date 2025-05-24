@@ -8,4 +8,5 @@ import java.util.List;
 public interface MyAlbumRepository extends JpaRepository<MyAlbum, Long> {
 
     List<MyAlbum> findByUserId(Long userId);
+
 }

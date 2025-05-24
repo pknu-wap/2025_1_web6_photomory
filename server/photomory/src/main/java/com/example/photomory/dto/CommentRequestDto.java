@@ -8,7 +8,7 @@ import lombok.Setter;
 public class CommentRequestDto {
     private Integer albumId;
     private Integer postId;
-    private Integer userId;
+    private Long userId;
     private String commentsText;
     private Integer commentCount;  // 추가된 필드
 }

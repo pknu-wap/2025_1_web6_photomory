@@ -30,8 +30,7 @@ public class NotificationController {
         UserEntity user = userRepository.findByUserEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        int userIdInt = user.getUserId();
-        Long userId = Integer.toUnsignedLong(userIdInt); // int → Long 변환
+        Long userId = user.getUserId();  // 바로 Long 타입으로 받기
 
         return notificationService.subscribe(userId);
     }
@@ -49,8 +48,7 @@ public class NotificationController {
         UserEntity user = userRepository.findByUserEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        int userIdInt = user.getUserId();
-        Long userId = Integer.toUnsignedLong(userIdInt);
+        Long userId = user.getUserId();  // 바로 Long 타입으로 받기
 
         return notificationService.getNotificationsAndMarkAllRead(userId);
     }

@@ -10,41 +10,21 @@ import java.util.Objects;
 public class AlbumMembers {
 
     @Id
-    @Column(name = "user_id", insertable = false, updatable = false)
-    private Integer userId;
-
-    @Id
-    @Column(name = "group_id", insertable = false, updatable = false)
-    private Integer groupId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userEntity;
 
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
     private MyAlbum myAlbum;
 
+
+
     // 기본 생성자
     public AlbumMembers() {}
 
-    // getter/setter
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Integer getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Integer groupId) {
-        this.groupId = groupId;
-    }
-
+    // Getter / Setter
     public UserEntity getUserEntity() {
         return userEntity;
     }
@@ -61,16 +41,16 @@ public class AlbumMembers {
         this.myAlbum = myAlbum;
     }
 
-    // Composite key class
+    // 복합키 클래스
     public static class AlbumMembersId implements Serializable {
-        private Integer userId;
-        private Integer groupId;
+        private Long userEntity;   // UserEntity PK 타입과 일치
+        private Integer myAlbum;   // MyAlbum PK 타입과 일치
 
         public AlbumMembersId() {}
 
-        public AlbumMembersId(Integer userId, Integer groupId) {
-            this.userId = userId;
-            this.groupId = groupId;
+        public AlbumMembersId(Long userEntity, Integer myAlbum) {
+            this.userEntity = userEntity;
+            this.myAlbum = myAlbum;
         }
 
         @Override
@@ -78,13 +58,13 @@ public class AlbumMembers {
             if (this == o) return true;
             if (!(o instanceof AlbumMembersId)) return false;
             AlbumMembersId that = (AlbumMembersId) o;
-            return Objects.equals(userId, that.userId) &&
-                    Objects.equals(groupId, that.groupId);
+            return Objects.equals(userEntity, that.userEntity) &&
+                    Objects.equals(myAlbum, that.myAlbum);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(userId, groupId);
+            return Objects.hash(userEntity, myAlbum);
         }
     }
 }

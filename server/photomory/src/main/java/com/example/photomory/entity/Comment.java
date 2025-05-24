@@ -1,11 +1,25 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "COMMENTS")
+@Table(name = "comment")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Comment {
 
     @Id
@@ -13,39 +27,34 @@ public class Comment {
     @Column(name = "comment_id")
     private Integer commentId;
 
-    @Column(name = "album_id", nullable = false)
-    private Integer albumId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
-    @Column(name = "post_id", nullable = false)
-    private Integer postId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
-    @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "album_id")
+    private Album album;
 
-    @Column(name = "comments_text", nullable = false)
-    private String commentsText;
+    @Column(name = "comment_text", length = 500)
+    private String commentsText; 
 
-    @Column(name = "comment_count", nullable = false)
-    private Integer commentCount;
+    @Column(name = "comment_time", nullable = false) 
+    private LocalDateTime commentTime; 
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Tag> tags = new HashSet<>();
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    // 편의 메서드
+    public void addTag(Tag tag) {
+        this.tags.add(tag);
+        tag.setComment(this); // 태그 레코드에 이 댓글을 연결
+    }
 
-    public Comment() {}
-
-    // Getter & Setter
-    public Integer getCommentId() { return commentId; }
-    public void setCommentId(Integer commentId) { this.commentId = commentId; }
-    public Integer getAlbumId() { return albumId; }
-    public void setAlbumId(Integer albumId) { this.albumId = albumId; }
-    public Integer getPostId() { return postId; }
-    public void setPostId(Integer postId) { this.postId = postId; }
-    public Integer getUserId() { return userId; }
-    public void setUserId(Integer userId) { this.userId = userId; }
-    public String getCommentsText() { return commentsText; }
-    public void setCommentsText(String commentsText) { this.commentsText = commentsText; }
-    public Integer getCommentCount() { return commentCount; }
-    public void setCommentCount(Integer commentCount) { this.commentCount = commentCount; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void removeTag(Tag tag) {
+        this.tags.remove(tag);
+        tag.setComment(null); // 태그 레코드에서 이 댓글 연결 해제
+    }
 }
