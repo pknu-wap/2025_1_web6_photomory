@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "COMMENTS")
+@Table(name = "COMMENT")
 @IdClass(Comment.CommentId.class)
 public class Comment {
 
