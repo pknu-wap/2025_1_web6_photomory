@@ -1,26 +1,21 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "ALBUM")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Album {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "album_id")
     private Integer albumId;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false, referencedColumnName = "post_id")
+    private Post post;
 
     @Column(name = "album_name", nullable = false)
     private String albumName;
@@ -34,21 +29,76 @@ public class Album {
     @Column(name = "album_description", nullable = false)
     private String albumDescription;
 
-    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Post> posts;
-
-    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "album")
     private List<Comment> comments;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "myalbum_id")
     private MyAlbum myAlbum;
 
-    @ManyToMany
-    @JoinTable(
-            name = "album_tag",
-            joinColumns = @JoinColumn(name = "album_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-    private Set<Tag> tags = new HashSet<>();
+    // Getter & Setter 추가
+
+    public Integer getAlbumId() {
+        return albumId;
+    }
+
+    public void setAlbumId(Integer albumId) {
+        this.albumId = albumId;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    public String getAlbumName() {
+        return albumName;
+    }
+
+    public void setAlbumName(String albumName) {
+        this.albumName = albumName;
+    }
+
+    public String getAlbumTag() {
+        return albumTag;
+    }
+
+    public void setAlbumTag(String albumTag) {
+        this.albumTag = albumTag;
+    }
+
+    public LocalDateTime getAlbumMakingTime() {
+        return albumMakingTime;
+    }
+
+    public void setAlbumMakingTime(LocalDateTime albumMakingTime) {
+        this.albumMakingTime = albumMakingTime;
+    }
+
+    public String getAlbumDescription() {
+        return albumDescription;
+    }
+
+    public void setAlbumDescription(String albumDescription) {
+        this.albumDescription = albumDescription;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public MyAlbum getMyAlbum() {
+        return myAlbum;
+    }
+
+    public void setMyAlbum(MyAlbum myAlbum) {
+        this.myAlbum = myAlbum;
+    }
 }

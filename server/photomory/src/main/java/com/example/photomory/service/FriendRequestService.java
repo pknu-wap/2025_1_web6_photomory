@@ -11,6 +11,7 @@ import com.example.photomory.repository.FriendRequestRepository;
 import com.example.photomory.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,10 +26,11 @@ public class FriendRequestService {
     private final NotificationService notificationService;
 
     public void sendRequest(Long senderId, Long receiverId) {
+        System.out.println("💬 친구 요청 요청됨: " + senderId + " → " + receiverId);
         if (senderId.equals(receiverId)) throw new IllegalArgumentException("자기 자신에게 요청 불가");
 
-        UserEntity sender = userRepository.findById(senderId).orElseThrow();
-        UserEntity receiver = userRepository.findById(receiverId).orElseThrow();
+        UserEntity sender = userRepository.findById(senderId).orElseThrow(() -> new RuntimeException("❌ sender 없음"));
+        UserEntity receiver = userRepository.findById(receiverId).orElseThrow(() -> new RuntimeException("❌ receiver 없음"));
 
         if (friendRequestRepository.existsBySenderAndReceiverAndStatus(sender, receiver, RequestStatus.PENDING)) {
             throw new IllegalStateException("이미 요청 보냄");
@@ -52,11 +54,11 @@ public class FriendRequestService {
         request.setStatus(RequestStatus.ACCEPTED);
         friendRequestRepository.save(request);
 
-        // ✅ sender, receiver 변수 선언
+        // sender, receiver 변수 선언
         UserEntity sender = request.getSender();
         UserEntity receiver = request.getReceiver();
 
-        // ✅ 형변환 포함하여 사용
+        // 형변환 포함하여 사용, 친구 양방향 관계 설정
         friendRepository.save(new Friend((long) sender.getUserId(), (long) receiver.getUserId(), true));
         friendRepository.save(new Friend((long) receiver.getUserId(), (long) sender.getUserId(), true));
 
@@ -113,14 +115,20 @@ public class FriendRequestService {
                 .map(user -> new FriendResponse(
                         (long) user.getUserId(),           // userId
                         user.getUserName(),     // name
-                        user.getUserPhotourl()  // photourl
+                        user.getUserEmail()  // 이메일
                 ))
                 .collect(Collectors.toList());
     }
 
+    //양방향이라 두번삭제
+    @Transactional
     public void deleteFriend(Long userId, Long targetId) {
-        friendRepository.deleteByFromUserIdAndToUserId(userId, targetId);
-        friendRepository.deleteByFromUserIdAndToUserId(targetId, userId);
+        if (friendRepository.existsByFromUserIdAndToUserId(userId, targetId)) {
+            friendRepository.deleteByFromUserIdAndToUserId(userId, targetId);
+        }
+        if (friendRepository.existsByFromUserIdAndToUserId(targetId, userId)) {
+            friendRepository.deleteByFromUserIdAndToUserId(targetId, userId);
+        }
     }
 }
 

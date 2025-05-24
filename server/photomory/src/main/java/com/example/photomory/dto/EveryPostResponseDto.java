@@ -9,7 +9,7 @@ import java.util.List;
 @Setter
 public class EveryPostResponseDto {
     private Integer postId;
-    private Long userId;
+    private Integer userId;
     private String userName;
     private String userPhotourl;
     private String postText;
