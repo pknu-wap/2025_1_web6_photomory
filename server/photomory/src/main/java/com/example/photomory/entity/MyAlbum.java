@@ -21,11 +21,19 @@ public class MyAlbum {
     private String myalbumName;
 
     @Column(name = "myalbum_tag")
-    private String myalbumTag; // "자연,풍경,감성" 형식으로 저장
+    private String myalbumTag; // 예: "자연,풍경,감성"
 
     private LocalDateTime myalbumMakingtime;
 
     private String myalbumDescription;
 
-    private Integer userId;
+    private Long userId;
+
+    // 생성 시점 자동 설정(옵션)
+    @PrePersist
+    public void prePersist() {
+        if (myalbumMakingtime == null) {
+            myalbumMakingtime = LocalDateTime.now();
+        }
+    }
 }
