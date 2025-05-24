@@ -3,6 +3,7 @@ package com.example.photomory.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -20,4 +21,6 @@ public class EveryPostResponseDto {
     private List<String> tags;
     private Integer commentCount;
     private List<EveryCommentDto> comments;
+    private LocalDateTime createdAt;
+
 }

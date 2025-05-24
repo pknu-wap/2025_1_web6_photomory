@@ -22,6 +22,7 @@ import java.util.Set;
 @Builder
 public class Post {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
@@ -71,4 +72,14 @@ public class Post {
         this.tags.remove(tag);
         tag.setPost(null); // 태그 레코드에서 이 게시물 연결 해제
     }
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+
 }

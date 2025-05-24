@@ -8,6 +8,7 @@ import com.example.photomory.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.photomory.entity.UserEntity;
+import com.example.photomory.dto.UserProfileUpdateRequest;
 
 
 import java.util.List;
@@ -49,5 +50,16 @@ public class UserService {
                 userEntity.getUserJob(),
                 friendList
         );
+    }
+    public void updateUserProfile(UserEntity user, UserProfileUpdateRequest dto) {
+        user.setUserName(dto.getUser_name());
+        user.setUserEmail(user.getUserEmail()); // 이메일은 안 바꾸는 경우 유지
+        user.setUserField(dto.getUser_field());
+        user.setUserEquipment(dto.getUser_equipment());
+        user.setUserIntroduction(dto.getUser_introduction());
+        user.setUserPhotourl(dto.getUser_photourl());
+        user.setUserJob(dto.getUser_job());
+
+        userRepository.save(user);
     }
 }
