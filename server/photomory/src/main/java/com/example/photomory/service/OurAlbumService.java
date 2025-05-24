@@ -318,7 +318,6 @@ public class OurAlbumService {
                     .collect(Collectors.toList());
 
             // 1.2. 그룹에 속한 모든 앨범 정보 가져오기
-            // AlbumRepository에 findByMyAlbum_MyalbumId(Integer myAlbumId) 메소드가 필요합니다.
             List<Album> albums = albumRepository.findByMyAlbum_MyalbumId(groupIdInt);
 
             List<OurAlbumResponseDefaultDto.Album> albumsDto = new ArrayList<>();
