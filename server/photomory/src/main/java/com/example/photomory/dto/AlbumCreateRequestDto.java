@@ -1,30 +1,23 @@
 package com.example.photomory.dto;
 
 import java.time.LocalDateTime;
-import lombok.Getter; // Lombok 사용 시
-import lombok.Setter; // Lombok 사용 시
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor; // 기본 생성자를 위한 Lombok 어노테이션
+import lombok.AllArgsConstructor; // 모든 필드를 포함하는 생성자를 위한 Lombok 어노테이션 (선택 사항)
+import lombok.Builder; // 빌더 패턴을 사용한다면 추가 (선택 사항)
 
-@Getter // Lombok 사용 시
-@Setter // Lombok 사용 시
+@Getter // Lombok이 모든 getter 메서드를 자동 생성합니다.
+@Setter // Lombok이 모든 setter 메서드를 자동 생성합니다.
+@NoArgsConstructor // Lombok이 기본 생성자를 자동 생성합니다.
+@AllArgsConstructor // 모든 필드를 인자로 받는 생성자 (필요에 따라 추가)
+@Builder // 빌더 패턴을 사용한다면 추가 (필요에 따라 추가)
 public class AlbumCreateRequestDto {
 
     private String albumName;
     private String albumTag;
     private LocalDateTime albumMakingTime;
     private String albumDescription;
-    private Long postId; // <-- post_id 값을 직접 받기 위한 필드 추가
 
-    // Lombok @NoArgsConstructor가 없다면 기본 생성자 필요
-    public AlbumCreateRequestDto() {}
 
-     public String getAlbumName() { return albumName; }
-     public void setAlbumName(String albumName) { this.albumName = albumName; }
-     public String getAlbumTag() { return albumTag; }
-     public void setAlbumTag(String albumTag) { this.albumTag = albumTag; }
-     public LocalDateTime getAlbumMakingTime() { return albumMakingTime; }
-     public void setAlbumMakingTime(LocalDateTime albumMakingTime) { this.albumMakingTime = albumMakingTime; }
-     public String getAlbumDescription() { return albumDescription; }
-     public void setAlbumDescription(String albumDescription) { this.albumDescription = albumDescription; }
-     public Long getPostId() { return postId; }
-     public void setPostId(Long postId) { this.postId = postId; }
 }
