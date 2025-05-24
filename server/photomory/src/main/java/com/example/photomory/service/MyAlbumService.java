@@ -27,7 +27,6 @@ public class MyAlbumService {
 
         MyAlbum album = new MyAlbum();
         album.setUserId(user.getUserId());
-
         album.setMyalbumName(myalbumName);
         album.setMyalbumDescription(myalbumDescription);
         album.setMyalbumMakingtime(LocalDateTime.now());
@@ -72,11 +71,9 @@ public class MyAlbumService {
     }
 
     public MyAlbumDetailDto getMyAlbum(Long myalbumId) {
-        // Long 타입의 myalbumId를 Integer로 변환합니다. MyAlbum ID는 Integer이기 때문입니다.
         Integer myalbumIdInt = myalbumId.intValue();
 
-        // 수정: MyAlbumRepository는 Integer ID를 기대하므로 myalbumIdInt를 사용합니다.
-        MyAlbum album = myAlbumRepository.findById(myalbumId) // myalbumId 대신 myalbumIdInt를 사용합니다.
+        MyAlbum album = myAlbumRepository.findById(myalbumIdInt)
                 .orElseThrow(() -> new RuntimeException("앨범을 찾을 수 없습니다."));
         return convertToDto(album);
     }
@@ -89,7 +86,9 @@ public class MyAlbumService {
     }
 
     public MyAlbumDetailDto updateMyAlbum(Long albumId, UserEntity user, MyAlbumUpdateRequest request) {
-        MyAlbum album = myAlbumRepository.findById(albumId)
+        Integer albumIdInt = albumId.intValue();
+
+        MyAlbum album = myAlbumRepository.findById(albumIdInt)
                 .orElseThrow(() -> new RuntimeException("앨범이 존재하지 않습니다."));
 
         if (!album.getUserId().equals(user.getUserId())) {
@@ -105,7 +104,9 @@ public class MyAlbumService {
     }
 
     public void deleteMyAlbum(Long albumId, UserEntity user) {
-        MyAlbum album = myAlbumRepository.findById(albumId)
+        Integer albumIdInt = albumId.intValue();
+
+        MyAlbum album = myAlbumRepository.findById(albumIdInt)
                 .orElseThrow(() -> new RuntimeException("앨범을 찾을 수 없습니다."));
 
         if (!album.getUserId().equals(user.getUserId())) {
@@ -123,7 +124,9 @@ public class MyAlbumService {
     }
 
     public MyAlbumDetailDto addPhotosToAlbum(Long albumId, UserEntity user, List<MyPhotoUploadRequest> photos) throws IOException {
-        MyAlbum album = myAlbumRepository.findById(albumId)
+        Integer albumIdInt = albumId.intValue();
+
+        MyAlbum album = myAlbumRepository.findById(albumIdInt)
                 .orElseThrow(() -> new RuntimeException("앨범이 존재하지 않습니다."));
 
         if (!album.getUserId().equals(user.getUserId())) {
@@ -163,7 +166,7 @@ public class MyAlbumService {
 
         return MyAlbumDetailDto.builder()
                 .myalbumId(album.getMyalbumId().longValue())
-                .userId(album.getUserId().longValue()) // User ID는 Long인 것이 맞으므로 이대로 둡니다.
+                .userId(album.getUserId().longValue())
                 .myalbumName(album.getMyalbumName())
                 .myalbumDescription(album.getMyalbumDescription())
                 .myalbumMakingtime(album.getMyalbumMakingtime())
@@ -171,6 +174,7 @@ public class MyAlbumService {
                 .mytags(mytags)
                 .build();
     }
+
     public void deletePhoto(int photoId, UserEntity user) {
         MyPhoto photo = myPhotoRepository.findById(photoId)
                 .orElseThrow(() -> new RuntimeException("사진이 존재하지 않습니다."));
@@ -181,5 +185,4 @@ public class MyAlbumService {
         s3Service.deleteFile(photo.getMyphotoUrl());
         myPhotoRepository.delete(photo);
     }
-
 }

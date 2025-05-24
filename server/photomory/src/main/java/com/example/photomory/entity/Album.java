@@ -37,15 +37,18 @@ public class Album {
     @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts;
 
+    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "myalbum_id")
+    private MyAlbum myAlbum;
+
     @ManyToMany
     @JoinTable(
-            name = "album_tag_table",
+            name = "album_tag",
             joinColumns = @JoinColumn(name = "album_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    @Builder.Default
     private Set<Tag> tags = new HashSet<>();
-
-    @ManyToMany(mappedBy = "albums")
-    private Set<UserEntity> users = new HashSet<>();
 }

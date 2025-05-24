@@ -13,19 +13,25 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EveryCommentDto {
-    private String userName;
-    private Long userId;
-    private String userPhotourl;
+    private Integer commentId;
+    private Integer postId;
+    private Integer albumId;
+    private String comment;
     private LocalDateTime createdAt;
+    private Long userId;
+    private String userName;
+    private String userPhotourl;
 
     public static EveryCommentDto from(Comment comment, String userName) {
         return EveryCommentDto.builder()
                 .commentId(comment.getCommentId())
-                .postId(comment.getPostId())
-                .albumId(comment.getAlbumId())
+                .postId(comment.getPost().getPostId())  // Post 객체에서 postId 꺼냄
+                .albumId(comment.getAlbum() != null ? comment.getAlbum().getAlbumId() : null)  // null-safe 처리
                 .comment(comment.getCommentsText())
-                .createdAt(comment.getCreatedAt())
+                .createdAt(comment.getCommentTime())  // 필드 이름에 맞춰 수정
+                .userId(comment.getUser().getUserId())
                 .userName(userName)
+                .userPhotourl(comment.getUser().getUserPhotourl())
                 .build();
     }
 }

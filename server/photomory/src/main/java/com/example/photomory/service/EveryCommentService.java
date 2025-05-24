@@ -1,7 +1,7 @@
 package com.example.photomory.service;
 
 import com.example.photomory.entity.Comment;
-import com.example.photomory.repository.EveryCommentRepository;
+import com.example.photomory.repository.CommentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,9 +9,9 @@ import java.util.List;
 @Service
 public class EveryCommentService {
 
-    private final EveryCommentRepository commentRepository;
+    private final CommentRepository commentRepository;
 
-    public EveryCommentService(EveryCommentRepository commentRepository) {
+    public EveryCommentService(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
     }
 
@@ -19,7 +19,7 @@ public class EveryCommentService {
         return commentRepository.save(comment);
     }
 
-    public List<Comment> getCommentsByPostId(Integer postId) {
-        return commentRepository.findByPostId(postId);
+    public List<Comment> getCommentsByPostId(Long postId) {
+        return commentRepository.findByPost_PostId(postId);
     }
 }

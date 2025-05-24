@@ -4,16 +4,16 @@ import com.example.photomory.dto.EveryPostResponseDto;
 import com.example.photomory.dto.EveryPostRequestDto;
 import com.example.photomory.dto.EveryCommentDto;
 import com.example.photomory.entity.Photo;
-
-import com.example.photomory.dto.EveryCommentDto; // EveryCommentDto 임포트
 import com.example.photomory.entity.Post;
 import com.example.photomory.entity.Tag;
 import com.example.photomory.entity.UserEntity;
-import com.example.photomory.entity.Comment; // Comment 엔티티 임포트
+import com.example.photomory.entity.Comment;
 import com.example.photomory.repository.CommentRepository;
+import com.example.photomory.repository.PhotoRepository;
 import com.example.photomory.repository.PostRepository;
 import com.example.photomory.repository.TagRepository;
 import com.example.photomory.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,8 @@ public class EveryPostService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository; // 사용되지 않는 경고는 무시하거나, UserEntity를 직접 조회하지 않는다면 제거를 고려할 수 있습니다.
+    private final UserRepository userRepository;
+    private final PhotoRepository photoRepository;
 
     public List<EveryPostResponseDto> getAllPostsWithComments() {
         List<Post> posts = postRepository.findAll();
@@ -37,14 +38,12 @@ public class EveryPostService {
             EveryPostResponseDto dto = new EveryPostResponseDto();
 
             dto.setPostId(post.getPostId());
-            // UserEntity 정보는 Post 엔티티에 직접 연결되어 있으므로 직접 접근합니다.
-            // null 체크를 추가하여 NPE 방지
+
             if (post.getUser() != null) {
                 dto.setUserId(post.getUser().getUserId());
                 dto.setUserName(post.getUser().getUserName());
                 dto.setUserPhotourl(post.getUser().getUserPhotourl());
             } else {
-                // 사용자 정보가 없을 경우 기본값 설정 또는 예외 처리
                 dto.setUserId(null);
                 dto.setUserName("Unknown User");
                 dto.setUserPhotourl(null);
@@ -55,11 +54,8 @@ public class EveryPostService {
             dto.setLikesCount(post.getLikesCount());
             dto.setLocation(post.getLocation());
             dto.setCreatedAt(post.getCreatedAt());
-
-            // Post 엔티티에 직접 photoUrl 필드가 있으므로 사용
             dto.setPhotoUrl(post.getPhotoUrl());
 
-            // Post 엔티티의 tags 필드 (Set<Tag>)에서 tagName을 추출하여 설정
             if (post.getTags() != null) {
                 dto.setTags(post.getTags().stream()
                         .map(Tag::getTagName)
@@ -68,36 +64,31 @@ public class EveryPostService {
                 dto.setTags(Collections.emptyList());
             }
 
-
-            // 댓글 조회 로직은 그대로 유지 (findByPost_PostId는 Long ID를 받음)
             List<EveryCommentDto> commentDtos = commentRepository.findByPost_PostId(post.getPostId().longValue()).stream()
                     .map(comment -> {
-                        Long commenterId = comment.getUserId() != null ? comment.getUserId().longValue() : null;
-                        UserEntity commenter = commenterId != null
-                                ? userRepository.findById(commenterId).orElse(null)
-                                : null;
+                        UserEntity commenter = comment.getUser();
+                        Long commenterId = commenter != null ? commenter.getUserId() : null;
 
                         return EveryCommentDto.builder()
                                 .userId(commenterId)
                                 .userName(commenter != null ? commenter.getUserName() : "알 수 없음")
                                 .userPhotourl(commenter != null ? commenter.getUserPhotourl() : null)
                                 .comment(comment.getCommentsText())
-                                .createdAt(comment.getCreatedAt())  // createdAt이 comment 엔티티에 있어야 함
+                                .createdAt(comment.getCommentTime())
                                 .build();
                     })
-                    .toList();
+                    .collect(Collectors.toList());
 
             dto.setComments(commentDtos);
             dto.setCommentCount(commentDtos.size());
 
-
             return dto;
-        }).toList();
+        }).collect(Collectors.toList());
     }
+
     public void createPost(EveryPostRequestDto dto) {
         UserEntity user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
-
 
         Post post = Post.builder()
                 .user(user)
@@ -125,6 +116,4 @@ public class EveryPostService {
             tagRepository.save(tag);
         }
     }
-
-
 }
