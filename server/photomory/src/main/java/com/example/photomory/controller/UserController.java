@@ -1,10 +1,14 @@
-
 package com.example.photomory.controller;
 
 import com.example.photomory.dto.UserProfileResponse;
+import com.example.photomory.dto.UserProfileUpdateRequest;
+import com.example.photomory.entity.UserEntity;
+import com.example.photomory.security.CustomUserDetails;
 import com.example.photomory.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
