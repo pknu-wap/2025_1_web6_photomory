@@ -10,8 +10,6 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../assets/photomory_logo.svg";
 import image1 from "../../assets/mainPageImage1.svg";
 import image2 from "../../assets/mainPageImage2.svg";
-import image3 from "../../assets/mainPageImage3.svg";
-import image4 from "../../assets/mainPageImage4.svg";
 import DailyPopularTagModal from "../ourMemory/DailyPopularTagModal"; //일간은 아니지만 그냥 쓰는 거
 import { useState, useEffect } from "react";
 
@@ -24,7 +22,6 @@ async function fetchUserEveryPosts(accessToken) {
                 'Authorization': `Bearer ${accessToken}`,
             },
         });
-
         if (!response.ok) {
             if (response.status===401) {
                 throw new Error('Unauthorized'); //토큰 만료
