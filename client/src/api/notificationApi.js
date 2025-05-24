@@ -29,7 +29,7 @@ export async function sentFriendRequests(userId) {
 }
 
 //받은 요청 목록 불러오기 api함수
-export async function fetchReceivedFriendRequests(userId) {
+export async function getReceivedFriendRequests(userId) {
   const token = localStorage.getItem("accessToken");
 
   try {
@@ -78,7 +78,7 @@ export function subscribeToNotifications(token, onMessageCallback) {
 }
 
 //알림 목록 조회 api함수
-export async function notificationList() {
+export async function getnotificationList() {
   const token = localStorage.getItem("accessToken"); // 또는 context 등에서
 
   try {

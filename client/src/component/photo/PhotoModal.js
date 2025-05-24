@@ -4,8 +4,19 @@ import "./PhotoModal.css";
 import calenderIcon from "../../assets/calenderIcon.svg";
 import modalCancelButton from "../../assets/modalCancelButton.svg";
 import discardButton from "../../assets/discardButton.svg";
+import { deleteMyAlbumPhoto } from "../../api/myAlbumAPi";
 
 function PhotoModal({ photo, onClose, onDelete }) {
+  const handleDelete = async () => {
+    try {
+      await deleteMyAlbumPhoto(photo.photo_id); // API 호출
+      onDelete(photo.photo_id); // 상위에서 상태 갱신
+      onClose(); // 모달 닫기
+    } catch (error) {
+      alert("사진 삭제에 실패했습니다.");
+    }
+  };
+
   if (!photo) return null;
   return (
     <>
@@ -66,13 +77,7 @@ function PhotoModal({ photo, onClose, onDelete }) {
                   justifyContent: "center",
                 }}
               >
-                <button
-                  onClick={() => {
-                    onDelete(photo.photo_id);
-                    onClose();
-                  }}
-                  className="deleteButton"
-                >
+                <button onClick={handleDelete} className="deleteButton">
                   <img src={discardButton} alt="discardButton" />
                   삭제하기
                 </button>
