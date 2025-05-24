@@ -23,10 +23,16 @@ public class Tag {
     @Column(name = "tag_name", nullable = false)
     private String tagName;
 
+    // Post와 ManyToMany 관계 유지
     @ManyToMany(mappedBy = "tags")
     private Set<Post> posts = new HashSet<>();
 
-    // 생성자 추가 (필요에 따라)
+    // Comment와 ManyToOne 관계 추가 (null 허용)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
+
+    // 생성자
     public Tag(String tagName) {
         this.tagName = tagName;
     }
