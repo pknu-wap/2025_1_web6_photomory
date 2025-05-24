@@ -36,6 +36,7 @@ public class UserEntity {
     @Column(name = "user_field", nullable = false)
     private String userField;
 
+    public UserEntity() {}
 
     public UserEntity(
             String userEmail,
@@ -57,57 +58,12 @@ public class UserEntity {
         this.userField = userField;
     }
 
-    // ✅ Getter
-    public int getUserId() { return this.userId; }
-
-    public String getUserName() { return this.userName; }
-
-    public String getUserEmail() { return this.userEmail; }
-
-    public String getUserPassword() { return this.userPassword; }
-
-    public String getUserPhotourl() { return this.userPhotourl; }
-
-    public String getUserEquipment() { return this.userEquipment; }
-
-    public String getUserIntroduction() { return this.userIntroduction; }
-
-    public String getUserJob() { return this.userJob; }
-
-    public String getUserField() { return this.userField; }
-
-    // ✅ Setter
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
+    // Setter for userPassword (기존 코드)
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
 
-    public void setUserPhotourl(String userPhotourl) {
-        this.userPhotourl = userPhotourl;
-    }
-
-    public void setUserEquipment(String userEquipment) {
-        this.userEquipment = userEquipment;
-    }
-
-    public void setUserIntroduction(String userIntroduction) {
-        this.userIntroduction = userIntroduction;
-    }
-
-    public void setUserJob(String userJob) {
-        this.userJob = userJob;
-    }
-
-    public void setUserField(String userField) {
-        this.userField = userField;
-
+    // Getters (기존 코드)
     public Long getUserId() {
         return userId;
     }
@@ -157,11 +113,9 @@ public class UserEntity {
         return Objects.equals(userId, that.userId);
     }
 
-    // ✅ UserDetails interface 구현
     @Override
     public int hashCode() {
         // userId가 null일 수 있으므로 Objects.hash를 사용합니다.
         return Objects.hash(userId);
-    }
     }
 }

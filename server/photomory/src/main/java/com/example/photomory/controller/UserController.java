@@ -1,32 +1,30 @@
+
 package com.example.photomory.controller;
 
 import com.example.photomory.dto.UserProfileResponse;
-import com.example.photomory.dto.UserProfileUpdateRequest;
-import com.example.photomory.entity.UserEntity;
 import com.example.photomory.service.UserService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
-@RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/profile")
-    public ResponseEntity<UserProfileResponse> getUserProfile(@AuthenticationPrincipal UserEntity user) {
-        return ResponseEntity.ok(userService.getUserProfile(user));
+    public ResponseEntity<UserProfileResponse> getUserProfile(@RequestParam Long userId) {
+        return ResponseEntity.ok(userService.getUserProfile(userId));
     }
 
     @PutMapping("/profile")
     public ResponseEntity<String> updateProfile(
-            @AuthenticationPrincipal UserEntity user,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody UserProfileUpdateRequest dto
     ) {
-        userService.updateUserProfile(user, dto);
+        userService.updateUserProfile(userDetails.getUser(), dto);
         return ResponseEntity.ok("프로필이 성공적으로 수정되었습니다.");
     }
 }

@@ -76,7 +76,7 @@ public class MyAlbumService {
         Integer myalbumIdInt = myalbumId.intValue();
 
         // 수정: MyAlbumRepository는 Integer ID를 기대하므로 myalbumIdInt를 사용합니다.
-        MyAlbum album = myAlbumRepository.findById(myalbumIdInt) // myalbumId 대신 myalbumIdInt를 사용합니다.
+        MyAlbum album = myAlbumRepository.findById(myalbumId) // myalbumId 대신 myalbumIdInt를 사용합니다.
                 .orElseThrow(() -> new RuntimeException("앨범을 찾을 수 없습니다."));
         return convertToDto(album);
     }
