@@ -96,25 +96,23 @@ public class OurAlbumController {
 
     // 7. 댓글 작성
     @PostMapping("/{albumId}/post/{postId}/comment")
-    public ResponseEntity<CommentResponseDto> createComment(@PathVariable Integer albumId,
-                                                            @PathVariable Integer postId,
-                                                            @RequestBody @Valid CommentRequestDto requestDto, // @Valid 추가
-                                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
-        // CustomUserDetails에서 UserEntity 가져오기
+    public ResponseEntity<CommentResponseDto> createComment(
+            @PathVariable Integer albumId,
+            @PathVariable Integer postId,
+            @RequestBody @Valid CommentRequestDto requestDto,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
         UserEntity user = userDetails.getUser();
 
-        // DTO에 들어온 albumId, postId와 pathVariable이 다르면 예외 처리하는 것은 좋은 방어적 코딩입니다.
         if (!albumId.equals(requestDto.getAlbumId()) || !postId.equals(requestDto.getPostId())) {
             throw new IllegalArgumentException("요청 경로와 본문의 앨범 또는 게시글 ID가 일치하지 않습니다.");
         }
 
-        // 서비스 계층으로 댓글 작성 요청 전달
-        // 서비스 계층에서 user 및 text 유효성 검사를 수행합니다.
         CommentResponseDto response = ourAlbumService.createComment(albumId, postId, user, requestDto.getCommentsText());
 
-        // 성공 시 201 Created 상태 코드 반환
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
 
 
     // 9. 초대 가능한 친구 목록 조회 (그룹 멤버 제외)
