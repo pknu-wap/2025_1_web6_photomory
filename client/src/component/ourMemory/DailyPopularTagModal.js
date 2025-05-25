@@ -7,9 +7,8 @@ const DailyPopularTagModal = ({ isOpen, onClose, imageForModal, post}) => { //po
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}> {/*{imageeFormodal? imageFormodal : post}*/}
-      <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-        <img className={styles.image} src={mokImage} alt=''></img>
-      </div>
+        <img className={styles.image} src={mokImage} alt=''
+        onClick={e => e.stopPropagation()}></img>
     </div>
   )
 } 
