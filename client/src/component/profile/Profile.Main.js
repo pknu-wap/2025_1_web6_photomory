@@ -102,6 +102,7 @@ function ProfileMain() {
   const [profileData, setProfileData] = useState(initialProfileState);
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState([])
 
   // 입력 필드 변경 핸들러
   const handleInputChange = useCallback((e) => {
@@ -182,19 +183,26 @@ function ProfileMain() {
     fetchUserData();
   }, []);
 
-  // 검색된 사용자 필터링
-  const filteredUsers = useMemo(() => {
-    if (!search.trim()) return users;
-    
-    return users.filter(user => 
-      user?.id?.toString().toLowerCase().includes(search.toLowerCase())
-    );
-  }, [users, search]);
+  useEffect(()=>{
+    if(search){
+      const filtered=users.filter((user)=>
+        user.userName.toLowerCase().includes(search.toLowerCase())
+      )
+      setFilteredUsers(filtered)
+    } else{
+      setFilteredUsers(users)
+    }
+  }, [search, users])
+
+  const numLimitedFilteredUsers= search? filteredUsers.slice(0,4) : users.slice(0,2)
 
   // 친구 목록 필터링
   const friends = useMemo(() => 
     users.filter(user => user?.isFriend) || []
   , [users]);
+
+  const numLimitedFriends= friends.slice(0,4)
+
 
   return (
     <div className={styles.allContainer}>
@@ -279,7 +287,7 @@ function ProfileMain() {
         <div className={styles.forFlexFriend}>
           <div className={styles.myFriendsListContainer}>
             <p className={styles.myFriendListTop}>내 친구 목록</p>
-            {friends.length > 0 ? friends.map((user) => (
+            {numLimitedFriends.length > 0 ? friends.map((user) => (
               <FriendManage
                 key={user.id}
                 userId={user.id}
@@ -289,11 +297,11 @@ function ProfileMain() {
                 onRemoveFriend={handleRemoveFriend}
               />
             )) : (
-              <p className={styles.zeroFriend}>앗, 친구가 없어요😓</p>
+              <p className={styles.zeroFriend}>앗, 친구가 없어요.😓</p>
             )}
           </div>
           <div className={styles.searchFriendContainer}>
-            <p className={styles.searchMyFriendTop}>친구 검색</p>
+            <p className={styles.searchMyFriendTop}>친구 검색</p> {/*아이콘 넣기 */}
             <input
               type="text"
               className={styles.searchBar}
@@ -301,7 +309,7 @@ function ProfileMain() {
               value={search}
               onChange={handleSearch}
             />
-            {filteredUsers.map(user => (
+            {numLimitedFilteredUsers.map(user => (
               <SearchFriend 
                 key={user.id} 
                 userId={user.id} 
