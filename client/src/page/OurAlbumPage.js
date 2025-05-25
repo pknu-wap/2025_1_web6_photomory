@@ -7,9 +7,9 @@ import AddAlbum from "../component/add/AddAlbum";
 import CurrentGroup from "../component/group/CurrentGroup";
 import Groups from "../component/group/Groups";
 import AlbumList from "../component/album/AlbumList";
-import getGroup from "../api/getGroup";
-import getGroupAlbums from "../api/getGroupAlbums";
-//import { addNewGroup } from "../api/groupApi"; //서버 연동 준비용
+
+import { getOurAlbumData } from "../api/ourAlbumApi"; //서버 연동 준비용
+import { normalizeOurAlbumData } from "../utils/normalizers";
 
 function OurAlbumPage() {
   const [groupList, setGroupList] = useState([]); // 그룹명과 해당 그룹 멤버들의 리스트
@@ -19,44 +19,49 @@ function OurAlbumPage() {
 
   //초기 그룹 정보, 앨범 가져오기
   useEffect(() => {
-    // 서버 연동 예정
-    // (async () => {
-    //   try {
-    //     const groups = await getGroupList(); // ← 서버에서 그룹 리스트 받아오기
-    //     setGroupList(groups);
-    //     ...
-    //   } catch (error) {
-    //     console.error("그룹 리스트 불러오기 실패:", error);
-    //   }
+    (async () => {
+      try {
+        const rawData = await getOurAlbumData();
+        const normalizedData = normalizeOurAlbumData(rawData);
 
-    const groups = getGroup(); // 그룹 데이터 불러오기
-
-    setGroupList(groups);
-    if (groups.length > 0) {
-      const firstGroup = groups[0]; //항상 첫번째 그룹 선택
-      const firstGroupAlbums = getGroupAlbums(firstGroup.group_id); //항상 첫번째 그룹의 앨범 선택
-
-      setSelectedGroupId(firstGroup.group_id); // 선택된 그룹 ID
-      setGroupAlbums(firstGroupAlbums); // 선택된 그룹의 앨범 전체 데이터
-      const initTitlesByGroup = {};
-      groups.forEach((group) => {
-        //처음부터 모든 그룹의 앨범 제목 목록을 한 번에 저장
-        const albums = getGroupAlbums(group.group_id);
-        initTitlesByGroup[group.group_id] = albums.map(
-          (album) => album.album_name
+        // 그룹 정보만 추출
+        const minimalGroupList = normalizedData.map(
+          ({ group_id, group_name, members }) => ({
+            group_id,
+            group_name,
+            members,
+          })
         );
-      });
-      setAlbumTitlesByGroup(initTitlesByGroup);
-    }
+
+        setGroupList(minimalGroupList);
+
+        if (normalizedData.length > 0) {
+          const firstGroup = normalizedData[0];
+          setSelectedGroupId(firstGroup.group_id);
+          setGroupAlbums(firstGroup.albums);
+
+          const titlesByGroup = {};
+          for (const group of normalizedData) {
+            titlesByGroup[group.group_id] = group.albums.map(
+              (album) => album.album_name
+            );
+          }
+          setAlbumTitlesByGroup(titlesByGroup);
+        }
+      } catch (error) {
+        console.error("서버 데이터 로드 실패:", error);
+      }
+    })();
   }, []);
 
-  //그룹id가 바뀔 대마다 그룹 앨범 가져오기
   useEffect(() => {
-    if (selectedGroupId) {
-      const albums = getGroupAlbums(selectedGroupId); // 그룹 ID로 앨범 가져오기
-      setGroupAlbums(albums); // 상태에 저장
+    if (selectedGroupId && groupList.length > 0) {
+      const group = groupList.find((g) => g.groupId === selectedGroupId);
+      if (group && group.albums) {
+        setGroupAlbums(group.albums);
+      }
     }
-  }, [selectedGroupId]);
+  }, [selectedGroupId, groupList]);
 
   // 새로운 그룹 추가 핸들러 (AddGroupButton에서 사용할 예정)
   const handleAddGroup = (newGroup) => {

@@ -1,44 +1,46 @@
-import { useState } from "react";
-import { fetchGroupAlbumDetail } from "../api/ourAlbumApi"; // API 경로 확인
+import React, { useState } from "react";
+import { writeComment } from "../api/ourAlbumApi"; // 실제 파일 경로에 맞게 수정하세요
 
-function ApiTestPage() {
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
+function CommentTestPage() {
+  const [comment, setComment] = useState("");
+  const albumId = 3;
+  const postId = 2;
+  const handleSubmit = async () => {
+    if (!comment.trim()) {
+      alert("댓글을 입력하세요.");
+      return;
+    }
 
-  // 앨범 상세 조회 버튼 클릭 핸들러
-  const handleFetchAlbumDetail = async () => {
-    const albumId = 1; // ✅ 테스트할 앨범 ID
-    const page = 0;
-    const size = 4;
-
-    setLoading(true);
     try {
-      const response = await fetchGroupAlbumDetail(albumId, page, size);
-      console.log("✅ 앨범 상세 조회 성공:", response);
-      setResult(response);
-    } catch (error) {
-      console.error("❌ 앨범 상세 조회 실패:", error);
-    } finally {
-      setLoading(false);
+      const result = await writeComment(
+        albumId,
+        postId,
+        comment // ✅ 서버가 기대하는 구조
+      );
+
+      console.log("✅ 댓글 작성 성공:", result);
+      alert("댓글 작성 완료!");
+      setComment("");
+    } catch (err) {
+      console.error("❌ 댓글 작성 실패:", err);
+      alert("댓글 작성 실패, 콘솔 확인");
     }
   };
 
   return (
     <div style={{ padding: "40px" }}>
-      <h2>🧪 앨범 상세 조회 테스트</h2>
-      <button onClick={handleFetchAlbumDetail} disabled={loading}>
-        {loading ? "불러오는 중..." : "앨범 상세 불러오기"}
-      </button>
-
-      {result && (
-        <pre
-          style={{ marginTop: "20px", background: "#f4f4f4", padding: "12px" }}
-        >
-          {JSON.stringify(result, null, 2)}
-        </pre>
-      )}
+      <h2>💬 댓글 작성 테스트</h2>
+      <textarea
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        placeholder="댓글을 입력하세요"
+        rows={4}
+        cols={50}
+      />
+      <br />
+      <button onClick={handleSubmit}>댓글 전송</button>
     </div>
   );
 }
 
-export default ApiTestPage;
+export default CommentTestPage;

@@ -1,47 +1,47 @@
 import React, { useState } from "react";
 import addGroupButton from "../../assets/addGroupButton.svg";
+import { createGroup } from "../../api/ourAlbumApi";
 import "./AddGroupButton.css";
-//import { addNewGroup } from "../../api/groupApi"; //서버 연동 준비용
-function AddGroupButtonTest({ onAddGroup }) {
-  const [showModal, setShowModal] = useState(false); // 모달 표시 여부
-  const [groupName, setGroupName] = useState(""); // 입력한 그룹 이름
 
-  // 모달 열기 핸들러
+function AddGroupButton({ onAddGroup }) {
+  const [showModal, setShowModal] = useState(false);
+  const [groupInfo, setGroupInfo] = useState({
+    groupName: "",
+    groupDescription: "",
+  });
+
   const handleOpenModal = () => setShowModal(true);
-
-  // 모달 닫기 핸들러
   const handleCloseModal = () => setShowModal(false);
 
-  //그룹명 입력 핸들러
   const handleInputChange = (e) => {
-    setGroupName(e.target.value); // 입력값 상태 업데이트
+    const { name, value } = e.target;
+    setGroupInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 그룹명 제출 핸들러
   const handleSubmit = async () => {
-    if (groupName.trim() === "") return alert("그룹명을 입력해주세요.");
+    const trimmedName = groupInfo.groupName.trim().replace(/\s+/g, "");
+    const trimmedDesc = groupInfo.groupDescription.trim();
 
-    // 서버 연동 준비용 코드 (주석 처리)
-    // try {
-    //   const result = await addNewGroup({ groupName: groupName.trim() }); // 서버에 그룹 추가 요청
-    //   onAddGroup(result); // 서버 응답 데이터를 상위로 전달
-    // } catch (error) {
-    //   console.error("그룹 생성 실패:", error);
-    //   alert("그룹 생성 중 오류가 발생했습니다.");
-    //   return;
-    // }
+    if (trimmedName === "")
+      return alert("그룹명을 입력해주세요. (공백만 입력 불가)");
 
-    // 그룹 객체 생성 (멤버는 나중에 추가한다고 가정)
-    const newGroup = {
-      group_id: `group${Date.now()}`, // 고유 ID 생성
-      group_name: groupName.trim(),
-      members: [],
-    };
+    try {
+      const result = await createGroup({
+        groupName: trimmedName,
+        groupDescription: trimmedDesc,
+      });
 
-    onAddGroup(newGroup); // 상위 컴포넌트로 전달
-    setGroupName(""); //입력창 초기화
-    handleCloseModal(); // 모달 닫기
+      onAddGroup(result);
+    } catch (error) {
+      console.error("그룹 생성 실패:", error);
+      alert("그룹 생성 중 오류가 발생했습니다.");
+      return;
+    }
+
+    setGroupInfo({ groupName: "", groupDescription: "" });
+    handleCloseModal();
   };
+
   return (
     <div
       style={{
@@ -55,7 +55,6 @@ function AddGroupButtonTest({ onAddGroup }) {
         <span style={{ fontSize: "16px", color: "#333" }}>새 그룹 만들기</span>
       </button>
 
-      {/* 모달창 (조건부 렌더링) */}
       {showModal && (
         <div
           style={{
@@ -68,7 +67,7 @@ function AddGroupButtonTest({ onAddGroup }) {
             boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
             zIndex: 1000,
             width: "436px",
-            height: "262px",
+            height: "320px",
             borderRadius: "8px",
           }}
         >
@@ -77,32 +76,56 @@ function AddGroupButtonTest({ onAddGroup }) {
               fontSize: "24px",
               fontWeight: "bold",
               lineHeight: "32px",
-              letterSpacing: "0px",
               marginBottom: "24px",
             }}
           >
             새 그룹 만들기
           </h3>
+
           <label
             htmlFor="groupName"
             style={{ display: "block", marginBottom: "8px" }}
           >
-            그룹이름
+            그룹 이름
           </label>
           <input
             id="groupName"
+            name="groupName"
             type="text"
             placeholder="그룹명을 입력하세요"
-            value={groupName}
+            value={groupInfo.groupName}
             onChange={handleInputChange}
             style={{
               padding: "8px",
               width: "100%",
-              marginBottom: "12px",
+              marginBottom: "16px",
               border: "1px solid #E5E7EB",
               height: "42px",
             }}
           />
+
+          <label
+            htmlFor="groupDescription"
+            style={{ display: "block", marginBottom: "8px" }}
+          >
+            그룹 설명
+          </label>
+          <input
+            id="groupDescription"
+            name="groupDescription"
+            type="text"
+            placeholder="그룹 설명을 입력하세요"
+            value={groupInfo.groupDescription}
+            onChange={handleInputChange}
+            style={{
+              padding: "8px",
+              width: "100%",
+              marginBottom: "16px",
+              border: "1px solid #E5E7EB",
+              height: "42px",
+            }}
+          />
+
           <div
             style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
           >
@@ -136,7 +159,6 @@ function AddGroupButtonTest({ onAddGroup }) {
         </div>
       )}
 
-      {/* 모달 외부 어두운 배경 */}
       {showModal && (
         <div
           onClick={handleCloseModal}
@@ -155,4 +177,4 @@ function AddGroupButtonTest({ onAddGroup }) {
   );
 }
 
-export default AddGroupButtonTest;
+export default AddGroupButton;
