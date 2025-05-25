@@ -30,7 +30,6 @@ function AddGroupButton({ onAddGroup }) {
         groupName: trimmedName,
         groupDescription: trimmedDesc,
       });
-
       onAddGroup(result);
     } catch (error) {
       console.error("그룹 생성 실패:", error);

@@ -32,7 +32,6 @@ function OurAlbumPage() {
             members,
           })
         );
-
         setGroupList(minimalGroupList);
 
         if (normalizedData.length > 0) {
@@ -64,7 +63,23 @@ function OurAlbumPage() {
   }, [selectedGroupId, groupList]);
 
   // 새로운 그룹 추가 핸들러 (AddGroupButton에서 사용할 예정)
-  const handleAddGroup = (newGroup) => {
+  const handleAddGroup = (newGroupRaw) => {
+    const myName = localStorage.getItem("userName") || "나";
+
+    // groupList에 맞는 필드 구조로 정규화
+    const newGroup = {
+      group_id: newGroupRaw.groupId,
+      group_name: newGroupRaw.groupName,
+      members: [
+        {
+          user_id: "me",
+          user_name: myName,
+          user_photourl: null,
+        },
+        // 서버 응답에 멤버가 이미 들어있다면 여기에 병합해도 됨
+      ],
+    };
+
     setGroupList((prev) => [...prev, newGroup]);
   };
 

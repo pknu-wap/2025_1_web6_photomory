@@ -159,7 +159,7 @@ export async function createGroupAlbumPost(
       postTitle,
       postTime,
     })
-  ); // 서버가 기대하는 방식대로 전송
+  );
 
   try {
     const response = await fetch(
@@ -191,7 +191,7 @@ export async function writeComment(albumId, postId, commentsText) {
   console.log(JSON.stringify({ albumId, postId, commentsText }));
   try {
     const response = await fetch(
-      `${BASE_URL}/api/our-album/album/${albumId}/post/${postId}/comment`,
+      `${BASE_URL}/api/our-album/${albumId}/post/${postId}/comment`,
       {
         method: "POST",
         headers: {
