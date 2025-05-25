@@ -57,7 +57,9 @@ export async function getReceivedFriendRequests(userId) {
 }
 
 //SSE 구독 함수
-export function subscribeToNotifications(token, onMessageCallback) {
+export function subscribeToNotifications(onMessageCallback) {
+  const token = localStorage.getItem("accessToken");
+
   const url = `${BASE_URL}/api/notifications/subscribe?token=${token}`;
 
   const eventSource = new EventSource(url);

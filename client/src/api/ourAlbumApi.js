@@ -54,6 +54,30 @@ export async function fetchGroupInfo(groupId) {
   }
 }
 
+// 우리의 추억 앨범 조회 API
+export async function getOurAlbumData() {
+  const accessToken = localStorage.getItem("accessToken");
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/our-album`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`우리의 추억 조회 실패: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("❌ 우리의 추억 API 오류:", error);
+    throw error;
+  }
+}
+
 //우리의 추억 앨범 생성 api 함수
 export async function createGroupAlbum(
   groupId,
@@ -87,6 +111,67 @@ export async function createGroupAlbum(
     return result;
   } catch (error) {
     console.error("앨범 생성 중 오류 발생:", error);
+    throw error;
+  }
+}
+
+// 우리의 추억 앨범 상세 + 게시물 목록 조회 API
+export async function fetchGroupAlbumDetail(albumId, page = 0, size = 4) {
+  const token = localStorage.getItem("accessToken");
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/api/our-album/album/${albumId}?page=${page}&size=${size}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`앨범 상세 조회 실패: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data; // { albumId, albumName, ..., posts: [...] }
+  } catch (error) {
+    console.error("📛 앨범 상세 정보 요청 중 에러:", error);
+    throw error;
+  }
+}
+
+// 우리의 추억 앨범 게시물 생성 api함수
+export async function createGroupAlbumPost(albumId, postData) {
+  const token = localStorage.getItem("accessToken");
+
+  const formData = new FormData();
+  formData.append("postTitle", postData.postTitle);
+  formData.append("postImageUrl", postData.postImageUrl);
+  formData.append("postTime", postData.postTime);
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/api/our-album/album/${albumId}/post`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`게시글 생성 실패: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("게시글 생성 중 오류:", error);
     throw error;
   }
 }

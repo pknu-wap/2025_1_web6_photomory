@@ -13,6 +13,7 @@ import MyAlbumPage from "./page/MyAlbumPage.js";
 import MyAlbumDetailPage from "./page/MyAlbumDetailPage.js";
 import SignupConfirmPage from "./page/SignupConfirmPage.js";
 import EveryMemoryPage from "./page/EveryMemoryPage.js";
+import ApiTestPage from "./page/ApiTestPage.js";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
             element={<GroupEditPage />}
           />
           <Route path="/everyMemory" element={<EveryMemoryPage />} />
+          <Route path="/ApiTestPage" element={<ApiTestPage />} />
         </Routes>
       </Router>
     </AuthProvider>
