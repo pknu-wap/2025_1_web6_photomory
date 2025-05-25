@@ -106,20 +106,24 @@ public class OurAlbumService {
         Post post = new Post();
         post.setAlbum(album);
         post.setUser(user);
-        post.setPostText(requestDto.getPostContent());
-        post.setPostDescription(requestDto.getPostDescription() != null ? requestDto.getPostDescription() : "");
 
-        post.setLocation(requestDto.getLocation());
+        post.setPostText(requestDto.getPostTitle());
+
+
         post.setMakingTime(requestDto.getPostTime());
 
         if (photoFile != null && !photoFile.isEmpty()) {
             String photoUrl = s3Service.uploadFile(photoFile);
             post.setPhotoUrl(photoUrl);
+        } else if (requestDto.getPostImageUrl() != null) {
+            // 요청 DTO에 이미지 URL이 있으면 그걸 설정
+            post.setPhotoUrl(requestDto.getPostImageUrl());
         }
 
         Post savedPost = postRepository.save(post);
         return PostResponseDto.fromEntity(savedPost);
     }
+
 
     // 특정앨범에서 게시글 삭제
     @Transactional
