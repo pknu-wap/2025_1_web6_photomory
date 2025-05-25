@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import com.example.photomory.exception.UnauthorizedException;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
@@ -94,20 +95,25 @@ public class OurAlbumController {
     }
 
     // 7. 댓글 작성
-    @PostMapping("/album/{albumId}/post/{postId}/comment")
-    public CommentResponseDto createComment(@PathVariable Integer albumId,
-                                            @PathVariable Integer postId,
-                                            @RequestBody CommentRequestDto requestDto,
-                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
+    @PostMapping("/{albumId}/post/{postId}/comment")
+    public ResponseEntity<CommentResponseDto> createComment(@PathVariable Integer albumId,
+                                                            @PathVariable Integer postId,
+                                                            @RequestBody @Valid CommentRequestDto requestDto, // @Valid 추가
+                                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        // CustomUserDetails에서 UserEntity 가져오기
         UserEntity user = userDetails.getUser();
 
-        // DTO에 들어온 albumId, postId와 pathVariable이 다르면 예외 처리하는 게 좋음
+        // DTO에 들어온 albumId, postId와 pathVariable이 다르면 예외 처리하는 것은 좋은 방어적 코딩입니다.
         if (!albumId.equals(requestDto.getAlbumId()) || !postId.equals(requestDto.getPostId())) {
-            throw new IllegalArgumentException("Path variables and request body IDs do not match");
+            throw new IllegalArgumentException("요청 경로와 본문의 앨범 또는 게시글 ID가 일치하지 않습니다.");
         }
 
-        // userId는 인증된 유저 정보와 비교하거나 무시해도 됨
-        return ourAlbumService.createComment(albumId, postId, user, requestDto.getCommentsText());
+        // 서비스 계층으로 댓글 작성 요청 전달
+        // 서비스 계층에서 user 및 text 유효성 검사를 수행합니다.
+        CommentResponseDto response = ourAlbumService.createComment(albumId, postId, user, requestDto.getCommentsText());
+
+        // 성공 시 201 Created 상태 코드 반환
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 

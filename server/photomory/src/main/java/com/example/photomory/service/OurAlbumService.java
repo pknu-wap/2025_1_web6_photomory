@@ -167,10 +167,24 @@ public class OurAlbumService {
     // 댓글 작성
     @Transactional
     public CommentResponseDto createComment(Integer albumId, Integer postId, UserEntity user, String text) {
+        // 앨범과 게시글이 존재하는지 확인
         Album album = albumRepository.findById(albumId)
                 .orElseThrow(() -> new EntityNotFoundException("앨범을 찾을 수 없습니다."));
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+
+        // 유저 정보 유효성 검사 (Comment 엔티티의 user 필드가 nullable=false이므로 필수)
+        if (user == null) {
+            throw new IllegalArgumentException("댓글을 작성할 사용자 정보가 유효하지 않습니다.");
+        }
+
+        // 댓글 내용 길이 검사 (Comment 엔티티의 commentsText 필드가 length=500으로 제한되어 있음)
+        if (text == null || text.trim().isEmpty()) {
+            throw new IllegalArgumentException("댓글 내용은 비워둘 수 없습니다.");
+        }
+        if (text.length() > 500) {
+            throw new IllegalArgumentException("댓글 내용은 500자를 초과할 수 없습니다.");
+        }
 
         Comment comment = new Comment();
         comment.setAlbum(album);
@@ -179,10 +193,10 @@ public class OurAlbumService {
         comment.setCommentsText(text);
         comment.setCommentTime(LocalDateTime.now());
 
+        // 댓글 저장 (이 부분에서 500 오류가 발생했었음)
         Comment saved = commentRepository.save(comment);
         return CommentResponseDto.fromEntity(saved);
     }
-
     // 친구 중에서 그룹에 없는 사람만 필터링하여 초대하기
     @Transactional(readOnly = true)
     public List<UserSummaryDto> getInvitableFriends(Long groupId, Long userId) {
