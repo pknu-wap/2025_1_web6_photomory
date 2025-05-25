@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import com.example.photomory.exception.UnauthorizedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
@@ -67,23 +68,24 @@ public class OurAlbumController {
     // 5. 게시물 생성 (파일 포함)
     @PostMapping("/album/{albumId}/post")
     public PostResponseDto createPost(@PathVariable Long albumId,
-                                      @RequestPart String requestDtoJson, // DTO를 JSON 문자열로 받습니다.
-                                      @RequestPart(required = false) MultipartFile photo, // 파일은 그대로 MultipartFile로 받습니다.
+                                      @RequestPart String requestDtoJson,
+                                      @RequestPart(required = false) MultipartFile photo,
                                       @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
+        if (userDetails == null) {
+            throw new UnauthorizedException("인증이 필요합니다.");
+        }
         UserEntity user = userDetails.getUser();
 
-        // JSON 문자열을 PostCreateRequestDto 객체로 변환
-        PostCreateRequestDto requestDto = null;
+        PostCreateRequestDto requestDto;
         try {
             requestDto = objectMapper.readValue(requestDtoJson, PostCreateRequestDto.class);
         } catch (Exception e) {
-            // JSON 파싱 실패 시 처리 (예: BadRequest 예외를 던져 클라이언트에게 알려줌)
-            // 실제 운영 환경에서는 더 구체적인 예외 처리 로직이 필요합니다.
             throw new IllegalArgumentException("Invalid PostCreateRequestDto JSON: " + e.getMessage(), e);
         }
 
         return ourAlbumService.createPost(albumId, requestDto, photo, user);
     }
+
 
     // 6. 게시물 클릭 시 상세 보기 (사진 확대, 댓글)
     @GetMapping("/post/{postId}/detail")
