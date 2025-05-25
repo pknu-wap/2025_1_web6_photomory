@@ -109,14 +109,15 @@ public class OurAlbumService {
 
         post.setPostText(requestDto.getPostTitle());
 
-
-        post.setMakingTime(requestDto.getPostTime());
+        // LocalDate -> LocalDateTime 변환
+        if (requestDto.getPostTime() != null) {
+            post.setMakingTime(requestDto.getPostTime().atStartOfDay());
+        }
 
         if (photoFile != null && !photoFile.isEmpty()) {
             String photoUrl = s3Service.uploadFile(photoFile);
             post.setPhotoUrl(photoUrl);
         } else if (requestDto.getPostImageUrl() != null) {
-            // 요청 DTO에 이미지 URL이 있으면 그걸 설정
             post.setPhotoUrl(requestDto.getPostImageUrl());
         }
 
