@@ -232,8 +232,7 @@ function ProfileMain() {
           </div>
           <button 
             className={styles.logOutForFlexRight}
-            onClick={handleLogout}
-          >
+            onClick={handleLogout}>
             로그아웃
           </button>
         </div>
