@@ -144,13 +144,22 @@ export async function fetchGroupAlbumDetail(albumId, page = 0, size = 4) {
 }
 
 // 우리의 추억 앨범 게시물 생성 api함수
-export async function createGroupAlbumPost(albumId, postData) {
+export async function createGroupAlbumPost(
+  albumId,
+  { postTitle, postTime, photoFile }
+) {
   const token = localStorage.getItem("accessToken");
 
   const formData = new FormData();
-  formData.append("postTitle", postData.postTitle);
-  formData.append("postImageUrl", postData.postImageUrl);
-  formData.append("postTime", postData.postTime);
+  formData.append("photo", photoFile);
+
+  formData.append(
+    "requestDtoJson",
+    JSON.stringify({
+      postTitle,
+      postTime,
+    })
+  ); // 서버가 기대하는 방식대로 전송
 
   try {
     const response = await fetch(
@@ -177,9 +186,9 @@ export async function createGroupAlbumPost(albumId, postData) {
 }
 
 //우리의 추억 댓글 전송 api함수
-export async function writeComment({ albumId, postId, content }) {
+export async function writeComment(albumId, postId, commentsText) {
   const token = localStorage.getItem("accessToken");
-
+  console.log(JSON.stringify({ albumId, postId, commentsText }));
   try {
     const response = await fetch(
       `${BASE_URL}/api/our-album/album/${albumId}/post/${postId}/comment`,
@@ -189,7 +198,7 @@ export async function writeComment({ albumId, postId, content }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`, // 필요 없다면 제거 가능
         },
-        body: JSON.stringify(content),
+        body: JSON.stringify({ albumId, postId, commentsText }),
       }
     );
 
