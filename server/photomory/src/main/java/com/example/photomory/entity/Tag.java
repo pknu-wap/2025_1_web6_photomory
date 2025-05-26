@@ -40,4 +40,9 @@ public class Tag {
     public Tag(String tagName) {
         this.tagName = tagName;
     }
+    public void setPost(Post post) {
+        this.posts = new HashSet<>();
+        this.posts.add(post);
+    }
+
 }

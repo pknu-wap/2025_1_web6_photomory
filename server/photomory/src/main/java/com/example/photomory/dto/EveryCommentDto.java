@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 public class EveryCommentDto {
     private Integer commentId;
     private Integer postId;
-    private Integer albumId;
     private String comment;
     private LocalDateTime createdAt;
     private Long userId;
@@ -26,8 +25,7 @@ public class EveryCommentDto {
         return EveryCommentDto.builder()
                 .commentId(comment.getCommentId())
                 .postId(comment.getPost().getPostId())  // Post 객체에서 postId 꺼냄
-                .albumId(comment.getAlbum() != null ? comment.getAlbum().getAlbumId() : null)  // null-safe 처리
-                .comment(comment.getCommentsText())
+                .comment(comment.getCommentText())
                 .createdAt(comment.getCommentTime())  // 필드 이름에 맞춰 수정
                 .userId(comment.getUser().getUserId())
                 .userName(userName)

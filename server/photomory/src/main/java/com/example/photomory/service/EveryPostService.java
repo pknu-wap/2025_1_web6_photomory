@@ -1,24 +1,15 @@
 package com.example.photomory.service;
 
-import com.example.photomory.dto.EveryPostResponseDto;
 import com.example.photomory.dto.EveryPostRequestDto;
+import com.example.photomory.dto.EveryPostResponseDto;
 import com.example.photomory.dto.EveryCommentDto;
-import com.example.photomory.entity.Photo;
-import com.example.photomory.entity.Post;
-import com.example.photomory.entity.Tag;
-import com.example.photomory.entity.UserEntity;
-import com.example.photomory.entity.Comment;
-import com.example.photomory.repository.CommentRepository;
-import com.example.photomory.repository.PhotoRepository;
-import com.example.photomory.repository.PostRepository;
-import com.example.photomory.repository.TagRepository;
-import com.example.photomory.repository.UserRepository;
-
+import com.example.photomory.entity.*;
+import com.example.photomory.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +29,6 @@ public class EveryPostService {
             EveryPostResponseDto dto = new EveryPostResponseDto();
 
             dto.setPostId(post.getPostId());
-
             if (post.getUser() != null) {
                 dto.setUserId(post.getUser().getUserId());
                 dto.setUserName(post.getUser().getUserName());
@@ -73,7 +63,7 @@ public class EveryPostService {
                                 .userId(commenterId)
                                 .userName(commenter != null ? commenter.getUserName() : "알 수 없음")
                                 .userPhotourl(commenter != null ? commenter.getUserPhotourl() : null)
-                                .comment(comment.getCommentsText())
+                                .comment(comment.getCommentText())
                                 .createdAt(comment.getCommentTime())
                                 .build();
                     })
@@ -86,9 +76,9 @@ public class EveryPostService {
         }).collect(Collectors.toList());
     }
 
-    public void createPost(EveryPostRequestDto dto) {
-        UserEntity user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다."));
+    public void createPost(EveryPostRequestDto dto, String userEmail) {
+        UserEntity user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다: " + userEmail));
 
         Post post = Post.builder()
                 .user(user)
@@ -101,19 +91,24 @@ public class EveryPostService {
 
         Photo photo = Photo.builder()
                 .post(post)
+                .userId(user.getUserId())
                 .photoUrl(dto.getPhotoUrl())
                 .photoName(dto.getPhotoName())
                 .photoComment(dto.getPhotoComment())
                 .photoMakingTime(dto.getPhotoMakingTime())
+                .date(dto.getPhotoMakingTime().toLocalDate())
+                .title(dto.getPhotoName())
                 .build();
         photoRepository.save(photo);
 
+
         for (String tagName : dto.getTags()) {
             Tag tag = Tag.builder()
-                    .post(post)
                     .tagName(tagName)
                     .build();
             tagRepository.save(tag);
         }
+
+        postRepository.save(post);
     }
 }

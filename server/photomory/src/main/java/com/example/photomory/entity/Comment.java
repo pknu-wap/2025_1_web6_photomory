@@ -36,11 +36,11 @@ public class Comment {
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "album_id")
+    @JoinColumn(name = "album_id", nullable = true)
     private Album album;
 
     @Column(name = "comment_text", length = 500)
-    private String commentsText; 
+    private String commentText;
 
     @Column(name = "comment_time", nullable = false) 
     private LocalDateTime commentTime; 
@@ -57,4 +57,10 @@ public class Comment {
         this.tags.remove(tag);
         tag.setComment(null); // 태그 레코드에서 이 댓글 연결 해제
     }
+
+    @PrePersist
+    public void prePersist() {
+        this.commentTime = LocalDateTime.now();
+    }
+
 }

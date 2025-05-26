@@ -75,6 +75,9 @@ public class Post {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
+    @Column(name = "comment_count", nullable = false)
+    private int commentCount;
+
 
 
 }

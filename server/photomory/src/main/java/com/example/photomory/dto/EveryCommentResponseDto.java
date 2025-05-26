@@ -24,7 +24,7 @@ public class EveryCommentResponseDto {
     public static EveryCommentResponseDto fromEntity(Comment comment) {
         return EveryCommentResponseDto.builder()
                 .commentId(comment.getCommentId())
-                .commentsText(comment.getCommentsText())
+                .commentsText(comment.getCommentText())
                 .commentMakingTime(comment.getCommentTime()) // <<< 이 부분을 수정했습니다.
                 .userId(comment.getUser() != null ? comment.getUser().getUserId() : null)
                 .userName(comment.getUser() != null ? comment.getUser().getUserName() : null)
