@@ -1,41 +1,15 @@
 package com.example.photomory.dto;
 
+import lombok.Getter;
+import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.List;
 
+@Getter
+@Setter
 public class AlbumCreateRequestDto {
-
     private String albumName;
-    private String albumTag;
+    private List<String> albumTags;  // 여기서 배열(리스트)로 받음
     private LocalDateTime albumMakingTime;
     private String albumDescription;
-
-    public AlbumCreateRequestDto() {}
-
-    public String getAlbumName() {
-        return albumName;
-    }
-    public void setAlbumName(String albumName) {
-        this.albumName = albumName;
-    }
-
-    public String getAlbumTag() {
-        return albumTag;
-    }
-    public void setAlbumTag(String albumTag) {
-        this.albumTag = albumTag;
-    }
-
-    public LocalDateTime getAlbumMakingTime() {
-        return albumMakingTime;
-    }
-    public void setAlbumMakingTime(LocalDateTime albumMakingTime) {
-        this.albumMakingTime = albumMakingTime;
-    }
-
-    public String getAlbumDescription() {
-        return albumDescription;
-    }
-    public void setAlbumDescription(String albumDescription) {
-        this.albumDescription = albumDescription;
-    }
 }

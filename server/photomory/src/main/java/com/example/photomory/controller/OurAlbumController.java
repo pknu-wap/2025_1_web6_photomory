@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import com.example.photomory.exception.UnauthorizedException;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
@@ -67,23 +69,24 @@ public class OurAlbumController {
     // 5. 게시물 생성 (파일 포함)
     @PostMapping("/album/{albumId}/post")
     public PostResponseDto createPost(@PathVariable Long albumId,
-                                      @RequestPart String requestDtoJson, // DTO를 JSON 문자열로 받습니다.
-                                      @RequestPart(required = false) MultipartFile photo, // 파일은 그대로 MultipartFile로 받습니다.
+                                      @RequestPart String requestDtoJson,
+                                      @RequestPart(required = false) MultipartFile photo,
                                       @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
+        if (userDetails == null) {
+            throw new UnauthorizedException("인증이 필요합니다.");
+        }
         UserEntity user = userDetails.getUser();
 
-        // JSON 문자열을 PostCreateRequestDto 객체로 변환
-        PostCreateRequestDto requestDto = null;
+        PostCreateRequestDto requestDto;
         try {
             requestDto = objectMapper.readValue(requestDtoJson, PostCreateRequestDto.class);
         } catch (Exception e) {
-            // JSON 파싱 실패 시 처리 (예: BadRequest 예외를 던져 클라이언트에게 알려줌)
-            // 실제 운영 환경에서는 더 구체적인 예외 처리 로직이 필요합니다.
             throw new IllegalArgumentException("Invalid PostCreateRequestDto JSON: " + e.getMessage(), e);
         }
 
         return ourAlbumService.createPost(albumId, requestDto, photo, user);
     }
+
 
     // 6. 게시물 클릭 시 상세 보기 (사진 확대, 댓글)
     @GetMapping("/post/{postId}/detail")
@@ -92,21 +95,24 @@ public class OurAlbumController {
     }
 
     // 7. 댓글 작성
-    @PostMapping("/album/{albumId}/post/{postId}/comment")
-    public CommentResponseDto createComment(@PathVariable Integer albumId,
-                                            @PathVariable Integer postId,
-                                            @RequestBody CommentRequestDto requestDto,
-                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
+    @PostMapping("/{albumId}/post/{postId}/comment")
+    public ResponseEntity<CommentResponseDto> createComment(
+            @PathVariable Integer albumId,
+            @PathVariable Integer postId,
+            @RequestBody @Valid CommentRequestDto requestDto,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
         UserEntity user = userDetails.getUser();
 
-        // DTO에 들어온 albumId, postId와 pathVariable이 다르면 예외 처리하는 게 좋음
         if (!albumId.equals(requestDto.getAlbumId()) || !postId.equals(requestDto.getPostId())) {
-            throw new IllegalArgumentException("Path variables and request body IDs do not match");
+            throw new IllegalArgumentException("요청 경로와 본문의 앨범 또는 게시글 ID가 일치하지 않습니다.");
         }
 
-        // userId는 인증된 유저 정보와 비교하거나 무시해도 됨
-        return ourAlbumService.createComment(albumId, postId, user, requestDto.getCommentsText());
+        CommentResponseDto response = ourAlbumService.createComment(albumId, postId, user, requestDto.getCommentsText());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
 
 
     // 9. 초대 가능한 친구 목록 조회 (그룹 멤버 제외)

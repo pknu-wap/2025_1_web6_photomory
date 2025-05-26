@@ -10,8 +10,10 @@ import com.example.photomory.repository.FriendRepository;
 import com.example.photomory.repository.FriendRequestRepository;
 import com.example.photomory.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +27,8 @@ public class FriendRequestService {
     private final FriendRepository friendRepository;
     private final NotificationService notificationService;
 
-    public void sendRequest(Long senderId, Long receiverId) {
+    @Transactional
+    public synchronized void sendRequest(Long senderId, Long receiverId) {
         System.out.println("💬 친구 요청 요청됨: " + senderId + " → " + receiverId);
         if (senderId.equals(receiverId)) throw new IllegalArgumentException("자기 자신에게 요청 불가");
 
@@ -33,7 +36,7 @@ public class FriendRequestService {
         UserEntity receiver = userRepository.findById(receiverId).orElseThrow(() -> new RuntimeException("❌ receiver 없음"));
 
         if (friendRequestRepository.existsBySenderAndReceiverAndStatus(sender, receiver, RequestStatus.PENDING)) {
-            throw new IllegalStateException("이미 요청 보냄");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 친구 요청을 보냈습니다.");
         }
 
         FriendRequest request = new FriendRequest();
