@@ -16,6 +16,7 @@ function OurAlbumPage() {
   const [selectedGroupId, setSelectedGroupId] = useState(""); // 선택된 그룹 ID를 App에서 관리
   const [groupAlbums, setGroupAlbums] = useState([]); // 그룹별 앨범 리스트
   const [albumTitlesByGroup, setAlbumTitlesByGroup] = useState({}); //그룹ID에 대한 앨범 목록 객체
+  const [albumsByGroupId, setAlbumsByGroupId] = useState({}); //그룹 id별 앨범 데이터터
 
   //초기 그룹 정보, 앨범 가져오기
   useEffect(() => {
@@ -40,12 +41,17 @@ function OurAlbumPage() {
           setGroupAlbums(firstGroup.albums);
 
           const titlesByGroup = {};
+          const albumsMap = {};
+
           for (const group of normalizedData) {
             titlesByGroup[group.group_id] = group.albums.map(
-              (album) => album.album_name
+              (a) => a.album_name
             );
+            albumsMap[group.group_id] = group.albums;
           }
+
           setAlbumTitlesByGroup(titlesByGroup);
+          setAlbumsByGroupId(albumsMap);
         }
       } catch (error) {
         console.error("서버 데이터 로드 실패:", error);
@@ -53,14 +59,14 @@ function OurAlbumPage() {
     })();
   }, []);
 
+  // 그룹 선택될 때 해당 그룹의 앨범을 albumsByGroupId에서 꺼냄
   useEffect(() => {
-    if (selectedGroupId && groupList.length > 0) {
-      const group = groupList.find((g) => g.groupId === selectedGroupId);
-      if (group && group.albums) {
-        setGroupAlbums(group.albums);
-      }
+    if (selectedGroupId && albumsByGroupId[selectedGroupId]) {
+      setGroupAlbums(albumsByGroupId[selectedGroupId]);
+    } else {
+      setGroupAlbums([]); // fallback
     }
-  }, [selectedGroupId, groupList]);
+  }, [selectedGroupId, albumsByGroupId]);
 
   // 새로운 그룹 추가 핸들러 (AddGroupButton에서 사용할 예정)
   const handleAddGroup = (newGroupRaw) => {
@@ -76,10 +82,9 @@ function OurAlbumPage() {
           user_name: myName,
           user_photourl: null,
         },
-        // 서버 응답에 멤버가 이미 들어있다면 여기에 병합해도 됨
       ],
     };
-
+    //그룹 리스트 상태 최신화
     setGroupList((prev) => [...prev, newGroup]);
   };
 
