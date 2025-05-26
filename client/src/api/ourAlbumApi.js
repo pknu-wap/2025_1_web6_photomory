@@ -81,10 +81,9 @@ export async function getOurAlbumData() {
 //우리의 추억 앨범 생성 api 함수
 export async function createGroupAlbum(
   groupId,
-  { albumName, albumTag, albumMakingTime, albumDescription }
+  { albumName, albumTags, albumMakingTime, albumDescription }
 ) {
   const token = localStorage.getItem("accessToken");
-
   try {
     const response = await fetch(
       `${BASE_URL}/api/our-album/group/${groupId}/album`,
@@ -96,7 +95,7 @@ export async function createGroupAlbum(
         },
         body: JSON.stringify({
           albumName,
-          albumTag,
+          albumTags,
           albumMakingTime,
           albumDescription,
         }),
