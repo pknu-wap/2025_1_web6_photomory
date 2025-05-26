@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import AlbumTitleList from "../album/AlbumTitleList";
 import addAlbumButton from "../../assets/addAlbumButton.svg";
+import { createGroupAlbum } from "../../api/ourAlbumApi";
+import { normalizeGroupAlbum } from "../../utils/normalizers";
 import "./AddAlbum.css";
 
 const MAX_ALBUM_COUNT = 7; //최대 앨범 갯수
@@ -55,7 +57,7 @@ function AddAlbum({
   };
 
   // 앨범 생성 처리
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const { album_name, album_description, tags } = newAlbumData;
 
@@ -87,29 +89,43 @@ function AddAlbum({
     const newAlbum = {
       album_name,
       album_description,
-      album_makingtime: new Date().toISOString().slice(0, 10),
       tags,
     };
-    //
-    if (type === "group") {
-      const updatedTitles = [
-        ...(albumTitlesByGroup[selectedGroupId] || []),
-        album_name,
-      ];
-      setAlbumTitlesByGroup((prev) => ({
-        ...prev,
-        [selectedGroupId]: updatedTitles,
-      }));
-      setGroupAlbums((prev) => [...prev, newAlbum]);
-    } else if (type === "private") {
-      setMyAlbums((prev) => [...prev, newAlbum]);
-    }
+    console.log(tags);
+    try {
+      if (type === "group") {
+        // 서버에 앨범 생성 요청
+        const createdAlbum = await createGroupAlbum(selectedGroupId, {
+          albumName: album_name,
+          albumTags: tags,
+          albumMakingTime: new Date().toISOString(),
+          albumDescription: album_description,
+        });
 
-    setNewAlbumData({
-      album_name: "",
-      album_description: "",
-      tags: [],
-    });
+        const normalizedAlbum = normalizeGroupAlbum(createdAlbum);
+
+        const updatedTitles = [
+          ...(albumTitlesByGroup[selectedGroupId] || []),
+          album_name,
+        ];
+        setAlbumTitlesByGroup((prev) => ({
+          ...prev,
+          [selectedGroupId]: updatedTitles,
+        }));
+        setGroupAlbums((prev) => [...prev, normalizedAlbum]);
+      } else if (type === "private") {
+        setMyAlbums((prev) => [...prev, newAlbum]);
+      }
+
+      setNewAlbumData({
+        album_name: "",
+        album_description: "",
+        tags: [],
+      });
+    } catch (error) {
+      console.error("앨범 생성 오류:", error);
+      alert("앨범 생성 중 문제가 발생했습니다.");
+    }
   };
 
   // 현재 앨범 제목 목록
