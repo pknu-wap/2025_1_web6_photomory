@@ -1,13 +1,8 @@
 package com.example.photomory.controller;
 
-import com.example.photomory.dto.NotificationRequest;
 import com.example.photomory.dto.NotificationResponse;
-import com.example.photomory.entity.UserEntity;
-import com.example.photomory.repository.UserRepository;
-import com.example.photomory.security.JwtTokenProvider;
 import com.example.photomory.service.AuthService;
 import com.example.photomory.service.NotificationService;
-import com.example.photomory.service.SseEmitters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

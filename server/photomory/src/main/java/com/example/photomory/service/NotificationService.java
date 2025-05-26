@@ -33,7 +33,7 @@ public class NotificationService {
     private final SseEmitters emitters;
     private final FriendRepository friendRepository;
 
-    // ✅ 1. SSE 구독
+    // 1. SSE 구독
     public SseEmitter subscribe(Long userId) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         emitters.add(userId, emitter);
@@ -42,7 +42,7 @@ public class NotificationService {
         return emitter;
     }
 
-    // ✅ 2. Remind를 제외한 모든 알림 전송 (댓글/좋아요/친구요청/수락)
+    // 2. Remind를 제외한 모든 알림 전송 (댓글/좋아요/친구요청/수락)
     public void sendNotification(Long receiverId, String message, NotificationType type, Long requestId) {
         // 1) DB 저장
         Notification notification = Notification.builder()
