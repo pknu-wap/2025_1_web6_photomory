@@ -1,3 +1,4 @@
+
 package com.example.photomory.service;
 
 import com.example.photomory.dto.*;
@@ -69,18 +70,9 @@ public class OurAlbumService {
 
         MyAlbum group = myAlbumRepository.findById(groupIdInt)
                 .orElseThrow(() -> new EntityNotFoundException("그룹을 찾을 수 없습니다."));
-
         Album album = new Album();
         album.setAlbumName(requestDto.getAlbumName());
-
-        // 리스트 -> 콤마로 구분된 문자열 변환 후 저장
-        if (requestDto.getAlbumTags() != null && !requestDto.getAlbumTags().isEmpty()) {
-            String tags = String.join(",", requestDto.getAlbumTags());
-            album.setAlbumTag(tags);
-        } else {
-            album.setAlbumTag(null);
-        }
-
+        album.setAlbumTag(requestDto.getAlbumTag());
         album.setAlbumMakingTime(requestDto.getAlbumMakingTime());
         album.setAlbumDescription(requestDto.getAlbumDescription());
         album.setMyAlbum(group);
@@ -88,7 +80,6 @@ public class OurAlbumService {
         Album savedAlbum = albumRepository.save(album);
         return AlbumResponseDto.fromEntity(savedAlbum);
     }
-
 
     // 앨범 상세정보 + 포스트 목록 (페이징 적용)
     @Transactional(readOnly = true)
@@ -162,17 +153,6 @@ public class OurAlbumService {
         postRepository.delete(post);
     }
 
-    // 게시물 클릭 시 상세 보기 (사진 확대, 댓글, 좋아요 수)
-    @Transactional(readOnly = true)
-    public PostZoomDetailResponseDto getPostZoomDetail(Long postId) {
-        Integer postIdInt = postId.intValue();
-
-        Post post = postRepository.findById(postIdInt)
-                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
-        List<Comment> comments = commentRepository.findByPost_PostId(postId);
-        return PostZoomDetailResponseDto.from(post, comments);
-    }
-
     // 댓글 작성
     @Transactional
     public CommentResponseDto createComment(Integer albumId, Integer postId, UserEntity user, String text) {
@@ -181,12 +161,10 @@ public class OurAlbumService {
                 .orElseThrow(() -> new EntityNotFoundException("앨범을 찾을 수 없습니다."));
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
-
         // 유저 정보 유효성 검사 (Comment 엔티티의 user 필드가 nullable=false이므로 필수)
         if (user == null) {
             throw new IllegalArgumentException("댓글을 작성할 사용자 정보가 유효하지 않습니다.");
         }
-
         // 댓글 내용 길이 검사 (Comment 엔티티의 commentsText 필드가 length=500으로 제한되어 있음)
         if (text == null || text.trim().isEmpty()) {
             throw new IllegalArgumentException("댓글 내용은 비워둘 수 없습니다.");
@@ -194,60 +172,40 @@ public class OurAlbumService {
         if (text.length() > 500) {
             throw new IllegalArgumentException("댓글 내용은 500자를 초과할 수 없습니다.");
         }
-
         Comment comment = new Comment();
         comment.setAlbum(album);
         comment.setPost(post);
         comment.setUser(user);
         comment.setCommentText(text);
         comment.setCommentTime(LocalDateTime.now());
-
-        // 댓글 저장 (이 부분에서 500 오류가 발생했었음)
+        // 댓글 저장
         Comment saved = commentRepository.save(comment);
         return CommentResponseDto.fromEntity(saved);
     }
-    // 친구 중에서 그룹에 없는 사람만 필터링하여 초대하기
+
+    // 친구 중에서 그룹에 없는 사람만 필터링하여 조회하기
     @Transactional(readOnly = true)
     public List<UserSummaryDto> getInvitableFriends(Long groupId, Long userId) {
         Integer groupIdInt = groupId.intValue();
-
+        // 1) 친구 상태인 목록 조회
         List<Friend> friends = friendRepository.findByFromUserIdAndAreWeFriendTrue(userId);
-
-        List<UserEntity> friendUsers = friends.stream()
-                .map(friend -> userRepository.findById(friend.getToUserId()).orElse(null))
-                .filter(user -> user != null)
-                .collect(Collectors.toList());
-
-        List<UserEntity> groupMembers = albumMembersRepository.findByMyAlbum_MyalbumId(groupIdInt)
-                .stream()
-                .map(AlbumMembers::getUserEntity)
-                .collect(Collectors.toList());
-
-        return friendUsers.stream()
-                .filter(friend -> !groupMembers.contains(friend))
-                .map(UserSummaryDto::fromEntity)
-                .collect(Collectors.toList());
+        // 2) 그룹 멤버 userId 목록 조회
+        List<Long> groupMemberIds = albumMembersRepository.findByMyAlbum_MyalbumId(groupIdInt).stream()
+                .map(albumMember -> albumMember.getUserEntity().getUserId())
+                .toList();
+        List<UserSummaryDto> result = new ArrayList<>();
+        // 3) 친구 중 그룹 멤버가 아닌 사람만 필터링해서 DTO로 변환
+        for (Friend friend : friends) {
+            Long toUserId = friend.getToUserId();
+            if (!groupMemberIds.contains(toUserId)) {
+                userRepository.findById(toUserId).ifPresent(friendUser ->
+                        result.add(UserSummaryDto.fromEntity(friendUser))
+                );
+            }
+        }
+        return result;
     }
-    @Transactional(readOnly = true)
-    public List<UserSummaryDto> getFriendsExcludingGroup(Long groupId, Long userId) {
-        Integer groupIdInt = groupId.intValue();
 
-        List<Friend> friends = friendRepository.findByFromUserIdAndAreWeFriendTrue(userId);
-
-        List<UserEntity> friendUsers = friends.stream()
-                .map(friend -> userRepository.findById(friend.getToUserId()).orElse(null))
-                .filter(user -> user != null)
-                .toList();
-
-        List<UserEntity> groupMembers = albumMembersRepository.findByMyAlbum_MyalbumId(groupIdInt).stream()
-                .map(AlbumMembers::getUserEntity)
-                .toList();
-
-        return friendUsers.stream()
-                .filter(friend -> !groupMembers.contains(friend))
-                .map(UserSummaryDto::fromEntity)
-                .toList();
-    }
 
 
     // 그룹에 친구 초대
@@ -275,6 +233,7 @@ public class OurAlbumService {
         }
     }
 
+    // 그룹에서 친구 삭제
     @Transactional
     public void removeMemberFromGroup(Long groupId, Long userIdToRemove) {
         Integer groupIdInt = groupId.intValue();
