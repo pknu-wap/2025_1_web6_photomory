@@ -4,6 +4,7 @@ import com.example.photomory.dto.*;
 import com.example.photomory.entity.*;
 import com.example.photomory.repository.MyAlbumRepository;
 import com.example.photomory.repository.MyPhotoRepository;
+import com.example.photomory.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,10 +21,14 @@ public class MyAlbumService {
 
     private final MyAlbumRepository myAlbumRepository;
     private final MyPhotoRepository myPhotoRepository;
+    private final UserRepository userRepository;
     private final S3Service s3Service;
 
-    public MyAlbumDetailDto createMyAlbum(UserEntity user, String myalbumName, String myalbumDescription,
+    public MyAlbumDetailDto createMyAlbum(Long userId, String myalbumName, String myalbumDescription,
                                           List<MultipartFile> photos, List<String> mytags) throws IOException {
+
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
         MyAlbum album = new MyAlbum();
         album.setUserId(user.getUserId());
@@ -70,12 +75,12 @@ public class MyAlbumService {
                 .build();
     }
 
-    public MyAlbumDetailDto getMyAlbum(Long myalbumId) {
-        Integer myalbumIdInt = myalbumId.intValue();
-
-        MyAlbum album = myAlbumRepository.findById(myalbumIdInt)
-                .orElseThrow(() -> new RuntimeException("앨범을 찾을 수 없습니다."));
-        return convertToDto(album);
+    public MyAlbumDetailDto getMyAlbum(Long userId) {
+        List<MyAlbum> albums = myAlbumRepository.findByUserId(userId);
+        if (albums.isEmpty()) {
+            throw new RuntimeException("해당 유저의 앨범이 존재하지 않습니다.");
+        }
+        return convertToDto(albums.get(0)); // 첫 앨범 반환 (필요시 수정)
     }
 
     public List<MyAlbumDetailDto> getAllMyAlbums(Long userId) {
@@ -85,13 +90,13 @@ public class MyAlbumService {
                 .collect(Collectors.toList());
     }
 
-    public MyAlbumDetailDto updateMyAlbum(Long albumId, UserEntity user, MyAlbumUpdateRequest request) {
+    public MyAlbumDetailDto updateMyAlbum(Long albumId, Long userId, MyAlbumUpdateRequest request) {
         Integer albumIdInt = albumId.intValue();
 
         MyAlbum album = myAlbumRepository.findById(albumIdInt)
                 .orElseThrow(() -> new RuntimeException("앨범이 존재하지 않습니다."));
 
-        if (!album.getUserId().equals(user.getUserId())) {
+        if (!album.getUserId().equals(userId)) {
             throw new RuntimeException("수정 권한이 없습니다.");
         }
 
@@ -103,13 +108,13 @@ public class MyAlbumService {
         return convertToDto(album);
     }
 
-    public void deleteMyAlbum(Long albumId, UserEntity user) {
+    public void deleteMyAlbum(Long albumId, Long userId) {
         Integer albumIdInt = albumId.intValue();
 
         MyAlbum album = myAlbumRepository.findById(albumIdInt)
                 .orElseThrow(() -> new RuntimeException("앨범을 찾을 수 없습니다."));
 
-        if (!album.getUserId().equals(user.getUserId())) {
+        if (!album.getUserId().equals(userId)) {
             throw new RuntimeException("삭제 권한이 없습니다.");
         }
 
@@ -123,13 +128,13 @@ public class MyAlbumService {
         myAlbumRepository.delete(album);
     }
 
-    public MyAlbumDetailDto addPhotosToAlbum(Long albumId, UserEntity user, List<MyPhotoUploadRequest> photos) throws IOException {
+    public MyAlbumDetailDto addPhotosToAlbum(Long albumId, Long userId, List<MyPhotoUploadRequest> photos) throws IOException {
         Integer albumIdInt = albumId.intValue();
 
         MyAlbum album = myAlbumRepository.findById(albumIdInt)
                 .orElseThrow(() -> new RuntimeException("앨범이 존재하지 않습니다."));
 
-        if (!album.getUserId().equals(user.getUserId())) {
+        if (!album.getUserId().equals(userId)) {
             throw new RuntimeException("사진 추가 권한이 없습니다.");
         }
 
@@ -175,11 +180,11 @@ public class MyAlbumService {
                 .build();
     }
 
-    public void deletePhoto(int photoId, UserEntity user) {
+    public void deletePhoto(int photoId, Long userId) {
         MyPhoto photo = myPhotoRepository.findById(photoId)
                 .orElseThrow(() -> new RuntimeException("사진이 존재하지 않습니다."));
 
-        if (!photo.getMyalbum().getUserId().equals(user.getUserId())) {
+        if (!photo.getMyalbum().getUserId().equals(userId)) {
             throw new RuntimeException("삭제 권한이 없습니다.");
         }
         s3Service.deleteFile(photo.getMyphotoUrl());
