@@ -70,7 +70,6 @@ public class OurAlbumService {
 
         MyAlbum group = myAlbumRepository.findById(groupIdInt)
                 .orElseThrow(() -> new EntityNotFoundException("그룹을 찾을 수 없습니다."));
-
         Album album = new Album();
         album.setAlbumName(requestDto.getAlbumName());
         album.setAlbumTag(requestDto.getAlbumTag());
@@ -188,7 +187,7 @@ public class OurAlbumService {
     @Transactional(readOnly = true)
     public List<UserSummaryDto> getInvitableFriends(Long groupId, Long userId) {
         Integer groupIdInt = groupId.intValue();
-        // 1) userId가 보낸 친구 요청 중 친구 상태(true)인 것들 조회
+        // 1) 친구 상태인 목록 조회
         List<Friend> friends = friendRepository.findByFromUserIdAndAreWeFriendTrue(userId);
         // 2) 그룹 멤버 userId 목록 조회
         List<Long> groupMemberIds = albumMembersRepository.findByMyAlbum_MyalbumId(groupIdInt).stream()
@@ -200,14 +199,13 @@ public class OurAlbumService {
             Long toUserId = friend.getToUserId();
             if (!groupMemberIds.contains(toUserId)) {
                 userRepository.findById(toUserId).ifPresent(friendUser ->
-                        // friendId: 현재 테이블에 식별자가 없으니 'toUserId'를 int로 변환해 넣음
-                        result.add(UserSummaryDto.fromEntity(friendUser, toUserId))
-
+                        result.add(UserSummaryDto.fromEntity(friendUser))
                 );
             }
         }
         return result;
     }
+
 
 
     // 그룹에 친구 초대

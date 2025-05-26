@@ -66,7 +66,7 @@ public class OurAlbumController {
         return ourAlbumService.getAlbumWithPosts(albumId, page, size);
     }
 
-    // 5. 게시물 생성 (파일 포함)
+    // 5. 사진 생성 (파일 포함)
     @PostMapping("/album/{albumId}/post")
     public PostResponseDto createPost(@PathVariable Long albumId,
                                       @RequestPart String requestDtoJson,
@@ -85,13 +85,6 @@ public class OurAlbumController {
         }
 
         return ourAlbumService.createPost(albumId, requestDto, photo, user);
-    }
-
-
-    // 6. 게시물 클릭 시 상세 보기 (사진 확대, 댓글)
-    @GetMapping("/post/{postId}/detail")
-    public PostZoomDetailResponseDto getPostZoomDetail(@PathVariable Long postId) {
-        return ourAlbumService.getPostZoomDetail(postId);
     }
 
     // 7. 댓글 작성
@@ -120,7 +113,7 @@ public class OurAlbumController {
     public List<UserSummaryDto> getInvitableFriends(@PathVariable Long groupId,
                                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
         UserEntity user = userDetails.getUser();
-        return ourAlbumService.getFriendsExcludingGroup(groupId, user.getUserId());
+        return ourAlbumService.getInvitableFriends(groupId, user.getUserId());
     }
 
     // 10. 친구를 그룹에 초대
