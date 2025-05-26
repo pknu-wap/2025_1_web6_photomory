@@ -9,7 +9,6 @@ import java.util.List;
 @Getter
 @Setter
 public class EveryPostRequestDto {
-    private Long userId;
     private String postText;
     private String postDescription;
     private String location;

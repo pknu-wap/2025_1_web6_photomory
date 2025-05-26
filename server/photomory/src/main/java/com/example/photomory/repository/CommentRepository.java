@@ -22,3 +22,4 @@ public interface CommentRepository extends JpaRepository<Comment, Long> { // Com
     @Transactional // 이 메소드에서 데이터 삭제가 발생하므로 @Transactional 어노테이션을 붙여야 합니다.
     void deleteByPost_PostId(Long postId); // Post ID가 Long임을 확인
 }
+
