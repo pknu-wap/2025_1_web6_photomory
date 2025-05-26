@@ -6,8 +6,10 @@ import com.example.photomory.entity.UserEntity;
 import com.example.photomory.repository.UserRepository;
 import com.example.photomory.security.JwtTokenProvider;
 import com.example.photomory.service.NotificationService;
+import com.example.photomory.service.SseEmitters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -21,6 +23,33 @@ public class NotificationController {
     private final NotificationService notificationService;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final SseEmitters sseEmitters;
+
+    //알림목록조회 테스트용!!
+    @GetMapping("/test")
+    public ResponseEntity<List<NotificationResponse>> getTestNotifications(@RequestParam Long userId) {
+        List<NotificationResponse> responses = notificationService.getNotificationsAndMarkAllRead(userId);
+        return ResponseEntity.ok(responses);
+    }
+
+    //SSE 접속 테스트용!! 실사용전에 삭제
+    @GetMapping(value = "/subscribe-test", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter testSubscribe() {
+        System.out.println("✅ /subscribe-test 호출됨");
+
+        try {
+            SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+            sseEmitters.add(1L, emitter);
+            emitter.onCompletion(() -> System.out.println("🔚 SSE 연결 종료됨"));
+            emitter.onTimeout(() -> System.out.println("⏱️ SSE 타임아웃"));
+            emitter.onError(e -> System.out.println("❌ SSE 에러: " + e.getMessage()));
+            return emitter;
+        } catch (Exception e) {
+            System.out.println("🔥 subscribe-test 에러: " + e.getMessage());
+            throw e;
+        }
+    }
+
 
     // ✅ 토큰 기반 구독
     @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -30,7 +59,7 @@ public class NotificationController {
         UserEntity user = userRepository.findByUserEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Long userId = user.getUserId();  // 바로 Long 타입으로 받기
+        Long userId = user.getUserId();
 
         return notificationService.subscribe(userId);
     }
@@ -48,7 +77,7 @@ public class NotificationController {
         UserEntity user = userRepository.findByUserEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Long userId = user.getUserId();  // 바로 Long 타입으로 받기
+        Long userId = user.getUserId();
 
         return notificationService.getNotificationsAndMarkAllRead(userId);
     }

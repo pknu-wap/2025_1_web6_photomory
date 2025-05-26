@@ -27,24 +27,17 @@ public class Tag {
     @Column(name = "tag_name", nullable = false)
     private String tagName;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "post_id")
-    private Post post;
+    // Post와 ManyToMany 관계 유지
+    @ManyToMany(mappedBy = "tags")
+    private Set<Post> posts = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    // Comment와 ManyToOne 관계 추가 (null 허용)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @ManyToMany(mappedBy = "tags")
-    private Set<Album> albums = new HashSet<>();
-
+    // 생성자
     public Tag(String tagName) {
         this.tagName = tagName;
-    }
-
-    public Tag(String tagName, Post post, Comment comment) {
-        this.tagName = tagName;
-        this.post = post;
-        this.comment = comment;
     }
 }

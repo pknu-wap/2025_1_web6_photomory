@@ -16,6 +16,16 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.example.photomory.entity.UserEntity;
+import com.example.photomory.security.CustomUserDetails;
+import com.example.photomory.service.EveryCommentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/every/comments")
@@ -23,6 +33,7 @@ public class EveryCommentController {
 
     @Autowired
     private CommentRepository commentRepository;
+
 
     @Autowired
     private UserRepository userRepository;

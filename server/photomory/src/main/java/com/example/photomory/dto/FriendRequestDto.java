@@ -1,5 +1,11 @@
 package com.example.photomory.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+
 public class FriendRequestDto {
 
     private Long id;

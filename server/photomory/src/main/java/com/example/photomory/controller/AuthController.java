@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
         methods = {RequestMethod.POST, RequestMethod.OPTIONS},
         allowedHeaders = "*"
 )
+
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;

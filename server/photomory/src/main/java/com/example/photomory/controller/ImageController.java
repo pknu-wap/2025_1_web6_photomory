@@ -1,17 +1,20 @@
 package com.example.photomory.controller;
 
-import com.example.photomory.entity.ImageEntity;
+import com.example.photomory.entity.Photo;
+import com.example.photomory.entity.Photo;
 import com.example.photomory.repository.ImageRepository;
 import com.example.photomory.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/images")
@@ -26,20 +29,24 @@ public class ImageController {
     public ResponseEntity<List<Map<String, String>>> uploadImages(
             @RequestParam("files") List<MultipartFile> files,
             @RequestParam("title") String title,
-            @RequestParam("date") String date) throws IOException {
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) throws IOException {
 
         List<Map<String, String>> uploadedImages = new ArrayList<>();
 
+        System.out.println("파일 수: " + files.size());
+
         for (MultipartFile file : files) {
-            String imageUrl = s3Service.uploadFile(file);
-            imageRepository.save(new ImageEntity(title, date, imageUrl));
+            String photoUrl = s3Service.uploadFile(file);
+            imageRepository.save(new Photo(title, date, photoUrl));
 
             //이 부분이 json으로 프론트에 json으로 응답됨
             Map<String, String> imageData = new HashMap<>();
             imageData.put("title", title);
-            imageData.put("date", date);
-            imageData.put("imageUrl", imageUrl);
+            imageData.put("date", date.toString());
+            imageData.put("photoUrl", photoUrl);
             uploadedImages.add(imageData);
+
+            System.out.println("파일 이름: " + file.getOriginalFilename());
         }
 
         return ResponseEntity.ok(uploadedImages);
@@ -49,15 +56,15 @@ public class ImageController {
     @GetMapping("/search")
     public ResponseEntity<List<Map<String, String>>> getImagesByTitleAndDate(
             @RequestParam("title") String title,
-            @RequestParam("date") String date) {
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
-        List<ImageEntity> images = imageRepository.findByTitleAndDate(title, date);
+        List<Photo> images = imageRepository.findByTitleAndDate(title, date);
 
         List<Map<String, String>> response = images.stream().map(image -> {
             Map<String, String> data = new HashMap<>();
-            data.put("imageUrl", image.getImageUrl());
+            data.put("photoUrl", image.getPhotoUrl());
             data.put("title", image.getTitle());
-            data.put("date", image.getDate());
+            data.put("date", image.getDate().toString());
             return data;
         }).toList();
 
@@ -66,15 +73,15 @@ public class ImageController {
 
     // ✅ 전체 이미지 조회 (테스트용 등)
     @GetMapping
-    public ResponseEntity<List<ImageEntity>> getAllImages() {
+    public ResponseEntity<List<Photo>> getAllImages() {
         return ResponseEntity.ok(imageRepository.findAll());
     }
 
     // ✅ 삭제: 이미지 URL로 삭제
     @DeleteMapping("/delete")
-    public ResponseEntity<Map<String, String>> deleteImage(@RequestParam("url") String imageUrl) {
-        s3Service.deleteFile(imageUrl);
-        imageRepository.deleteByImageUrl(imageUrl);
+    public ResponseEntity<Map<String, String>> deleteImage(@RequestParam("url") String photoUrl) {
+        s3Service.deleteFile(photoUrl);
+        imageRepository.deleteByPhotoUrl(photoUrl);
 
         Map<String, String> response = new HashMap<>();
         response.put("message", "삭제 완료");
