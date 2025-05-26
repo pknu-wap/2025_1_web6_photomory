@@ -47,4 +47,7 @@ public class Notification {
     private String title;
     private LocalDate date;
 
+    private Long requestId;
+
+
 }

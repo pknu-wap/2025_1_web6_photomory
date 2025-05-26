@@ -118,4 +118,5 @@ public class UserEntity {
         // userId가 null일 수 있으므로 Objects.hash를 사용합니다.
         return Objects.hash(userId);
     }
+
 }
