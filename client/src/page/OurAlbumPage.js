@@ -120,8 +120,6 @@ function OurAlbumPage() {
     }
   }, [selectedGroupId, albumsByGroupId]);
 
-  console.log(groupAlbums);
-
   return (
     <>
       <Header />

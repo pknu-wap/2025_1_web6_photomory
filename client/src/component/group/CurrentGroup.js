@@ -65,7 +65,7 @@ function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
           </>
         ) : (
           <div className="noGroupPlaceholder">
-            <p>선택된 그룹이 없습니다.</p>
+            <p>👥 선택된 그룹이 없습니다.</p>
           </div>
         )}
       </div>
