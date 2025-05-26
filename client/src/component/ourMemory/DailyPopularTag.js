@@ -13,7 +13,7 @@ export default function DailyPopularTag({
     <div className={styles.todayTagContainer}>
       <span
         className={styles.todayTagImage}
-        style={{ backgroundImage: `url(${post?.photo_url || { emptyImage }})` }}
+        style={{ backgroundImage: `url(${post?.photoUrl || { emptyImage }})` }}
         onClick={handleImageClick}></span>
       <div className={styles.forFlexTodayTag1}>
         <div className={styles.forFlexTodayTag2}>
@@ -34,7 +34,7 @@ export default function DailyPopularTag({
           }}>
             <img src={heart} alt="" className={styles.todayTagHeartIcon}></img>
             <span className={styles.todayTagheartText}>
-              {post?.likes_count || "3.2k"}
+              {post?.likesCount || "3.2k"}
               {/*하트 갯수 받기*/}
             </span>
           </div>
@@ -50,7 +50,7 @@ export default function DailyPopularTag({
             ></img>
             <span className={styles.forFlextodayTagCommentText}>
               <span className={styles.todayTagCommentText}>
-                {post?.comments_count || "80"}
+                {post?.commentsCount || "80"}
                 {/*댓글 갯수 받기*/}
               </span>
             </span>

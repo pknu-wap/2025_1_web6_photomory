@@ -84,7 +84,7 @@ async function getUserPosts() {
     }
 }
 
-async function updateLikeCount(post_id){ //좋아요 수 관리
+async function updateLikeCount(postId){ //좋아요 수 관리
     try{
         const accessToken= localStorage.getItem('accessToken')
         const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{/* 이거 엔드포인트 뭐임..?*/
@@ -93,7 +93,7 @@ async function updateLikeCount(post_id){ //좋아요 수 관리
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`
             },
-            body: JSON.stringify(post_id)
+            body: JSON.stringify(postId)
         })
         if(!response.ok){
             if(response.status===401){
@@ -109,7 +109,7 @@ async function updateLikeCount(post_id){ //좋아요 수 관리
     }
 }
 
-async function updateComment(post_id, comment){ //댓글 수, 댓글 내용 관리.
+async function updateComment(postId, comment){ //댓글 수, 댓글 내용 관리.
     try{
         const accessToken= localStorage.getItem('accessToken')
         const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{/* 이거 엔드포인트 뭐임..?*/
@@ -118,7 +118,7 @@ async function updateComment(post_id, comment){ //댓글 수, 댓글 내용 관�
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`
             },
-            body: JSON.stringify({ post_id, user_id: comment.user_id, comment_text: comment.comment_text })
+            body: JSON.stringify({ postId, userId: comment.userId, commentText: comment.commentText })
         })
         if(!response.ok){
             if(response.status===401){
@@ -211,7 +211,7 @@ export default function EveryMemoryMain(){
         try{
             const posts= await getUserPosts();
             if (posts && Array.isArray(posts)) {
-                const sortedPosts = [...posts].sort((a,b)=>b.likes_count-a.likes_count);
+                const sortedPosts = [...posts].sort((a,b)=>b.likesCount-a.likesCount);
                 setPosts(sortedPosts); // 태그 상관 없이 좋아요 내림차순으로 posts 객체 정리
             }
             else{
@@ -241,19 +241,19 @@ export default function EveryMemoryMain(){
         }
     }, [posts]); //뭔가 posts말고 posts 좋아요 순서가 바뀐다면으로 하는 게 더 좋을 거 같은데..
 
-    const handleLikeNum =async(post_id)=>{
+    const handleLikeNum =async(postId)=>{
         try{
             setPosts((prevPosts) => //낙관적 업뎃
-                prevPosts.map((post)=> post.post_id=== post_id
-                    ? { ...post, likes_count: post.likes_count + 1 } //이미 {}여기엔 속성이라 post.을 안 붙임
-                    : post).sort((a, b) => b.likes_count - a.likes_count)
+                prevPosts.map((post)=> post.postId=== postId
+                    ? { ...post, likesCount: post.likesCount + 1 } //이미 {}여기엔 속성이라 post.을 안 붙임
+                    : post).sort((a, b) => b.likesCount - a.likesCount)
             );
 
-            const updatedPostByLike = await updateLikeCount(post_id); //서버 업뎃
+            const updatedPostByLike = await updateLikeCount(postId); //서버 업뎃
             setPosts((prevPosts) =>
-                prevPosts.map((post) =>post.post_id=== post_id
-                    ? { ...post, likes_count: updatedPostByLike.likes_count }
-                    :post).sort((a, b) => b.likes_count - a.likes_count)
+                prevPosts.map((post) =>post.postId=== postId
+                    ? { ...post, likesCount: updatedPostByLike.likesCount }
+                    :post).sort((a, b) => b.likesCount - a.likesCount)
             );
         }
         catch (error) {
@@ -263,18 +263,18 @@ export default function EveryMemoryMain(){
     const handleCommentNum=async(modalPost, comment)=>{ //댓글 수, 내용.
         try{
             setPosts((prevPosts)=> //낙관적 업뎃
-                prevPosts.map((post)=>post.post_id===modalPost.post_id
+                prevPosts.map((post)=>post.postId===modalPost.postId
                 ? {
                     ...post,
-                    comments_count: post.comments_count + 1,
+                    commentsCount: post.commentsCount + 1,
                     comments:[...post.comments, comment] //코멘트에선 코멘트 텍스트와 유저 아이디만 준다.
                 }
                     : post)
             );
-            const updatedPostByComment= await updateComment(modalPost.post_id, comment) //서버 업뎃
+            const updatedPostByComment= await updateComment(modalPost.postId, comment) //서버 업뎃
             setPosts((prevPosts)=>
-                prevPosts.map((post)=>post.post_id===modalPost.post_id
-                ? {...post, comments_count: updatedPostByComment.comments_count}
+                prevPosts.map((post)=>post.postId===modalPost.postId
+                ? {...post, commentsCount: updatedPostByComment.commentsCount}
                     : post)
             );
         }
@@ -285,8 +285,8 @@ export default function EveryMemoryMain(){
 
     const weeklyPosts= randomPosts.slice(0,3); //아 여기선 먼저 useState([])에서[]로 됐다가 다시 비동기로 값을 받는다 usestate에서 useState() 그냥 이렇게 하면 비동기라서 이 코드가 먼저 실행될 떄 undefined가 떠서 타입 오류가 뜬다. slice는 undefined이면 오류가 뜬다. 따라서 []을 쓴다. 그 후 값이 들어온다.
 
-    const weeklyPost_ids = useMemo(() => new Set(weeklyPosts.map((weeklyPost) => weeklyPost.post_id)), [weeklyPosts]);
-    const dailyPosts = useMemo(() => posts.filter((post) => !weeklyPost_ids.has(post.post_id)), [posts, weeklyPost_ids]); //has는 Set,Map에 사용하는 include,some보다 빠르게 작동함.
+    const weeklyPostIds = useMemo(() => new Set(weeklyPosts.map((weeklyPost) => weeklyPost.postId)), [weeklyPosts]);
+    const dailyPosts = useMemo(() => posts.filter((post) => !weeklyPostIds.has(post.postId)), [posts, weeklyPostIds]); //has는 Set,Map에 사용하는 include,some보다 빠르게 작동함.
 
     const [nextPage, setNextPage] = useState([0,1,2,3,4,5]);
     const onClickNextPage=(value)=>{ 
@@ -597,14 +597,14 @@ export default function EveryMemoryMain(){
                     isOpen={isCommentModalOpen}
                     onClose={handleCloseCommentModal}
                     post={selectedPostForModal ? [selectedPostForModal] : []}
-                    handleCommentNum={(comment_text) => {
-                        if (selectedPostForModal && selectedPostForModal.post_id) { //먼저 selected 안 해주고 .post_id하면 오류날 수 있어 먼저 .이 없는 걸로
+                    handleCommentNum={(commentText) => {
+                        if (selectedPostForModal && selectedPostForModal.postId) { //먼저 selected 안 해주고 .postId하면 오류날 수 있어 먼저 .이 없는 걸로
                             handleCommentNum(selectedPostForModal, 
                                 { //위에서 comment로 받을 거.
-                                    user_id: selectedPostForModal.commets.user_id,
-                                    user_name: selectedPostForModal.commets.user_name,
-                                    user_photourl: selectedPostForModal.commets.user_photourl,
-                                    comment_text: comment_text
+                                    userId: selectedPostForModal.commets.userId,
+                                    userName: selectedPostForModal.commets.userName,
+                                    userPhotourl: selectedPostForModal.commets.userPhotourl,
+                                    commentText: commentText
                                 } //코멘트모달에서 코멘트텍스트만 받고 다른 건 에브리에서 통괄
                             );
                         }

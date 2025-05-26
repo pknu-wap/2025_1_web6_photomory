@@ -40,7 +40,7 @@ async function fetchUserEveryPosts(accessToken) {
 
 async function fetchUserOurAlbums(accessToken) {
   try{
-    const response= await fetch(`${process.env.REACT_APP_API_URL}/api/our-album/album/1?page=0&size=10`,{
+    const response= await fetch(`${process.env.REACT_APP_API_URL}/api/our-album`,{
       method: 'GET',
       headers:{
         'Content_type': 'application/json',
@@ -174,7 +174,7 @@ function MainPageMain() {
       const ourAlbums = await getUserPosts().ourAlbums;
       const myAlbums = await getUserPosts().myAlbums;
       if (posts || ourAlbums || myAlbums) {
-        const sortedPosts = [...posts].sort((a, b) => b.likes_count - a.likes_count);
+        const sortedPosts = [...posts].sort((a, b) => b.likesCount - a.likesCount);
         setPosts(sortedPosts); // 태그 상관 없이 좋아요 내림차순으로 posts 객체 정리
         setOurAlbums(ourAlbums)
         setMyAlbums(myAlbums)
@@ -205,16 +205,16 @@ function MainPageMain() {
   }, [posts]); //이거 에브리에서 받아오든 여기서 에브리가 받아 가든으로 고쳐야 한다.
 
 
-  const handleLikeNum = async (postId) => {
+  const handleLikeNum = async (postId) => { //이건 에브리 메모리에
     try {
       setPosts((prevPosts) => // 낙관적 업뎃
         prevPosts
           .map((post) =>
             post.postId === postId
-              ? { ...post, likes_count: post.likes_count + 1 } // 이미 {}여기엔 속성이라 post.을 안 붙임
+              ? { ...post, likesCount: post.likesCount + 1 } // 이미 {}여기엔 속성이라 post.을 안 붙임
               : post
           )
-          .sort((a, b) => b.likes_count - a.likes_count)
+          .sort((a, b) => b.likesCount - a.likesCount)
       );
 
       const updatedPostByLike = await updateLikeCommentCount(postId); // 서버 업뎃
@@ -222,10 +222,10 @@ function MainPageMain() {
         prevPosts
           .map((post) =>
             post.postId === postId
-              ? { ...post, likes_count: updatedPostByLike.likes_count }
+              ? { ...post, likesCount: updatedPostByLike.likesCount }
               : post
           )
-          .sort((a, b) => b.likes_count - a.likes_count)
+          .sort((a, b) => b.likesCount - a.likesCount)
       );
     } catch (error) {
       console.error('Error uploading like count', error);
@@ -261,10 +261,10 @@ function MainPageMain() {
           나만 볼 수 있는 특별한 순간을 안전하게 보관하세요
         </p>
         <div className={styles.myMemoryImageContainer}>
-          <img src={myAlbums[0]?.myphotos[0] || image1} alt="" className={styles.myMemoryImage1} //이미지도 가꼬 와야 한다.
-          onClick={(e) => imageModalOpen(e, myAlbums[0]?.myphotos[0] || '')}/>
-          <img src={myAlbums[0]?.myphotos[0] || image2} alt="" className={styles.myMemoryImage2}
-          onClick={(e) => imageModalOpen(e, myAlbums[0]?.myphotos[1] || '')}/>
+          <img src={myAlbums[0]?.myphotos[0]?.myphotoUrl || image1} alt="" className={styles.myMemoryImage1} //이미지도 가꼬 와야 한다.
+          onClick={(e) => imageModalOpen(e, myAlbums[0]?.myphotos[0]?.myphotoUrl || '')}/>
+          <img src={myAlbums[1]?.myphotos[0]?.myphotoUrl || image2} alt="" className={styles.myMemoryImage2}
+          onClick={(e) => imageModalOpen(e, myAlbums[1]?.myphotos[0]?.myphotoUrl || '')}/>
         </div>
       </div>
       <div
@@ -278,10 +278,10 @@ function MainPageMain() {
           특별한 순간을 다른 사람들과 함께 나누고 소통하세요
         </p>
         <div className={styles.ourMemoryImageContainer}>
-          <img src={ourAlbums[0]?.posts[0] || image1} alt="" className={styles.ourMemoryImage1}
-          onClick={(e) => imageModalOpen(e, ourAlbums[0]?.posts[0] || '')}/>
-          <img src={ourAlbums[0]?.posts[0] || image2} alt="" className={styles.ourMemoryImage2}
-          onClick={(e) => imageModalOpen(e, ourAlbums[0]?.posts[1] || '')}/>
+          <img src={ourAlbums[0]?.albums[0]?.photos[0] || image1} alt="" className={styles.ourMemoryImage1}
+          onClick={(e) => imageModalOpen(e, ourAlbums[0]?.albums[0]?.photos[0] || '')}/>
+          <img src={ourAlbums[0]?.albums[0]?.photos[1] || image2} alt="" className={styles.ourMemoryImage2}
+          onClick={(e) => imageModalOpen(e, ourAlbums[0]?.albums[1]?.photos[0] || '')}/>
         </div>
       </div>
       <div className={styles.weeklyMemoryTitleContainer}>
@@ -296,18 +296,18 @@ function MainPageMain() {
       </div>
       <div className={styles.weeklyMemoryContainer1}>
         <img
-          src={weeklyPosts[0]?.photo_url || ''} 
+          src={weeklyPosts[0]?.photoUrl || ''} 
           alt=""
           className={styles.weeklyMemoryImage1}
           onClick={(e) => imageModalOpen(e, weeklyPosts[0])}
         ></img>
         <div className={styles.weeklyMemoryImageText1}>
           <FontAwesomeIcon icon={faTrophy} style={{ color: "#FFD43B" }} className={styles.weeklyMemoryImageTrophy1}/>
-          {randomTagText? randomTagText : '느낌 좋은 사진'} 부문 1등!! by @{weeklyPosts[0]?.user_name || ''}
+          {randomTagText? randomTagText : '느낌 좋은 사진'} 부문 1등!! by @{weeklyPosts[0]?.userName || ''}
         </div>
         <div className={styles.weeklyMemoryLikesContainer1}
         onClick={()=>{
-          handleLikeNum(weeklyPosts[0]?.post_id || '')
+          handleLikeNum(weeklyPosts[0]?.postId || '')
         }}>
           <FontAwesomeIcon
             icon={faHeart}
@@ -315,23 +315,23 @@ function MainPageMain() {
             className={styles.weeklyMemoryLikes1}
           />
           &nbsp;
-          <span className={styles.heartNum}>{weeklyPosts[0]?.likes_count || '1.4k'}</span>
+          <span className={styles.heartNum}>{weeklyPosts[0]?.likesCount || '1.4k'}</span>
         </div>
       </div>
       <div className={styles.weeklyMemoryContainer2}>
         <img
-          src={weeklyPosts[1]?.photo_url || ''}
+          src={weeklyPosts[1]?.photoUrl || ''}
           alt=""
           className={styles.weeklyMemoryImage2}
           onClick={(e) => imageModalOpen(e, weeklyPosts[1])}
         ></img>
         <div className={styles.weeklyMemoryImageText2}>
           <FontAwesomeIcon icon={faTrophy} style={{ color: "#C0C0C0" }} className={styles.weeklyMemoryImageTrophy2}/>
-          {randomTagText? randomTagText : '느낌 좋은 사진'} 부문 2등!! by @{weeklyPosts[1]?.user_name || ''}
+          {randomTagText? randomTagText : '느낌 좋은 사진'} 부문 2등!! by @{weeklyPosts[1]?.userName || ''}
         </div>
         <div className={styles.weeklyMemoryLikesContainer2}
         onClick={()=>{
-          handleLikeNum(weeklyPosts[1]?.post_id || '')
+          handleLikeNum(weeklyPosts[1]?.postId || '')
         }}>
           <FontAwesomeIcon
             icon={faHeart}
@@ -339,23 +339,23 @@ function MainPageMain() {
             className={styles.weeklyMemoryLikes2}
           />
           &nbsp;
-          <span className={styles.heartNum}>{weeklyPosts[1]?.likes_count || '1.4k'}</span>
+          <span className={styles.heartNum}>{weeklyPosts[1]?.likesCount || '1.4k'}</span>
         </div>
       </div>
       <div className={styles.weeklyMemoryContainer3}>
         <img
-          src={weeklyPosts[2]?.photo_url || ''}
+          src={weeklyPosts[2]?.photoUrl || ''}
           alt=""
           className={styles.weeklyMemoryImage3}
           onClick={(e) => imageModalOpen(e, weeklyPosts[2])}
         ></img>
         <div className={styles.weeklyMemoryImageText3}>
           <FontAwesomeIcon icon={faTrophy} style={{ color: "#CD7F32" }} className={styles.weeklyMemoryImageTrophy2}/>
-          {randomTagText? randomTagText : '느낌 좋은 사진'} 부문 3등!! by @{weeklyPosts[2]?.user_name || ''}
+          {randomTagText? randomTagText : '느낌 좋은 사진'} 부문 3등!! by @{weeklyPosts[2]?.userName || ''}
         </div>
         <div className={styles.weeklyMemoryLikesContainer2}
         onClick={()=>{
-          handleLikeNum(weeklyPosts[2]?.post_id || '')
+          handleLikeNum(weeklyPosts[2]?.postId || '')
         }}>
           <FontAwesomeIcon
             icon={faHeart}
@@ -363,7 +363,7 @@ function MainPageMain() {
             className={styles.weeklyMemoryLikes2}
           />
           &nbsp;
-          <span className={styles.heartNum}>{weeklyPosts[2]?.likes_count || '1.4k'}</span>
+          <span className={styles.heartNum}>{weeklyPosts[2]?.likesCount || '1.4k'}</span>
         </div>
       </div>
       <div className={styles.forFlexMorePictureContainer}>
