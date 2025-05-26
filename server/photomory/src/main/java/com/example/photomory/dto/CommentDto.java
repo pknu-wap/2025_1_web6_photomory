@@ -25,7 +25,7 @@ public class CommentDto {
                 .postId(comment.getPost() != null ? comment.getPost().getPostId() : null)
                 .userId(comment.getUser() != null ? comment.getUser().getUserId() : null)
                 .userName(comment.getUser() != null ? comment.getUser().getUserName() : "알 수 없음")
-                .commentsText(comment.getCommentsText())
+                .commentsText(comment.getCommentText())
                 .build();
     }
 }

@@ -199,7 +199,7 @@ public class OurAlbumService {
         comment.setAlbum(album);
         comment.setPost(post);
         comment.setUser(user);
-        comment.setCommentsText(text);
+        comment.setCommentText(text);
         comment.setCommentTime(LocalDateTime.now());
 
         // 댓글 저장 (이 부분에서 500 오류가 발생했었음)
@@ -364,7 +364,7 @@ public class OurAlbumService {
                                 .albumId(comment.getAlbum() != null ? comment.getAlbum().getAlbumId().longValue() : null)
                                 .photoId(comment.getPost() != null ? comment.getPost().getPostId().longValue() : null)
                                 .userId(comment.getUser() != null ? comment.getUser().getUserId() : null)
-                                .commentText(comment.getCommentsText())
+                                .commentText(comment.getCommentText())
                                 .build())
                         .collect(Collectors.toList());
 

@@ -46,7 +46,7 @@ public class CommentResponseDto {
                 comment.getPost() != null ? comment.getPost().getPostId() : null,
                 comment.getUser() != null ? comment.getUser().getUserId() : null,
                 comment.getUser() != null ? comment.getUser().getUserName() : null,
-                comment.getCommentsText(), // 엔티티 필드명 `commentsText`
+                comment.getCommentText(), // 엔티티 필드명 `commentsText`
                 comment.getCommentTime() != null // 엔티티 필드명 `commentTime`
                         ? comment.getCommentTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                         : null

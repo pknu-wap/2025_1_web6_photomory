@@ -134,7 +134,7 @@ public class OurAlbumResponseDto {
         public static CommentDto fromEntity(Comment comment) {
             CommentDto dto = new CommentDto();
             dto.setCommentId(comment.getCommentId());
-            dto.setCommentsText(comment.getCommentsText());
+            dto.setCommentsText(comment.getCommentText());
             if (comment.getUser() != null) {
                 dto.setUserName(comment.getUser().getUserName());
             } else {

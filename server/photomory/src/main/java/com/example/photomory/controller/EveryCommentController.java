@@ -1,15 +1,12 @@
 package com.example.photomory.controller;
 
-import com.example.photomory.dto.CommentRequestDto;
-import com.example.photomory.entity.UserEntity;
-import com.example.photomory.security.CustomUserDetails;
+import com.example.photomory.dto.EveryCommentRequestDto;
 import com.example.photomory.service.EveryCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/every")
@@ -19,12 +16,18 @@ public class EveryCommentController {
     private final EveryCommentService everyCommentService;
 
     @PostMapping("/comments")
-    public ResponseEntity<?> addComment(@RequestBody @Valid CommentRequestDto dto,
-                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
-        UserEntity user = userDetails.getUser();
+    public ResponseEntity<?> addComment(@RequestBody EveryCommentRequestDto dto,
+                                        @AuthenticationPrincipal UserDetails userDetails) {
 
-        everyCommentService.addComment(dto.getAlbumId(), dto.getPostId(), user, dto.getCommentsText());
+        if (userDetails == null) {
+            System.out.println("❌ 인증되지 않은 사용자입니다.");
+            return ResponseEntity.status(401).body("로그인이 필요합니다.");
+        }
 
+        String userEmail = userDetails.getUsername();
+        System.out.println("✅ 인증된 사용자: " + userEmail);
+
+        everyCommentService.addComment(dto, userEmail);
         return ResponseEntity.ok("댓글 작성 완료");
     }
 }

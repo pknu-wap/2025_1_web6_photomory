@@ -35,21 +35,17 @@ public class Comment {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    // Comment가 Album에 직접 연결될 수 있도록 추가 (DTO의 albumId를 위함)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "album_id") // DB의 comment 테이블에 album_id 컬럼이 있어야 합니다.
+    @JoinColumn(name = "album_id", nullable = true)
     private Album album;
 
     @Column(name = "comment_text", length = 500)
-    private String commentsText; // DTO와 필드명 일치
+    private String commentText;
 
-    @Column(name = "comment_time", nullable = false) // DB 컬럼명과 일치
-    private LocalDateTime commentTime; // DTO와 타입 일치
-
-    // Comment와 Tag의 One-to-Many 관계
-    // Tag 엔티티의 'comment' 필드(ManyToOne)에 의해 매핑됩니다.
+    @Column(name = "comment_time", nullable = false) 
+    private LocalDateTime commentTime; 
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Tag> tags = new HashSet<>(); // 이 댓글에 연결된 Tag 레코드들
+    private Set<Tag> tags = new HashSet<>();
 
     // 편의 메서드
     public void addTag(Tag tag) {
@@ -61,4 +57,10 @@ public class Comment {
         this.tags.remove(tag);
         tag.setComment(null); // 태그 레코드에서 이 댓글 연결 해제
     }
+
+    @PrePersist
+    public void prePersist() {
+        this.commentTime = LocalDateTime.now();
+    }
+
 }

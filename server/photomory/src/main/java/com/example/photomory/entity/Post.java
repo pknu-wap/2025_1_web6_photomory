@@ -18,6 +18,7 @@ import java.util.Set;
 @Builder // Lombok - 빌더 패턴
 public class Post {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
@@ -66,4 +67,17 @@ public class Post {
             album.getPosts().add(this);
         }
     }
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+    @Column(name = "comment_count", nullable = false)
+    private int commentCount;
+
+
+
 }

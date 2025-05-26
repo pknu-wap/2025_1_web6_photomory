@@ -1,6 +1,10 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.*;
 
 import java.util.HashSet;
@@ -36,4 +40,9 @@ public class Tag {
     public Tag(String tagName) {
         this.tagName = tagName;
     }
+    public void setPost(Post post) {
+        this.posts = new HashSet<>();
+        this.posts.add(post);
+    }
+
 }
