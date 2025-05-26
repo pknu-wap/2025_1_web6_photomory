@@ -3,6 +3,7 @@ package com.example.photomory.service;
 import com.example.photomory.dto.LoginRequestDto;
 import com.example.photomory.repository.AuthUserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.photomory.entity.UserEntity;
 
@@ -13,10 +14,10 @@ import java.util.Optional;
 public class AuthService {
 
     private final AuthUserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     // 생성자 주입 방식으로 passwordEncoder 주입
-    public AuthService(AuthUserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public AuthService(AuthUserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
