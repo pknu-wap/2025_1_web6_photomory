@@ -73,15 +73,7 @@ public class OurAlbumService {
 
         Album album = new Album();
         album.setAlbumName(requestDto.getAlbumName());
-
-        // 리스트 -> 콤마로 구분된 문자열 변환 후 저장
-        if (requestDto.getAlbumTags() != null && !requestDto.getAlbumTags().isEmpty()) {
-            String tags = String.join(",", requestDto.getAlbumTags());
-            album.setAlbumTag(tags);
-        } else {
-            album.setAlbumTag(null);
-        }
-
+        album.setAlbumTag(requestDto.getAlbumTag());
         album.setAlbumMakingTime(requestDto.getAlbumMakingTime());
         album.setAlbumDescription(requestDto.getAlbumDescription());
         album.setMyAlbum(group);
@@ -89,7 +81,6 @@ public class OurAlbumService {
         Album savedAlbum = albumRepository.save(album);
         return AlbumResponseDto.fromEntity(savedAlbum);
     }
-
 
     // 앨범 상세정보 + 포스트 목록 (페이징 적용)
     @Transactional(readOnly = true)
