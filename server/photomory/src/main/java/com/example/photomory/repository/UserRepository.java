@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByUserId(Long userId);
     List<UserEntity> findByUserNameContaining(String keyword);
+    Optional<UserEntity> findByUserEmail(String email);
 
     //hw
     // 친구가 아닌 사용자 검색 (키워드 포함)
