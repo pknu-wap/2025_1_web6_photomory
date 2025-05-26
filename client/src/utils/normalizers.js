@@ -29,10 +29,26 @@ export function normalizeOurAlbumData(rawData) {
       album_id: a.albumId,
       album_name: a.albumName,
       album_description: a.albumDescription,
-      album_tag: a.albumTag,
+      album_tag: Array.isArray(a.albumTag) ? a.albumTag : [a.albumTag], //항상 배열로 유지
       album_makingtime: a.albumMakingtime,
       photos: a.photos, // 그대로 유지
       comments: a.comments, // 그대로 유지
     })),
   }));
+}
+
+export function normalizeGroupAlbum(apiAlbum) {
+  return {
+    album_id: apiAlbum.albumId,
+    album_name: apiAlbum.albumName,
+    album_description: apiAlbum.albumDescription,
+    album_tag: Array.isArray(apiAlbum.albumTags)
+      ? apiAlbum.albumTags
+      : apiAlbum.albumTags
+      ? [apiAlbum.albumTags]
+      : [],
+    album_makingtime: apiAlbum.albumMakingTime?.slice(0, 10),
+    photos: [], // API에서 포함되지 않으면 기본값
+    comments: [], // 마찬가지
+  };
 }
