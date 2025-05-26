@@ -8,7 +8,7 @@ import defaultProfile from "../../assets/defaultProfileIcon.svg";
 const fetchUserData = async (accessToken) => {
   try {
     // 전체 사용자 목록 가져오기
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users`,{ //아직 벡엔드에 없음
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/friend-requests/non-friends/search`,{
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
