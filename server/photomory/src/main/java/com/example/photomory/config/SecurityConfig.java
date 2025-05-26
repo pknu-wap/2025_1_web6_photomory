@@ -22,9 +22,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-@Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@Configuration
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;

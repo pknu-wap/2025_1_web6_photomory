@@ -15,4 +15,5 @@ public class NotificationResponse {
     private NotificationType type;
     private LocalDateTime createdAt;
     private boolean isRead;
+    private Long requestId;
 }
