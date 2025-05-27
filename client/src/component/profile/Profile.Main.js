@@ -5,7 +5,7 @@ import SearchFriend from "../friend/Search.Friend";
 import logout from '../../assets/logout.svg'
 import defaultProfile from "../../assets/defaultProfileIcon.svg";
 
-const getUserList = async (retries=1, maxRetries=3) => {
+const getUserList = async (retries=0, maxRetries=3) => {
     const refreshToken= localStorage.getItem('refreshToken')
     let accessToken=localStorage.getItem('accessToken');
   try {
@@ -39,11 +39,11 @@ const getUserList = async (retries=1, maxRetries=3) => {
   }
 };
 
-const getMyInfo= async (retries=1, maxRetries=3)=>{ //내 정보 가져오기
+const getMyInfo= async (retries=0, maxRetries=3)=>{ //내 정보 가져오기
     const refreshToken= localStorage.getItem('refreshToken')
     let accessToken=localStorage.getItem('accessToken');
   try{
-    const response= await fetch(`${process.env.REACT_APP_API_URL}/api아직서버에 없음`,{
+    const response= await fetch(`${process.env.REACT_APP_API_URL}/api/user/profile`,{
       method: 'GET',
       headers:{
         'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ const getMyInfo= async (retries=1, maxRetries=3)=>{ //내 정보 가져오기
   }
 }
 
-const postMyinfo= async (myInfo, retries=1, maxRetries=3)=>{ 
+const postMyinfo= async (myInfo, retries=0, maxRetries=3)=>{ 
   let accessToken= localStorage.getItem('accessToken');
   const refreshToken= localStorage.getItem('refreshToken');
   try{
@@ -95,6 +95,38 @@ const postMyinfo= async (myInfo, retries=1, maxRetries=3)=>{
       accessToken=await refreshAccessToken(refreshToken);
       if (accessToken) {
         const response = await postMyinfo(myInfo, retries+1, maxRetries);
+        return response
+      }
+    }
+    console.log('Failed to post MyInfo')
+    return null
+  }
+}
+
+const editFriend= async(userId, retries=0, maxRetries=3)=>{ //친삭
+  let accessToken=localStorage.getItem('accessToken')
+  const refreshToken=localStorage.getItem('refreshToken')
+  try{
+    const response= await fetch(`${process.env.REACT_APP_API_URL}/api/friend-list/${userId}`,{
+      method: 'DELETE',
+      headers:{
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      }
+    })
+    if(!response.ok){
+      if(response.status===401){
+        throw new Error('Unauthorized')
+      }
+      throw new Error('Failed to post MyInfo:' `${response.status}`)
+    }
+    return {success: true};
+  
+  }catch(error){
+    if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+      accessToken=await refreshAccessToken(refreshToken);
+      if (accessToken) {
+        const response = await editFriend(userId, retries+1, maxRetries);
         return response
       }
     }
@@ -171,16 +203,31 @@ function ProfileMain() {
   }, []);
 
   // 친구 제거 핸들러
-  const handleRemoveFriend = useCallback((userId) => {
+  const handleRemoveFriend = useCallback(async (userId) => {
     if (!userId) return;
-    
-    setUsers(prevUsers => 
+
+    setUsers(prevUsers => //낙관적 
       prevUsers.map(user => 
         user.id === userId 
           ? { ...user, isFriend: false }
           : user
+        )
+      );
+    try{
+      const response= await editFriend(userId) //서버
+      if(!response || !response.success){
+        throw new Error('친구 삭제에 실패했습니다.')
+      }
+    } catch(error){
+      console.error('')
+      setUsers((prevUsers)=> //낙관적 업뎃 롤백
+        prevUsers.map((user) => 
+          user.id === userId 
+            ? { ...user, isFriend: true }
+            : user
+        )
       )
-    );
+    }
   }, []);
 
   // 로그아웃 핸들러
@@ -213,7 +260,7 @@ function ProfileMain() {
             equipment: myData.equipment || "",
             area: myData.area || "",
             introduction: myData.introduction || "",
-            profileImage: myData.profileImage || defaultProfile
+            profileImage: myData.user_photourl || defaultProfile
           });
         }
 
