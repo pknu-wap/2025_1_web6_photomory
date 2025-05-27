@@ -87,7 +87,7 @@ async function getUserPosts() {
 async function updateLikeCount(postId){ //좋아요 수 관리
     try{
         const accessToken= localStorage.getItem('accessToken')
-        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{/* 이거 엔드포인트 뭐임..?*/
+        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts/${postId}/like`,{/* 이거 엔드포인트 뭐임..?*/
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json',
@@ -206,6 +206,7 @@ export default function EveryMemoryMain(){
     const [isCommentModalOpen, setIsCommentModalOpen]= useState(false);
     const [selectedPostForModal, setSelectedPostForModal] = useState(null); //모달 띄울 때 선택한 거 포스트 하나.
     const [uploadImage, setUploadImage]= useState(null);
+    const [isLikeCountUp, setIsLikeCountUp]= useState('')
 
     const fetchPosts= async ()=>{
         try{
@@ -241,20 +242,34 @@ export default function EveryMemoryMain(){
         }
     }, [posts]); //뭔가 posts말고 posts 좋아요 순서가 바뀐다면으로 하는 게 더 좋을 거 같은데..
 
-    const handleLikeNum =async(postId)=>{
+    const handleLikeNum =async(postId)=>{ //이거 islikecountup을 기준으로 크게 두 개로 나눠야 함
         try{
-            setPosts((prevPosts) => //낙관적 업뎃
-                prevPosts.map((post)=> post.postId=== postId
-                    ? { ...post, likesCount: post.likesCount + 1 } //이미 {}여기엔 속성이라 post.을 안 붙임
-                    : post).sort((a, b) => b.likesCount - a.likesCount)
-            );
-
+            if(isLikeCountUp===true){
+                setPosts((prevPosts) => //낙관적 업뎃(하트 증가)
+                    prevPosts.map((post)=> post.postId=== postId
+                        ? { ...post, likesCount: post.likesCount + 1 } 
+                        : post).sort((a, b) => b.likesCount - a.likesCount)
+                );
             const updatedPostByLike = await updateLikeCount(postId); //서버 업뎃
             setPosts((prevPosts) =>
                 prevPosts.map((post) =>post.postId=== postId
                     ? { ...post, likesCount: updatedPostByLike.likesCount }
                     :post).sort((a, b) => b.likesCount - a.likesCount)
             );
+            }else{
+                setPosts((prevPosts) => //낙관적 업뎃(하트 감소)
+                    prevPosts.map((post)=> post.postId=== postId
+                        ? { ...post, likesCount: post.likesCount - 1 } 
+                        : post).sort((a, b) => b.likesCount - a.likesCount)
+                );
+                const updatedPostByLike = await updateLikeCount(postId); //서버 업뎃
+                setPosts((prevPosts) =>
+                    prevPosts.map((post) =>post.postId=== postId
+                        ? { ...post, likesCount: updatedPostByLike.likesCount }
+                        :post).sort((a, b) => b.likesCount - a.likesCount)
+                );
+            }
+            
         }
         catch (error) {
             console.error('Error uploading like count', error);
