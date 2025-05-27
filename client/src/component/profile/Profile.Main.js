@@ -2,10 +2,12 @@ import React, { useEffect, useMemo, useState, useCallback } from "react";
 import styles from "./Profile.Main.module.css";
 import FriendManage from "../friend/Friend.Manage";
 import SearchFriend from "../friend/Search.Friend";
-import GetMy from "../../api/GetMy";
+import logout from '../../assets/logout.svg'
 import defaultProfile from "../../assets/defaultProfileIcon.svg";
 
-const fetchUserData = async (accessToken) => {
+const getUserList = async (retries=1, maxRetries=3) => {
+    const refreshToken= localStorage.getItem('refreshToken')
+    let accessToken=localStorage.getItem('accessToken');
   try {
     // 전체 사용자 목록 가져오기
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/friend-requests/non-friends/search`,{
@@ -16,7 +18,7 @@ const fetchUserData = async (accessToken) => {
       }
     });
     if (!response.ok) {
-      throw new Error('사용자 데이터를 가져오는데 실패했습니다.');
+      throw new Error('사용자 데이터를 가져오는 대에 실패했습니다.');
     }
     const userData = await response.json();
     if (Array.isArray(userData)) {
@@ -27,52 +29,102 @@ const fetchUserData = async (accessToken) => {
     }
   } 
   catch (error) {
-    console.error("데이터 가져오기 오류:", error);
-    throw error;
+    if(error.message==='Unauthorized' && refreshToken && retries<maxRetries){
+      accessToken= await refreshAccessToken(refreshToken)
+      if(accessToken){
+        const response=getUserList(retries+1, maxRetries)
+        return response
+      }
+    }
   }
 };
 
+const getMyInfo= async (retries=1, maxRetries=3)=>{ //내 정보 가져오기
+    const refreshToken= localStorage.getItem('refreshToken')
+    let accessToken=localStorage.getItem('accessToken');
+  try{
+    const response= await fetch(`${process.env.REACT_APP_API_URL}/api아직서버에 없음`,{
+      method: 'GET',
+      headers:{
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer${accessToken}`
+      }
+    })
+      if(!response.ok){
+        if(response.status===401){
+          throw new Error('Unauthorized')
+        }
+        throw new Error('Failed to get myInfo:' `${response.status}`)
+      }
+    const myInfo= await response.json();
+    return myInfo
+  }
+  catch(error){
+    if(error.message==='Unauthorized' && refreshToken && retries< maxRetries){
+      accessToken= await refreshAccessToken(refreshToken)
+      if(accessToken){
+        const response= await getMyInfo(retries+1, maxRetries)
+        return response
+      }
+    }
+  }
+}
+
+const postMyinfo= async (myInfo, retries=1, maxRetries=3)=>{ 
+  let accessToken= localStorage.getItem('accessToken');
+  const refreshToken= localStorage.getItem('refreshToken');
+  try{
+    const response= await fetch(`${process.env.REACT_APP_API_URL}/api아직서버에 없음`,{
+      method:'POST',
+      headers:{
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+      body: JSON.stringify(myInfo)
+    })
+    if(!response.ok){
+      if(response.status===401){
+        throw new Error('Unauthorized')
+      }
+      throw new Error('Failed to post MyInfo:' `${response.status}`)
+    }
+    return response.json();
+  }
+  catch(error){
+    if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+      accessToken=await refreshAccessToken(refreshToken);
+      if (accessToken) {
+        const response = await postMyinfo(myInfo, retries+1, maxRetries);
+        return response
+      }
+    }
+    console.log('Failed to post MyInfo')
+    return null
+  }
+}
+
 async function refreshAccessToken(refreshToken) {
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/refresh-token`, { //이건 벡엔드에서 추후 변경 예정
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({refreshToken})
-        });
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/refresh-token`, { //이건 벡엔드에서 추후 변경 예정
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({refreshToken})
+      });
 
-        if (!response.ok) {
-            throw new Error(`Token refredh failed status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data.accessToken;
+      if (!response.ok) {
+        throw new Error(`Token refredh failed status: ${response.status}`);
+      }
+      const data = await response.json();
+      if (data.accessToken) {
+        localStorage.setItem('accessToken', data.accessToken);
+      }
+      return data.accessToken;
     }
     catch (error) {
         console.error('Error fetching token:', error);
         return null;
-    }
-}
-
-async function getUserData() {
-    let accessToken= localStorage.getItem('accessToken');
-    const refreshToken= localStorage.getItem('refreshToken');
-    try{
-        const userData = await fetchUserData(accessToken)
-        return userData
-    }
-    catch (error){
-        if (error.message === 'Unauthorized' && refreshToken) { //리프토큰 없으면 요청 안 되게게
-            accessToken=await refreshAccessToken(refreshToken);
-            if (accessToken) {
-                localStorage.setItem('accessToken', accessToken);
-                const userData = await fetchUserData(accessToken);
-                return userData
-            }
-        }
-        console.log('Failed to fetch user data')
-        return null
     }
 }
 
@@ -103,6 +155,7 @@ function ProfileMain() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([])
+  const [isEdit, setIsEdit]= useState(false)
 
   // 입력 필드 변경 핸들러
   const handleInputChange = useCallback((e) => {
@@ -147,10 +200,10 @@ function ProfileMain() {
 
   // 사용자 데이터 가져오기
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchProfileAndUsers = async () => {
       try {
         // 내 프로필 데이터 가져오기
-        const myData = await GetMy();
+        const myData = await getMyInfo();
         if (myData) {
           setProfileData({
             id: myData.id || "",
@@ -165,22 +218,17 @@ function ProfileMain() {
         }
 
         // 전체 사용자 목록 가져오기
-        const response = await getUserData();
-        if (!response.ok) {
-          throw new Error('사용자 데이터를 가져오는데 실패했습니다.');
-        }
-        
-        const userData = await response.json();
+        const userData = await getUserList();
         if (Array.isArray(userData)) {
           setUsers(userData);
         } else {
           throw new Error('잘못된 사용자 데이터 형식입니다.');
         }
       } catch (error) {
-        console.error('로그아웃 중 오류 발생:', error);
+        console.error(error);
       }
     };
-    fetchUserData();
+    fetchProfileAndUsers();
   }, []);
 
   useEffect(()=>{
@@ -203,6 +251,18 @@ function ProfileMain() {
 
   const numLimitedFriends= friends.slice(0,4)
 
+  const editHandle= async (e)=>{
+    try{
+      setIsEdit((prev)=>!prev)
+        if(e.target.value==='save'){
+          const afterProfileData= await postMyinfo(profileData)
+          setProfileData(afterProfileData)
+      }
+    }
+    catch(arror){
+      console.error('failed to get myInfo')
+    }
+  }
 
   return (
     <div className={styles.allContainer}>
@@ -210,7 +270,7 @@ function ProfileMain() {
         <div className={styles.myDetailInfoContainer1}>
           <div className={styles.forFlexLeft}>
             <img 
-              src={profileData.profileImage} 
+              src={profileData?.profileImage || defaultProfile} 
               alt="Profile" 
               className={styles.image}
             />
@@ -230,11 +290,24 @@ function ProfileMain() {
               <div className={styles.id}>ID: {profileData.id}</div>
             </div>
           </div>
-          <button 
-            className={styles.logOutForFlexRight}
-            onClick={handleLogout}>
-            로그아웃
-          </button>
+          <div className={styles.forFlexSetting}>
+            {isEdit? (
+              <button className={styles.save}
+              onClick={editHandle}
+              value='save'
+              >저장하기</button>
+            ):(
+              <button className={styles.edit}
+              onClick={editHandle}
+              >수정하기</button>
+            )}
+            <button 
+              className={styles.logOutForFlexRight}
+              onClick={handleLogout}>
+              <img src={logout} alt="" className={styles.logoutIcon}></img>
+              로그아웃
+            </button>
+          </div>
         </div>
 
         <div className={styles.myDetailInfoContainer2}>
