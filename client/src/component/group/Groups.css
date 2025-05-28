@@ -41,6 +41,8 @@
 }
 
 .groupMember {
+  display: flex;
+  align-items: center;
   background-color: #e0e0e0;
   padding: 4px 10px;
   border-radius: 20px;
