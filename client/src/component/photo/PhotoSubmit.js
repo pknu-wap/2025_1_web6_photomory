@@ -2,7 +2,8 @@ import { useState, useRef } from "react";
 import "./PhotoSubmit.css";
 import submitFileImage from "../../assets/submitFileImage.svg";
 import { addPhotosToMyAlbum } from "../../api/myAlbumAPi";
-function PhotoSubmit({ albumId, handleAddPhoto }) {
+import { createGroupAlbumPost } from "../../api/ourAlbumApi";
+function PhotoSubmit({ type, albumId, handleAddPhoto }) {
   const [newPhotoData, setNewPhotoData] = useState({
     imgFile: null,
     photo_name: "",
@@ -30,23 +31,34 @@ function PhotoSubmit({ albumId, handleAddPhoto }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("photos", newPhotoData.imgFile);
-
-    //사진 메타데이터
-    const photoMeta = [
-      { name: newPhotoData.photo_name, date: newPhotoData.photo_makingtime },
-    ];
-    formData.append("photoData", JSON.stringify(photoMeta));
-
+    let result;
     try {
-      // API 호출 (albumId와 함께)
-      const result = await addPhotosToMyAlbum(albumId, formData);
+      if (type === "private") {
+        // 개인 앨범 FormData 구성 및 업로드 요청
+        const formData = new FormData();
+        formData.append("photos", newPhotoData.imgfile);
+        //사진 메타데이터
+        const photoMeta = [
+          {
+            name: newPhotoData.photo_name,
+            date: newPhotoData.photo_makingtime,
+          },
+        ];
+        formData.append("photoData", JSON.stringify(photoMeta));
+        result = await addPhotosToMyAlbum(albumId, formData);
+      } else {
+        // 공유 앨범 게시글 생성 API 호출
+        result = await createGroupAlbumPost(albumId, {
+          postTitle: newPhotoData.photo_name,
+          postTime: newPhotoData.photo_makingtime,
+          photoFile: newPhotoData.imgFile,
+        });
+      }
 
       if (result) {
         console.log("서버에서 응답받은 데이터:", result);
 
-        // 로컬 렌더링용 추가
+        //현재 사진들들 상태 업데이트
         handleAddPhoto({
           photo_id: Date.now(),
           photo_name: newPhotoData.photo_name,
@@ -54,6 +66,7 @@ function PhotoSubmit({ albumId, handleAddPhoto }) {
           photo_url: URL.createObjectURL(newPhotoData.imgFile),
         });
 
+        //입력 초기화화
         resetForm();
       } else {
         alert("서버 업로드에 실패했습니다.");

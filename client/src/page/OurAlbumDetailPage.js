@@ -38,7 +38,6 @@ function OurAlbumDetailPage() {
 
   const { album, description, groupName, groupMembers } = albumData; //앨범 정보 구조 분해
 
-  console.log(groupMembers);
   //사진 추가 헨들러
   const handleAddPhoto = (newPhoto) => {
     setPhotoList((prev) => [newPhoto, ...prev]);
@@ -88,7 +87,11 @@ function OurAlbumDetailPage() {
               photoCount={Count}
             />
           </div>
-          <PhotoSubmit handleAddPhoto={handleAddPhoto} />
+          <PhotoSubmit
+            type="group"
+            albumId={albumId}
+            handleAddPhoto={handleAddPhoto}
+          />
         </div>
       </Container>
       <Footer />
