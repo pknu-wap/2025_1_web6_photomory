@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddGroupButton from "../add/AddGroupButton";
 import SelectGroupOptions from "../group/SelectGroupOptions.js";
+import defaultProfileIcon from "../../assets/defaultProfileIcon.svg";
 import "./CurrentGroup.css";
 
 function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
@@ -50,7 +51,7 @@ function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
                   }}
                 >
                   <img
-                    src={member.user_photourl}
+                    src={member.user_photourl || defaultProfileIcon}
                     alt={member.user_name}
                     style={{
                       width: "24px",
