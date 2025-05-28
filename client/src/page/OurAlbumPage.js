@@ -24,8 +24,14 @@ function OurAlbumPage() {
   //태그 선택 헨들러
   const handleTagClick = (tag) => {
     setSelectedTags((prev) =>
+      //기존 태그 선택 취소, 태그 선택
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
+  };
+
+  //태그 추가 헨들러
+  const handleAddTagClick = (tags) => {
+    setCurrentTags((prev) => Array.from(new Set([...prev, ...tags])));
   };
 
   // 새로운 그룹 추가 핸들러 (AddGroupButton에서 사용할 예정)
@@ -156,6 +162,7 @@ function OurAlbumPage() {
               albumTitlesByGroup={albumTitlesByGroup}
               setAlbumTitlesByGroup={setAlbumTitlesByGroup}
               setGroupAlbums={setGroupAlbums}
+              handleAddTagClick={handleAddTagClick}
             />
             <AllAlbumTags
               tags={currentTags}

@@ -16,6 +16,7 @@ function AddAlbum({
   setGroupAlbums, //그룹 앨범 추가
   albumTitles = [], //나만의 추억에서만 쓸 앨범명 목록
   setMyAlbums, //나만의 추억  앨범 상태 변화 함수
+  handleAddTagClick, //우리의 추억 앨범 생성 시 태그 추가
 }) {
   // 앨범 제목, 설명, 태그를 포함한 상태 객체
   const [newAlbumData, setNewAlbumData] = useState({
@@ -91,7 +92,7 @@ function AddAlbum({
       album_description,
       tags,
     };
-    console.log(tags);
+
     try {
       if (type === "group") {
         // 서버에 앨범 생성 요청
@@ -108,11 +109,15 @@ function AddAlbum({
           ...(albumTitlesByGroup[selectedGroupId] || []),
           album_name,
         ];
+        //그룹별 앨범 업데이트
         setAlbumTitlesByGroup((prev) => ({
           ...prev,
           [selectedGroupId]: updatedTitles,
         }));
+        //해당 그룹 앨범 업데이트
         setGroupAlbums((prev) => [...prev, normalizedAlbum]);
+        //해당 앨범의 태그 추가
+        handleAddTagClick?.(normalizedAlbum.album_tag); // 선택적으로 존재할 경우 호출
       } else if (type === "private") {
         setMyAlbums((prev) => [...prev, newAlbum]);
       }

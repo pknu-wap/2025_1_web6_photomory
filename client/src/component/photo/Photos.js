@@ -6,7 +6,7 @@ import PaginationBar from "../common/PaginationBar";
 import privateIcon from "../../assets/privateIcon.svg";
 import PhotoGrid from "./PhotoGrid";
 import "./Photos.css";
-function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
+function Photos({ type, albumTitle, photoList = [], onDeltePhoto }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null); //선택된 이미지 상태
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
   let photosPerPage; //한 페이지당  사진 갯수

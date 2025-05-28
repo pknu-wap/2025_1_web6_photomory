@@ -33,7 +33,7 @@ export function normalizeOurAlbumData(rawData) {
         album_description: a.albumDescription,
         album_tag: a.albumTag
           ? a.albumTag.split(",").map((tag) => tag.trim())
-          : [],
+          : [], //태그 배열 처리
         album_makingtime: a.albumMakingtime,
         photos: a.photos ?? [],
         comments: a.comments ?? [],
@@ -41,6 +41,7 @@ export function normalizeOurAlbumData(rawData) {
   }));
 }
 
+//앨범 생성 시 앨범 상태 정규화 함수
 export function normalizeGroupAlbum(apiAlbum) {
   return {
     album_id: apiAlbum.albumId,
@@ -54,5 +55,26 @@ export function normalizeGroupAlbum(apiAlbum) {
     album_makingtime: apiAlbum.albumMakingTime?.slice(0, 10),
     photos: [], // API에서 포함되지 않으면 기본값
     comments: [], // 마찬가지
+  };
+}
+
+//우리의 추억 상세 페이지 필드명 변환 함수 (정규화 함수)
+export function normalizeGroupAlbumDetail(apiData, groupInfo) {
+  return {
+    album: {
+      album_id: apiData.albumId,
+      album_name: apiData.albumName,
+      album_tag: Array.isArray(apiData.albumTags) ? apiData.albumTags : [],
+      album_makingtime: apiData.albumMakingTime?.slice(0, 10),
+      photos: apiData.posts ?? [],
+    },
+    description: apiData.albumDescription,
+    groupName: groupInfo?.groupName ?? "", // groupInfo가 없으면 빈 문자열
+    groupMembers:
+      groupInfo?.members?.map((m) => ({
+        user_id: m.userId,
+        user_name: m.username,
+        user_photourl: m.profileImageUrl,
+      })) ?? [],
   };
 }
