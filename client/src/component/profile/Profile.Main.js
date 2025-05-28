@@ -205,7 +205,7 @@ function ProfileMain() {
   // 친구 제거 핸들러
   const handleRemoveFriend = useCallback(async (userId) => {
     if (!userId) return;
-
+    const rollBackUsers= [...users]
     setUsers(prevUsers => //낙관적 
       prevUsers.map(user => 
         user.id === userId 
@@ -220,13 +220,7 @@ function ProfileMain() {
       }
     } catch(error){
       console.error('')
-      setUsers((prevUsers)=> //낙관적 업뎃 롤백
-        prevUsers.map((user) => 
-          user.id === userId 
-            ? { ...user, isFriend: true }
-            : user
-        )
-      )
+      setUsers(rollBackUsers) //낙관적 업뎃 롤백
     }
   }, []);
 
