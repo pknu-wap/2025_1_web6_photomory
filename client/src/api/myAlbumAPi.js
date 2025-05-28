@@ -58,7 +58,7 @@ export async function getMyMemoryAlbums() {
     //정규화 처리
     const normalized = result.map(normalizeMyAlbumData);
 
-    return normalized;
+    return [normalized];
   } catch (error) {
     console.error("앨범 조회 실패:", error);
     throw error;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getMyAlbums } from "../api/getMyAlbum";
+import { getMyMemoryAlbums } from "../api/myAlbumAPi";
 import Container from "../component/common/Container";
 import Calender from "../component/calender/Calender";
 import Header from "../component/common/Header";
@@ -30,7 +30,7 @@ function MyAlbumPage() {
 
   //초기 렌더링시 배열로 앨범과 각 사진정보 받기
   useEffect(() => {
-    const albums = getMyAlbums();
+    const albums = getMyMemoryAlbums();
     setMyAlbums(albums);
   }, []);
 
