@@ -13,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import com.example.photomory.exception.UnauthorizedException;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.List;
@@ -86,7 +84,6 @@ public class OurAlbumController {
 
         return ourAlbumService.createPost(albumId, requestDto, photo, user);
     }
-
 
     // 7. 댓글 작성
     @PostMapping("/{albumId}/post/{postId}/comment")

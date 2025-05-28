@@ -31,6 +31,7 @@ public class OurAlbumService {
     private final UserRepository userRepository;
     private final S3UrlResponseService s3UrlResponseService;
 
+
     // 그룹 생성
     @Transactional
     public GroupResponseDto createGroup(GroupCreateRequestDto requestDto, UserEntity user) {
@@ -126,15 +127,12 @@ public class OurAlbumService {
         if (photoFile != null && !photoFile.isEmpty()) {
             String uploadedUrl = s3Service.uploadFile(photoFile);
             post.setPhotoUrl(uploadedUrl);
-        } else if (requestDto.getPostImageUrl() != null) {
-            post.setPhotoUrl(requestDto.getPostImageUrl());
         }
 
         Post savedPost = postRepository.save(post);
         return PostResponseDto.fromEntity(savedPost);
     }
-
-
+    
     // 특정앨범에서 게시글 삭제
     @Transactional
     public void deletePostWithFile(Long albumId, Long postId, UserEntity currentUser) {

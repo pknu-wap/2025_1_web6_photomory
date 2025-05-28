@@ -23,6 +23,7 @@ public class Album {
     @Column(name = "album_id")
     private Integer albumId;
 
+
     @Column(name = "album_name", nullable = false)
     private String albumName;
 
