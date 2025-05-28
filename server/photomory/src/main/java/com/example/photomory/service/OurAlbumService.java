@@ -30,6 +30,7 @@ public class OurAlbumService {
     private final S3Service s3Service;
     private final UserRepository userRepository;
     private final S3UrlResponseService s3UrlResponseService;
+    private final PhotoRepository photoRepository;
 
 
     // 그룹 생성
@@ -132,7 +133,7 @@ public class OurAlbumService {
         Post savedPost = postRepository.save(post);
         return PostResponseDto.fromEntity(savedPost);
     }
-    
+
     // 특정앨범에서 게시글 삭제
     @Transactional
     public void deletePostWithFile(Long albumId, Long postId, UserEntity currentUser) {
@@ -341,16 +342,18 @@ public class OurAlbumService {
             for (Album album : albums) {
                 List<Post> posts = postRepository.findByAlbum_AlbumId(album.getAlbumId());
 
-                List<OurAlbumResponseDefaultDto.Photo> photosDto = posts.stream()
-                        .map(post -> OurAlbumResponseDefaultDto.Photo.builder()
-                                .photoId(post.getPostId() != null ? post.getPostId().longValue() : null)
-                                // 여기서 S3UrlResponseService 사용해 URL 변환
-                                .photoUrl(post.getPhotoUrl() != null ? s3UrlResponseService.getFileUrl(post.getPhotoUrl()) : null)
-                                .photoName(post.getPostDescription())
+                List<OurAlbumResponseDefaultDto.Photo> photosDto = new ArrayList<>();
+                for (Post post : posts) {
+                    photoRepository.findByPost(post).ifPresent(photo -> {
+                        photosDto.add(OurAlbumResponseDefaultDto.Photo.builder()
+                                .photoId(photo.getPhotoId())
+                                .photoUrl(photo.getPhotoUrl() != null ? s3UrlResponseService.getFileUrl(photo.getPhotoUrl()) : null)
+                                .photoName(photo.getPhotoName())
                                 .postId(post.getPostId() != null ? post.getPostId().longValue() : null)
-                                .photoMakingtime(post.getMakingTime() != null ? post.getMakingTime().toLocalDate().toString() : null)
-                                .build())
-                        .collect(Collectors.toList());
+                                .photoMakingtime(photo.getPhotoMakingTime() != null ? photo.getPhotoMakingTime().toLocalDate().toString() : null)
+                                .build());
+                    });
+                }
 
                 List<Long> postIdsInAlbum = posts.stream()
                         .map(Post::getPostId)
@@ -392,4 +395,6 @@ public class OurAlbumService {
 
         return allGroupDetails;
     }
+
+
 }
