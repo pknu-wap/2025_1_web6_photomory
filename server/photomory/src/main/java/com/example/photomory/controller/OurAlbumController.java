@@ -88,12 +88,6 @@ public class OurAlbumController {
     }
 
 
-    // 6. 게시물 클릭 시 상세 보기 (사진 확대, 댓글)
-    @GetMapping("/post/{postId}/detail")
-    public PostZoomDetailResponseDto getPostZoomDetail(@PathVariable Long postId) {
-        return ourAlbumService.getPostZoomDetail(postId);
-    }
-
     // 7. 댓글 작성
     @PostMapping("/{albumId}/post/{postId}/comment")
     public ResponseEntity<CommentResponseDto> createComment(
@@ -112,7 +106,6 @@ public class OurAlbumController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
 
 
     // 9. 초대 가능한 친구 목록 조회 (그룹 멤버 제외)
@@ -148,11 +141,15 @@ public class OurAlbumController {
     public ResponseEntity<Void> deletePostInAlbum(@PathVariable Long albumId, // 앨범 ID (Long으로 받되, 서비스에서 Integer 변환)
                                                   @PathVariable Long postId,  // 게시글 ID (Long으로 받되, 서비스에서 Integer 변환)
                                                   @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new UnauthorizedException("인증이 필요합니다.");
+        }
+
         UserEntity currentUser = userDetails.getUser();
-        // 서비스 메소드 호출 시 앨범 ID도 함께 전달
-        ourAlbumService.deletePostInAlbum(albumId, postId, currentUser);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        ourAlbumService.deletePostWithFile(albumId, postId, currentUser);
+        return ResponseEntity.noContent().build();
     }
+
     // 13. 앨범삭제
     @DeleteMapping("/album/{albumId}") // 앨범 ID만 받음
     public ResponseEntity<Void> deleteAlbum(@PathVariable Long albumId, // 앨범 ID (Long으로 받되, 서비스에서 Integer 변환)

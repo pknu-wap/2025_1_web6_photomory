@@ -115,17 +115,15 @@ public class OurAlbumService {
         Post post = new Post();
         post.setAlbum(album);
         post.setUser(user);
-
         post.setPostText(requestDto.getPostTitle());
 
-        // LocalDate -> LocalDateTime 변환
         if (requestDto.getPostTime() != null) {
             post.setMakingTime(requestDto.getPostTime().atStartOfDay());
         }
 
         if (photoFile != null && !photoFile.isEmpty()) {
-            String photoUrl = s3Service.uploadFile(photoFile);
-            post.setPhotoUrl(photoUrl);
+            String uploadedUrl = s3Service.uploadFile(photoFile);
+            post.setPhotoUrl(uploadedUrl);
         } else if (requestDto.getPostImageUrl() != null) {
             post.setPhotoUrl(requestDto.getPostImageUrl());
         }
@@ -137,7 +135,7 @@ public class OurAlbumService {
 
     // 특정앨범에서 게시글 삭제
     @Transactional
-    public void deletePostInAlbum(Long albumId, Long postId, UserEntity currentUser) {
+    public void deletePostWithFile(Long albumId, Long postId, UserEntity currentUser) {
         Integer albumIdInt = albumId.intValue();
         Integer postIdInt = postId.intValue();
 
@@ -155,12 +153,15 @@ public class OurAlbumService {
             throw new IllegalArgumentException("게시글 삭제 권한이 없습니다. (작성자만 삭제 가능)");
         }
 
+        // ✅ S3 이미지 삭제
         if (post.getPhotoUrl() != null && !post.getPhotoUrl().isEmpty()) {
-            s3Service.deleteFile(post.getPhotoUrl());
+            s3Service.deleteFile(post.getPhotoUrl()); // ← 수정 필요
         }
 
         postRepository.delete(post);
     }
+
+
 
     // 게시물 클릭 시 상세 보기 (사진 확대, 댓글, 좋아요 수)
     @Transactional(readOnly = true)
@@ -228,6 +229,7 @@ public class OurAlbumService {
                 .map(UserSummaryDto::fromEntity)
                 .collect(Collectors.toList());
     }
+
     @Transactional(readOnly = true)
     public List<UserSummaryDto> getFriendsExcludingGroup(Long groupId, Long userId) {
         Integer groupIdInt = groupId.intValue();
