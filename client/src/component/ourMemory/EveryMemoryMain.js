@@ -243,18 +243,19 @@ export default function EveryMemoryMain(){
     }, [posts]); //뭔가 posts말고 posts 좋아요 순서가 바뀐다면으로 하는 게 더 좋을 거 같은데..
 
     const handleLikeNum =async(postId)=>{ //이거 islikecountup을 기준으로 크게 두 개로 나눠야 함
+        const rollBackPosts= [...posts]
         try{
-            if(isLikeCountUp===true){
+            if(isLikeCountUp===false){ //아직 안 됐음 올리기
                 setPosts((prevPosts) => //낙관적 업뎃(하트 증가)
                     prevPosts.map((post)=> post.postId=== postId
                         ? { ...post, likesCount: post.likesCount + 1 } 
                         : post).sort((a, b) => b.likesCount - a.likesCount)
                 );
-            const updatedPostByLike = await updateLikeCount(postId); //서버 업뎃
-            setPosts((prevPosts) =>
-                prevPosts.map((post) =>post.postId=== postId
-                    ? { ...post, likesCount: updatedPostByLike.likesCount }
-                    :post).sort((a, b) => b.likesCount - a.likesCount)
+                const updatedPostByLike = await updateLikeCount(postId); //서버 업뎃
+                setPosts((prevPosts) =>
+                    prevPosts.map((post) =>post.postId=== postId
+                        ? { ...post, likesCount: updatedPostByLike.likesCount }
+                        :post).sort((a, b) => b.likesCount - a.likesCount)
             );
             }else{
                 setPosts((prevPosts) => //낙관적 업뎃(하트 감소)
@@ -273,6 +274,7 @@ export default function EveryMemoryMain(){
         }
         catch (error) {
             console.error('Error uploading like count', error);
+            setPosts(rollBackPosts) //낙관적 업뎃 롤백
         }
     }
     const handleCommentNum=async(modalPost, comment)=>{ //댓글 수, 내용.
@@ -438,15 +440,15 @@ export default function EveryMemoryMain(){
             <div className={styles.mainContainer}>
                 {error && <p className={styles.error}>{error}</p>}
                 <p className={styles.weeklyTag}>
-                    <img src={camera} alt='' className={styles.weeklyTagCamera}></img>
+                    <span className={styles.weeklyTagCamera}>📷</span>
                     <span className={styles.weeklyTagText}>
-                        오늘의 태그 #{randomTagText} - 주간 인기 {randomTagText} 사진 갤러리
+                        오늘의 태그 #{randomTagText? randomTagText : 'Unknown'} - 주간 인기 {randomTagText} 사진 갤러리
                     </span>
                 </p>
                 <div className={styles.forFlexTagBox}>
                     <div className={styles.tagBox}>
                         <img src={landscape} alt='' className={styles.tagBoxLandscape}></img>
-                        <span className={styles.tagBoxText}>#{randomTagText}</span>
+                        <span className={styles.tagBoxText}>#{randomTagText? randomTagText: 'Unknown'}</span>
                     </div>
                 </div>
                 <div className={styles.forFlexweeklyTag1}>
