@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,7 @@ public class OurAlbumService {
     private final MyAlbumRepository myAlbumRepository;
     private final S3Service s3Service;
     private final UserRepository userRepository;
+    private final S3UrlResponseService s3UrlResponseService;
 
     // 그룹 생성
     @Transactional
@@ -344,7 +346,8 @@ public class OurAlbumService {
                 List<OurAlbumResponseDefaultDto.Photo> photosDto = posts.stream()
                         .map(post -> OurAlbumResponseDefaultDto.Photo.builder()
                                 .photoId(post.getPostId() != null ? post.getPostId().longValue() : null)
-                                .photoUrl(post.getPhotoUrl())
+                                // 여기서 S3UrlResponseService 사용해 URL 변환
+                                .photoUrl(post.getPhotoUrl() != null ? s3UrlResponseService.getFileUrl(post.getPhotoUrl()) : null)
                                 .photoName(post.getPostDescription())
                                 .postId(post.getPostId() != null ? post.getPostId().longValue() : null)
                                 .photoMakingtime(post.getMakingTime() != null ? post.getMakingTime().toLocalDate().toString() : null)
@@ -388,6 +391,7 @@ public class OurAlbumService {
                     .albums(albumsDto)
                     .build());
         }
+
         return allGroupDetails;
     }
 }
