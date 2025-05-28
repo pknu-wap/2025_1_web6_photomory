@@ -20,20 +20,24 @@ export function normalizeOurAlbumData(rawData) {
   return rawData.map((group) => ({
     group_id: group.groupId,
     group_name: group.groupName,
-    members: group.members.map((m) => ({
-      user_id: m.userId,
-      user_name: m.userName,
-      user_photourl: m.userPhotourl,
-    })),
-    albums: group.albums.map((a) => ({
-      album_id: a.albumId,
-      album_name: a.albumName,
-      album_description: a.albumDescription,
-      album_tag: Array.isArray(a.albumTag) ? a.albumTag : [a.albumTag], //항상 배열로 유지
-      album_makingtime: a.albumMakingtime,
-      photos: a.photos, // 그대로 유지
-      comments: a.comments, // 그대로 유지
-    })),
+    members:
+      group.members?.map((m) => ({
+        user_id: m.userId,
+        user_name: m.userName,
+        user_photourl: m.userPhotourl,
+      })) ?? [],
+    albums:
+      group.albums?.map((a) => ({
+        album_id: a.albumId,
+        album_name: a.albumName,
+        album_description: a.albumDescription,
+        album_tag: a.albumTag
+          ? a.albumTag.split(",").map((tag) => tag.trim())
+          : [],
+        album_makingtime: a.albumMakingtime,
+        photos: a.photos ?? [],
+        comments: a.comments ?? [],
+      })) ?? [],
   }));
 }
 
