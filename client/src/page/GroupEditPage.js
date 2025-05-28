@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { getMyGroupById } from "../api/getMyGroupById";
-import { getFriends } from "../api/getFriends";
-import GroupEditor from "../component/group/GroupEditor";
 import { useParams } from "react-router-dom";
 import Header from "../component/common/Header";
+import GroupEditor from "../component/group/GroupEditor";
 import Footer from "../component/common/Footer";
+import { getFriends } from "../api/getFriends";
+import { fetchGroupInfo } from "../api/ourAlbumApi";
+import { normalizeMember } from "../utils/normalizers";
 
 function GroupEditPage() {
   const { groupId } = useParams(); //GroupId 불러오기
@@ -14,17 +15,24 @@ function GroupEditPage() {
   const [addedMembers, setAddedMembers] = useState([]); //현재 그룹 멤버 상태
 
   useEffect(() => {
-    const myFriends = getFriends();
-    if (myFriends) {
-      setFriends(myFriends);
-      setFilteredFriends(myFriends); // 초기에는 전체 친구를 보여줌
-    }
+    (async () => {
+      try {
+        const myFriend = getFriends();
+        if (myFriend) {
+          setFriends(myFriend);
+          setFilteredFriends(myFriend);
+        }
 
-    const myGroup = getMyGroupById(Number(groupId)); // 현재 선택된 그룹 Id로 맴버 불러오기
-    if (myGroup) {
-      setGroupName(myGroup.groupName);
-      setAddedMembers(myGroup.members);
-    }
+        const myGroup = await fetchGroupInfo(groupId);
+        if (myGroup) {
+          setGroupName(myGroup.groupName);
+          //그룹 멤버 정보 정규화
+          setAddedMembers(myGroup.members.map(normalizeMember));
+        }
+      } catch (error) {
+        console.log("그룹 정보 불러오기 중 오류 발생:", error);
+      }
+    })();
   }, [groupId]); //groupId가 바뀔때 마다 다시 불러오기
 
   //친구 검색 핸들러
@@ -40,6 +48,7 @@ function GroupEditPage() {
       setFilteredFriends(filtered);
     }
   };
+
   //현재 그룹 인원 삭제 핸들러
   const handleRemoveMember = (userId) => {
     setAddedMembers((prev) => prev.filter((m) => m.user_id !== userId));

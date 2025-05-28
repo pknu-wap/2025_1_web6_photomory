@@ -78,3 +78,11 @@ export function normalizeGroupAlbumDetail(apiData, groupInfo) {
       })) ?? [],
   };
 }
+
+export function normalizeMember(member) {
+  return {
+    user_id: member.userId,
+    user_name: member.username,
+    user_photourl: member.profileImageUrl,
+  };
+}
