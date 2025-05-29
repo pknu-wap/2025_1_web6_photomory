@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +52,7 @@ public class FriendRequestService {
 
         // 친구 요청 알림 전송
         String message = sender.getUserName() + "님이 친구 요청을 보냈습니다.";
-        notificationService.sendNotification(receiverId, message, NotificationType.FRIEND_REQUEST, request.getId());
+        notificationService.sendNotification(receiverId, senderId, message, NotificationType.FRIEND_REQUEST, request.getId());
 
         // 요청 ID 반환
         return request.getId();
@@ -78,7 +76,7 @@ public class FriendRequestService {
 
         // 🔥 친구 수락 알림 전송
         String message = receiver.getUserName() + "님이 친구 요청을 수락했습니다.";
-        notificationService.sendNotification(sender.getUserId(), message, NotificationType.FRIEND_ACCEPT, requestId);
+        notificationService.sendNotification(sender.getUserId(),  receiver.getUserId(), message, NotificationType.FRIEND_ACCEPT, requestId);
     }
 
     // 친구 요청 거절

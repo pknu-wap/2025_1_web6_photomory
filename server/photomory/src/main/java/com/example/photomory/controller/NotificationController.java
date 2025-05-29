@@ -26,13 +26,17 @@ public class NotificationController {
         return notificationService.subscribe(userId);
     }
 
-    //2. 알림 전체 조회 + 읽음 처리
-    @GetMapping
-    public ResponseEntity<List<NotificationResponse>> getNotifications(
-            @RequestHeader("Authorization") String token) {
-
+    // 안 읽은 알림 개수 조회
+    @GetMapping("/unread-count")
+    public int countUnread(@RequestHeader("Authorization") String token) {
         Long userId = authService.extractUserId(token);
-        List<NotificationResponse> notifications = notificationService.getNotificationsAndMarkAllRead(userId);
-        return ResponseEntity.ok(notifications);
+        return notificationService.countUnread(userId);
+    }
+
+    // 알림 목록 조회 + 읽음 처리
+    @GetMapping("/list-read")
+    public List<NotificationResponse> getNotifications(@RequestHeader("Authorization") String token) {
+        Long userId = authService.extractUserId(token);
+        return notificationService.getNotificationsAndMarkAllRead(userId);
     }
 }
