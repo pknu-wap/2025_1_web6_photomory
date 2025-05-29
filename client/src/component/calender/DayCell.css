@@ -30,3 +30,8 @@ body.modal-open .day:active {
   box-shadow: none !important; /*그림자 효과 제거 */
   cursor: default;
 }
+
+/*.day의 transition을 모달 열릴 때 비활성화*/
+body.modal-open .day {
+  transition: none !important;
+}
