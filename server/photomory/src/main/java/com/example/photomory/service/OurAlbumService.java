@@ -368,7 +368,7 @@ public class OurAlbumService {
                         for (Photo photo : photos) {
                             photosDto.add(OurAlbumResponseDefaultDto.Photo.builder()
                                     .photoId(photo.getPhotoId())
-                                    .photoUrl(photo.getPhotoUrl() != null ? photo.getPhotoUrl() : null) // ***** 이 부분 수정됨 *****
+                                    .photoUrl(photo.getPhotoUrl() != null ? s3UrlResponseService.getFileUrl(photo.getPhotoUrl()) : null)
                                     .photoName(photo.getPhotoName())
                                     .postId(post.getPostId() != null ? post.getPostId().longValue() : null)
                                     .photoMakingtime(photo.getPhotoMakingTime() != null ? photo.getPhotoMakingTime().toLocalDate().toString() : null)
