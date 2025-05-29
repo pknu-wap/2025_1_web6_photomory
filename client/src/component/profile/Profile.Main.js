@@ -36,6 +36,8 @@ const getUserList = async (retries=0, maxRetries=3) => {
         return response
       }
     }
+    console.error('Failed to get userList')
+    return null
   }
 };
 
@@ -67,6 +69,8 @@ const getMyInfo= async (retries=0, maxRetries=3)=>{ //내 정보 가져오기
         return response
       }
     }
+    console.error('Failed to get MyInfo')
+    return null
   }
 }
 
@@ -98,7 +102,7 @@ const postMyinfo= async (myInfo, retries=0, maxRetries=3)=>{
         return response
       }
     }
-    console.log('Failed to post MyInfo')
+    console.error('Failed to post MyInfo')
     return null
   }
 }
@@ -130,7 +134,7 @@ const editFriend= async(userId, retries=0, maxRetries=3)=>{ //친삭
         return response
       }
     }
-    console.log('Failed to post MyInfo')
+    console.error('Failed to post MyInfo')
     return null
   }
 }
