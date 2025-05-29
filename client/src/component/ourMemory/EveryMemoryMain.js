@@ -44,7 +44,7 @@ async function fetchUserposts(retries=0, maxRetries=3) {
                 return result
             }
         }
-        console.log('Failed to get post')
+        console.error('Failed to get post')
         return null
     }
 }
@@ -85,7 +85,7 @@ async function updateLikeCount(postId,retries=0,maxRetries=3){ //좋아요 수 �
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`
             },
-            body: JSON.stringify(postId)
+            body: JSON.stringify({postId})
         })
         if(!response.ok){
             if(response.status===401){
@@ -103,7 +103,7 @@ async function updateLikeCount(postId,retries=0,maxRetries=3){ //좋아요 수 �
             return result
         }
     }
-    console.log('Failed to upload like')
+    console.error('Failed to upload like')
     return null
     }
 }
@@ -112,7 +112,7 @@ async function updateComment(postId, comment, retries=0, maxRetries=3){ //댓글
     let accessToken= localStorage.getItem('accessToken')
     const refreshToken =localStorage.getItem('refreshToken')
     try{
-        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{/* 이거 엔드포인트 뭐임..?*/
+        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/comments`,{
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ async function updateComment(postId, comment, retries=0, maxRetries=3){ //댓글
             return result
         }
     }
-    console.log('Failed to upload comment')
+    console.error('Failed to upload comment')
     return null
     }
 }
@@ -207,7 +207,7 @@ async function uploadingImage(uploadImage, retries=0,maxRetries=3) {
                 return result
             }
         }
-        console.log('Failed to upload image')
+        console.error('Failed to upload image')
         return null
     }
 }
@@ -225,7 +225,7 @@ export default function EveryMemoryMain(){
 
     const fetchPosts= async ()=>{
         try{
-            const posts= await fetchUserposts(); // 이것도 바꾸자
+            const posts= await fetchUserposts();
             if (posts && Array.isArray(posts)) {
                 const sortedPosts = [...posts].sort((a,b)=>b.likesCount-a.likesCount);
                 setPosts(sortedPosts); // 태그 상관 없이 좋아요 내림차순으로 posts 객체 정리
@@ -249,8 +249,8 @@ export default function EveryMemoryMain(){
             const allTag=[...new Set(posts.flatMap((post)=>post.tags))] //중복 없는 하나의 배열로 만들기
             if (allTag.length>0) { //set은 생성자 함수, 하지만 일반 함수처럼 호출 불가. 따라서 new랑 짝궁=>set 객체 만들어짐=>[...new~]=>배열열
                 const randomIndex = Math.floor(Math.random()*allTag.length); //0이상 allTag.length이하의 난수 생성
+                localStorage.setItem('randomIndex', randomIndex) //랜덤태그 이름 저장장
                 setRandomTagText(allTag[randomIndex])
-                console.log('selected tag:', allTag[randomIndex])
                 const filteredPosts= posts.filter((post)=>(post.tags || []).includes(allTag[randomIndex]));
                 setRandomPosts(filteredPosts);
             }
@@ -373,8 +373,8 @@ export default function EveryMemoryMain(){
 
         const files = Array.from(e.target.files);
         const selectedFiles = files.filter((file) => {
-            if (file.size > 20 * 1024 ** 2) {
-                alert('파일 크기는 20MB를 초과할 수 없습니다.');
+            if (file.size > 5 * 1024 ** 2) {
+                alert('파일 크기는 5MB를 초과할 수 없습니다.');
                 return false;
             }
             const validTypes = ['image/jpeg', 'image/png', 'image/heic'];
@@ -443,7 +443,7 @@ export default function EveryMemoryMain(){
                 <p className={styles.weeklyTag}>
                     <span className={styles.weeklyTagCamera}>📷</span>
                     <span className={styles.weeklyTagText}>
-                        오늘의 태그 #{randomTagText? randomTagText : 'Unknown'} - 주간 인기 {randomTagText} 사진 갤러리
+                        주간 인기 {randomTagText? randomTagText: "'Unknown'"} 사진 갤러리
                     </span>
                 </p>
                 <div className={styles.forFlexTagBox}>
