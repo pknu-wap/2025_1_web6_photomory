@@ -84,9 +84,11 @@ public class OurAlbumController {
             throw new IllegalArgumentException("Invalid PostCreateRequestDto JSON: " + e.getMessage(), e);
         }
 
-        // 서비스 호출
+        // 서비스 호출 (수정된 DTO 필드 전달)
+        // requestDto 내부에 photoName과 photoMakingTime이 포함되어 있다고 가정합니다.
         return ourAlbumService.createPost(albumId, requestDto, photo, user.getUserId());
     }
+
 
     // 7. 댓글 작성
     @PostMapping("/{albumId}/post/{postId}/comment")
