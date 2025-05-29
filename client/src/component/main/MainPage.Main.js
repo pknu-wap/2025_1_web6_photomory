@@ -13,8 +13,10 @@ import image2 from "../../assets/mainPageImage2.svg";
 import DailyPopularTagModal from "../ourMemory/DailyPopularTagModal"; //일간은 아니지만 그냥 쓰는 거
 import { useState, useEffect } from "react";
 
-async function fetchUserEveryPosts(accessToken) {
-    try {
+async function fetchUserEveryPosts(retries=0, maxRetries=3) {
+    let accessToken=localStorage.getItem('accessToken')
+    const refreshToken=localStorage.getItem('refreshToken')
+  try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`, {
             method: 'GET',
             headers: {
@@ -32,13 +34,22 @@ async function fetchUserEveryPosts(accessToken) {
         const posts = await response.json();
         return posts;
     } 
-    catch (error) {
-        console.error('Error fetching user every posts:', error);
-        throw error;
+    catch (error){
+      if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+        accessToken = await refreshAccessToken(refreshToken);
+        if (accessToken) {
+          const result = await fetchUserEveryPosts(retries+1, maxRetries);
+          return result
+        }
+      }
+      console.error('Failed to get post')
+      return null
     }
 }
 
-async function fetchUserOurAlbums(accessToken) {
+async function fetchUserOurAlbums(retries=0, maxRetries=3) {
+  let accessToken= localStorage.getItem('accessToken')
+  const refreshToken= localStorage.getItem('refreshToken')
   try{
     const response= await fetch(`${process.env.REACT_APP_API_URL}/api/our-album`,{
       method: 'GET',
@@ -57,12 +68,21 @@ async function fetchUserOurAlbums(accessToken) {
     return ourPost;
   }
   catch (error){
-    console.error('Error fetching user our posts')
-    throw error;
+    if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+      accessToken = await refreshAccessToken(refreshToken);
+      if (accessToken) {
+        const result = await fetchUserEveryPosts(retries+1, maxRetries);
+        return result
+      }
+    }
+    console.error('Failed to get ourAlbums')
+    return null
   }
 }
 
-async function fetchUserMyAlbums(accessToken) {
+async function fetchUserMyAlbums(retries=0, maxRetries=3) {
+  let accessToken= localStorage.getItem('accessToken')
+  const refreshToken= localStorage.getItem('refreshToken')
   try{
     const response= await fetch(`${process.env.REACT_APP_API_URL}/api/my-albums/all`,{
       method: 'GET',
@@ -81,11 +101,50 @@ async function fetchUserMyAlbums(accessToken) {
     return myPost;
   }
   catch (error){
-    console.error('Error fetching user my posts')
-    throw error;
+    if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+      accessToken = await refreshAccessToken(refreshToken);
+      if (accessToken) {
+        const result = await fetchUserEveryPosts(retries+1, maxRetries);
+        return result
+      }
+    }
+    console.error('Failed to get ourAlbums')
+    return null
   }
 }
 
+async function updateLikeCount(postId, retries=0, maxRetries=3){
+  let accessToken=localStorage.getItem('accessToken')
+  const refreshToken=localStorage.getItem('refreshToken')
+  try{
+        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({postId})
+        })
+        if(!response.ok){
+            if(response.status===401){
+                throw new Error('Unauthorized')
+            }
+            throw new Error('Failed to upload count:' `${response.status}`)
+        }
+        return await response.json();
+    }
+  catch (error){
+    if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+      accessToken = await refreshAccessToken(refreshToken);
+      if (accessToken) {
+        const result = await fetchUserEveryPosts(retries+1, maxRetries);
+        return result
+      }
+    }
+    console.error('Failed to get ourAlbums')
+    return null
+  }
+}
 async function refreshAccessToken(refreshToken) {
     try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/refresh-token`, {
@@ -109,53 +168,6 @@ async function refreshAccessToken(refreshToken) {
     }
 }
 
-async function getUserPosts() {
-    let accessToken= localStorage.getItem('accessToken');
-    const refreshToken= localStorage.getItem('refreshToken');
-    try{
-        const posts = await fetchUserEveryPosts(accessToken)
-        const ourAlbums = await fetchUserOurAlbums(accessToken)
-        const myAlbums = await fetchUserMyAlbums(accessToken)
-        return {posts: posts, ourAlbums: ourAlbums, myAlbums:myAlbums}
-    }
-    catch (error){
-        if (error.message === 'Unauthorized' && refreshToken) { //리프토큰 없으면 요청 안 되게게
-            accessToken=await refreshAccessToken(refreshToken);
-            if (accessToken) {
-                localStorage.setItem('accessToken', accessToken);
-                const posts = await fetchUserEveryPosts(accessToken);
-                return posts
-            }
-        }
-        console.log('Failed to fetch user posts')
-        return null
-    }
-} //여까지 리프, 엑세 토큰 및 유저 포스트 가져오기 여기가 먼저 드가지니, 에브리에 포스트로 순위 매기는 건 여기서 처리하고 넘겨주는 게 좋을 듯
-
-async function updateLikeCommentCount(postId){
-    try{
-        const accessToken= localStorage.getItem('accessToken')
-        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{
-            method: 'POST',
-            headers:{
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`
-            },
-            body: JSON.stringify({postId})
-        })
-        if(!response.ok){
-            if(response.status===401){
-                throw new Error('Unauthorized')
-            }
-            throw new Error('Failed to upload count:' `${response.status}`)
-        }
-        return await response.json();
-    }
-    catch(error){
-        console.error('Error updating count:', error)
-        throw error;
-    }
-}
 
 function MainPageMain() {
   const [posts, setPosts]= useState([])
@@ -170,9 +182,9 @@ function MainPageMain() {
 
   const fetchPosts = async () => {
     try {
-      const posts = await getUserPosts().posts;
-      const ourAlbums = await getUserPosts().ourAlbums;
-      const myAlbums = await getUserPosts().myAlbums;
+      const posts = await fetchUserEveryPosts();
+      const ourAlbums = await fetchUserOurAlbums();
+      const myAlbums = await fetchUserMyAlbums();
       if (posts || ourAlbums || myAlbums) {
         const sortedPosts = [...posts].sort((a, b) => b.likesCount - a.likesCount);
         setPosts(sortedPosts); // 태그 상관 없이 좋아요 내림차순으로 posts 객체 정리
@@ -195,9 +207,8 @@ function MainPageMain() {
     if (posts.length > 0) {
       const allTag = [...new Set(posts.flatMap((post) => post.tags))]; //중복 없는 하나의 배열로 만들기
       if (allTag.length > 0) { //set은 생성자 함수, 하지만 일반 함수처럼 호출 불가. 따라서 new랑 짝궁=>set 객체 만들어짐=>[...new~]=>배열열
-        const randomIndex = Math.floor(Math.random() * allTag.length);//0이상 allTag.length이하의 난수 생성
+        const randomIndex = localStorage.getItem('randomIndex') //에브리에서 받아와서 에브리랑 다른 태그 선택 안 되게 설정
         setRandomTagText(allTag[randomIndex]);
-        console.log('selected tag:', allTag[randomIndex]);
         const filteredPosts = posts.filter((post) => (post.tags || []).includes(allTag[randomIndex]));
         setRandomPosts(filteredPosts);//뭔가 posts말고 posts 좋아요 순서가 바뀐다면으로 하는 게 더 좋을 거 같은데..
       }
@@ -205,32 +216,28 @@ function MainPageMain() {
   }, [posts]); //이거 에브리에서 받아오든 여기서 에브리가 받아 가든으로 고쳐야 한다.
 
 
-  const handleLikeNum = async (postId) => { //이건 에브리 메모리에
-    try {
-      setPosts((prevPosts) => // 낙관적 업뎃
-        prevPosts
-          .map((post) =>
-            post.postId === postId
-              ? { ...post, likesCount: post.likesCount + 1 } // 이미 {}여기엔 속성이라 post.을 안 붙임
-              : post
-          )
-          .sort((a, b) => b.likesCount - a.likesCount)
-      );
-
-      const updatedPostByLike = await updateLikeCommentCount(postId); // 서버 업뎃
-      setPosts((prevPosts) =>
-        prevPosts
-          .map((post) =>
-            post.postId === postId
-              ? { ...post, likesCount: updatedPostByLike.likesCount }
-              : post
-          )
-          .sort((a, b) => b.likesCount - a.likesCount)
-      );
-    } catch (error) {
-      console.error('Error uploading like count', error);
+    const handleLikeNum =async(postId)=>{ //이거 islikecountup을 기준으로 크게 두 개로 나눠야 함
+        const rollBackPosts= [...posts]
+        try{ 
+            setPosts((prevPosts) => //낙관적 업뎃(하트 증가)
+                prevPosts.map((post)=> post.postId=== postId
+                    ? post.isLikeCountUp===false
+                        ? { ...post, likesCount: post.likesCount + 1 } 
+                        : { ...post, likesCount: post.likesCount - 1 }  
+                    : post).sort((a, b) => b.likesCount - a.likesCount)
+            );
+            const updatedPostByLike = await updateLikeCount(postId); //서버 업뎃
+            setPosts((prevPosts) =>
+                prevPosts.map((post) =>post.postId=== postId
+                    ? { ...post, likesCount: updatedPostByLike.likesCount }
+                    :post).sort((a, b) => b.likesCount - a.likesCount)
+            );
+        }
+        catch (error) {
+            console.error('Error uploading like count', error);
+            setPosts(rollBackPosts) //낙관적 업뎃 롤백
+        }
     }
-  };
 
   const weeklyPosts= randomPosts.slice(0,3); //아 여기선 먼저 useState([])에서[]로 됐다가 다시 비동기로 값을 받는다 usestate에서 useState() 그냥 이렇게 하면 비동기라서 이 코드가 먼저 실행될 떄 undefined가 떠서 타입 오류가 뜬다. slice는 undefined이면 오류가 뜬다. 따라서 []을 쓴다. 그 후 값이 들어온다.
 
