@@ -2,7 +2,7 @@
 
 > 친구들과 사진을 공유하고, 추억을 기록할 수 있는 그룹 기반 앨범 웹 서비스입니다.
 
----
+
 
 ## 🧩 주요 기능
 
@@ -15,10 +15,9 @@
 | 캘린더 보기 | 날짜별 업로드된 사진을 캘린더 형식으로 시각화 |
 | 알림 기능 | 그룹 활동에 대한 실시간 알림 수신 (SSE 기반, 추가 예정) |
 
----
+
 ## 메인 페이지
 
----
 
 ## 🛠️ 기술 스택
 
@@ -35,7 +34,7 @@
 ### ☁️ 배포 및 기타
 ![](https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)
 ![](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white)
----
+
 
 ## 🖼️ 화면 구성
 
@@ -46,6 +45,3 @@
 
 ---
 
-## 🧪 실행 방법
-
-1. `.env` 파일 생성 후 환경변수 설정
