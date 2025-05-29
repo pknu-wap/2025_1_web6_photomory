@@ -152,46 +152,6 @@ public class OurAlbumService {
         return PostResponseDto.fromEntity(savedPost);
     }
 
-    // 특정앨범에서 게시글 삭제
-    @Transactional
-    public void deletePostWithFile(Long albumId, Long postId, UserEntity currentUser) {
-        Integer albumIdInt = albumId.intValue();
-        Integer postIdInt = postId.intValue();
-
-        Album album = albumRepository.findById(albumIdInt)
-                .orElseThrow(() -> new EntityNotFoundException("해당 앨범을 찾을 수 없습니다."));
-
-        Post post = postRepository.findById(postIdInt)
-                .orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다."));
-
-        if (!post.getAlbum().getAlbumId().equals(albumIdInt)) {
-            throw new IllegalArgumentException("요청된 게시글이 해당 앨범에 속하지 않습니다.");
-        }
-
-        if (!post.getUser().getUserId().equals(currentUser.getUserId())) {
-            throw new IllegalArgumentException("게시글 삭제 권한이 없습니다. (작성자만 삭제 가능)");
-        }
-
-        // ✅ S3 이미지 삭제
-        if (post.getPhotoUrl() != null && !post.getPhotoUrl().isEmpty()) {
-            s3Service.deleteFile(post.getPhotoUrl()); // ← 수정 필요
-        }
-
-        postRepository.delete(post);
-    }
-
-
-
-    // 게시물 클릭 시 상세 보기 (사진 확대, 댓글, 좋아요 수)
-    @Transactional(readOnly = true)
-    public PostZoomDetailResponseDto getPostZoomDetail(Long postId) {
-        Integer postIdInt = postId.intValue();
-
-        Post post = postRepository.findById(postIdInt)
-                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
-        List<Comment> comments = commentRepository.findByPost_PostId(postId);
-        return PostZoomDetailResponseDto.from(post, comments);
-    }
 
     // 댓글 작성
     @Transactional
@@ -294,19 +254,21 @@ public class OurAlbumService {
             }
         }
     }
-
     @Transactional
-    public void removeMemberFromGroup(Long groupId, Long userIdToRemove) {
+    public void removeMemberFromGroup(Long groupId, Long userIdToRemove, UserEntity currentUser) {
         Integer groupIdInt = groupId.intValue();
 
+        // 그룹 조회
         MyAlbum group = myAlbumRepository.findById(groupIdInt)
                 .orElseThrow(() -> new EntityNotFoundException("그룹을 찾을 수 없습니다."));
 
+        // 삭제할 멤버 조회
         AlbumMembers memberToRemove = albumMembersRepository.findByMyAlbum_MyalbumIdAndUserEntity_UserId(groupIdInt, userIdToRemove)
                 .orElseThrow(() -> new EntityNotFoundException("그룹에서 해당 멤버를 찾을 수 없습니다."));
 
         albumMembersRepository.delete(memberToRemove);
     }
+
 
     // 앨범 삭제
     @Transactional
@@ -316,21 +278,30 @@ public class OurAlbumService {
         Album album = albumRepository.findById(albumIdInt)
                 .orElseThrow(() -> new EntityNotFoundException("해당 앨범을 찾을 수 없습니다."));
 
+        // 권한 확인 로직은 유지
         if (!album.getMyAlbum().getUserId().equals(currentUser.getUserId())) {
             throw new IllegalArgumentException("앨범 삭제 권한이 없습니다. (앨범을 생성한 그룹의 관리자만 삭제 가능)");
         }
 
+        // 해당 앨범에 속한 모든 게시물 조회
         List<Post> postsToDelete = postRepository.findByAlbum_AlbumId(albumIdInt);
 
         for (Post post : postsToDelete) {
+            // 1. 게시물에 연결된 모든 댓글 삭제
             commentRepository.deleteByPost_PostId(post.getPostId().longValue());
-            if (post.getPhotoUrl() != null && !post.getPhotoUrl().isEmpty()) {
-                s3Service.deleteFile(post.getPhotoUrl());
+
+            if (post.getPhotos() != null && !post.getPhotos().isEmpty()) {
+                for (Photo photo : post.getPhotos()) {
+                    if (photo.getPhotoUrl() != null && !photo.getPhotoUrl().isEmpty()) {
+                        s3Service.deleteFile(photo.getPhotoUrl());
+                    }
+                }
             }
+
             postRepository.delete(post);
         }
-
-        albumRepository.delete(album);
+        // 앨범 삭제
+        albumRepository.delete(album); // <- 여기도 albumRepository.delete(album); 으로 끝나야 합니다.
     }
 
     // 우리의 추억 페이지 기본 데이터 반환

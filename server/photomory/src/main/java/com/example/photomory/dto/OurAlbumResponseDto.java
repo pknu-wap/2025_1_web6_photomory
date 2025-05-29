@@ -3,41 +3,44 @@ package com.example.photomory.dto;
 import com.example.photomory.entity.Album;
 import com.example.photomory.entity.Comment;
 import com.example.photomory.entity.Post;
-import com.example.photomory.entity.Tag;
-import com.example.photomory.entity.UserEntity; // UserEntity 임포트 추가
+import com.example.photomory.entity.Photo; // Photo 엔티티 임포트 추가
+import com.example.photomory.entity.UserEntity;
+
+import lombok.AllArgsConstructor; // AllArgsConstructor 추가
+import lombok.Getter; // Getter 추가
+import lombok.NoArgsConstructor; // NoArgsConstructor 추가
+import lombok.Setter; // Setter 추가 (특히 DTO에 값을 설정할 때 필요)
 
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// Lombok 어노테이션을 사용하여 코드를 간결하게 만드는 것을 권장합니다.
-// @Getter
-// @Setter
-// @NoArgsConstructor
-// @AllArgsConstructor // 필요하다면
+// Lombok 어노테이션 적용으로 코드 간결화 및 유지보수성 향상
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor // 필요하다면 (모든 필드를 포함하는 생성자)
 public class OurAlbumResponseDto {
 
     private Integer albumId;
     private String albumName;
     private String albumDescription;
-    private List<String> albumTags; // 여러 개의 태그를 담을 리스트 필드 추가
+    private List<String> albumTags;
     private String albumMakingTime;
 
     private String userName;
     private String userPhotoUrl;
 
-    private List<PostSummaryDto> posts; // 이 posts는 서비스에서 채워져야 함
+    private List<PostSummaryDto> posts;
 
-    public OurAlbumResponseDto() {}
-
+    // fromEntity 메서드에서 Lombok이 생성한 Setter를 사용합니다.
     public static OurAlbumResponseDto fromEntity(Album album, List<Post> posts, UserEntity albumCreator) {
         OurAlbumResponseDto dto = new OurAlbumResponseDto();
         dto.setAlbumId(album.getAlbumId());
         dto.setAlbumName(album.getAlbumName());
         dto.setAlbumDescription(album.getAlbumDescription());
 
-        // 단일 albumTag를 리스트로 변환 (null 체크 포함)
         if (album.getAlbumTag() != null && !album.getAlbumTag().isEmpty()) {
             dto.setAlbumTags(List.of(album.getAlbumTag()));
         } else {
@@ -48,13 +51,11 @@ public class OurAlbumResponseDto {
             dto.setAlbumMakingTime(album.getAlbumMakingTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         }
 
-        // 앨범 생성자 정보 설정
         if (albumCreator != null) {
             dto.setUserName(albumCreator.getUserName());
             dto.setUserPhotoUrl(albumCreator.getUserPhotourl());
         }
 
-        // 게시물 목록 설정 (서비스에서 전달받은 posts 사용)
         if (posts != null && !posts.isEmpty()) {
             dto.setPosts(posts.stream()
                     .map(PostSummaryDto::fromEntity)
@@ -66,42 +67,42 @@ public class OurAlbumResponseDto {
         return dto;
     }
 
-
-    // Getters / Setters (Lombok @Getter/@Setter 사용 시 필요 없음, 하지만 요청에 따라 유지)
+    // 기존 수동 Getters/Setters는 Lombok 어노테이션 (@Getter, @Setter) 사용 시 삭제 가능합니다.
+    // 유지하더라도 Lombok이 생성한 메서드가 우선합니다.
+    // 여기서는 가독성을 위해 주석 처리하거나 제거하는 것을 추천합니다.
+    /*
     public Integer getAlbumId() { return albumId; }
     public void setAlbumId(Integer albumId) { this.albumId = albumId; }
-    public String getAlbumName() { return albumName; }
-    public void setAlbumName(String albumName) { this.albumName = albumName; }
-    public String getAlbumDescription() { return albumDescription; }
-    public void setAlbumDescription(String albumDescription) { this.albumDescription = albumDescription; }
-    public List<String> getAlbumTags() { return albumTags; }
-    public void setAlbumTags(List<String> albumTags) { this.albumTags = albumTags; }
-    public String getAlbumMakingTime() { return albumMakingTime; }
-    public void setAlbumMakingTime(String albumMakingTime) { this.albumMakingTime = albumMakingTime; }
-    public String getUserName() { return userName; }
-    public void setUserName(String userName) { this.userName = userName; }
-    public String getUserPhotoUrl() { return userPhotoUrl; }
-    public void setUserPhotoUrl(String userPhotoUrl) { this.userPhotoUrl = userPhotoUrl; }
-    public List<PostSummaryDto> getPosts() { return posts; }
-    public void setPosts(List<PostSummaryDto> posts) { this.posts = posts; }
+    // ... 나머지 Getters / Setters
+    */
 
 
     // 게시물 + 댓글 요약 DTO
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor // 필요하다면
     public static class PostSummaryDto {
         private Integer postId;
         private String postText;
-        private String photoUrl;
+        private String photoUrl; // 대표 사진 URL
         private List<CommentDto> comments;
 
-        public PostSummaryDto() {}
-
+        // fromEntity 메서드에서 Post 엔티티의 변경된 구조를 반영합니다.
         public static PostSummaryDto fromEntity(Post post) {
             PostSummaryDto dto = new PostSummaryDto();
             dto.setPostId(post.getPostId());
             dto.setPostText(post.getPostText());
 
-            // Post 엔티티에 직접 photoUrl 필드가 있으므로 Photos 리스트를 순회할 필요 없음
-            dto.setPhotoUrl(post.getPhotoUrl()); // Post.getPhotoUrl() 사용
+            // 🚨 핵심 수정 부분: Post 엔티티의 photos 컬렉션에서 첫 번째 Photo의 URL을 가져옵니다.
+            if (post.getPhotos() != null && !post.getPhotos().isEmpty()) {
+                // Set은 순서를 보장하지 않으므로, '첫 번째'라는 의미는 Set의 이터레이터가 반환하는 첫 요소입니다.
+                // 만약 특정 기준의 대표 사진(예: 썸네일 플래그)이 있다면 해당 로직을 구현해야 합니다.
+                Photo firstPhoto = post.getPhotos().iterator().next();
+                dto.setPhotoUrl(firstPhoto.getPhotoUrl());
+            } else {
+                dto.setPhotoUrl(null); // 게시물에 사진이 없을 경우 URL을 null로 설정
+            }
 
             if (post.getComments() != null) {
                 dto.setComments(post.getComments().stream()
@@ -114,18 +115,19 @@ public class OurAlbumResponseDto {
             return dto;
         }
 
-        // Getters / Setters (Lombok @Getter/@Setter 사용 시 필요 없음, 하지만 요청에 따라 유지)
+        // 기존 수동 Getters/Setters는 Lombok 어노테이션 사용 시 삭제 가능합니다.
+        /*
         public Integer getPostId() { return postId; }
         public void setPostId(Integer postId) { this.postId = postId; }
-        public String getPostText() { return postText; }
-        public void setPostText(String postText) { this.postText = postText; }
-        public String getPhotoUrl() { return photoUrl; }
-        public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
-        public List<CommentDto> getComments() { return comments; }
-        public void setComments(List<CommentDto> comments) { this.comments = comments; }
+        // ... 나머지 Getters / Setters
+        */
     }
 
     // 댓글 DTO
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor // 필요하다면
     public static class CommentDto {
         private Integer commentId;
         private String commentsText;
@@ -143,12 +145,11 @@ public class OurAlbumResponseDto {
             return dto;
         }
 
-        // Getters / Setters (Lombok @Getter/@Setter 사용 시 필요 없음, 하지만 요청에 따라 유지)
+        // 기존 수동 Getters/Setters는 Lombok 어노테이션 사용 시 삭제 가능합니다.
+        /*
         public Integer getCommentId() { return commentId; }
         public void setCommentId(Integer commentId) { this.commentId = commentId; }
-        public String getCommentsText() { return commentsText; }
-        public void setCommentsText(String commentsText) { this.commentsText = commentsText; }
-        public String getUserName() { return userName; }
-        public void setUserName(String userName) { this.userName = userName; }
+        // ... 나머지 Getters / Setters
+        */
     }
 }

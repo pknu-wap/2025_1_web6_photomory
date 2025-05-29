@@ -4,15 +4,16 @@ import com.example.photomory.dto.*;
 import com.example.photomory.entity.UserEntity;
 import com.example.photomory.security.CustomUserDetails;
 import com.example.photomory.service.OurAlbumService;
-import com.fasterxml.jackson.databind.ObjectMapper; // <--- 이 임포트 추가
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
-import com.example.photomory.exception.UnauthorizedException;
+import com.example.photomory.exception.UnauthorizedException; // 기존에 있던 임포트
 import jakarta.validation.Valid;
+import java.lang.IllegalArgumentException;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,11 +24,15 @@ import java.util.List;
 public class OurAlbumController {
 
     private final OurAlbumService ourAlbumService;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper; // JSON 파싱을 위한 ObjectMapper 주입
 
-    // 0. 기본 페이지 데이터
-    @GetMapping // /api/our-album 에 대한 GET 요청 처리
+    // 0. 기본 페이지 데이터 조회
+    @GetMapping
     public ResponseEntity<List<OurAlbumResponseDefaultDto>> getAllUserGroupsDefaultData(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        // 사용자 인증 확인
+        if (userDetails == null) {
+            throw new UnauthorizedException("인증 정보가 없습니다. 로그인해주세요.");
+        }
         UserEntity user = userDetails.getUser();
         List<OurAlbumResponseDefaultDto> userGroupsDetail = ourAlbumService.getAllGroupsDetailForUser(user.getUserId());
         return ResponseEntity.ok(userGroupsDetail);
@@ -35,44 +40,54 @@ public class OurAlbumController {
 
     // 1. 그룹 생성
     @PostMapping("/group")
-    public GroupResponseDto createGroup(@RequestBody GroupCreateRequestDto requestDto,
-                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<GroupResponseDto> createGroup(@RequestBody @Valid GroupCreateRequestDto requestDto,
+                                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new UnauthorizedException("인증 정보가 없습니다. 로그인해주세요.");
+        }
         UserEntity user = userDetails.getUser();
-        return ourAlbumService.createGroup(requestDto, user);
+        GroupResponseDto responseDto = ourAlbumService.createGroup(requestDto, user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     // 2. 그룹 정보 + 구성원 반환
     @GetMapping("/group/{groupId}")
-    public GroupFullInfoResponseDto getGroupFullInfo(@PathVariable Long groupId) {
-        return ourAlbumService.getGroupFullInfo(groupId);
+    public ResponseEntity<GroupFullInfoResponseDto> getGroupFullInfo(@PathVariable Long groupId) {
+        GroupFullInfoResponseDto responseDto = ourAlbumService.getGroupFullInfo(groupId);
+        return ResponseEntity.ok(responseDto);
     }
 
     // 3. 앨범 생성
     @PostMapping("/group/{groupId}/album")
-    public AlbumResponseDto createAlbum(@PathVariable Long groupId,
-                                        @RequestBody AlbumCreateRequestDto requestDto,
-                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<AlbumResponseDto> createAlbum(@PathVariable Long groupId,
+                                                        @RequestBody @Valid AlbumCreateRequestDto requestDto,
+                                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new UnauthorizedException("인증 정보가 없습니다. 로그인해주세요.");
+        }
         UserEntity user = userDetails.getUser();
-        return ourAlbumService.createAlbum(groupId, requestDto, user);
+        AlbumResponseDto responseDto = ourAlbumService.createAlbum(groupId, requestDto, user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     // 4. 앨범 상세정보 + 포스트 목록 (페이징 적용)
     @GetMapping("/album/{albumId}")
-    public AlbumWithPostsResponseDto getAlbumWithPosts(@PathVariable Long albumId,
-                                                       @RequestParam(defaultValue = "0") int page,
-                                                       @RequestParam(defaultValue = "10") int size) {
-        return ourAlbumService.getAlbumWithPosts(albumId, page, size);
+    public ResponseEntity<AlbumWithPostsResponseDto> getAlbumWithPosts(@PathVariable Long albumId,
+                                                                       @RequestParam(defaultValue = "0") int page,
+                                                                       @RequestParam(defaultValue = "10") int size) {
+        AlbumWithPostsResponseDto responseDto = ourAlbumService.getAlbumWithPosts(albumId, page, size);
+        return ResponseEntity.ok(responseDto);
     }
 
     // 5. 게시물 생성 (파일 포함)
     @PostMapping("/album/{albumId}/post")
-    public PostResponseDto createPost(@PathVariable Long albumId,
-                                      @RequestPart String requestDtoJson,
-                                      @RequestPart(required = false) MultipartFile photo,
-                                      @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
+    public ResponseEntity<PostResponseDto> createPost(@PathVariable Long albumId,
+                                                      @RequestPart String requestDtoJson, // JSON 문자열로 DTO 받음
+                                                      @RequestPart(name = "photo", required = false) MultipartFile photo, // 사진 파일 받음
+                                                      @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
         // 사용자 인증 확인
         if (userDetails == null) {
-            throw new UnauthorizedException("인증이 필요합니다.");
+            throw new UnauthorizedException("인증 정보가 없습니다. 로그인해주세요.");
         }
         UserEntity user = userDetails.getUser();
 
@@ -81,14 +96,14 @@ public class OurAlbumController {
         try {
             requestDto = objectMapper.readValue(requestDtoJson, PostCreateRequestDto.class);
         } catch (Exception e) {
+            // JSON 파싱 실패 시 예외 처리
             throw new IllegalArgumentException("Invalid PostCreateRequestDto JSON: " + e.getMessage(), e);
         }
 
-        // 서비스 호출 (수정된 DTO 필드 전달)
-        // requestDto 내부에 photoName과 photoMakingTime이 포함되어 있다고 가정합니다.
-        return ourAlbumService.createPost(albumId, requestDto, photo, user.getUserId());
+        // 서비스 호출
+        PostResponseDto responseDto = ourAlbumService.createPost(albumId, requestDto, photo, user.getUserId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
-
 
     // 7. 댓글 작성
     @PostMapping("/{albumId}/post/{postId}/comment")
@@ -98,8 +113,12 @@ public class OurAlbumController {
             @RequestBody @Valid CommentRequestDto requestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
+        if (userDetails == null) {
+            throw new UnauthorizedException("인증 정보가 없습니다. 로그인해주세요.");
+        }
         UserEntity user = userDetails.getUser();
 
+        // 경로 변수와 DTO 본문의 ID 일치 여부 확인
         if (!albumId.equals(requestDto.getAlbumId()) || !postId.equals(requestDto.getPostId())) {
             throw new IllegalArgumentException("요청 경로와 본문의 앨범 또는 게시글 ID가 일치하지 않습니다.");
         }
@@ -109,53 +128,67 @@ public class OurAlbumController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
     // 9. 초대 가능한 친구 목록 조회 (그룹 멤버 제외)
     @GetMapping("/group/{groupId}/invitable-friends")
-    public List<UserSummaryDto> getInvitableFriends(@PathVariable Long groupId,
-                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<List<UserSummaryDto>> getInvitableFriends(@PathVariable Long groupId,
+                                                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new UnauthorizedException("인증 정보가 없습니다. 로그인해주세요.");
+        }
         UserEntity user = userDetails.getUser();
-        return ourAlbumService.getFriendsExcludingGroup(groupId, user.getUserId());
+        List<UserSummaryDto> friends = ourAlbumService.getFriendsExcludingGroup(groupId, user.getUserId());
+        return ResponseEntity.ok(friends);
     }
 
     // 10. 친구를 그룹에 초대
     @PostMapping("/group/{groupId}/invite")
-    public String inviteToGroup(@PathVariable Long groupId,
-                                @RequestBody List<Long> friendIds,
-                                @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<String> inviteToGroup(@PathVariable Long groupId,
+                                                @RequestBody List<Long> friendIds,
+                                                @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new UnauthorizedException("인증 정보가 없습니다. 로그인해주세요.");
+        }
         UserEntity inviter = userDetails.getUser();
         ourAlbumService.inviteToGroup(groupId, inviter, friendIds);
-        return "친구 초대가 완료되었습니다.";
+        return ResponseEntity.ok("친구 초대가 완료되었습니다.");
     }
 
     // 11. 친구 그룹에서 삭제
-    @DeleteMapping("/{groupId}/member/{userIdToRemove}")
+    @DeleteMapping("/group/{groupId}/member/{userIdToRemove}") // @DeleteMapping 어노테이션 수정
     public ResponseEntity<Void> removeMemberFromGroup(
             @PathVariable Long groupId,
-            @PathVariable Long userIdToRemove
+            @PathVariable Long userIdToRemove,
+            @AuthenticationPrincipal CustomUserDetails userDetails // 삭제 권한 확인을 위해 userDetails 추가
     ) {
-        ourAlbumService.removeMemberFromGroup(groupId, userIdToRemove);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 성공 시 204 No Content 반환
+        if (userDetails == null) {
+            throw new UnauthorizedException("인증 정보가 없습니다. 로그인해주세요.");
+        }
+        UserEntity currentUser = userDetails.getUser();
+        // 서비스 메서드에 currentUser를 전달하여 권한 확인 로직 추가
+        ourAlbumService.removeMemberFromGroup(groupId, userIdToRemove, currentUser);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     // 12. 특정 앨범에서 게시글 삭제
-    @DeleteMapping("/album/{albumId}/post/{postId}") // 앨범 ID와 게시글 ID를 모두 받음
-    public ResponseEntity<Void> deletePostInAlbum(@PathVariable Long albumId, // 앨범 ID (Long으로 받되, 서비스에서 Integer 변환)
-                                                  @PathVariable Long postId,  // 게시글 ID (Long으로 받되, 서비스에서 Integer 변환)
+    @DeleteMapping("/album/{albumId}/post/{postId}")
+    public ResponseEntity<Void> deletePostInAlbum(@PathVariable Long albumId,
+                                                  @PathVariable Long postId,
                                                   @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null) {
-            throw new UnauthorizedException("인증이 필요합니다.");
+            throw new UnauthorizedException("인증 정보가 없습니다. 로그인해주세요.");
         }
-
         UserEntity currentUser = userDetails.getUser();
         ourAlbumService.deletePostWithFile(albumId, postId, currentUser);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build(); // 204 No Content 반환
     }
 
-    // 13. 앨범삭제
-    @DeleteMapping("/album/{albumId}") // 앨범 ID만 받음
-    public ResponseEntity<Void> deleteAlbum(@PathVariable Long albumId, // 앨범 ID (Long으로 받되, 서비스에서 Integer 변환)
+    // 13. 앨범 삭제
+    @DeleteMapping("/album/{albumId}")
+    public ResponseEntity<Void> deleteAlbum(@PathVariable Long albumId,
                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new UnauthorizedException("인증 정보가 없습니다. 로그인해주세요.");
+        }
         UserEntity currentUser = userDetails.getUser();
         ourAlbumService.deleteAlbum(albumId, currentUser);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // 204 No Content 반환

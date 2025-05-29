@@ -36,8 +36,6 @@ public class Post {
     @Column(name = "post_description")
     private String postDescription;
 
-    @Column(name = "photo_url")
-    private String photoUrl;
 
     @Column(name = "location")
     private String location;
@@ -86,4 +84,11 @@ public class Post {
 
     @Column(name = "comment_count", nullable = false)
     private int commentCount;
+
+    public void addPhoto(Photo photo) {
+        this.photos.add(photo);
+        if (photo.getPost() != this) { // 무한 루프 방지
+            photo.setPost(this);
+        }
+    }
 }
