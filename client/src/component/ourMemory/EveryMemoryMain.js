@@ -15,7 +15,9 @@ import DailyPopularTagModal from "./DailyPopularTagModal";
 import CommentModal from "./CommnetModal.js";
 import { useState, useEffect, useMemo, useRef } from "react";
 
-async function fetchUserposts(accessToken) {
+async function fetchUserposts(retries=0, maxRetries=3) {
+    let accessToken = localStorage.getItem('accessToken')
+    const refreshToken = localStorage.getItem('refreshToken')
     try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`, {
             method: 'GET',
@@ -34,9 +36,16 @@ async function fetchUserposts(accessToken) {
 
         const posts = await response.json();
         return posts;
-    } catch (error) {
-        console.error('Error fetching user posts:', error);
-        throw error;
+    } catch (error){
+        if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+            accessToken = await refreshAccessToken(refreshToken);
+            if (accessToken) {
+                const result = await fetchUserposts(retries+1, maxRetries);
+                return result
+            }
+        }
+        console.error('Failed to get post')
+        return null
     }
 }
 
@@ -55,6 +64,9 @@ async function refreshAccessToken(refreshToken) {
         }
 
         const data = await response.json();
+        if (data.accessToken) {
+            localStorage.setItem('accessToken', data.accessToken);
+        }
         return data.accessToken;
     }
     catch (error) {
@@ -63,37 +75,17 @@ async function refreshAccessToken(refreshToken) {
     }
 }
 
-async function getUserPosts() {
-    let accessToken= localStorage.getItem('accessToken');
-    const refreshToken= localStorage.getItem('refreshToken');
+async function updateLikeCount(postId,retries=0,maxRetries=3){ //좋아요 수 관리
+    let accessToken= localStorage.getItem('accessToken')
+    const refreshToken= localStorage.getItem('refreshToken')
     try{
-        const posts = await fetchUserposts(accessToken)
-        return posts
-    }
-    catch (error){
-        if (error.message === 'Unauthorized' && refreshToken) { //리프토큰 없으면 요청 안 되게게
-            accessToken=await refreshAccessToken(refreshToken);
-            if (accessToken) {
-                localStorage.setItem('accessToken', accessToken);
-                const posts = await fetchUserposts(accessToken);
-                return posts
-            }
-        }
-        console.log('Failed to fetch user posts')
-        return null
-    }
-}
-
-async function updateLikeCount(postId){ //좋아요 수 관리
-    try{
-        const accessToken= localStorage.getItem('accessToken')
-        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{/* 이거 엔드포인트 뭐임..?*/
+        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts/${postId}/like`,{/* 이거 엔드포인트 뭐임..?*/
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`
             },
-            body: JSON.stringify(postId)
+            body: JSON.stringify({postId})
         })
         if(!response.ok){
             if(response.status===401){
@@ -104,15 +96,23 @@ async function updateLikeCount(postId){ //좋아요 수 관리
         return await response.json();
     }
     catch(error){
-        console.error('Error updating count:', error)
-        throw error;
+        if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+            accessToken=await refreshAccessToken(refreshToken);
+        if (accessToken) {
+            const result = await updateLikeCount(accessToken,retries+1, maxRetries);
+            return result
+        }
+    }
+    console.error('Failed to upload like')
+    return null
     }
 }
 
-async function updateComment(postId, comment){ //댓글 수, 댓글 내용 관리.
+async function updateComment(postId, comment, retries=0, maxRetries=3){ //댓글 수, 댓글 내용 관리.    
+    let accessToken= localStorage.getItem('accessToken')
+    const refreshToken =localStorage.getItem('refreshToken')
     try{
-        const accessToken= localStorage.getItem('accessToken')
-        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{/* 이거 엔드포인트 뭐임..?*/
+        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/comments`,{
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json',
@@ -128,18 +128,27 @@ async function updateComment(postId, comment){ //댓글 수, 댓글 내용 관�
         }
         return await response.json();
     }
-    catch(error){
-        console.error('Error updating count:', error)
-        throw error;
+    catch (error){
+        if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+            accessToken=await refreshAccessToken(refreshToken);
+        if (accessToken) {
+            const result = await updateComment(accessToken,retries+1, maxRetries);
+            return result
+        }
+    }
+    console.error('Failed to upload comment')
+    return null
     }
 }
-async function uploadingImage(uploadImage) {
+async function uploadingImage(uploadImage, retries=0,maxRetries=3) {
+        const refreshToken=localStorage.getItem('refreshToken')
+        let accessToken= localStorage.getItem('accessToken')
+
     try {
         if (!uploadImage || !uploadImage.images || uploadImage.images.length === 0) {
             throw new Error('이미지를 선택해주세요.');
         }
 
-        const accessToken = localStorage.getItem('accessToken');
         if (!accessToken) {
             throw new Error('로그인이 필요합니다.');
         }
@@ -190,9 +199,16 @@ async function uploadingImage(uploadImage) {
         const result = await response.json();
         alert('이미지가 성공적으로 업로드되었습니다.');
         return result;
-    } catch (error) {
-        console.error('Error uploading image:', error);
-        alert(error.message);
+    }    catch (error){
+        if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+            accessToken=await refreshAccessToken(refreshToken);
+            if (accessToken) {
+                const result = await uploadingImage(accessToken,retries+1, maxRetries);
+                return result
+            }
+        }
+        console.error('Failed to upload image')
+        return null
     }
 }
 
@@ -209,7 +225,7 @@ export default function EveryMemoryMain(){
 
     const fetchPosts= async ()=>{
         try{
-            const posts= await getUserPosts();
+            const posts= await fetchUserposts();
             if (posts && Array.isArray(posts)) {
                 const sortedPosts = [...posts].sort((a,b)=>b.likesCount-a.likesCount);
                 setPosts(sortedPosts); // 태그 상관 없이 좋아요 내림차순으로 posts 객체 정리
@@ -233,22 +249,24 @@ export default function EveryMemoryMain(){
             const allTag=[...new Set(posts.flatMap((post)=>post.tags))] //중복 없는 하나의 배열로 만들기
             if (allTag.length>0) { //set은 생성자 함수, 하지만 일반 함수처럼 호출 불가. 따라서 new랑 짝궁=>set 객체 만들어짐=>[...new~]=>배열열
                 const randomIndex = Math.floor(Math.random()*allTag.length); //0이상 allTag.length이하의 난수 생성
+                localStorage.setItem('randomIndex', randomIndex) //랜덤태그 이름 저장장
                 setRandomTagText(allTag[randomIndex])
-                console.log('selected tag:', allTag[randomIndex])
                 const filteredPosts= posts.filter((post)=>(post.tags || []).includes(allTag[randomIndex]));
                 setRandomPosts(filteredPosts);
             }
         }
     }, [posts]); //뭔가 posts말고 posts 좋아요 순서가 바뀐다면으로 하는 게 더 좋을 거 같은데..
 
-    const handleLikeNum =async(postId)=>{
+    const handleLikeNum =async(postId)=>{   
+        const rollBackPosts= [...posts]
         try{
-            setPosts((prevPosts) => //낙관적 업뎃
+            setPosts((prevPosts) => //낙관적 업뎃(하트 증가)
                 prevPosts.map((post)=> post.postId=== postId
-                    ? { ...post, likesCount: post.likesCount + 1 } //이미 {}여기엔 속성이라 post.을 안 붙임
+                    ? post.isLikeCountUp===false
+                        ? { ...post, likesCount: post.likesCount + 1 , isLikeCountUp: !post.isLikeCountUp}  //서버에서 어떤 값을 주는지 정해지면 또 수정하자.. 
+                        : { ...post, likesCount: post.likesCount - 1 , isLikeCountUp: !post.isLikeCountUp}  
                     : post).sort((a, b) => b.likesCount - a.likesCount)
             );
-
             const updatedPostByLike = await updateLikeCount(postId); //서버 업뎃
             setPosts((prevPosts) =>
                 prevPosts.map((post) =>post.postId=== postId
@@ -258,21 +276,22 @@ export default function EveryMemoryMain(){
         }
         catch (error) {
             console.error('Error uploading like count', error);
+            setPosts(rollBackPosts) //낙관적 업뎃 롤백
         }
     }
     const handleCommentNum=async(modalPost, comment)=>{ //댓글 수, 내용.
+        const rollBackPosts= [...posts]
         try{
             setPosts((prevPosts)=> //낙관적 업뎃
                 prevPosts.map((post)=>post.postId===modalPost.postId
                 ? {
                     ...post,
                     commentsCount: post.commentsCount + 1,
-                    comments:[...post.comments, comment] //코멘트에선 코멘트 텍스트와 유저 아이디만 준다.
-                }
-                    : post)
+                    comments:[...post.comments, comment]} //코멘트에선 코멘트 텍스트와 유저 아이디만 준다.
+                : post)
             );
             const updatedPostByComment= await updateComment(modalPost.postId, comment) //서버 업뎃
-            setPosts((prevPosts)=>
+            setPosts((prevPosts)=> //updatedPostByLike근데 여기서 서버가 어떻게 값을 주는지 명확하지 않다.
                 prevPosts.map((post)=>post.postId===modalPost.postId
                 ? {...post, commentsCount: updatedPostByComment.commentsCount}
                     : post)
@@ -280,6 +299,7 @@ export default function EveryMemoryMain(){
         }
         catch(error){
             console.error('Error uploading like count', error);
+            setPosts(rollBackPosts)
         }
     }
 
@@ -355,8 +375,8 @@ export default function EveryMemoryMain(){
 
         const files = Array.from(e.target.files);
         const selectedFiles = files.filter((file) => {
-            if (file.size > 20 * 1024 ** 2) {
-                alert('파일 크기는 20MB를 초과할 수 없습니다.');
+            if (file.size > 5 * 1024 ** 2) {
+                alert('파일 크기는 5MB를 초과할 수 없습니다.');
                 return false;
             }
             const validTypes = ['image/jpeg', 'image/png', 'image/heic'];
@@ -423,15 +443,15 @@ export default function EveryMemoryMain(){
             <div className={styles.mainContainer}>
                 {error && <p className={styles.error}>{error}</p>}
                 <p className={styles.weeklyTag}>
-                    <img src={camera} alt='' className={styles.weeklyTagCamera}></img>
+                    <span className={styles.weeklyTagCamera}>📷</span>
                     <span className={styles.weeklyTagText}>
-                        오늘의 태그 #{randomTagText} - 주간 인기 {randomTagText} 사진 갤러리
+                        주간 인기 {randomTagText? randomTagText: "'Unknown'"} 사진 갤러리
                     </span>
                 </p>
                 <div className={styles.forFlexTagBox}>
                     <div className={styles.tagBox}>
                         <img src={landscape} alt='' className={styles.tagBoxLandscape}></img>
-                        <span className={styles.tagBoxText}>#{randomTagText}</span>
+                        <span className={styles.tagBoxText}>#{randomTagText? randomTagText: 'Unknown'}</span>
                     </div>
                 </div>
                 <div className={styles.forFlexweeklyTag1}>

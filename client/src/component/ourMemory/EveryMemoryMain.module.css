@@ -13,8 +13,7 @@
 }
 
 .weeklyTagCamera{
-    width: 20px;
-    height: 20px;
+    font-size: 43px;
 }
 .weeklyTag{
     font-weight: 700;
@@ -27,6 +26,7 @@
     width: 100%;
     display: flex;
     align-items: center;
+    margin-bottom: 30px;
 }
 .tagBox{
     border: 1px solid black;
@@ -44,15 +44,11 @@
     width: clamp(18px, 3.5vw, 24px);
     height: clamp(18px, 3.5vw, 24px);
 }
-
-.tagBoxLandscape path {
-    fill: #00ff00 !important;
-}
-
 .tagBoxText{
     font-weight: 700;
     font-size: clamp(18px, 3.5vw, 24px);
     margin-left: 5px;
+    padding: 4px 7px 4px 7px;
 }
 
 .forFlexweeklyTag1{
@@ -89,7 +85,7 @@
 }
 
 .weeklyTagContainer{
-    width: clamp(220px, 40vw, 430px);
+    width: clamp(257px, 40vw, 430px);
     aspect-ratio: 1/1;
     border-radius: 10px;
     background-color: white;
@@ -105,6 +101,7 @@
     background-color: rgb(230, 230, 230);
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
+    object-fit: cover;
 }
 .weeklyTagImage:hover{
     transform: translateY(-5px);
@@ -135,7 +132,6 @@
     flex-direction: row;
 }
 .userImage{
-    border: 1px solid black;
     width: 35px;
     height: 35px;
     border-radius: 50%;
@@ -149,7 +145,7 @@
 .forFlexweeklyTag2{
     display: flex;
     flex-direction: row;
-    margin: 5px 0px 10px 5px;
+    margin: 5px 5px 10px 5px;
 } 
 .heartContainer{
     background-color: #FEF2F2;
@@ -251,6 +247,7 @@
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
     transition: all 0.3s ease;
+    object-fit: cover;
 }
 .todayTagImage:hover{
     box-shadow: 0 10px 20px rgba(0, 0, 0,0.3);

@@ -1,5 +1,5 @@
 body{
-  min-width: 600px;
+  min-width: 656px;
 }
 .myInfoContainer {
   background-color: white;
@@ -17,7 +17,7 @@ body{
   flex-direction: row;
   justify-content: space-between;
   padding: 25px;
-  align-items: center;
+  gap: 20px;
 }
 
 .forFlexLeft {
@@ -28,16 +28,17 @@ body{
 }
 
 .image {
-  width: clamp(80px, 5vw, 100px);
-  height: clamp(80px, 5vw, 100px);
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   object-fit: cover;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
+  transform: translate(0, -10%);
 }
 
 .image:hover {
-  transform: scale(1.1);
+  transform: scale(1.1) translate(0, -10%);
 }
 
 .forFlex {
@@ -47,6 +48,7 @@ body{
 }
 
 .name {
+  width:90%;
   font-weight: 700;
   color: #212529;
   transition: color 0.3s ease;
@@ -60,12 +62,8 @@ body{
   margin-left: 7px;
   color: #6c757d;
 }
-.logOutForFlexRight{
-  font-weight: 500;
-  color: #6B7280;
-  min-width: 59px;
-}
 .job{
+  width:90%;
   border-radius: 8px;
   border: 1px solid #b7bdc3;
   padding: 8px 12px;
@@ -76,7 +74,43 @@ body{
   font-size: 14px;
   color: #6c757d;
 }
-
+.forFlexSetting {
+  height: 100%;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+}
+.logOutForFlexRight{
+  min-width: 69px;
+  font-weight: 500;
+  color: #6B7280;
+  border: 2px solid #b7bdc3;
+  padding: 5px 8px;
+  white-space: nowrap;
+}
+.save{
+  min-width: 69px;
+  font-weight: 500;
+  color: #6B7280;
+  border: 2px solid #b7bdc3;
+  margin-bottom: 10px;
+  padding: 5px 8px;
+}
+.edit{
+  min-width: 69px;
+  font-weight: 500;
+  color: #6B7280;
+  border: 2px solid #b7bdc3;
+  margin-bottom: 20px;
+  padding: 5px 8px;
+}
+.logoutIcon{
+  width: 16px;
+  height: 16px;
+  color: #6B7280;
+  transform: translate(0, 15%);
+  margin-right: 3px;
+}
 .myDetailInfoContainer2 {
   display: flex;
   flex-direction: row;
