@@ -35,7 +35,14 @@ export function normalizeOurAlbumData(rawData) {
           ? a.albumTag.split(",").map((tag) => tag.trim())
           : [], //태그 배열 처리
         album_makingtime: a.albumMakingtime,
-        photos: a.photos ?? [],
+        photos:
+          a.photos?.map((p) => ({
+            photo_id: p.photoId,
+            photo_url: p.photoUrl,
+            photo_name: p.photoName,
+            photo_makingtime: p.photoMakingtime,
+            post_id: p.postId,
+          })) ?? [],
         comments: a.comments ?? [],
       })) ?? [],
   }));
