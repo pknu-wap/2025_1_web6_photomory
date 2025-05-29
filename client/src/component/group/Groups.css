@@ -40,6 +40,20 @@
   margin-top: 8px;
 }
 
+.groupEditLink {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+
+.groupEditLink:hover {
+  cursor: pointer;
+  transform: translateY(-5px) scale(1.05);
+}
+
+.groupEditLink:active {
+  transform: translateY(1px) scale(0.96);
+}
+
 .groupMember {
   display: flex;
   align-items: center;
