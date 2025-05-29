@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Calender.css"; //Calender 컴포넌트 css사용
 import "./DayCell.css";
 import PhotoModal from "../photo/PhotoModal";
@@ -14,6 +14,20 @@ function DayCell({
 }) {
   //day: 날짜, isEmpty:빈 칸인지 여부 (true이면 날짜 없음)
   const [selectedPhoto, setSelectedPhoto] = useState(null); //날짜 셀을 눌렀을때 선택되는 사진정보상태
+
+  useEffect(() => {
+    //모달이 열렸을 때
+    if (selectedPhoto) {
+      //body에 modal-open 클래스 추가, 모달 상태 나타냄
+      document.body.classList.add("modal-open");
+    } else {
+      // 모달이 닫혔을 경우 클래스 제거
+      document.body.classList.remove("modal-open");
+    }
+
+    // 모달이 다른 사진으로 전환될 때 이전 모달 상태를 정리
+    return () => document.body.classList.remove("modal-open");
+  }, [selectedPhoto]);
 
   const handlePhotoClick = (photo) => {
     // 클릭한 사진 정보 변경 핸들러
@@ -35,7 +49,9 @@ function DayCell({
 
   return (
     <div
-      className={`day ${isEmpty ? "empty" : ""}`}
+      className={`day ${isEmpty ? "empty" : ""} ${
+        selectedPhoto ? "modal-oepn" : "" //모달 오픈시 상속 제어
+      }`}
       style={{
         backgroundColor: isEmpty ? "transparent" : bgColor, // 빈칸은 배경 없음
       }}
