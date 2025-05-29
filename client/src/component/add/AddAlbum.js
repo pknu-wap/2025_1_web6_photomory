@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import AlbumTitleList from "../album/AlbumTitleList";
-import addAlbumButton from "../../assets/addAlbumButton.svg";
 import { createGroupAlbum } from "../../api/ourAlbumApi";
 import { normalizeGroupAlbum } from "../../utils/normalizers";
 import "./AddAlbum.css";
@@ -203,7 +202,7 @@ function AddAlbum({
           <AlbumTitleList albumTitles={currentAlbumTitles} />
 
           <button type="submit" className="addAlbumButton">
-            <img src={addAlbumButton} alt="addAlbumButton" />
+            앨범 만들기
           </button>
         </form>
       </div>
