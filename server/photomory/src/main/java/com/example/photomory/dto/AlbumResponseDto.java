@@ -1,7 +1,6 @@
 package com.example.photomory.dto;
 
 import com.example.photomory.entity.Album;
-import com.example.photomory.entity.Tag; // Tag 엔티티 임포트 추가
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -12,22 +11,21 @@ import java.util.List; // List 임포트
 import java.util.stream.Collectors; // Collectors 임포트
 import java.util.Arrays;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor // Lombok AllArgsConstructor (필요하다면)
+@AllArgsConstructor
 public class AlbumResponseDto {
 
     private Integer albumId;
     private String albumName;
-    // private String albumTag; // 기존 단일 태그 필드 제거
-    private List<String> albumTags; // 여러 개의 태그를 담을 리스트 필드 추가
+    private List<String> albumTags;
     private LocalDateTime albumMakingTime;
     private String albumDescription;
-    private Integer groupId; // 앨범이 속한 그룹의 ID 추가
+    private Integer groupId;
 
-    // 엔티티 → DTO 변환 메서드
+    // 새로 추가: 사진 리스트 필드
+    private List<PostResponseDto> photos;  // PostResponseDto는 사진 DTO 클래스
 
     public static AlbumResponseDto fromEntity(Album album) {
         AlbumResponseDto dto = new AlbumResponseDto();
@@ -48,6 +46,16 @@ public class AlbumResponseDto {
 
         if (album.getMyAlbum() != null) {
             dto.setGroupId(album.getMyAlbum().getMyalbumId());
+        }
+
+        // 추가: photos 리스트 변환 (Album에 getPosts()가 있다고 가정)
+        if (album.getPosts() != null && !album.getPosts().isEmpty()) {
+            List<PostResponseDto> photoDtos = album.getPosts().stream()
+                    .map(PostResponseDto::fromEntity)
+                    .collect(Collectors.toList());
+            dto.setPhotos(photoDtos);
+        } else {
+            dto.setPhotos(List.of());
         }
 
         return dto;

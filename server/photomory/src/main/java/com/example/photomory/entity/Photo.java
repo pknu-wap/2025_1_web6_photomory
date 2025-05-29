@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+import java.util.List;
+import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -79,4 +80,5 @@ public class Photo {
         this.photoUrl = photoUrl;
         this.userId = userId;
     }
+
 }
