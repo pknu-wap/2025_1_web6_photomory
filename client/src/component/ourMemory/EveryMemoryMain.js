@@ -257,14 +257,14 @@ export default function EveryMemoryMain(){
         }
     }, [posts]); //뭔가 posts말고 posts 좋아요 순서가 바뀐다면으로 하는 게 더 좋을 거 같은데..
 
-    const handleLikeNum =async(postId)=>{ //이거 islikecountup을 기준으로 크게 두 개로 나눠야 함
+    const handleLikeNum =async(postId)=>{   
         const rollBackPosts= [...posts]
         try{
             setPosts((prevPosts) => //낙관적 업뎃(하트 증가)
                 prevPosts.map((post)=> post.postId=== postId
                     ? post.isLikeCountUp===false
-                        ? { ...post, likesCount: post.likesCount + 1 } 
-                        : { ...post, likesCount: post.likesCount - 1 }  
+                        ? { ...post, likesCount: post.likesCount + 1 , isLikeCountUp: !post.isLikeCountUp}  //서버에서 어떤 값을 주는지 정해지면 또 수정하자.. 
+                        : { ...post, likesCount: post.likesCount - 1 , isLikeCountUp: !post.isLikeCountUp}  
                     : post).sort((a, b) => b.likesCount - a.likesCount)
             );
             const updatedPostByLike = await updateLikeCount(postId); //서버 업뎃
@@ -280,6 +280,7 @@ export default function EveryMemoryMain(){
         }
     }
     const handleCommentNum=async(modalPost, comment)=>{ //댓글 수, 내용.
+        const rollBackPosts= [...posts]
         try{
             setPosts((prevPosts)=> //낙관적 업뎃
                 prevPosts.map((post)=>post.postId===modalPost.postId
@@ -290,7 +291,7 @@ export default function EveryMemoryMain(){
                 : post)
             );
             const updatedPostByComment= await updateComment(modalPost.postId, comment) //서버 업뎃
-            setPosts((prevPosts)=>
+            setPosts((prevPosts)=> //updatedPostByLike근데 여기서 서버가 어떻게 값을 주는지 명확하지 않다.
                 prevPosts.map((post)=>post.postId===modalPost.postId
                 ? {...post, commentsCount: updatedPostByComment.commentsCount}
                     : post)
@@ -298,6 +299,7 @@ export default function EveryMemoryMain(){
         }
         catch(error){
             console.error('Error uploading like count', error);
+            setPosts(rollBackPosts)
         }
     }
 

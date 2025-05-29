@@ -222,12 +222,12 @@ function MainPageMain() {
             setPosts((prevPosts) => //낙관적 업뎃(하트 증가)
                 prevPosts.map((post)=> post.postId=== postId
                     ? post.isLikeCountUp===false
-                        ? { ...post, likesCount: post.likesCount + 1 } 
-                        : { ...post, likesCount: post.likesCount - 1 }  
+                        ? { ...post, likesCount: post.likesCount + 1, isLikeCountUp: !post.isLikeCountUp } //서버에서 어떤 값을 주는지 정해지면 또 수정하자..
+                        : { ...post, likesCount: post.likesCount - 1, isLikeCountUp: !post.isLikeCountUp }  
                     : post).sort((a, b) => b.likesCount - a.likesCount)
             );
             const updatedPostByLike = await updateLikeCount(postId); //서버 업뎃
-            setPosts((prevPosts) =>
+            setPosts((prevPosts) => //updatedPostByLike근데 여기서 서버가 어떻게 값을 주는지 명확하지 않다.
                 prevPosts.map((post) =>post.postId=== postId
                     ? { ...post, likesCount: updatedPostByLike.likesCount }
                     :post).sort((a, b) => b.likesCount - a.likesCount)
