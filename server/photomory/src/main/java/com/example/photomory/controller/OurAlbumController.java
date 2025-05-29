@@ -70,11 +70,13 @@ public class OurAlbumController {
                                       @RequestPart String requestDtoJson,
                                       @RequestPart(required = false) MultipartFile photo,
                                       @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
+        // 사용자 인증 확인
         if (userDetails == null) {
             throw new UnauthorizedException("인증이 필요합니다.");
         }
         UserEntity user = userDetails.getUser();
 
+        // requestDtoJson 파싱
         PostCreateRequestDto requestDto;
         try {
             requestDto = objectMapper.readValue(requestDtoJson, PostCreateRequestDto.class);
@@ -82,7 +84,8 @@ public class OurAlbumController {
             throw new IllegalArgumentException("Invalid PostCreateRequestDto JSON: " + e.getMessage(), e);
         }
 
-        return ourAlbumService.createPost(albumId, requestDto, photo, user);
+        // 서비스 호출
+        return ourAlbumService.createPost(albumId, requestDto, photo, user.getUserId());
     }
 
     // 7. 댓글 작성

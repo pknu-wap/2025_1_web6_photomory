@@ -111,13 +111,17 @@ public class OurAlbumService {
 
     // 게시물 생성
     @Transactional
-    public PostResponseDto createPost(Long albumId, PostCreateRequestDto requestDto, MultipartFile photoFile, UserEntity user) throws IOException {
+    public PostResponseDto createPost(Long albumId, PostCreateRequestDto requestDto, MultipartFile photoFile, Long userId) throws IOException {
         Integer albumIdInt = albumId.intValue();
 
+        // 앨범 조회
         Album album = albumRepository.findById(albumIdInt)
                 .orElseThrow(() -> new EntityNotFoundException("앨범을 찾을 수 없습니다."));
 
-        // Post 엔티티 생성 및 설정
+        // 사용자 조회 (가장 중요: 영속 상태의 UserEntity를 사용)
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
         Post post = new Post();
         post.setAlbum(album);
         post.setUser(user);
@@ -125,29 +129,22 @@ public class OurAlbumService {
 
         if (requestDto.getPostTime() != null) {
             post.setMakingTime(requestDto.getPostTime().atStartOfDay());
+        } else {
         }
 
-        // Post 저장 (ID가 생성됨)
         Post savedPost = postRepository.save(post);
 
-        // 사진 파일이 있으면 S3에 업로드 후 Photo 엔티티 생성 및 저장
         if (photoFile != null && !photoFile.isEmpty()) {
             String uploadedUrl = s3Service.uploadFile(photoFile);
 
-            // Post 엔티티에 대표 사진 URL 저장 (필요시)
-            savedPost.setPhotoUrl(uploadedUrl);
+            savedPost.setPhotoUrl(uploadedUrl); // Post 엔티티의 photoUrl 필드 업데이트
 
-            // Photo 엔티티 생성 및 연관관계 설정
             Photo photo = new Photo();
             photo.setPost(savedPost);
             photo.setPhotoUrl(uploadedUrl);
 
-            // Photo 저장
             photoRepository.save(photo);
         }
-
-        // 대표사진 URL 변경사항 저장 (optional)
-        postRepository.save(savedPost);
 
         return PostResponseDto.fromEntity(savedPost);
     }
