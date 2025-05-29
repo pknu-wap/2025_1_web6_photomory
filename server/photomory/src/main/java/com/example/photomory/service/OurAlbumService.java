@@ -114,11 +114,9 @@ public class OurAlbumService {
     public PostResponseDto createPost(Long albumId, PostCreateRequestDto requestDto, MultipartFile photoFile, Long userId) throws IOException {
         Integer albumIdInt = albumId.intValue();
 
-        // 앨범 조회
         Album album = albumRepository.findById(albumIdInt)
                 .orElseThrow(() -> new EntityNotFoundException("앨범을 찾을 수 없습니다."));
 
-        // 사용자 조회 (가장 중요: 영속 상태의 UserEntity를 사용)
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
@@ -130,6 +128,8 @@ public class OurAlbumService {
         if (requestDto.getPostTime() != null) {
             post.setMakingTime(requestDto.getPostTime().atStartOfDay());
         } else {
+            // postTime이 없으면 현재 시간으로 설정하거나, null 허용
+            post.setMakingTime(LocalDateTime.now()); // 예시: 현재 시간으로 설정
         }
 
         Post savedPost = postRepository.save(post);
@@ -137,12 +137,15 @@ public class OurAlbumService {
         if (photoFile != null && !photoFile.isEmpty()) {
             String uploadedUrl = s3Service.uploadFile(photoFile);
 
-            savedPost.setPhotoUrl(uploadedUrl); // Post 엔티티의 photoUrl 필드 업데이트
+            // savedPost.setPhotoUrl(uploadedUrl); // Post 엔티티의 photoUrl 필드는 필요 없을 수 있습니다.
+            // Photo 엔티티가 사진 정보를 담당하도록 합니다.
+            // 만약 Post에 대표 사진 URL이 필요하다면 유지합니다.
 
             Photo photo = new Photo();
             photo.setPost(savedPost);
             photo.setPhotoUrl(uploadedUrl);
-
+            photo.setPhotoName(requestDto.getPhotoName()); // 추가: DTO에서 받은 사진 이름 설정
+            photo.setPhotoMakingTime(requestDto.getPhotoMakingTime());
             photoRepository.save(photo);
         }
 
