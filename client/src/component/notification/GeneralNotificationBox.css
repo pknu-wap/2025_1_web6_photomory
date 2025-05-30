@@ -7,4 +7,5 @@
 .general-list {
   display: flex;
   flex-direction: column;
+  height: 228px;
 }
