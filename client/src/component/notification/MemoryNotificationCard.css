@@ -40,7 +40,7 @@
   display: block;
 }
 
-.memory-image-placeholder {
+.memoryImagePlaceholder {
   font-size: 14px;
   color: #666;
 }
@@ -50,17 +50,17 @@
   gap: 16px;
 }
 
-.memory-title {
+.memoryTitle {
   font-weight: bold;
   font-size: 16px;
 }
 
-.memory-date {
+.memoryDate {
   font-size: 13px;
   color: #888;
 }
 
-.memory-button {
+.memoryButton {
   margin-top: 8px;
   align-self: flex-start;
   background-color: #000;
