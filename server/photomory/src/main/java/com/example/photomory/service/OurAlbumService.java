@@ -1,5 +1,6 @@
 package com.example.photomory.service;
 
+import com.example.photomory.domain.NotificationType;
 import com.example.photomory.dto.*;
 import com.example.photomory.entity.*;
 import com.example.photomory.repository.*;
@@ -32,6 +33,7 @@ public class OurAlbumService {
     private final UserRepository userRepository;
     private final S3UrlResponseService s3UrlResponseService;
     private final PhotoRepository photoRepository;
+    private final NotificationService notificationService;
 
 
     // 그룹 생성
@@ -183,6 +185,32 @@ public class OurAlbumService {
         comment.setCommentTime(LocalDateTime.now());
 
         Comment saved = commentRepository.save(comment);
+
+        // noti-hw
+        UserEntity postWriter = post.getUser(); // 게시글 작성자 (알림 수신자)
+
+        // 자신이 쓴 글이 아니라면 알림 전송
+        if (!user.getUserId().equals(postWriter.getUserId())) {
+            // 게시글 제목은 사진의 제목을 그대로 사용 (첫 번째, 두 번째 상관없이 다 같음)
+            String postTitle = post.getPhotos().stream()
+                    .map(Photo::getTitle) // 사진의 title
+                    .findAny()            // 아무 사진의 제목을 가져옴
+                    .orElse("제목 없음");   // 사진 없으면 기본값
+
+            // 알림 메시지 생성
+            String message = user.getUserName() + "님이 " + postTitle + " 게시글에 댓글을 남겼습니다.";
+
+            // 알림 전송
+            notificationService.sendNotification(
+                    postWriter.getUserId(),   // 수신자: 게시글 작성자
+                    user.getUserId(),         // 발신자: 댓글 작성자
+                    message,                  // 알림 메시지
+                    NotificationType.COMMENT, // 알림 타입
+                    postId.longValue()        // 게시글 ID를 requestId로 사용
+            );
+        }
+
+
         return CommentResponseDto.fromEntity(saved);
     }
     // 친구 중에서 그룹에 없는 사람만 필터링하여 초대하기
@@ -251,6 +279,16 @@ public class OurAlbumService {
                 member.setMyAlbum(group);
                 member.setUserEntity(friend);
                 albumMembersRepository.save(member);
+
+                // 알림 전송: 그룹 초대 알림
+                String message = inviter.getUserName() + "님의 " + group.getMyAlbumName() + " 그룹에 초대되었습니다.";
+                notificationService.sendNotification(
+                        friend.getUserId(), // 수신자: 초대받은 친구
+                        inviter.getUserId(), // 발신자: 초대한 사람
+                        message,
+                        NotificationType.GROUP_INVITE,
+                        groupId // 그룹 ID를 requestId로 사용
+                );
             }
         }
     }
