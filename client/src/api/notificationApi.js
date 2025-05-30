@@ -84,7 +84,7 @@ export async function fetchnotificationList() {
   const token = localStorage.getItem("accessToken"); // 또는 context 등에서
 
   try {
-    const response = await fetch(`${BASE_URL}/api/notifications`, {
+    const response = await fetch(`${BASE_URL}/api/notifications/list-read`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

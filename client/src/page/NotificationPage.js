@@ -4,7 +4,7 @@ import Header from "../component/common/Header";
 import MemoryNotificationBox from "../component/notification/MemoryNotificationBox";
 import GeneralNotificationBox from "../component/notification/GeneralNotificationBox";
 import { getnotificationList } from "../api/getNotificationList";
-
+import { fetchnotificationList } from "../api/notificationApi";
 function NotificationPage() {
   const [memoryNotifications, setMemoryNotifications] = useState([]);
   const [generalNotifications, setGeneralNotifications] = useState([]);
@@ -13,7 +13,8 @@ function NotificationPage() {
     async function fetchData() {
       try {
         const data = await getnotificationList(); // 목데이터 배열
-
+        const testData = fetchnotificationList();
+        console.log(testData);
         const memory = data.filter((item) => item.type === "REMIND");
         const general = data.filter((item) => item.type !== "REMIND");
 
