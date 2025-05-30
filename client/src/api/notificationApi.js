@@ -80,7 +80,7 @@ export function subscribeToNotifications(onMessageCallback) {
 }
 
 //알림 목록 조회 api함수
-export async function getnotificationList() {
+export async function fetchnotificationList() {
   const token = localStorage.getItem("accessToken"); // 또는 context 등에서
 
   try {
