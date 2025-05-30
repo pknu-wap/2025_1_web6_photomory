@@ -1,29 +1,34 @@
-import { useEffect, useState } from "react";
-import { fetchnotificationList } from "../../api/notificationApi";
+import { useState } from "react";
 import MemoryNotificationCard from "./MemoryNotificationCard";
+import PaginationBar from "../common/PaginationBar"; // 경로는 실제 프로젝트에 맞게
+import "./MemoryNotificationBox.css";
 
-function MemoryNotificationBox() {
-  const [notifications, setNotifications] = useState([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const data = await fetchnotificationList();
-        console.log(data);
-        setNotifications(data); // 배열로 상태 저장
-      } catch (error) {
-        console.error("알림 불러오기 실패:", error);
-      }
-    }
-
-    fetchData();
-  }, []);
+function MemoryNotificationBox({ memoryNotifications }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+  console.log(memoryNotifications);
+  const totalPages = Math.ceil(memoryNotifications.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const currentItems = memoryNotifications.slice(
+    startIdx,
+    startIdx + itemsPerPage
+  );
 
   return (
-    <div>
-      {notifications.map((notification) => (
-        <MemoryNotificationCard key={notification.id} data={notification} />
-      ))}
+    <div className="memory-box">
+      <h2 className="memory-title">📸 추억 회상 알림</h2>
+
+      <div className="memory-grid">
+        {currentItems.map((notification, idx) => (
+          <MemoryNotificationCard key={idx} data={notification} />
+        ))}
+      </div>
+
+      <PaginationBar
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }
