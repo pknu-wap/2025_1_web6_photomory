@@ -85,6 +85,9 @@ public class MyAlbumService {
 
     public List<MyAlbumDetailDto> getAllMyAlbums(Long userId) {
         List<MyAlbum> albums = myAlbumRepository.findByUserId(userId);
+        if (albums == null) {
+            albums = new ArrayList<>();
+        }
         return albums.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
