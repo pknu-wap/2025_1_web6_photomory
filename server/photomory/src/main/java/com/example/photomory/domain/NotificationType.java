@@ -5,5 +5,6 @@ public enum NotificationType {
     LIKE,
     FRIEND_REQUEST,
     FRIEND_ACCEPT,
-    REMIND
+    REMIND,
+    GROUP_INVITE
 }

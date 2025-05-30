@@ -23,6 +23,10 @@ public class Notification {
     @Column(name = "user_id")  // 알림 받는 사용자 ID (수신자)
     private Long userId;
 
+    @Column(name = "sender_id")  // ⭐️ 보낸 사용자 ID (발신자)
+    private Long senderId;
+
+
     @Column(name = "noti_message")
     private String message;
 
@@ -41,8 +45,8 @@ public class Notification {
     @Column(name = "noti_is_read")
     private boolean isRead = false;
 
-    @Column(name = "photo_url")
-    private String photoUrl;
+    private String senderName;    // 발신자 이름
+    private String senderPhotourl; // 발신자 프로필 사진
 
     private String title;
     private LocalDate date;

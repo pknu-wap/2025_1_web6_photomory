@@ -10,7 +10,8 @@ import lombok.*;
 @Builder
 
 public class NotificationRequest {
-    private Long userId; // 알림 수신자
+    private Long userId;// 알림 수신자
+    private Long senderId;
     private String message;
     private NotificationType type;
 }

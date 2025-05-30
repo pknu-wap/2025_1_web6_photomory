@@ -12,9 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,9 @@ public class OurAlbumService {
     private final MyAlbumRepository myAlbumRepository;
     private final S3Service s3Service;
     private final UserRepository userRepository;
+    private final S3UrlResponseService s3UrlResponseService;
+    private final PhotoRepository photoRepository;
+
 
     // 그룹 생성
     @Transactional
@@ -106,72 +111,47 @@ public class OurAlbumService {
 
     // 게시물 생성
     @Transactional
-    public PostResponseDto createPost(Long albumId, PostCreateRequestDto requestDto, MultipartFile photoFile, UserEntity user) throws IOException {
+    public PostResponseDto createPost(Long albumId, PostCreateRequestDto requestDto, MultipartFile photoFile, Long userId) throws IOException {
         Integer albumIdInt = albumId.intValue();
 
         Album album = albumRepository.findById(albumIdInt)
                 .orElseThrow(() -> new EntityNotFoundException("앨범을 찾을 수 없습니다."));
 
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+
         Post post = new Post();
         post.setAlbum(album);
         post.setUser(user);
-
         post.setPostText(requestDto.getPostTitle());
 
-        // LocalDate -> LocalDateTime 변환
         if (requestDto.getPostTime() != null) {
             post.setMakingTime(requestDto.getPostTime().atStartOfDay());
-        }
-
-        if (photoFile != null && !photoFile.isEmpty()) {
-            String photoUrl = s3Service.uploadFile(photoFile);
-            post.setPhotoUrl(photoUrl);
-        } else if (requestDto.getPostImageUrl() != null) {
-            post.setPhotoUrl(requestDto.getPostImageUrl());
+        } else {
+            // postTime이 없으면 현재 시간으로 설정하거나, null 허용
+            post.setMakingTime(LocalDateTime.now()); // 예시: 현재 시간으로 설정
         }
 
         Post savedPost = postRepository.save(post);
+
+        if (photoFile != null && !photoFile.isEmpty()) {
+            String uploadedUrl = s3Service.uploadFile(photoFile);
+
+            // savedPost.setPhotoUrl(uploadedUrl); // Post 엔티티의 photoUrl 필드는 필요 없을 수 있습니다.
+            // Photo 엔티티가 사진 정보를 담당하도록 합니다.
+            // 만약 Post에 대표 사진 URL이 필요하다면 유지합니다.
+
+            Photo photo = new Photo();
+            photo.setPost(savedPost);
+            photo.setPhotoUrl(uploadedUrl);
+            photo.setPhotoName(requestDto.getPhotoName()); // 추가: DTO에서 받은 사진 이름 설정
+            photo.setPhotoMakingTime(requestDto.getPhotoMakingTime());
+            photoRepository.save(photo);
+        }
+
         return PostResponseDto.fromEntity(savedPost);
     }
 
-
-    // 특정앨범에서 게시글 삭제
-    @Transactional
-    public void deletePostInAlbum(Long albumId, Long postId, UserEntity currentUser) {
-        Integer albumIdInt = albumId.intValue();
-        Integer postIdInt = postId.intValue();
-
-        Album album = albumRepository.findById(albumIdInt)
-                .orElseThrow(() -> new EntityNotFoundException("해당 앨범을 찾을 수 없습니다."));
-
-        Post post = postRepository.findById(postIdInt)
-                .orElseThrow(() -> new EntityNotFoundException("해당 게시글을 찾을 수 없습니다."));
-
-        if (!post.getAlbum().getAlbumId().equals(albumIdInt)) {
-            throw new IllegalArgumentException("요청된 게시글이 해당 앨범에 속하지 않습니다.");
-        }
-
-        if (!post.getUser().getUserId().equals(currentUser.getUserId())) {
-            throw new IllegalArgumentException("게시글 삭제 권한이 없습니다. (작성자만 삭제 가능)");
-        }
-
-        if (post.getPhotoUrl() != null && !post.getPhotoUrl().isEmpty()) {
-            s3Service.deleteFile(post.getPhotoUrl());
-        }
-
-        postRepository.delete(post);
-    }
-
-    // 게시물 클릭 시 상세 보기 (사진 확대, 댓글, 좋아요 수)
-    @Transactional(readOnly = true)
-    public PostZoomDetailResponseDto getPostZoomDetail(Long postId) {
-        Integer postIdInt = postId.intValue();
-
-        Post post = postRepository.findById(postIdInt)
-                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
-        List<Comment> comments = commentRepository.findByPost_PostId(postId);
-        return PostZoomDetailResponseDto.from(post, comments);
-    }
 
     // 댓글 작성
     @Transactional
@@ -202,7 +182,6 @@ public class OurAlbumService {
         comment.setCommentText(text);
         comment.setCommentTime(LocalDateTime.now());
 
-        // 댓글 저장 (이 부분에서 500 오류가 발생했었음)
         Comment saved = commentRepository.save(comment);
         return CommentResponseDto.fromEntity(saved);
     }
@@ -228,6 +207,7 @@ public class OurAlbumService {
                 .map(UserSummaryDto::fromEntity)
                 .collect(Collectors.toList());
     }
+
     @Transactional(readOnly = true)
     public List<UserSummaryDto> getFriendsExcludingGroup(Long groupId, Long userId) {
         Integer groupIdInt = groupId.intValue();
@@ -274,19 +254,21 @@ public class OurAlbumService {
             }
         }
     }
-
     @Transactional
-    public void removeMemberFromGroup(Long groupId, Long userIdToRemove) {
+    public void removeMemberFromGroup(Long groupId, Long userIdToRemove, UserEntity currentUser) {
         Integer groupIdInt = groupId.intValue();
 
+        // 그룹 조회
         MyAlbum group = myAlbumRepository.findById(groupIdInt)
                 .orElseThrow(() -> new EntityNotFoundException("그룹을 찾을 수 없습니다."));
 
+        // 삭제할 멤버 조회
         AlbumMembers memberToRemove = albumMembersRepository.findByMyAlbum_MyalbumIdAndUserEntity_UserId(groupIdInt, userIdToRemove)
                 .orElseThrow(() -> new EntityNotFoundException("그룹에서 해당 멤버를 찾을 수 없습니다."));
 
         albumMembersRepository.delete(memberToRemove);
     }
+
 
     // 앨범 삭제
     @Transactional
@@ -296,33 +278,51 @@ public class OurAlbumService {
         Album album = albumRepository.findById(albumIdInt)
                 .orElseThrow(() -> new EntityNotFoundException("해당 앨범을 찾을 수 없습니다."));
 
+        // 권한 확인 로직은 유지
         if (!album.getMyAlbum().getUserId().equals(currentUser.getUserId())) {
             throw new IllegalArgumentException("앨범 삭제 권한이 없습니다. (앨범을 생성한 그룹의 관리자만 삭제 가능)");
         }
 
+        // 해당 앨범에 속한 모든 게시물 조회
         List<Post> postsToDelete = postRepository.findByAlbum_AlbumId(albumIdInt);
 
         for (Post post : postsToDelete) {
+            // 1. 게시물에 연결된 모든 댓글 삭제
             commentRepository.deleteByPost_PostId(post.getPostId().longValue());
-            if (post.getPhotoUrl() != null && !post.getPhotoUrl().isEmpty()) {
-                s3Service.deleteFile(post.getPhotoUrl());
+
+            if (post.getPhotos() != null && !post.getPhotos().isEmpty()) {
+                for (Photo photo : post.getPhotos()) {
+                    if (photo.getPhotoUrl() != null && !photo.getPhotoUrl().isEmpty()) {
+                        s3Service.deleteFile(photo.getPhotoUrl());
+                    }
+                }
             }
+
             postRepository.delete(post);
         }
-
-        albumRepository.delete(album);
+        // 앨범 삭제
+        albumRepository.delete(album); // <- 여기도 albumRepository.delete(album); 으로 끝나야 합니다.
     }
 
     // 우리의 추억 페이지 기본 데이터 반환
     @Transactional(readOnly = true)
     public List<OurAlbumResponseDefaultDto> getAllGroupsDetailForUser(Long userId) {
-        List<AlbumMembers> albumMemberships = albumMembersRepository.findByUserEntity_UserId(userId);
+        System.out.println("\n--- [시작] getAllGroupsDetailForUser 메서드 (userId: " + userId + ") ---");
 
+        List<AlbumMembers> albumMemberships = albumMembersRepository.findByUserEntity_UserId(userId);
         List<OurAlbumResponseDefaultDto> allGroupDetails = new ArrayList<>();
+
+        System.out.println("  [정보] 사용자 ID " + userId + " 가 속한 그룹 수: " + albumMemberships.size());
+        if (albumMemberships.isEmpty()) {
+            System.out.println("  [경고] 해당 사용자는 어떤 그룹에도 속해 있지 않습니다. 빈 리스트를 반환합니다.");
+            return new ArrayList<>();
+        }
 
         for (AlbumMembers membership : albumMemberships) {
             MyAlbum myAlbum = membership.getMyAlbum();
             Integer groupIdInt = myAlbum.getMyalbumId();
+
+            System.out.println("\n--- [그룹 시작] 그룹 ID: " + groupIdInt + ", 그룹명: " + myAlbum.getMyalbumName() + " ---");
 
             List<OurAlbumResponseDefaultDto.Member> membersDto = albumMembersRepository.findByMyAlbum_MyalbumId(groupIdInt)
                     .stream()
@@ -332,22 +332,51 @@ public class OurAlbumService {
                             .userPhotourl(member.getUserEntity().getUserPhotourl())
                             .build())
                     .collect(Collectors.toList());
+            System.out.println("  [정보] 그룹 ID " + groupIdInt + " 의 멤버 수: " + membersDto.size());
 
-            List<Album> albums = albumRepository.findByMyAlbum_MyalbumId(groupIdInt);
-
+            // 앨범, 게시물, 사진이 모두 페치 조인으로 미리 로딩됨
+            List<Album> albums = albumRepository.findAllByMyAlbumIdWithPostsAndPhotos(groupIdInt);
             List<OurAlbumResponseDefaultDto.Album> albumsDto = new ArrayList<>();
-            for (Album album : albums) {
-                List<Post> posts = postRepository.findByAlbum_AlbumId(album.getAlbumId());
 
-                List<OurAlbumResponseDefaultDto.Photo> photosDto = posts.stream()
-                        .map(post -> OurAlbumResponseDefaultDto.Photo.builder()
-                                .photoId(post.getPostId() != null ? post.getPostId().longValue() : null)
-                                .photoUrl(post.getPhotoUrl())
-                                .photoName(post.getPostDescription())
-                                .postId(post.getPostId() != null ? post.getPostId().longValue() : null)
-                                .photoMakingtime(post.getMakingTime() != null ? post.getMakingTime().toLocalDate().toString() : null)
-                                .build())
-                        .collect(Collectors.toList());
+            System.out.println("  [정보] 그룹 ID " + groupIdInt + " 에 연결된 앨범 수: " + albums.size());
+            if (albums.isEmpty()) {
+                System.out.println("  [경고] 이 그룹에는 연결된 앨범이 없습니다.");
+            }
+
+            for (Album album : albums) {
+                System.out.println("\n---- [앨범 시작] 앨범 ID: " + (album.getAlbumId() != null ? album.getAlbumId().longValue() : "NULL") + ", 앨범명: " + album.getAlbumName() + " ----");
+
+                List<Post> posts = new ArrayList<>(album.getPosts()); // 이미 페치 조인된 posts 컬렉션
+                List<OurAlbumResponseDefaultDto.Photo> photosDto = new ArrayList<>();
+
+                System.out.println("    [정보] 앨범 ID " + (album.getAlbumId() != null ? album.getAlbumId().longValue() : "NULL") + " 에 포함된 게시물 수: " + posts.size());
+                if (posts.isEmpty()) {
+                    System.out.println("    [경고] 이 앨범에는 연결된 게시물이 없습니다.");
+                }
+
+                for (Post post : posts) {
+                    System.out.println("      [게시물 처리] 앨범 ID: " + (album.getAlbumId() != null ? album.getAlbumId().longValue() : "NULL") + ", 게시물 ID: " + (post.getPostId() != null ? post.getPostId().longValue() : "NULL"));
+
+                    // *** 여기가 수정된 핵심 부분입니다: Set<Photo>를 List<Photo>로 변환 ***
+                    List<Photo> photos = new ArrayList<>(post.getPhotos()); // Post 엔티티의 photos 필드가 Set이므로 List로 변환
+
+                    System.out.println("      [사진 검색 결과] 게시물 ID " + (post.getPostId() != null ? post.getPostId().longValue() : "NULL") + " 에 대해 찾은 사진 수 (페치 조인): " + photos.size());
+
+                    if (photos.isEmpty()) {
+                        System.out.println("        [경고] 이 게시물에는 연결된 사진이 없습니다.");
+                    } else {
+                        for (Photo photo : photos) {
+                            photosDto.add(OurAlbumResponseDefaultDto.Photo.builder()
+                                    .photoId(photo.getPhotoId())
+                                    .photoUrl(photo.getPhotoUrl() != null ? s3UrlResponseService.getFileUrl(photo.getPhotoUrl()) : null)
+                                    .photoName(photo.getPhotoName())
+                                    .postId(post.getPostId() != null ? post.getPostId().longValue() : null)
+                                    .photoMakingtime(photo.getPhotoMakingTime() != null ? photo.getPhotoMakingTime().toLocalDate().toString() : null)
+                                    .build());
+                            System.out.println("          [사진 추가 성공] Photo ID: " + photo.getPhotoId() + ", Photo URL: " + (photo.getPhotoUrl() != null ? photo.getPhotoUrl() : "NULL"));
+                        }
+                    }
+                }
 
                 List<Long> postIdsInAlbum = posts.stream()
                         .map(Post::getPostId)
@@ -357,6 +386,9 @@ public class OurAlbumService {
                 List<Comment> commentsInAlbum = new ArrayList<>();
                 if (!postIdsInAlbum.isEmpty()) {
                     commentsInAlbum = commentRepository.findByPost_PostIdIn(postIdsInAlbum);
+                    System.out.println("    [정보] 앨범 ID " + (album.getAlbumId() != null ? album.getAlbumId().longValue() : "NULL") + " 의 게시물들에 대한 댓글 수: " + commentsInAlbum.size());
+                } else {
+                    System.out.println("    [정보] 앨범 ID " + (album.getAlbumId() != null ? album.getAlbumId().longValue() : "NULL") + " 에 게시물이 없어 댓글을 조회하지 않습니다.");
                 }
 
                 List<OurAlbumResponseDefaultDto.Comment> commentsDto = commentsInAlbum.stream()
@@ -377,6 +409,7 @@ public class OurAlbumService {
                         .photos(photosDto)
                         .comments(commentsDto)
                         .build());
+                System.out.println("---- [앨범 완료] 앨범 ID: " + (album.getAlbumId() != null ? album.getAlbumId().longValue() : "NULL") + " ----");
             }
 
             allGroupDetails.add(OurAlbumResponseDefaultDto.builder()
@@ -385,7 +418,10 @@ public class OurAlbumService {
                     .members(membersDto)
                     .albums(albumsDto)
                     .build());
+            System.out.println("--- [그룹 완료] 그룹 ID: " + groupIdInt + " ---");
         }
+
+        System.out.println("\n--- [종료] getAllGroupsDetailForUser 메서드 ---");
         return allGroupDetails;
     }
 }

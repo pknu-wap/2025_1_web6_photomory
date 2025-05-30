@@ -13,7 +13,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     List<UserEntity> findByUserNameContaining(String keyword);
     Optional<UserEntity> findByUserEmail(String userEmail);
 
-
     //hw
     // 친구가 아닌 사용자 검색 (키워드 포함)
 
