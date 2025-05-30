@@ -178,7 +178,7 @@ public class OurAlbumController {
             throw new UnauthorizedException("인증 정보가 없습니다. 로그인해주세요.");
         }
         UserEntity currentUser = userDetails.getUser();
-        ourAlbumService.deletePostWithFile(albumId, postId, currentUser);
+//        ourAlbumService.deletePostWithFile(albumId, postId, currentUser);
         return ResponseEntity.noContent().build(); // 204 No Content 반환
     }
 

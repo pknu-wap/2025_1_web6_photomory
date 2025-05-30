@@ -23,6 +23,7 @@ import com.example.photomory.entity.Album; // Album 엔티티의 실제 패키�
 public class Post {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+
     private Set<Photo> photos = new HashSet<>(); // Set 타입 유지
 
     @Id
@@ -84,6 +85,10 @@ public class Post {
 
     @Column(name = "comment_count", nullable = false)
     private int commentCount;
+
+
+    @Column(name = "photo_url") // nullable=true가 명시되지 않으면 기본값으로 nullable=true
+    private String photoUrl;
 
     public void addPhoto(Photo photo) {
         this.photos.add(photo);
