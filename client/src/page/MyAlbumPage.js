@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getMyMemoryAlbums } from "../api/myAlbumAPi";
+import { fetchMyMemoryAlbums } from "../api/myAlbumAPi";
 import Container from "../component/common/Container";
 import Calender from "../component/calender/Calender";
 import Header from "../component/common/Header";
@@ -8,6 +8,7 @@ import AllAlbumTags from "../component/tag/AllalbumTags";
 import AlbumList from "../component/album/AlbumList";
 import Footer from "../component/common/Footer";
 import privateIcon from "../assets/privateIcon.svg";
+import { normalizeMyAlbumData } from "../utils/normalizers";
 function MyAlbumPage() {
   const [myAlbums, setMyAlbums] = useState([]); //나의 앨범 상태
   const [selectedTags, setSelectedTags] = useState([]); //선택된 태그 배열 상태
@@ -30,8 +31,15 @@ function MyAlbumPage() {
 
   //초기 렌더링시 배열로 앨범과 각 사진정보 받기
   useEffect(() => {
-    const albums = getMyMemoryAlbums();
-    setMyAlbums(albums);
+    const rawAlbums = fetchMyMemoryAlbums();
+
+    if (!Array.isArray(rawAlbums) || rawAlbums.length === 0) {
+      setMyAlbums([]); // 빈 배열로 처리
+      return;
+    }
+
+    const normalizedAlbums = rawAlbums.map(normalizeMyAlbumData); //정규화 처리
+    setMyAlbums(normalizedAlbums);
   }, []);
 
   //앨범 제목만 따로 추출한 배열

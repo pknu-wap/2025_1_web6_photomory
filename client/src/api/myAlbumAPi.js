@@ -39,7 +39,7 @@ export async function createMyMemoryAlbum({
 }
 
 //나만의 추억 앨범 조회 api함수
-export async function getMyMemoryAlbums() {
+export async function fetchMyMemoryAlbums() {
   const accessToken = localStorage.getItem("accessToken");
 
   try {
