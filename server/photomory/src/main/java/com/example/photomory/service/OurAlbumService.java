@@ -1,5 +1,6 @@
 package com.example.photomory.service;
 
+import com.example.photomory.domain.NotificationType;
 import com.example.photomory.dto.*;
 import com.example.photomory.entity.*;
 import com.example.photomory.repository.*;
@@ -11,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 
 import java.io.IOException;
@@ -32,6 +35,7 @@ public class OurAlbumService {
     private final UserRepository userRepository;
     private final S3UrlResponseService s3UrlResponseService;
     private final PhotoRepository photoRepository;
+    private final NotificationService notificationService;
 
 
     // 그룹 생성
@@ -124,12 +128,10 @@ public class OurAlbumService {
         post.setAlbum(album);
         post.setUser(user);
         post.setPostText(requestDto.getPostTitle());
-
         if (requestDto.getPostTime() != null) {
-            post.setMakingTime(requestDto.getPostTime().atStartOfDay());
+            post.setMakingTime(requestDto.getPostTime());
         } else {
-            // postTime이 없으면 현재 시간으로 설정하거나, null 허용
-            post.setMakingTime(LocalDateTime.now()); // 예시: 현재 시간으로 설정
+            post.setMakingTime(LocalDateTime.now());
         }
 
         Post savedPost = postRepository.save(post);
@@ -150,6 +152,30 @@ public class OurAlbumService {
         }
 
         return PostResponseDto.fromEntity(savedPost);
+    }
+
+    // 게시글 삭제
+    @Transactional
+    public void deletePostWithFile(Integer albumId, Integer postId, UserEntity currentUser) {
+        Album album = albumRepository.findById(albumId)
+                .orElseThrow(() -> new IllegalArgumentException("앨범을 찾을 수 없습니다. id=" + albumId));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id=" + postId));
+
+        if (!post.getAlbum().equals(album)) {
+            throw new IllegalArgumentException("게시글이 해당 앨범에 속하지 않습니다.");
+        }
+
+        if (post.getPhotos() != null) {
+            for (Photo photo : post.getPhotos()) {
+                if (photo.getPhotoUrl() != null && !photo.getPhotoUrl().isEmpty()) {
+                    s3Service.deleteFile(photo.getPhotoUrl());
+                }
+            }
+        }
+
+        postRepository.delete(post);
     }
 
 
@@ -183,6 +209,32 @@ public class OurAlbumService {
         comment.setCommentTime(LocalDateTime.now());
 
         Comment saved = commentRepository.save(comment);
+
+        // noti-hw
+        UserEntity postWriter = post.getUser(); // 게시글 작성자 (알림 수신자)
+
+        // 자신이 쓴 글이 아니라면 알림 전송
+        if (!user.getUserId().equals(postWriter.getUserId())) {
+            // 게시글 제목은 사진의 제목을 그대로 사용 (첫 번째, 두 번째 상관없이 다 같음)
+            String postTitle = post.getPhotos().stream()
+                    .map(Photo::getTitle) // 사진의 title
+                    .findAny()            // 아무 사진의 제목을 가져옴
+                    .orElse("제목 없음");   // 사진 없으면 기본값
+
+            // 알림 메시지 생성
+            String message = user.getUserName() + "님이 " + postTitle + " 게시글에 댓글을 남겼습니다.";
+
+            // 알림 전송
+            notificationService.sendNotification(
+                    postWriter.getUserId(),   // 수신자: 게시글 작성자
+                    user.getUserId(),         // 발신자: 댓글 작성자
+                    message,                  // 알림 메시지
+                    NotificationType.COMMENT, // 알림 타입
+                    postId.longValue()        // 게시글 ID를 requestId로 사용
+            );
+        }
+
+
         return CommentResponseDto.fromEntity(saved);
     }
     // 친구 중에서 그룹에 없는 사람만 필터링하여 초대하기
@@ -251,6 +303,16 @@ public class OurAlbumService {
                 member.setMyAlbum(group);
                 member.setUserEntity(friend);
                 albumMembersRepository.save(member);
+
+                // 알림 전송: 그룹 초대 알림
+                String message = inviter.getUserName() + "님의 " + group.getMyAlbumName() + " 그룹에 초대되었습니다.";
+                notificationService.sendNotification(
+                        friend.getUserId(), // 수신자: 초대받은 친구
+                        inviter.getUserId(), // 발신자: 초대한 사람
+                        message,
+                        NotificationType.GROUP_INVITE,
+                        groupId // 그룹 ID를 requestId로 사용
+                );
             }
         }
     }
@@ -305,6 +367,7 @@ public class OurAlbumService {
     }
 
     // 우리의 추억 페이지 기본 데이터 반환
+    // 우리의 추억 페이지 기본 데이터 반환
     @Transactional(readOnly = true)
     public List<OurAlbumResponseDefaultDto> getAllGroupsDetailForUser(Long userId) {
         System.out.println("\n--- [시작] getAllGroupsDetailForUser 메서드 (userId: " + userId + ") ---");
@@ -334,7 +397,6 @@ public class OurAlbumService {
                     .collect(Collectors.toList());
             System.out.println("  [정보] 그룹 ID " + groupIdInt + " 의 멤버 수: " + membersDto.size());
 
-            // 앨범, 게시물, 사진이 모두 페치 조인으로 미리 로딩됨
             List<Album> albums = albumRepository.findAllByMyAlbumIdWithPostsAndPhotos(groupIdInt);
             List<OurAlbumResponseDefaultDto.Album> albumsDto = new ArrayList<>();
 
@@ -346,8 +408,9 @@ public class OurAlbumService {
             for (Album album : albums) {
                 System.out.println("\n---- [앨범 시작] 앨범 ID: " + (album.getAlbumId() != null ? album.getAlbumId().longValue() : "NULL") + ", 앨범명: " + album.getAlbumName() + " ----");
 
-                List<Post> posts = new ArrayList<>(album.getPosts()); // 이미 페치 조인된 posts 컬렉션
+                List<Post> posts = new ArrayList<>(album.getPosts());
                 List<OurAlbumResponseDefaultDto.Photo> photosDto = new ArrayList<>();
+                Set<Long> photoIds = new HashSet<>();  // 중복 사진 ID 체크용 Set
 
                 System.out.println("    [정보] 앨범 ID " + (album.getAlbumId() != null ? album.getAlbumId().longValue() : "NULL") + " 에 포함된 게시물 수: " + posts.size());
                 if (posts.isEmpty()) {
@@ -357,8 +420,7 @@ public class OurAlbumService {
                 for (Post post : posts) {
                     System.out.println("      [게시물 처리] 앨범 ID: " + (album.getAlbumId() != null ? album.getAlbumId().longValue() : "NULL") + ", 게시물 ID: " + (post.getPostId() != null ? post.getPostId().longValue() : "NULL"));
 
-                    // *** 여기가 수정된 핵심 부분입니다: Set<Photo>를 List<Photo>로 변환 ***
-                    List<Photo> photos = new ArrayList<>(post.getPhotos()); // Post 엔티티의 photos 필드가 Set이므로 List로 변환
+                    List<Photo> photos = new ArrayList<>(post.getPhotos());
 
                     System.out.println("      [사진 검색 결과] 게시물 ID " + (post.getPostId() != null ? post.getPostId().longValue() : "NULL") + " 에 대해 찾은 사진 수 (페치 조인): " + photos.size());
 
@@ -366,14 +428,19 @@ public class OurAlbumService {
                         System.out.println("        [경고] 이 게시물에는 연결된 사진이 없습니다.");
                     } else {
                         for (Photo photo : photos) {
-                            photosDto.add(OurAlbumResponseDefaultDto.Photo.builder()
-                                    .photoId(photo.getPhotoId())
-                                    .photoUrl(photo.getPhotoUrl() != null ? s3UrlResponseService.getFileUrl(photo.getPhotoUrl()) : null)
-                                    .photoName(photo.getPhotoName())
-                                    .postId(post.getPostId() != null ? post.getPostId().longValue() : null)
-                                    .photoMakingtime(photo.getPhotoMakingTime() != null ? photo.getPhotoMakingTime().toLocalDate().toString() : null)
-                                    .build());
-                            System.out.println("          [사진 추가 성공] Photo ID: " + photo.getPhotoId() + ", Photo URL: " + (photo.getPhotoUrl() != null ? photo.getPhotoUrl() : "NULL"));
+                            if (!photoIds.contains(photo.getPhotoId())) {
+                                photoIds.add(photo.getPhotoId());
+                                photosDto.add(OurAlbumResponseDefaultDto.Photo.builder()
+                                        .photoId(photo.getPhotoId())
+                                        .photoUrl(photo.getPhotoUrl() != null ? s3UrlResponseService.getFileUrl(photo.getPhotoUrl()) : null)
+                                        .photoName(photo.getPhotoName())
+                                        .postId(post.getPostId() != null ? post.getPostId().longValue() : null)
+                                        .photoMakingtime(photo.getPhotoMakingTime() != null ? photo.getPhotoMakingTime().toLocalDate().toString() : null)
+                                        .build());
+                                System.out.println("          [사진 추가 성공] Photo ID: " + photo.getPhotoId() + ", Photo URL: " + (photo.getPhotoUrl() != null ? photo.getPhotoUrl() : "NULL"));
+                            } else {
+                                System.out.println("          [중복 사진 무시] Photo ID: " + photo.getPhotoId());
+                            }
                         }
                     }
                 }

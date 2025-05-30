@@ -171,15 +171,16 @@ public class OurAlbumController {
 
     // 12. 특정 앨범에서 게시글 삭제
     @DeleteMapping("/album/{albumId}/post/{postId}")
-    public ResponseEntity<Void> deletePostInAlbum(@PathVariable Long albumId,
-                                                  @PathVariable Long postId,
-                                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<Void> deletePostInAlbum(
+            @PathVariable Integer albumId,   // Integer 타입으로 변경
+            @PathVariable Integer postId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null) {
             throw new UnauthorizedException("인증 정보가 없습니다. 로그인해주세요.");
         }
         UserEntity currentUser = userDetails.getUser();
-//        ourAlbumService.deletePostWithFile(albumId, postId, currentUser);
-        return ResponseEntity.noContent().build(); // 204 No Content 반환
+        ourAlbumService.deletePostWithFile(albumId, postId, currentUser);
+        return ResponseEntity.noContent().build();
     }
 
     // 13. 앨범 삭제
