@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 import styles from "./Profile.Main.module.css";
 import FriendManage from "../friend/Friend.Manage";
 import SearchFriend from "../friend/Search.Friend";
@@ -197,7 +198,6 @@ function ProfileMain() {
   const handleInputChange = useCallback((e) => {
     const { className, value } = e.target;
     const field = FIELD_MAPPING[className];
-    
     if (field) {
       setProfileData(prev => ({
         ...prev,
@@ -228,11 +228,14 @@ function ProfileMain() {
     }
   }, []);
 
+  const { setIsLogged } = useAuth();
+
   // 로그아웃 핸들러
   const handleLogout = useCallback(() => {
     try {
-      localStorage.removeItem('token');
+      setIsLogged(false)
       window.location.href = '/login';
+      localStorage.removeItem('accessToken');
     } catch (error) {
       console.error('로그아웃 중 오류 발생:', error);
     }
@@ -323,16 +326,16 @@ function ProfileMain() {
               <input
                 className={styles.name}
                 onChange={handleInputChange}
-                value={profileData.name}
+                value={profileData?.name ||''}
                 placeholder="이름을 알려줘!"
               />
               <input
                 className={styles.job}
                 onChange={handleInputChange}
-                value={profileData.job}
+                value={profileData?.job || ""}
                 placeholder="직업을 알려줘!"
               />
-              <div className={styles.id}>ID: {profileData.id}</div>
+              <div className={styles.id}>ID: {profileData?.id ||''}</div>
             </div>
           </div>
           <div className={styles.forFlexSetting}>
@@ -340,7 +343,7 @@ function ProfileMain() {
               <button className={styles.save}
               onClick={editHandle}
               value='save'
-              >저장하기</button>
+              >저장하기</button> 
             ):(
               <button className={styles.edit}
               onClick={editHandle}
@@ -363,7 +366,7 @@ function ProfileMain() {
               placeholder="풍경 사진"
               className={styles.myFieldInput}
               onChange={handleInputChange}
-              value={profileData.field}
+              value={profileData?.field || ''}
             />
           </div>
           <div className={styles.myEquipmentContainer}>
@@ -373,7 +376,7 @@ function ProfileMain() {
               placeholder="sony A7 IV"
               className={styles.myEquipmentInput}
               onChange={handleInputChange}
-              value={profileData.equipment}
+              value={profileData?.equipment || ''}
             />
           </div>
           <div className={styles.myAreaContainer}>
@@ -383,7 +386,7 @@ function ProfileMain() {
               placeholder="서울, 강원"
               className={styles.myAreaInput}
               onChange={handleInputChange}
-              value={profileData.area}
+              value={profileData?.area || ''}
             />
           </div>
         </div>
@@ -394,7 +397,7 @@ function ProfileMain() {
             className={styles.introduction}
             placeholder="제가 누구냐면요.."
             onChange={handleInputChange}
-            value={profileData.introduction}
+            value={profileData?.introduction || ''}
           />
         </div>
       </div>
