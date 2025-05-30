@@ -15,17 +15,17 @@ function MemoryNotificationBox({ memoryNotifications }) {
   );
 
   return (
-    <div className="memory-box">
-      <h2 className="memory-title">추억 회상 알림</h2>
+    <div className="memoryBox">
+      <h2 className="memoryTitle">추억 회상 알림</h2>
 
-      <div className="memory-grid">
+      <div className="memoryGrid">
         {currentItems.map((notification, idx) => (
           <MemoryNotificationCard key={idx} data={notification} />
         ))}
 
         {/*빈 슬롯 채우기*/}
         {Array.from({ length: 6 - currentItems.length }).map((_, idx) => (
-          <div key={`empty-${idx}`} className="memory-card empty-card"></div>
+          <div key={`empty-${idx}`} className="emptNotiCard"></div>
         ))}
       </div>
 
