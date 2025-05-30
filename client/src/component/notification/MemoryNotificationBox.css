@@ -1,0 +1,15 @@
+.memory-box {
+  margin-bottom: 40px;
+}
+
+.memory-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
