@@ -124,12 +124,10 @@ public class OurAlbumService {
         post.setAlbum(album);
         post.setUser(user);
         post.setPostText(requestDto.getPostTitle());
-
         if (requestDto.getPostTime() != null) {
-            post.setMakingTime(requestDto.getPostTime().atStartOfDay());
+            post.setMakingTime(requestDto.getPostTime());
         } else {
-            // postTime이 없으면 현재 시간으로 설정하거나, null 허용
-            post.setMakingTime(LocalDateTime.now()); // 예시: 현재 시간으로 설정
+            post.setMakingTime(LocalDateTime.now());
         }
 
         Post savedPost = postRepository.save(post);
@@ -150,6 +148,30 @@ public class OurAlbumService {
         }
 
         return PostResponseDto.fromEntity(savedPost);
+    }
+
+    // 게시글 삭제
+    @Transactional
+    public void deletePostWithFile(Integer albumId, Integer postId, UserEntity currentUser) {
+        Album album = albumRepository.findById(albumId)
+                .orElseThrow(() -> new IllegalArgumentException("앨범을 찾을 수 없습니다. id=" + albumId));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다. id=" + postId));
+
+        if (!post.getAlbum().equals(album)) {
+            throw new IllegalArgumentException("게시글이 해당 앨범에 속하지 않습니다.");
+        }
+
+        if (post.getPhotos() != null) {
+            for (Photo photo : post.getPhotos()) {
+                if (photo.getPhotoUrl() != null && !photo.getPhotoUrl().isEmpty()) {
+                    s3Service.deleteFile(photo.getPhotoUrl());
+                }
+            }
+        }
+
+        postRepository.delete(post);
     }
 
 

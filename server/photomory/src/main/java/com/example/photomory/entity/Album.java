@@ -33,6 +33,11 @@ public class Album {
     @Column(name = "album_description", nullable = false)
     private String albumDescription;
 
+    // album 테이블의 post_id 컬럼에 매핑되는 필드 (대표 포스트 등 용도)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post mainPost;
+
     @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Post> posts = new HashSet<>();
 
