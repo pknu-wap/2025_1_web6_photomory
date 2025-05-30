@@ -6,7 +6,7 @@ import "./MemoryNotificationBox.css";
 function MemoryNotificationBox({ memoryNotifications }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-  console.log(memoryNotifications);
+
   const totalPages = Math.ceil(memoryNotifications.length / itemsPerPage);
   const startIdx = (currentPage - 1) * itemsPerPage;
   const currentItems = memoryNotifications.slice(
@@ -21,6 +21,11 @@ function MemoryNotificationBox({ memoryNotifications }) {
       <div className="memory-grid">
         {currentItems.map((notification, idx) => (
           <MemoryNotificationCard key={idx} data={notification} />
+        ))}
+
+        {/*빈 슬롯 채우기*/}
+        {Array.from({ length: 6 - currentItems.length }).map((_, idx) => (
+          <div key={`empty-${idx}`} className="memory-card empty-card"></div>
         ))}
       </div>
 

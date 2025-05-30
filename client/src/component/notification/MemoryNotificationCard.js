@@ -5,7 +5,7 @@ function MemoryNotificationCard({ data }) {
   const { message, photoUrl, title, date } = data;
   return (
     <div className="memory-card">
-      <div className="memory-dot">
+      <div className="memoryTime">
         <img src={clock} alt="clock" />
         <span className="memory-message">{message}</span>
       </div>

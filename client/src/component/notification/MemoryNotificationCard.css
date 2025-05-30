@@ -18,9 +18,11 @@
   gap: 4px;
 }
 
-.memory-dot {
+.memoryTime {
   color: black;
   font-size: 14px;
+  display: flex;
+  gap: 5px;
 }
 
 .memory-message {

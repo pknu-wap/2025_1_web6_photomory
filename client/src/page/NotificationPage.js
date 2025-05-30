@@ -33,7 +33,7 @@ function NotificationPage() {
       <div
         style={{
           width: "1056px",
-          minHeight: "600px",
+          height: "1068px",
           borderRadius: "8px",
           background: "#ffffff",
           margin: "64px auto",
