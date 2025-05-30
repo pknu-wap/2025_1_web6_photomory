@@ -267,12 +267,7 @@ export default function EveryMemoryMain(){
                         : { ...post, likesCount: post.likesCount - 1 , isLikeCountUp: !post.isLikeCountUp}  
                     : post).sort((a, b) => b.likesCount - a.likesCount)
             );
-            const updatedPostByLike = await updateLikeCount(postId); //서버 업뎃
-            setPosts((prevPosts) =>
-                prevPosts.map((post) =>post.postId=== postId
-                    ? { ...post, likesCount: updatedPostByLike.likesCount }
-                    :post).sort((a, b) => b.likesCount - a.likesCount)
-            );
+            await updateLikeCount(postId); //서버 업뎃
         }
         catch (error) {
             console.error('Error uploading like count', error);
@@ -290,12 +285,7 @@ export default function EveryMemoryMain(){
                     comments:[...post.comments, comment]} //코멘트에선 코멘트 텍스트와 유저 아이디만 준다.
                 : post)
             );
-            const updatedPostByComment= await updateComment(modalPost.postId, comment) //서버 업뎃
-            setPosts((prevPosts)=> //updatedPostByLike근데 여기서 서버가 어떻게 값을 주는지 명확하지 않다.
-                prevPosts.map((post)=>post.postId===modalPost.postId
-                ? {...post, commentsCount: updatedPostByComment.commentsCount}
-                    : post)
-            );
+            await updateComment(modalPost.postId, comment) //서버 업뎃
         }
         catch(error){
             console.error('Error uploading like count', error);
