@@ -1,35 +1,31 @@
 package com.example.photomory.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime; // LocalDateTime 추가 임포트
+import java.time.LocalDate; // 이 임포트는 더 이상 postTime에서 사용하지 않으므로 필요없을 수 있습니다.
+import java.time.LocalDateTime;
 
 public class PostCreateRequestDto {
 
     private String postTitle;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate postTime;
+    // postTime 필드를 LocalDate에서 LocalDateTime으로 변경하고 패턴도 조정
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss") // <-- 변경: 날짜와 시간 포함
+    private LocalDateTime postTime; // <-- 변경: LocalDate -> LocalDateTime
 
-    // --- 새로 추가된 필드 ---
-    private String photoName; // 사진 파일 이름
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss") // ISO 8601 형식
-    private LocalDateTime photoMakingTime; // 사진 촬영 시간
-    // -------------------------
+    private String photoName;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime photoMakingTime;
 
-    // 기본 생성자
     public PostCreateRequestDto() {
     }
 
-    // 모든 필드를 포함하는 생성자 (선택 사항, 필요에 따라 추가)
-    public PostCreateRequestDto(String postTitle, LocalDate postTime, String photoName, LocalDateTime photoMakingTime) {
+    public PostCreateRequestDto(String postTitle, LocalDateTime postTime, String photoName, LocalDateTime photoMakingTime) {
         this.postTitle = postTitle;
         this.postTime = postTime;
         this.photoName = photoName;
         this.photoMakingTime = photoMakingTime;
     }
 
-    // 기존 필드에 대한 Getter 및 Setter
     public String getPostTitle() {
         return postTitle;
     }
@@ -38,15 +34,15 @@ public class PostCreateRequestDto {
         this.postTitle = postTitle;
     }
 
-    public LocalDate getPostTime() {
+    // Getter 및 Setter도 변경된 타입에 맞춰 수정
+    public LocalDateTime getPostTime() { // <-- 반환 타입 변경
         return postTime;
     }
 
-    public void setPostTime(LocalDate postTime) {
+    public void setPostTime(LocalDateTime postTime) { // <-- 파라미터 타입 변경
         this.postTime = postTime;
     }
 
-    // --- 새로 추가된 필드에 대한 Getter 및 Setter ---
     public String getPhotoName() {
         return photoName;
     }
@@ -62,5 +58,4 @@ public class PostCreateRequestDto {
     public void setPhotoMakingTime(LocalDateTime photoMakingTime) {
         this.photoMakingTime = photoMakingTime;
     }
-    // ------------------------------------------------
 }
