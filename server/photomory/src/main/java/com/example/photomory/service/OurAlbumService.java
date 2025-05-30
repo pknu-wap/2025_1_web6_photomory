@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Objects;
 
 
 import java.io.IOException;
@@ -367,7 +368,6 @@ public class OurAlbumService {
     }
 
     // 우리의 추억 페이지 기본 데이터 반환
-    // 우리의 추억 페이지 기본 데이터 반환
     @Transactional(readOnly = true)
     public List<OurAlbumResponseDefaultDto> getAllGroupsDetailForUser(Long userId) {
         System.out.println("\n--- [시작] getAllGroupsDetailForUser 메서드 (userId: " + userId + ") ---");
@@ -411,6 +411,7 @@ public class OurAlbumService {
                 List<Post> posts = new ArrayList<>(album.getPosts());
                 List<OurAlbumResponseDefaultDto.Photo> photosDto = new ArrayList<>();
                 Set<Long> photoIds = new HashSet<>();  // 중복 사진 ID 체크용 Set
+                Set<String> photoUrls = new HashSet<>(); // 중복 URL 체크용 Set
 
                 System.out.println("    [정보] 앨범 ID " + (album.getAlbumId() != null ? album.getAlbumId().longValue() : "NULL") + " 에 포함된 게시물 수: " + posts.size());
                 if (posts.isEmpty()) {
@@ -428,18 +429,36 @@ public class OurAlbumService {
                         System.out.println("        [경고] 이 게시물에는 연결된 사진이 없습니다.");
                     } else {
                         for (Photo photo : photos) {
-                            if (!photoIds.contains(photo.getPhotoId())) {
-                                photoIds.add(photo.getPhotoId());
-                                photosDto.add(OurAlbumResponseDefaultDto.Photo.builder()
-                                        .photoId(photo.getPhotoId())
-                                        .photoUrl(photo.getPhotoUrl() != null ? s3UrlResponseService.getFileUrl(photo.getPhotoUrl()) : null)
-                                        .photoName(photo.getPhotoName())
-                                        .postId(post.getPostId() != null ? post.getPostId().longValue() : null)
-                                        .photoMakingtime(photo.getPhotoMakingTime() != null ? photo.getPhotoMakingTime().toLocalDate().toString() : null)
-                                        .build());
-                                System.out.println("          [사진 추가 성공] Photo ID: " + photo.getPhotoId() + ", Photo URL: " + (photo.getPhotoUrl() != null ? photo.getPhotoUrl() : "NULL"));
+                            if (photo.getPhotoId() != null) {
+                                String originalUrl = photo.getPhotoUrl();
+                                String photoUrl = null;
+
+                                if (originalUrl != null) {
+                                    if (originalUrl.startsWith("http://") || originalUrl.startsWith("https://")) {
+                                        photoUrl = originalUrl;
+                                    } else {
+                                        photoUrl = s3UrlResponseService.getFileUrl(originalUrl);
+                                    }
+                                }
+
+                                if (!photoIds.contains(photo.getPhotoId()) && (photoUrl == null || !photoUrls.contains(photoUrl))) {
+                                    photoIds.add(photo.getPhotoId());
+                                    if (photoUrl != null) photoUrls.add(photoUrl);
+
+                                    photosDto.add(OurAlbumResponseDefaultDto.Photo.builder()
+                                            .photoId(photo.getPhotoId())
+                                            .photoUrl(photoUrl)
+                                            .photoName(photo.getPhotoName())
+                                            .postId(post.getPostId() != null ? post.getPostId().longValue() : null)
+                                            .photoMakingtime(photo.getPhotoMakingTime() != null ? photo.getPhotoMakingTime().toLocalDate().toString() : null)
+                                            .build());
+
+                                    System.out.println("          [사진 추가 성공] Photo ID: " + photo.getPhotoId() + ", Photo URL: " + (photoUrl != null ? photoUrl : "NULL"));
+                                } else {
+                                    System.out.println("          [중복 사진 무시] Photo ID: " + photo.getPhotoId());
+                                }
                             } else {
-                                System.out.println("          [중복 사진 무시] Photo ID: " + photo.getPhotoId());
+                                System.out.println("          [경고] Photo ID가 NULL인 사진 발견, 무시합니다.");
                             }
                         }
                     }
@@ -447,6 +466,7 @@ public class OurAlbumService {
 
                 List<Long> postIdsInAlbum = posts.stream()
                         .map(Post::getPostId)
+                        .filter(postId -> postId != null)
                         .map(Integer::longValue)
                         .collect(Collectors.toList());
 
@@ -476,6 +496,7 @@ public class OurAlbumService {
                         .photos(photosDto)
                         .comments(commentsDto)
                         .build());
+
                 System.out.println("---- [앨범 완료] 앨범 ID: " + (album.getAlbumId() != null ? album.getAlbumId().longValue() : "NULL") + " ----");
             }
 
@@ -485,6 +506,7 @@ public class OurAlbumService {
                     .members(membersDto)
                     .albums(albumsDto)
                     .build());
+
             System.out.println("--- [그룹 완료] 그룹 ID: " + groupIdInt + " ---");
         }
 
