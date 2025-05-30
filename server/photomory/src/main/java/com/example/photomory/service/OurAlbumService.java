@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 
 import java.io.IOException;
@@ -327,6 +329,7 @@ public class OurAlbumService {
     }
 
     // 우리의 추억 페이지 기본 데이터 반환
+    // 우리의 추억 페이지 기본 데이터 반환
     @Transactional(readOnly = true)
     public List<OurAlbumResponseDefaultDto> getAllGroupsDetailForUser(Long userId) {
         System.out.println("\n--- [시작] getAllGroupsDetailForUser 메서드 (userId: " + userId + ") ---");
@@ -356,7 +359,6 @@ public class OurAlbumService {
                     .collect(Collectors.toList());
             System.out.println("  [정보] 그룹 ID " + groupIdInt + " 의 멤버 수: " + membersDto.size());
 
-            // 앨범, 게시물, 사진이 모두 페치 조인으로 미리 로딩됨
             List<Album> albums = albumRepository.findAllByMyAlbumIdWithPostsAndPhotos(groupIdInt);
             List<OurAlbumResponseDefaultDto.Album> albumsDto = new ArrayList<>();
 
@@ -368,8 +370,9 @@ public class OurAlbumService {
             for (Album album : albums) {
                 System.out.println("\n---- [앨범 시작] 앨범 ID: " + (album.getAlbumId() != null ? album.getAlbumId().longValue() : "NULL") + ", 앨범명: " + album.getAlbumName() + " ----");
 
-                List<Post> posts = new ArrayList<>(album.getPosts()); // 이미 페치 조인된 posts 컬렉션
+                List<Post> posts = new ArrayList<>(album.getPosts());
                 List<OurAlbumResponseDefaultDto.Photo> photosDto = new ArrayList<>();
+                Set<Long> photoIds = new HashSet<>();  // 중복 사진 ID 체크용 Set
 
                 System.out.println("    [정보] 앨범 ID " + (album.getAlbumId() != null ? album.getAlbumId().longValue() : "NULL") + " 에 포함된 게시물 수: " + posts.size());
                 if (posts.isEmpty()) {
@@ -379,8 +382,7 @@ public class OurAlbumService {
                 for (Post post : posts) {
                     System.out.println("      [게시물 처리] 앨범 ID: " + (album.getAlbumId() != null ? album.getAlbumId().longValue() : "NULL") + ", 게시물 ID: " + (post.getPostId() != null ? post.getPostId().longValue() : "NULL"));
 
-                    // *** 여기가 수정된 핵심 부분입니다: Set<Photo>를 List<Photo>로 변환 ***
-                    List<Photo> photos = new ArrayList<>(post.getPhotos()); // Post 엔티티의 photos 필드가 Set이므로 List로 변환
+                    List<Photo> photos = new ArrayList<>(post.getPhotos());
 
                     System.out.println("      [사진 검색 결과] 게시물 ID " + (post.getPostId() != null ? post.getPostId().longValue() : "NULL") + " 에 대해 찾은 사진 수 (페치 조인): " + photos.size());
 
@@ -388,14 +390,19 @@ public class OurAlbumService {
                         System.out.println("        [경고] 이 게시물에는 연결된 사진이 없습니다.");
                     } else {
                         for (Photo photo : photos) {
-                            photosDto.add(OurAlbumResponseDefaultDto.Photo.builder()
-                                    .photoId(photo.getPhotoId())
-                                    .photoUrl(photo.getPhotoUrl() != null ? s3UrlResponseService.getFileUrl(photo.getPhotoUrl()) : null)
-                                    .photoName(photo.getPhotoName())
-                                    .postId(post.getPostId() != null ? post.getPostId().longValue() : null)
-                                    .photoMakingtime(photo.getPhotoMakingTime() != null ? photo.getPhotoMakingTime().toLocalDate().toString() : null)
-                                    .build());
-                            System.out.println("          [사진 추가 성공] Photo ID: " + photo.getPhotoId() + ", Photo URL: " + (photo.getPhotoUrl() != null ? photo.getPhotoUrl() : "NULL"));
+                            if (!photoIds.contains(photo.getPhotoId())) {
+                                photoIds.add(photo.getPhotoId());
+                                photosDto.add(OurAlbumResponseDefaultDto.Photo.builder()
+                                        .photoId(photo.getPhotoId())
+                                        .photoUrl(photo.getPhotoUrl() != null ? s3UrlResponseService.getFileUrl(photo.getPhotoUrl()) : null)
+                                        .photoName(photo.getPhotoName())
+                                        .postId(post.getPostId() != null ? post.getPostId().longValue() : null)
+                                        .photoMakingtime(photo.getPhotoMakingTime() != null ? photo.getPhotoMakingTime().toLocalDate().toString() : null)
+                                        .build());
+                                System.out.println("          [사진 추가 성공] Photo ID: " + photo.getPhotoId() + ", Photo URL: " + (photo.getPhotoUrl() != null ? photo.getPhotoUrl() : "NULL"));
+                            } else {
+                                System.out.println("          [중복 사진 무시] Photo ID: " + photo.getPhotoId());
+                            }
                         }
                     }
                 }
