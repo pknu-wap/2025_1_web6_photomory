@@ -62,7 +62,7 @@
   {
     "type": "REMIND",
     "title": "산책하는 모습",
-    "photoUrl": "https://cdn.example.com/photos/photo1.jpg",
+    "photoUrl": "https://picsum.photos/seed/photo1011/600",
     "date": "2025-05-25",
     "message": "3일 전 오늘"
   }

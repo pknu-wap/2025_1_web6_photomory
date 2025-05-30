@@ -16,7 +16,7 @@ function MemoryNotificationBox({ memoryNotifications }) {
 
   return (
     <div className="memory-box">
-      <h2 className="memory-title">📸 추억 회상 알림</h2>
+      <h2 className="memory-title">추억 회상 알림</h2>
 
       <div className="memory-grid">
         {currentItems.map((notification, idx) => (
