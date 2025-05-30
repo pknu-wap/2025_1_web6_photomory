@@ -13,7 +13,7 @@ function NotificationPage() {
     async function fetchData() {
       try {
         const data = await getnotificationList(); // 목데이터 배열
-        const testData = fetchnotificationList();
+        const testData = await fetchnotificationList();
         console.log(testData);
         const memory = data.filter((item) => item.type === "REMIND");
         const general = data.filter((item) => item.type !== "REMIND");
