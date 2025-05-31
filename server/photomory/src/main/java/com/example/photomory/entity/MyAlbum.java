@@ -16,10 +16,10 @@ public class MyAlbum {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "album_id") // 실제 DB 컬럼명과 매핑
+    @Column(name = "album_id") // 실제 DB 컬럼명이 'album_id'인 경우
     private Integer myalbumId;
 
-    @Column(name = "myalbum_name")
+    @Column(name = "myalbum_name") // ⚠️ 수정: DB 컬럼명과 정확히 일치시킴
     private String myalbumName;
 
     @Column(name = "myalbum_tag")
@@ -28,13 +28,13 @@ public class MyAlbum {
     @Column(name = "myalbum_makingtime")
     private LocalDateTime myalbumMakingtime;
 
+
     @Column(name = "myalbum_description")
     private String myalbumDescription;
 
     @Column(name = "user_id")
     private Long userId;
 
-    // 생성 시점 자동 설정
     @PrePersist
     public void prePersist() {
         if (myalbumMakingtime == null) {
