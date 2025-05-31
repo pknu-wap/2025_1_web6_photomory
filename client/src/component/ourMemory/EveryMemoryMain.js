@@ -78,7 +78,7 @@ async function updateLikeCount(postId,retries=0,maxRetries=3){ //좋아요 수 �
     let accessToken= localStorage.getItem('accessToken')
     const refreshToken= localStorage.getItem('refreshToken')
     try{
-        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts/${postId}/like`,{/* 이거 엔드포인트 뭐임..?*/
+        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/posts/every/${postId}/like`,{/* 이거 엔드포인트 뭐임..?*/
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json',
@@ -177,12 +177,13 @@ async function uploadingImage(uploadImage, retries=0,maxRetries=3) {
         // 다른 데이터 추가
         formData.append('postText', uploadImage.postText || '');
         formData.append('postDescription', uploadImage.postDescription || '');
-        formData.append('postLocation', uploadImage.postLocation || '');
-        formData.append('postTag', uploadImage.postTag || '');
+        formData.append('location', uploadImage.postLocation || '');
+        formData.append('tags', uploadImage.postTag || '');
 
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`, {
             method: 'POST',
             headers:{
+                'Content-Type': `multipart/form-data;`,
                 'Authorization': `Bearer ${accessToken}`
             },
             body: formData
