@@ -7,12 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Set;
-import java.util.HashSet;  // Set 구현체로 HashSet 사용 시 필요
-
-
+import java.util.HashSet;
 import java.time.LocalDateTime;
-import java.util.ArrayList; // List 초기화를 위해 필요
-import java.util.List;
 
 @Entity
 @Table(name = "OurPost")
@@ -44,13 +40,12 @@ public class OurPost {
 
     @OneToMany(mappedBy = "ourPost", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
-    private List<Photo> photos = new ArrayList<>();
+    private Set<Photo> photos = new HashSet<>();
 
     @OneToMany(mappedBy = "ourPost", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
-    private List<Comment> comments = new ArrayList<>();
+    private Set<Comment> comments = new HashSet<>();
 
-    // 여기에 tags 필드 추가
     @ManyToMany
     @JoinTable(
             name = "our_post_tag",
@@ -60,3 +55,4 @@ public class OurPost {
     @Builder.Default
     private Set<Tag> tags = new HashSet<>();
 }
+

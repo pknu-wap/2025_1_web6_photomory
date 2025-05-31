@@ -34,12 +34,17 @@ public class CommentResponseDto {
 
     // Entity -> DTO 변환 메서드
     public static CommentResponseDto fromEntity(Comment comment) {
-        // Comment 엔티티의 Getter 메서드들을 사용하여 DTO를 생성합니다.
-        // Comment 엔티티에 getAlbum(), getPost(), getUser(), getCommentsText(), getCommentTime()이 있어야 합니다.
+        Integer albumId = null;
+        if (comment.getOurAlbum() != null) {
+            albumId = comment.getOurAlbum().getAlbumId();
+        } else if (comment.getOurPost() != null && comment.getOurPost().getOurAlbum() != null) {
+            albumId = comment.getOurPost().getOurAlbum().getAlbumId();
+        }
+
         return new CommentResponseDto(
                 comment.getCommentId(),
-                comment.getEveryAlbum() != null ? comment.getEveryAlbum().getAlbumId() : null,
-                comment.getEveryPost() != null ? comment.getEveryPost().getPostId() : null,
+                albumId,
+                comment.getOurPost() != null ? comment.getOurPost().getPostId() : null,
                 comment.getUser() != null ? comment.getUser().getUserId() : null,
                 comment.getUser() != null ? comment.getUser().getUserName() : null,
                 comment.getCommentText(),
@@ -48,6 +53,7 @@ public class CommentResponseDto {
                         : null
         );
     }
+
 
     // Getters & Setters (Lombok @Getter/@Setter 사용 시 불필요)
     public Integer getCommentId() {

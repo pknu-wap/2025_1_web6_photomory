@@ -6,13 +6,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList; // List를 위한 임포트
-import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
-@Table(name = "OUR_ALBUM") // 테이블명 유지
+@Table(name = "OUR_ALBUM")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,7 +21,7 @@ public class OurAlbum {
 
     @OneToMany(mappedBy = "ourAlbum", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<Comment> comments = new ArrayList<>();
+    private Set<Comment> comments = new HashSet<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,14 +39,12 @@ public class OurAlbum {
     private String albumTag;
 
     @Column(name = "album_makingtime", nullable = false)
-    private LocalDateTime albumMakingTime; // 필드명은 이미 올바릅니다.
+    private LocalDateTime albumMakingTime;
 
     @Column(name = "album_description", nullable = false, length = 250)
     private String albumDescription;
 
     @OneToMany(mappedBy = "ourAlbum", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @Builder.Default // Lombok @Builder를 사용할 때 초기화를 위해 필요
-    private List<OurPost> posts = new ArrayList<>(); // List<Post> -> List<OurPost>로 타입 변경
-
-
+    @Builder.Default
+    private Set<OurPost> posts = new HashSet<>();
 }
