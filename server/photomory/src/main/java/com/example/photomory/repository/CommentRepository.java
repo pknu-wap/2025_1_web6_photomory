@@ -3,7 +3,8 @@ package com.example.photomory.repository;
 import com.example.photomory.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional; // @Transactional 임포트 추가
+import org.springframework.transaction.annotation.Transactional;
+import java.util.Collection;
 
 import java.util.List;
 
@@ -18,8 +19,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long> { // Com
 
     List<Comment> findByPost_PostIdIn(List<Long> postIds); // Post ID가 Long임을 확인
 
-    // 새롭게 추가할 메소드: 특정 Post ID에 해당하는 모든 댓글을 삭제
     @Transactional // 이 메소드에서 데이터 삭제가 발생하므로 @Transactional 어노테이션을 붙여야 합니다.
     void deleteByPost_PostId(Long postId); // Post ID가 Long임을 확인
+
+    void deleteByOurPost_PostId(Integer postId);
+
+    List<Comment> findByOurPost_PostIdIn(Collection<Long> ourPostIds);
 }
 

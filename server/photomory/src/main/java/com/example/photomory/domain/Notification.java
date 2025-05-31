@@ -23,7 +23,7 @@ public class Notification {
     @Column(name = "user_id")  // 알림 받는 사용자 ID (수신자)
     private Long userId;
 
-    @Column(name = "sender_id")  // ⭐️ 보낸 사용자 ID (발신자)
+    @Column(name = "sender_id")  // 보낸 사용자 ID (발신자)
     private Long senderId;
 
 

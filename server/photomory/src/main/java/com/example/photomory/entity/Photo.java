@@ -5,80 +5,41 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
-@Table(name = "photo")
+@Table(name = "Photo") // <-- 테이블명은 "Photo"로 유지합니다. (이전 지시 철회)
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Setter
-    public class Photo {
+public class Photo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long photoId;
-
-    @Column(nullable = false)
-    private String photoUrl;
-
-    @Column(nullable = false)
-    private String photoName;
-
-    @Column(nullable = false)
-    private String photoComment;
-
-    @Column(nullable = false)
-    private LocalDateTime photoMakingTime;
+    @Column(name = "photo_id")
+    private Integer photoId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = true)
-    private Post post;
+    @JoinColumn(name = "our_post_id", nullable = true)
+    private OurPost ourPost;
 
-    //hw..
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "my_post_id", nullable = true)
+    private MyPost myPost; // <--- MyPost 엔티티를 참조하는 필드 추가
+
+    @Column(name = "photo_url", nullable = false, length = 500)
+    private String photoUrl;
+
+    @Column(name = "photo_name", length = 255)
+    private String photoName;
+
+    @Column(name = "photo_making_time")
+    private LocalDateTime photoMakingTime;
+
+    @Column(name = "title", length = 255)
     private String title;
-
-    @Column(name = "`date`") // 예약어일 경우 백틱 처리
-    private LocalDate date;
-
-    private Long userId;
-
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
-    }
-
-    public void setPhotoName(String photoName) {
-        this.photoName = photoName;
-    }
-
-    public void setPhotoComment(String photoComment) {
-        this.photoComment = photoComment;
-    }
-
-    public void setPhotoMakingTime(LocalDateTime photoMakingTime) {
-        this.photoMakingTime = photoMakingTime;
-    }
-
-    //hw
-    public Photo(String title, LocalDate date, String photoUrl) {
-        this.title = title;
-        this.date = date;
-        this.photoUrl = photoUrl;
-    }
-
-    public Photo(String title, LocalDate date, String photoUrl, Long userId) {
-        this.title = title;
-        this.date = date;
-        this.photoUrl = photoUrl;
-        this.userId = userId;
-    }
-
 }
