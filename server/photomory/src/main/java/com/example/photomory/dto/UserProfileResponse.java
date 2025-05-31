@@ -31,6 +31,10 @@ public class UserProfileResponse {
     @JsonProperty("job")
     private String job;
 
+    @JsonProperty("user_area")
+    private String userArea;
+
     @JsonProperty("friends")
     private List<FriendResponse> friends;
+
 }

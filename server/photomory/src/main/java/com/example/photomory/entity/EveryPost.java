@@ -12,7 +12,7 @@ import java.util.HashSet; // ★★★ 이 줄 추가 ★★★
 import java.util.Set;
 
 @Entity
-@Table(name = "EveryPost")
+@Table(name = "every_post")
 @Getter
 @Setter
 @NoArgsConstructor
