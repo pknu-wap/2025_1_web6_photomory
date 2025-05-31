@@ -6,38 +6,70 @@ import SearchFriend from "../friend/Search.Friend";
 import logout from '../../assets/logout.svg'
 import defaultProfile from "../../assets/defaultProfileIcon.svg";
 
-const getUserList = async (retries=0, maxRetries=3) => {
+const getNonFriendsList = async (retries=0, maxRetries=3) => {
     const refreshToken= localStorage.getItem('refreshToken')
     let accessToken=localStorage.getItem('accessToken');
   try {
-    // 전체 사용자 목록 가져오기
+    // 친구가 아닌 전체 사용자 목록 가져오기
     const response = await fetch(`${process.env.REACT_APP_API_URL}/api/friend-requests/non-friends/search`,{
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`, //이제 유저에 따라 친구 검색이 달라지니 엑세스 토큰을 추가.
       }
     });
     if (!response.ok) {
-      throw new Error('사용자 데이터를 가져오는 대에 실패했습니다.');
+      throw new Error('친구가 아닌 사용자 데이터를 가져오는 대에 실패했습니다.');
     }
-    const userData = await response.json();
-    if (Array.isArray(userData)) {
-      // setUsers(userData);
-      return userData;
+    const NonFriendsData = await response.json();
+    if (Array.isArray(NonFriendsData)) {
+      return NonFriendsData;
     } else {
-      throw new Error('잘못된 사용자 데이터 형식입니다.');
+      throw new Error('잘못된 친구가 아닌 사용자 데이터 형식입니다.');
     }
   } 
   catch (error) {
     if(error.message==='Unauthorized' && refreshToken && retries<maxRetries){
       accessToken= await refreshAccessToken(refreshToken)
       if(accessToken){
-        const response=getUserList(retries+1, maxRetries)
+        const response=getNonFriendsList(retries+1, maxRetries)
         return response
       }
     }
-    console.error('Failed to get userList')
+    console.error('Failed to get non-Friend List')
+    return null
+  }
+};
+
+const getFriendsList = async (retries=0, maxRetries=3) => { //안 나옴
+    const refreshToken= localStorage.getItem('refreshToken')
+    let accessToken=localStorage.getItem('accessToken');
+  try {
+    // 친구인 전체 사용자 목록 가져오기
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/friend-list`,{
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`, //이제 유저에 따라 친구 검색이 달라지니 엑세스 토큰을 추가.
+      }
+    });
+    if (!response.ok) {
+      throw new Error('친구 사용자 데이터를 가져오는 대에 실패했습니다.');
+    }
+    const friendData = await response.json();
+    if (Array.isArray(friendData)) {
+      return friendData;
+    } else {
+      throw new Error('잘못된 친구 사용자 데이터 형식입니다.');
+    }
+  } 
+  catch (error) {
+    if(error.message==='Unauthorized' && refreshToken && retries<maxRetries){
+      accessToken= await refreshAccessToken(refreshToken)
+      if(accessToken){
+        const response=getFriendsList(retries+1, maxRetries)
+        return response
+      }
+    }
+    console.error('Failed to get friend List')
     return null
   }
 };
@@ -49,8 +81,7 @@ const getMyInfo= async (retries=0, maxRetries=3)=>{ //내 정보 가져오기
     const response= await fetch(`${process.env.REACT_APP_API_URL}/api/user/profile`,{
       method: 'GET',
       headers:{
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer${accessToken}`
+        'Authorization': `Bearer ${accessToken}`
       }
     })
       if(!response.ok){
@@ -79,13 +110,13 @@ const postMyinfo= async (myInfo, retries=0, maxRetries=3)=>{
   let accessToken= localStorage.getItem('accessToken');
   const refreshToken= localStorage.getItem('refreshToken');
   try{
-    const response= await fetch(`${process.env.REACT_APP_API_URL}/api아직서버에 없음`,{
-      method:'POST',
+    const response= await fetch(`${process.env.REACT_APP_API_URL}/api/user/profile `,{
+      method:'PUT',
       headers:{
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`
       },
-      body: JSON.stringify(myInfo)
+      body: JSON.stringify({myInfo})
     })
     if(!response.ok){
       if(response.status===401){
@@ -108,6 +139,39 @@ const postMyinfo= async (myInfo, retries=0, maxRetries=3)=>{
   }
 }
 
+const addFriend= async (id, retries=0, maxRetries=3)=>{ //친추
+  let accessToken= localStorage.getItem('accessToken');
+  const refreshToken= localStorage.getItem('refreshToken');
+  try{
+    const response= await fetch(`${process.env.REACT_APP_API_URL}/api/friend-requests/send?receiverId=${id}`,{
+      method:'POST',
+      headers:{
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+      body: JSON.stringify({id})
+    })
+    if(!response.ok){
+      if(response.status===401){
+        throw new Error('Unauthorized')
+      }
+      throw new Error('Failed to post MyInfo:' `${response.status}`)
+    }
+    return response.json();
+  }
+  catch(error){
+    if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+      accessToken=await refreshAccessToken(refreshToken);
+      if (accessToken) {
+        const response = await addFriend(id, retries+1, maxRetries);
+        return response
+      }
+    }
+    console.error('Failed to update Friend')
+    return null
+  }
+}
+
 const editFriend= async(userId, retries=0, maxRetries=3)=>{ //친삭
   let accessToken=localStorage.getItem('accessToken')
   const refreshToken=localStorage.getItem('refreshToken')
@@ -115,7 +179,6 @@ const editFriend= async(userId, retries=0, maxRetries=3)=>{ //친삭
     const response= await fetch(`${process.env.REACT_APP_API_URL}/api/friend-list/${userId}`,{
       method: 'DELETE',
       headers:{
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`
       }
     })
@@ -167,14 +230,14 @@ async function refreshAccessToken(refreshToken) {
 
 // 초기 프로필 데이터 상태
 const initialProfileState = {
-  id: "",
-  name: "",
-  job: "",
-  field: "",
-  equipment: "",
-  area: "",
-  introduction: "",
-  profileImage: defaultProfile
+  user_id:'',
+  user_name: "",
+  user_introduction:'',
+  user_job: "",
+  user_equipment: "",
+  user_field: "",
+  user_area: "",
+  user_photourl: defaultProfile
 };
 
 // 입력 필드 매핑
@@ -189,44 +252,103 @@ const FIELD_MAPPING = {
 
 function ProfileMain() {
   const [profileData, setProfileData] = useState(initialProfileState);
-  const [users, setUsers] = useState([]);
+  const [nonFriendUsers, setNonFriendUsers] = useState([]);
+  const [friendUsers, setFriendUsers] = useState([])
   const [search, setSearch] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([])
   const [isEdit, setIsEdit]= useState(false)
 
-  // 입력 필드 변경 핸들러
-  const handleInputChange = useCallback((e) => {
-    const { className, value } = e.target;
-    const field = FIELD_MAPPING[className];
-    if (field) {
-      setProfileData(prev => ({
-        ...prev,
-        [field]: value.trim()
-      }));
-    }
+  
+    // 사용자 데이터 가져오기
+  useEffect(() => {
+    const fetchProfileAndUsers = async () => {
+      try {
+        // 내 프로필 데이터 가져오기
+        const myData = await getMyInfo();
+        if (myData) {
+          setProfileData({
+            id: myData.id || "",
+            name: myData.name || "",
+            job: myData.job || "",
+            field: myData.field || "",
+            equipment: myData.equipment || "",
+            area: myData.area || "",
+            introduction: myData.introduction || "",
+            profileImage: myData.user_photourl || defaultProfile
+          });
+        }
+
+        // 친구가 아닌 사용자 목록 가져오기
+        const nonFriendsList = await getNonFriendsList();
+        if (Array.isArray(nonFriendsList)) {
+          setNonFriendUsers(nonFriendsList);
+        } else {
+          throw new Error('잘못된 사용자 데이터 형식입니다.');
+        }
+
+        //친구인 사용자 목록 가져오기
+        const friendList= await getFriendsList()
+        if (Array.isArray(friendList)) {
+          setFriendUsers(friendList);
+        } else {
+          throw new Error('잘못된 사용자 데이터 형식입니다.');
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchProfileAndUsers();
   }, []);
 
-  // 친구 제거 핸들러
-  const handleRemoveFriend = useCallback(async (userId) => {
-    if (!userId) return;
-    const rollBackUsers= [...users]
-    setUsers(prevUsers => //낙관적 
-      prevUsers.map(user => 
-        user.id === userId 
-          ? { ...user, isFriend: false }
-          : user
-        )
-      );
+
+
+  const addFriendhandle= async(userId)=>{ //친구 추가
+    if(!userId) return;
+    const rollBackNonFriends= [...nonFriendUsers]
+    const rollBackFriends= [...friendUsers]
+    const findMatchUser=nonFriendUsers.find((user)=>user.userId === userId)
+    const matchUser= {...findMatchUser, isFriend: true};
+
+    setNonFriendUsers((prevUsers) => //친구 아닌 곳에서 제외외
+      prevUsers.filter((user) => 
+        user.userId !== userId
+      )
+    );
+    setFriendUsers((prevUsers)=>[...prevUsers, matchUser]) //친구 추가
     try{
-      const response= await editFriend(userId) //서버
+      const response = await addFriend(userId)
       if(!response || !response.success){
-        throw new Error('친구 삭제에 실패했습니다.')
+        throw new Error('친구 추가에 실패했습니다.')
       }
     } catch(error){
-      console.error('')
-      setUsers(rollBackUsers) //낙관적 업뎃 롤백
+      setNonFriendUsers(rollBackNonFriends)
+      setFriendUsers(rollBackFriends)
     }
-  }, []);
+  }
+
+  const handleRemoveFriend= async(userId)=>{ //친구 제거 핸들러
+    if(!userId) return;
+    const rollBackNonFriends= [...nonFriendUsers]
+    const rollBackFriends= [...friendUsers]
+    const findMatchUser=nonFriendUsers.find((user)=>user.userId === userId)
+    const matchUser= {...findMatchUser, isFriend: false};
+
+    setFriendUsers((prevUsers) => //친구인 거에서 제거
+      prevUsers.filter((user) => 
+        user.userId !== userId
+      )
+    );
+    setNonFriendUsers((prevUsers)=>[...prevUsers, matchUser]) //친구인 거에 추가가
+    try{
+      const response = await editFriend(userId)
+      if(!response || !response.success){
+        throw new Error('친구 제거에 실패했습니다.')
+      }
+    } catch(error){
+      setNonFriendUsers(rollBackNonFriends)
+      setFriendUsers(rollBackFriends)
+    }
+  }
 
   const { setIsLogged } = useAuth();
 
@@ -246,71 +368,62 @@ function ProfileMain() {
     setSearch(e.target.value);
   }, []);
 
-  // 사용자 데이터 가져오기
-  useEffect(() => {
-    const fetchProfileAndUsers = async () => {
-      try {
-        // 내 프로필 데이터 가져오기
-        const myData = await getMyInfo();
-        if (myData) {
-          setProfileData({
-            id: myData.id || "",
-            name: myData.name || "",
-            job: myData.job || "",
-            field: myData.field || "",
-            equipment: myData.equipment || "",
-            area: myData.area || "",
-            introduction: myData.introduction || "",
-            profileImage: myData.user_photourl || defaultProfile
-          });
-        }
-
-        // 전체 사용자 목록 가져오기
-        const userData = await getUserList();
-        if (Array.isArray(userData)) {
-          setUsers(userData);
-        } else {
-          throw new Error('잘못된 사용자 데이터 형식입니다.');
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchProfileAndUsers();
+  // 입력 필드 변경 핸들러
+  const handleInputChange = useCallback((e) => {
+    const { className, value } = e.target;
+    const field = FIELD_MAPPING[className];
+    if (field) {
+      setProfileData(prev => ({
+        ...prev,
+        [field]: value  // 입력 중에는 trim() 하지 않음
+      }));
+    }
   }, []);
 
-  useEffect(()=>{
+  useEffect(()=>{ //친구 검색
     if(search){
-      const filtered=users.filter((user)=>
+      const filtered=nonFriendUsers.filter((user)=>
         user.userName.toLowerCase().includes(search.toLowerCase())
       )
       setFilteredUsers(filtered)
     } else{
-      setFilteredUsers(users)
+      setFilteredUsers(nonFriendUsers)
     }
-  }, [search, users])
+  }, [search, nonFriendUsers])
 
-  const numLimitedFilteredUsers= search? filteredUsers.slice(0,4) : users.slice(0,2)
+  //이것도 갯수제한 두지 말고 그냥 스크롤로 해두자자
+  const numLimitedFilteredUsers= search? filteredUsers : nonFriendUsers //혹시나해서서
 
   // 친구 목록 필터링
   const friends = useMemo(() => 
-    users.filter(user => user?.isFriend) || []
-  , [users]);
+    friendUsers.filter(user => user?.isFriend)
+  , [friendUsers]);
 
-  const numLimitedFriends= friends.slice(0,4)
-
-  const editHandle= async (e)=>{
-    try{
+  const editHandle = async (e) => {
+    e.preventDefault();
+    // 저장 시에만 양 끝의 공백을 제거
+    const trimmedData = {
+      ...profileData,
+      user_name: profileData?.name?.trim() || '',
+      user_introduction: profileData?.introduction?.trim() || '',
+      user_job: profileData?.job?.trim() || '',
+      user_equipment: profileData?.equipment?.trim() || '',
+      user_field: profileData?.field?.trim() || '',
+      user_photourl: profileData?.photourl?.trim() || '',
+    };
       setIsEdit((prev)=>!prev)
-        if(e.target.value==='save'){
-          const afterProfileData= await postMyinfo(profileData)
-          setProfileData(afterProfileData)
+    try {
+      if(e.target.value==='save'){
+        const response = await postMyinfo(trimmedData);
+        if (response) {
+          setProfileData(trimmedData);
+        }
       }
+    } catch (error) {
+      console.error('Error saving profile:', error);
     }
-    catch(arror){
-      console.error('failed to get myInfo')
-    }
-  }
+  };
+
 
   return (
     <div className={styles.allContainer}>
@@ -326,16 +439,16 @@ function ProfileMain() {
               <input
                 className={styles.name}
                 onChange={handleInputChange}
-                value={profileData?.name ||''}
+                value={profileData?.name ||'unKnown'}
                 placeholder="이름을 알려줘!"
               />
               <input
                 className={styles.job}
                 onChange={handleInputChange}
-                value={profileData?.job || ""}
+                value={profileData?.job || "unKnown"}
                 placeholder="직업을 알려줘!"
               />
-              <div className={styles.id}>ID: {profileData?.id ||''}</div>
+              <div className={styles.id}>ID: {profileData?.id ||'unKnown'}</div>
             </div>
           </div>
           <div className={styles.forFlexSetting}>
@@ -366,7 +479,7 @@ function ProfileMain() {
               placeholder="풍경 사진"
               className={styles.myFieldInput}
               onChange={handleInputChange}
-              value={profileData?.field || ''}
+              value={profileData?.field || 'unKnown'}
             />
           </div>
           <div className={styles.myEquipmentContainer}>
@@ -376,7 +489,7 @@ function ProfileMain() {
               placeholder="sony A7 IV"
               className={styles.myEquipmentInput}
               onChange={handleInputChange}
-              value={profileData?.equipment || ''}
+              value={profileData?.equipment || 'unKnown'}
             />
           </div>
           <div className={styles.myAreaContainer}>
@@ -386,7 +499,7 @@ function ProfileMain() {
               placeholder="서울, 강원"
               className={styles.myAreaInput}
               onChange={handleInputChange}
-              value={profileData?.area || ''}
+              value={profileData?.area || 'unKnown'}
             />
           </div>
         </div>
@@ -397,7 +510,7 @@ function ProfileMain() {
             className={styles.introduction}
             placeholder="제가 누구냐면요.."
             onChange={handleInputChange}
-            value={profileData?.introduction || ''}
+            value={profileData?.introduction || 'unKnown'}
           />
         </div>
       </div>
@@ -407,14 +520,14 @@ function ProfileMain() {
         <div className={styles.forFlexFriend}>
           <div className={styles.myFriendsListContainer}>
             <p className={styles.myFriendListTop}>내 친구 목록</p>
-            {numLimitedFriends.length > 0 ? friends.map((user) => (
+            {friends.length > 0 ? friends.map((user) => ( //친구가 어느 정도 이상이면 오버플로우로 스크롤할 수 있게 
               <FriendManage
                 key={user.id}
                 userId={user.id}
                 userName={user.name}
                 userField={user.field}
                 isFriend={user.isFriend}
-                onRemoveFriend={handleRemoveFriend}
+                handleRemoveFriend={handleRemoveFriend}
               />
             )) : (
               <p className={styles.zeroFriend}>앗, 친구가 없어요.😓</p>
@@ -429,13 +542,16 @@ function ProfileMain() {
               value={search}
               onChange={handleSearch}
             />
-            {numLimitedFilteredUsers.map(user => (
-              <SearchFriend 
-                key={user.id} 
-                userId={user.id} 
-                userName={user.name} 
-              />
-            ))}
+            <div className={styles.forFlexFriendList}>
+              {numLimitedFilteredUsers.map(user => (
+                <SearchFriend
+                  key={user.id}
+                  userId={user.id} 
+                  userName={user.name} 
+                  userImage={user.Userphotourl}
+                  addFriend={addFriendhandle} //유저 아이디 보내줌
+                />))}
+            </div>
           </div>
         </div>
       </div>
