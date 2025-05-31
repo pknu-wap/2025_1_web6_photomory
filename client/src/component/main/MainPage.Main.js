@@ -20,7 +20,6 @@ async function fetchUserEveryPosts(retries=0, maxRetries=3) {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`,
             },
         });
@@ -54,29 +53,28 @@ async function fetchUserOurAlbums(retries=0, maxRetries=3) {
     const response= await fetch(`${process.env.REACT_APP_API_URL}/api/our-album`,{
       method: 'GET',
       headers:{
-        'Content_type': 'application/json',
         'Authorization': `Bearer ${accessToken}`
       }
     })
     if(!response.ok){
-      if(response.status==='401'){
-        throw new Error('Unathorized')
+      if(response.status===401){
+        throw new Error('Unauthorized')
       }
       throw new Error(`Http error! status: ${response.status}`)
     }
-    const ourPost= await response.jsom();
+    const ourPost= await response.json();
     return ourPost;
   }
   catch (error){
-    if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+    if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) {
       accessToken = await refreshAccessToken(refreshToken);
       if (accessToken) {
-        const result = await fetchUserEveryPosts(retries+1, maxRetries);
+        const result = await fetchUserOurAlbums(retries+1, maxRetries);
         return result
       }
     }
     console.error('Failed to get ourAlbums')
-    return null
+    return []
   }
 }
 
@@ -87,29 +85,28 @@ async function fetchUserMyAlbums(retries=0, maxRetries=3) {
     const response= await fetch(`${process.env.REACT_APP_API_URL}/api/my-albums/all`,{
       method: 'GET',
       headers:{
-        'Content_type': 'application/json',
         'Authorization': `Bearer ${accessToken}`
       }
     })
     if(!response.ok){
-      if(response.status==='401'){
-        throw new Error('Unathorized')
+      if(response.status===401){
+        throw new Error('Unauthorized')
       }
       throw new Error(`Http error! status: ${response.status}`)
     }
-    const myPost= await response.jsom();
+    const myPost= await response.json();
     return myPost;
   }
   catch (error){
-    if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+    if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) {
       accessToken = await refreshAccessToken(refreshToken);
       if (accessToken) {
-        const result = await fetchUserEveryPosts(retries+1, maxRetries);
+        const result = await fetchUserMyAlbums(retries+1, maxRetries);
         return result
       }
     }
-    console.error('Failed to get ourAlbums')
-    return null
+    console.error('Failed to get myAlbums')
+    return []
   }
 }
 
@@ -185,12 +182,19 @@ function MainPageMain() {
       const posts = await fetchUserEveryPosts();
       const ourAlbums = await fetchUserOurAlbums();
       const myAlbums = await fetchUserMyAlbums();
-      if (posts || ourAlbums || myAlbums) {
+      
+      if (posts) {
         const sortedPosts = [...posts].sort((a, b) => b.likesCount - a.likesCount);
-        setPosts(sortedPosts); // 태그 상관 없이 좋아요 내림차순으로 posts 객체 정리
-        setOurAlbums(ourAlbums)
-        setMyAlbums(myAlbums)
-      } else {
+        setPosts(sortedPosts);
+      }
+      if (ourAlbums) {
+        setOurAlbums(ourAlbums);
+      }
+      if (myAlbums) {
+        setMyAlbums(myAlbums);
+      }
+      
+      if (!posts && !ourAlbums && !myAlbums) {
         setError('데이터를 불러오지 못했습니다.');
       }
     } catch (error) {
