@@ -38,10 +38,16 @@ public class NotificationService {
 
     // 2. Remind를 제외한 모든 알림 전송 (발신자 정보 포함)
     public void sendNotification(Long receiverId, Long senderId, String message, NotificationType type, Long requestId) {
+
+        UserEntity sender = userRepository.findById(senderId)
+                .orElseThrow(() -> new RuntimeException("발신자 정보 없음"));
+
         // 1) DB 저장
         Notification notification = Notification.builder()
                 .userId(receiverId)
                 .senderId(senderId)
+                .senderName(sender.getUserName())
+                .senderPhotourl(sender.getUserPhotourl())
                 .message(message)
                 .type(type)
                 .requestId(requestId)
@@ -49,10 +55,6 @@ public class NotificationService {
                 .isRead(false)
                 .build();
         notificationRepository.save(notification);
-
-        // 2) 발신자 정보 조회
-        UserEntity sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new RuntimeException("발신자 정보 없음"));
 
         // 3) DTO 생성
         NotificationResponse response = NotificationResponse.builder()
@@ -114,9 +116,8 @@ public class NotificationService {
 
         return notifications.stream()
                 .map(n -> {
-                    // Remind 알림은 senderId가 없을 수 있으므로 처리 분기
+                    // Remind 알림은 senderId가 없을 수 있으므로 분기
                     if (n.getSenderId() == null) {
-                        // 발신자 정보 없는 경우 (Remind) → senderName, senderPhotourl는 null로 전달
                         return NotificationResponse.builder()
                                 .id(n.getId())
                                 .userId(n.getUserId())
@@ -131,16 +132,16 @@ public class NotificationService {
                                 .build();
                     }
 
-                    // 발신자 정보 있는 경우
+                    // senderId가 있으면 UserEntity에서 발신자 정보 꺼내서 채워줌
                     UserEntity sender = userRepository.findById(n.getSenderId())
-                            .orElseThrow(() -> new RuntimeException("발신자 정보 없음"));
+                            .orElse(null);
 
                     return NotificationResponse.builder()
                             .id(n.getId())
                             .userId(n.getUserId())
                             .senderId(n.getSenderId())
-                            .senderName(sender.getUserName())
-                            .senderPhotourl(sender.getUserPhotourl())
+                            .senderName(sender != null ? sender.getUserName() : null)
+                            .senderPhotourl(sender != null ? sender.getUserPhotourl() : null)
                             .message(n.getMessage())
                             .type(n.getType())
                             .createdAt(n.getCreatedAt())

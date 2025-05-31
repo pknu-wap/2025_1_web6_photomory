@@ -10,8 +10,10 @@ import com.example.photomory.service.AuthService;
 import com.example.photomory.service.FriendRequestService;
 import com.example.photomory.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -55,14 +57,20 @@ public class FriendRequestController {
         return ResponseEntity.ok().build();
     }
 
-    // 친구가 아닌 사용자 찾기
     @GetMapping("/non-friends/search")
     public ResponseEntity<List<NonFriendUserDto>> searchNonFriendUsers(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token,
             @RequestParam(value = "keyword", required = false) String keyword) {
 
-        Long loginUserId = authService.extractUserId(token);
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "토큰이 필요합니다.");
+        }
+
+        String pureToken = token.substring(7); // "Bearer " 제거
+        Long loginUserId = authService.extractUserId(pureToken);
+
         List<NonFriendUserDto> nonFriends = friendRequestService.searchNonFriendUsers(loginUserId, keyword);
         return ResponseEntity.ok(nonFriends);
     }
+
 }
