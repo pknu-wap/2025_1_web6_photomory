@@ -440,18 +440,24 @@ function ProfileMain() {
                 className={styles.name}
                 onChange={handleInputChange}
                 value={profileData?.name ||'unKnown'}
-                placeholder="이름을 알려줘!"
+                placeholder="이름을 알려주세요."
               />
               <input
                 className={styles.job}
                 onChange={handleInputChange}
                 value={profileData?.job || "unKnown"}
-                placeholder="직업을 알려줘!"
+                placeholder="직업을 알려주세요."
               />
               <div className={styles.id}>ID: {profileData?.id ||'unKnown'}</div>
             </div>
           </div>
           <div className={styles.forFlexSetting}>
+            <button 
+              className={styles.logOutForFlexRight}
+              onClick={handleLogout}>
+              <img src={logout} alt="" className={styles.logoutIcon}></img>
+              로그아웃
+            </button>
             {isEdit? (
               <button className={styles.save}
               onClick={editHandle}
@@ -462,12 +468,6 @@ function ProfileMain() {
               onClick={editHandle}
               >수정하기</button>
             )}
-            <button 
-              className={styles.logOutForFlexRight}
-              onClick={handleLogout}>
-              <img src={logout} alt="" className={styles.logoutIcon}></img>
-              로그아웃
-            </button>
           </div>
         </div>
 
