@@ -19,9 +19,13 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/profile")
-    public ResponseEntity<UserProfileResponse> getUserProfile(@RequestParam Long userId) {
+    public ResponseEntity<UserProfileResponse> getUserProfile(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long userId = userDetails.getUser().getUserId();
         return ResponseEntity.ok(userService.getUserProfile(userId));
     }
+
 
     @PutMapping("/profile")
     public ResponseEntity<String> updateProfile(
