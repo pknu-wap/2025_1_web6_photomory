@@ -22,7 +22,6 @@ async function fetchUserposts(retries=0, maxRetries=3) {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`,
             },
         });
