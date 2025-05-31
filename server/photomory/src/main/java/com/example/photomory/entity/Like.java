@@ -19,7 +19,15 @@ public class Like {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "like_id")
     private Long likesId;
+
+    @Column(name = "post_type", nullable = false)
+    private String postType;
+
+    @Column(name = "post_id", nullable = false)
+    private Long postId;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

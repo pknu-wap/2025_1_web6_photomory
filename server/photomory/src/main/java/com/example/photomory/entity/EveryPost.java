@@ -39,7 +39,7 @@ public class EveryPost {
     private String location;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "album_id", nullable = false)
+    @JoinColumn(name = "album_id", nullable = true)
     private EveryAlbum everyAlbum;
 
     @OneToMany(mappedBy = "everyPost", cascade = CascadeType.ALL, orphanRemoval = true)

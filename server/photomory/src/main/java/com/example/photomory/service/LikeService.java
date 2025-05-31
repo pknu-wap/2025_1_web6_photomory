@@ -39,6 +39,7 @@ public class LikeService {
                                     .ourPost(ourPost)
                                     .commentId(0)
                                     .likesCount(1)
+                                    .postType("OUR")
                                     .build();
                             likeRepository.save(like);
                         }
@@ -59,6 +60,7 @@ public class LikeService {
                                     .myPost(myPost)
                                     .commentId(0)
                                     .likesCount(1)
+                                    .postType("MY")
                                     .build();
                             likeRepository.save(like);
                         }
@@ -77,8 +79,10 @@ public class LikeService {
                             Like like = Like.builder()
                                     .user(user)
                                     .everyPost(everyPost)
+                                    .postId(postId)
                                     .commentId(0)
                                     .likesCount(1)
+                                    .postType("EVERY")
                                     .build();
                             likeRepository.save(like);
                         }

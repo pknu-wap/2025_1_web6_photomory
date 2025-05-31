@@ -6,7 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.HashSet; // ★★★ 이 줄 추가 ★★★
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -26,9 +27,23 @@ public class Tag {
     @Column(name = "tag_name", nullable = false)
     private String tagName;
 
+    @Column(name = "post_type", nullable = false)
+    private String postType;
+
+    @Column(name = "post_id", nullable = false)
+    private Integer postId;
+
     @ManyToMany(mappedBy = "tags")
     @Builder.Default
     private Set<EveryPost> everyPosts = new HashSet<>();
+
+    @ManyToMany(mappedBy = "tags")
+    @Builder.Default
+    private Set<OurPost> ourPosts = new HashSet<>();
+
+    @ManyToMany(mappedBy = "tags")
+    @Builder.Default
+    private Set<MyPost> myPosts = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
@@ -40,19 +55,10 @@ public class Tag {
         }
         this.everyPosts.add(everyPost);
     }
-    @ManyToMany(mappedBy = "tags")
-    @Builder.Default
-    private Set<OurPost> ourPosts = new HashSet<>();
-
-    @ManyToMany(mappedBy = "tags")
-    @Builder.Default
-    private Set<MyPost> myPosts = new HashSet<>();
-
 
     public void removeEveryPost(EveryPost everyPost) {
         if (this.everyPosts != null) {
             this.everyPosts.remove(everyPost);
         }
     }
-
 }
