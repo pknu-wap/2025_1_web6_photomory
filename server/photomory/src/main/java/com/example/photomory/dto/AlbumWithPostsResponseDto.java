@@ -13,6 +13,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Arrays;
+import java.util.ArrayList;
+
 
 @Data // @Getter, @Setter, @ToString, @EqualsAndHashCode, @RequiredArgsConstructor를 포함합니다.
 @Builder
@@ -28,7 +30,7 @@ public class AlbumWithPostsResponseDto {
 
     public static AlbumWithPostsResponseDto from(OurAlbum ourAlbum, List<OurPost> posts) {
         List<PostWithCommentsResponseDto> postDtos = posts.stream()
-                .map(ourPost -> PostWithCommentsResponseDto.fromEntity(ourPost, ourPost.getComments()))
+                .map(ourPost -> PostWithCommentsResponseDto.fromEntity(ourPost, new ArrayList<>(ourPost.getComments())))
                 .collect(Collectors.toList());
 
         List<String> tags;

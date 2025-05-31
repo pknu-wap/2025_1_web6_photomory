@@ -7,7 +7,7 @@ import java.util.Objects; // Objects 클래스 임포트
 
 @Entity
 @Setter
-@Table(name = "USERS") //
+@Table(name = "USERS")
 public class UserEntity {
 
     @Id
@@ -103,7 +103,8 @@ public class UserEntity {
         return userField;
     }
 
-    // *** 중요: 아래 equals() 와 hashCode() 메서드를 추가합니다. ***
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

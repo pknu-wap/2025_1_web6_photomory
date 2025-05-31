@@ -126,32 +126,31 @@ public class OurAlbumService {
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
         OurPost ourPost = new OurPost();
-        ourPost.setOurAlbum(ourAlbum); // 이전에 'setAlbum'에서 'setOurAlbum'으로 수정 완료
+        ourPost.setOurAlbum(ourAlbum);
         ourPost.setUser(user);
-        ourPost.setPostText(requestDto.getPostTitle()); // PostText 대신 PostTitle을 사용하시고 계시네요. 의도된 것이 맞는지 확인해주세요.
-        if (requestDto.getPostTime() != null) {
-            ourPost.setMakingTime(requestDto.getPostTime());
-        } else {
-            ourPost.setMakingTime(LocalDateTime.now());
-        }
+        ourPost.setPostText(requestDto.getPostTitle());
+        ourPost.setMakingTime(requestDto.getPostTime() != null ? requestDto.getPostTime() : LocalDateTime.now());
 
         OurPost savedPost = ourPostRepository.save(ourPost);
 
         if (photoFile != null && !photoFile.isEmpty()) {
-            // S3Service를 통해 파일 업로드
-            String uploadedUrl = s3Service.uploadFile(photoFile); // <--- s3Service 사용 (이미 올바르게 되어 있었음)
+            String uploadedUrl = s3Service.uploadFile(photoFile);
 
             Photo photo = new Photo();
             photo.setOurPost(savedPost);
+            photo.setPostId(savedPost.getPostId());  // 여기서 post_id 값을 꼭 넣어줘야 합니다.
+            photo.setPostType("OUR");                 // post_type 필수값 세팅
             photo.setPhotoUrl(uploadedUrl);
             photo.setPhotoName(requestDto.getPhotoName());
             photo.setPhotoMakingTime(requestDto.getPhotoMakingTime());
+            photo.setUser(user);
+
             photoRepository.save(photo);
         }
 
-        // PostResponseDto.fromEntity 메서드가 OurPost 엔티티를 받도록 되어 있어야 합니다.
         return PostResponseDto.fromEntity(savedPost);
     }
+
 
     // 게시글 삭제
     @Transactional
@@ -179,52 +178,38 @@ public class OurAlbumService {
 
     // 댓글 작성
     @Transactional
-    public CommentResponseDto createComment(Integer albumId, Integer postId, UserEntity user, String text) {
-        OurAlbum ourAlbum = ourAlbumRepository.findById(albumId)
-                .orElseThrow(() -> new EntityNotFoundException("앨범을 찾을 수 없습니다."));
-
-        OurPost ourPost = ourPostRepository.findById(postId) // Post 대신 OurPost 사용
-                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
-
-        if (user == null) {
-            throw new IllegalArgumentException("댓글을 작성할 사용자 정보가 유효하지 않습니다.");
-        }
-        if (text == null || text.trim().isEmpty()) {
-            throw new IllegalArgumentException("댓글 내용은 비워둘 수 없습니다.");
-        }
-        if (text.length() > 500) {
-            throw new IllegalArgumentException("댓글 내용은 500자를 초과할 수 없습니다.");
-        }
-
+    public CommentResponseDto createComment(Integer albumId, Integer postId, UserEntity user, String commentsText) {
         Comment comment = new Comment();
-        comment.setOurAlbum(ourAlbum);
-        comment.setOurPost(ourPost);
-        comment.setUser(user);
-        comment.setCommentText(text);
-        comment.setCommentTime(LocalDateTime.now());
 
-        Comment saved = commentRepository.save(comment);
-
-        UserEntity postWriter = ourPost.getUser(); // OurPost 사용
-
-        if (!user.getUserId().equals(postWriter.getUserId())) {
-            String postTitle = ourPost.getPhotos().stream() // OurPost 사용
-                    .map(Photo::getTitle)
-                    .findAny()
-                    .orElse("제목 없음");
-
-            String message = user.getUserName() + "님이 " + postTitle + " 게시글에 댓글을 남겼습니다.";
-
-            notificationService.sendNotification(
-                    postWriter.getUserId(),
-                    user.getUserId(),
-                    message,
-                    NotificationType.COMMENT,
-                    postId.longValue()
-            );
+        // 앨범과 게시글 중 하나만 연결
+        if (postId != null) {
+            OurPost post = ourPostRepository.findById(postId)
+                    .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+            comment.setOurPost(post);
+            comment.setOurAlbum(null);
+            comment.setEveryAlbum(null);
+            comment.setEveryPost(null);
+        } else if (albumId != null) {
+            OurAlbum album = ourAlbumRepository.findById(albumId)
+                    .orElseThrow(() -> new EntityNotFoundException("앨범을 찾을 수 없습니다."));
+            comment.setOurAlbum(album);
+            comment.setOurPost(null);
+            comment.setEveryAlbum(null);
+            comment.setEveryPost(null);
+        } else {
+            throw new IllegalArgumentException("게시글 ID 또는 앨범 ID 중 하나는 반드시 입력되어야 합니다.");
         }
-        return CommentResponseDto.fromEntity(saved);
+
+        comment.setUser(user);
+        comment.setCommentText(commentsText);
+
+        comment.validateParentRelationship();
+
+        Comment savedComment = commentRepository.save(comment);
+
+        return CommentResponseDto.fromEntity(savedComment);
     }
+
 
     // 친구 중에서 그룹에 없는 사람만 필터링하여 초대하기
     @Transactional(readOnly = true)
