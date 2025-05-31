@@ -141,13 +141,64 @@
 }
 .searchFriendContainer {
   width: 50%;
-  margin: 15px 15px 15px 30px;
-  border-radius: 7px;
+  margin: 15px;
+  border-radius: 8px;
+  border: 1px solid #b7bdc3;
+  padding: 20px;
+}
+.forFlexFriendList{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 7.5px;
+}
+.myFriendItemContainer{
+  background: rgba(0, 0, 0, 0.05);
+}
+.zeroFriend{
+  color: rgb(128, 128, 128);
+  font-size: 14px;
+  border-radius: 8px;
+  margin: 15px 0;
+  padding: 8px 12px;
+  width: fit-content; 
+  position: relative;
+  transform: translate(-50%, 0);
+  left: 50%;
 }
 .searchMyFriendTop {
   font-weight: 500;
   margin-left: 15px;
 }
 .searchBar {
-  margin-left: 15px;
+  margin: 15px 0;
+  width: 100%;
+  border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+  .myInfoContainer,
+  .manageFriendContainer {
+    width: 95%;
+  }
+
+  .myDetailInfoContainer2 {
+    flex-direction: column;
+  }
+
+  .manageFriendContainer {
+    flex-direction: column;
+  }
+
+  .myFriendsListContainer,
+  .searchFriendContainer {
+    width: 100%;
+    margin: 10px 0;
+  }
+  .manageFriendTop{
+    margin-left: 0px;
+  }
+  .forFlexFriend{
+    flex-direction: column;
+  }
 }
