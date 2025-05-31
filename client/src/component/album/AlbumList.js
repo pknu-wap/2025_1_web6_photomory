@@ -3,8 +3,15 @@ import { Link } from "react-router-dom";
 import PaginationBar from "../common/PaginationBar.js";
 import emptyImage from "../../assets/emptyImage.svg";
 import "./AlbumList.css";
+
 //개인 앨범, 공유 앨범에서 각 앨범을 보여주는 컴포넌트
-function AlbumList({ albums, type = "", selectedGroupId = "", basePath = "" }) {
+function AlbumList({
+  albums,
+  type = "",
+  selectedGroupId = "",
+  basePath = "",
+  allAlbumsCount,
+}) {
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
   const albumsPerPage = 4; //한 페이지당 앨범 갯수
 
@@ -22,61 +29,76 @@ function AlbumList({ albums, type = "", selectedGroupId = "", basePath = "" }) {
   };
 
   if (!albums || albums.length === 0) {
-    return <p>앨범이 없습니다.</p>;
+    return (
+      <div
+        style={{
+          padding: "40px",
+          backgroundColor: "#f9f9f9",
+          borderRadius: "8px",
+          textAlign: "center",
+          color: "#999",
+          fontSize: "16px",
+          marginTop: "20px",
+        }}
+      >
+        {allAlbumsCount === 0
+          ? "아직 생성된 앨범이 없습니다. 첫 앨범을 만들어보세요!"
+          : "선택된 태그에 해당하는 앨범이 없습니다."}
+      </div>
+    );
   }
 
   return (
     <div>
-      {currentAlbums.map((currentAlbum) => (
-        <div key={currentAlbum.album_id} className="albumCard">
-          <div className="innerAlbum">
-            {/* 앨범 제목 */}
-            <h4 className="albumTitle">#{currentAlbum.album_name}</h4>
-            <Link
-              to={
-                type === "group"
-                  ? `${basePath}/${selectedGroupId}/${currentAlbum.album_id}`
-                  : `${basePath}/${currentAlbum.album_id}`
-              }
-              className="albumLink"
-            >
-              앨범 상세보기
-            </Link>
-            <div className="albumInfo">
-              <p>
-                총 {currentAlbum.photos.length}장의 사진들 | 생성일:{" "}
-                {currentAlbum.album_makingtime}
-              </p>
-            </div>
-          </div>
-          {/* 사진미리보기(최대4개) */}
-          <div className="albums">
-            {/* 사진 4개까지 미리보기 */}
-            {currentAlbum.photos.slice(0, 4).map((photo) => (
-              <div
-                key={photo.photo_id}
-                style={{
-                  textAlign: "center",
-                }}
+      {currentAlbums.map((currentAlbum) => {
+        const photos = Array.isArray(currentAlbum.photos)
+          ? currentAlbum.photos
+          : []; // 현재 앨범의 사진이 없다면 빈 배열 대체
+
+        return (
+          <div key={currentAlbum.album_id} className="albumCard">
+            <div className="innerAlbum">
+              {/* 앨범 제목 */}
+              <h4 className="albumTitle">#{currentAlbum.album_name}</h4>
+              <Link
+                to={
+                  type === "group"
+                    ? `${basePath}/${selectedGroupId}/${currentAlbum.album_id}`
+                    : `${basePath}/${currentAlbum.album_id}`
+                }
+                className="albumLink"
               >
-                <img
-                  src={photo.photo_url}
-                  alt={photo.photo_name}
-                  className="photo"
-                />
+                앨범 상세보기
+              </Link>
+              <div className="albumInfo">
+                <p>
+                  총 {photos.length}장의 사진들 | 생성일:{" "}
+                  {currentAlbum.album_makingtime}
+                </p>
               </div>
-            ))}
-            {/* 부족한 개수만큼 placeholder 추가 */}
-            {Array.from({ length: 4 - currentAlbum.photos.length }).map(
-              (_, idx) => (
+            </div>
+            {/* 사진미리보기(최대4개) */}
+            <div className="albums">
+              {/* 사진 4개까지 미리보기 */}
+              {photos.slice(0, 4).map((photo) => (
+                <div key={photo.photo_id} style={{ textAlign: "center" }}>
+                  <img
+                    src={photo.photo_url}
+                    alt={photo.photo_name}
+                    className="photo"
+                  />
+                </div>
+              ))}
+              {/* 부족한 개수만큼 placeholder 추가 */}
+              {Array.from({ length: 4 - photos.length }).map((_, idx) => (
                 <div key={`placeholder-${idx}`} className="emptyCard">
                   <img src={emptyImage} alt="emptyImage" />
                 </div>
-              )
-            )}
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
       {/*페이지네이션 바 */}
       <PaginationBar
         currentPage={currentPage}

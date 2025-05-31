@@ -1,6 +1,6 @@
 .addAlbumCard {
   width: 256px;
-  height: 485px;
+  height: 685px;
   border-radius: 8px;
   background: linear-gradient(0deg, rgba(0, 0, 0, 0.001), rgba(0, 0, 0, 0.001)),
     #ffffff;
@@ -36,4 +36,64 @@
 .addAlbumButton {
   all: unset;
   cursor: pointer;
+}
+
+.albumTagInput {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+}
+
+.selectedTagList {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  min-height: 45px;
+}
+
+.selectedTag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #e0f3ff;
+  color: #0077cc;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 13px;
+  white-space: nowrap;
+  height: 32px;
+}
+
+.selectedTag button {
+  margin-left: 6px;
+  background: none;
+  border: none;
+  color: #0077cc;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.cancelTagButton {
+  margin-left: 6px;
+  cursor: pointer;
+  border: none;
+}
+
+.tagAddButton {
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.tagContainer {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  height: 33.6px;
 }

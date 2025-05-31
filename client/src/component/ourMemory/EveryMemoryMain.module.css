@@ -13,8 +13,7 @@
 }
 
 .weeklyTagCamera{
-    width: 20px;
-    height: 20px;
+    font-size: 43px;
 }
 .weeklyTag{
     font-weight: 700;
@@ -27,6 +26,7 @@
     width: 100%;
     display: flex;
     align-items: center;
+    margin-bottom: 30px;
 }
 .tagBox{
     border: 1px solid black;
@@ -44,15 +44,11 @@
     width: clamp(18px, 3.5vw, 24px);
     height: clamp(18px, 3.5vw, 24px);
 }
-
-.tagBoxLandscape path {
-    fill: #00ff00 !important;
-}
-
 .tagBoxText{
     font-weight: 700;
     font-size: clamp(18px, 3.5vw, 24px);
     margin-left: 5px;
+    padding: 4px 7px 4px 7px;
 }
 
 .forFlexweeklyTag1{
@@ -89,19 +85,30 @@
 }
 
 .weeklyTagContainer{
-    width: clamp(220px, 40vw, 430px);
+    width: clamp(257px, 40vw, 430px);
     aspect-ratio: 1/1;
     border-radius: 10px;
     background-color: white;
+    box-shadow:0px 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
-.weeklyTagContainer{
-    box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.1),
-    0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+.forPadding{
+    padding: 10px;
 }
 .weeklyTagImage{
     width: 100%;
     height: clamp(150px, 38vw, 300px);
-    border-bottom: 1px solid black;
+    transition: all 0.3s ease;
+    background-color: rgb(230, 230, 230);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    object-fit: cover;
+}
+.weeklyTagImage:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0,0.3);
+}
+.weeklyTagImage:active{
+    box-shadow: rgba(100, 100, 100, 0.1) 0px 0px 15px 5px;
 }
 .trophyIcon{
     width: 20px;
@@ -125,7 +132,6 @@
     flex-direction: row;
 }
 .userImage{
-    border: 1px solid black;
     width: 35px;
     height: 35px;
     border-radius: 50%;
@@ -139,9 +145,8 @@
 .forFlexweeklyTag2{
     display: flex;
     flex-direction: row;
-    margin: 5px 0px 10px 5px;
-}
-
+    margin: 5px 5px 10px 5px;
+} 
 .heartContainer{
     background-color: #FEF2F2;
     border-radius: 20px;
@@ -166,6 +171,12 @@
 .heartContainer:hover,
 .commentContainer:hover{
     cursor: pointer;
+}
+.heartContainer:active .heartIcon,
+.commentContainer:active .commentIcon,
+.heartContainer:active .todayTagHeartIcon,
+.commentContainer:active .todayTagCommentIcon{
+    transform: scale(0.95);
 }
 .heartIcon{
     width: 20px;
@@ -231,12 +242,22 @@
 .todayTagImage{
     height: 100%;
     width: clamp(150px, 20vw, 200px);
-    border-right: 1px solid black;
+    background-color: rgb(230, 230, 230);
     flex: none;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    transition: all 0.3s ease;
+    object-fit: cover;
+}
+.todayTagImage:hover{
+    box-shadow: 0 10px 20px rgba(0, 0, 0,0.3);
+}
+.todayTagImage:active{
+    box-shadow: rgba(100, 100, 100, 0.1) 0px 0px 15px 5px;
 }
 .forFlexTodayTag1{
     flex: 1;
-    margin: 5px 15px 10px 10px;
+    margin: 15px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
