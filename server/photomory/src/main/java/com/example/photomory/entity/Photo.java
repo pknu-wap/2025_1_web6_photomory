@@ -24,7 +24,6 @@ public class Photo {
     @Column(name = "photo_id")
     private Integer photoId;
 
-
     @Column(name = "post_id", nullable = false)
     private Integer postId;
 

@@ -39,6 +39,11 @@ public class UserEntity {
     @Column(name = "user_field", nullable = false)
     private String userField;
 
+    @Column(name = "user_area")
+    private String userArea;
+
+
+
     public UserEntity() {}
 
     public UserEntity(
@@ -49,7 +54,8 @@ public class UserEntity {
             String userEquipment,
             String userIntroduction,
             String userJob,
-            String userField
+            String userField,
+            String userArea
     ) {
         this.userEmail = userEmail;
         this.userName = userName;
@@ -59,6 +65,7 @@ public class UserEntity {
         this.userIntroduction = userIntroduction;
         this.userJob = userJob;
         this.userField = userField;
+        this.userArea = userArea;
     }
 
     // Setter for userPassword (기존 코드)
@@ -102,6 +109,9 @@ public class UserEntity {
     public String getUserField() {
         return userField;
     }
+
+    public String getUserArea() {return userArea;}
+
 
 
 

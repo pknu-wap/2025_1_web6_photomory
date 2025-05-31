@@ -13,6 +13,7 @@ public class RegisterRequestDto {
     private String user_equipment;
     private String user_introduction;
     private String user_field;
+    private String user_area;
 
     // 기본 생성자 (public)
     public RegisterRequestDto() {}
@@ -27,6 +28,7 @@ public class RegisterRequestDto {
             @JsonProperty("user_job") String user_job,
             @JsonProperty("user_equipment") String user_equipment,
             @JsonProperty("user_introduction") String user_introduction,
+            @JsonProperty("user_area") String user_area,
             @JsonProperty("user_field") String user_field) {
         this.user_name = user_name;
         this.user_email = user_email;
@@ -35,6 +37,7 @@ public class RegisterRequestDto {
         this.user_job = user_job;
         this.user_equipment = user_equipment;
         this.user_introduction = user_introduction;
+        this.user_area = user_area;
         this.user_field = user_field;
     }
 
@@ -67,7 +70,10 @@ public class RegisterRequestDto {
         return user_introduction;
     }
 
+    public String getUser_area() { return user_area; }
+
     public String getUser_field() {
         return user_field;
     }
+
 }

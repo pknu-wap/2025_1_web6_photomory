@@ -72,7 +72,8 @@ public class RegisterService {
                         userRequestDto.getUser_equipment(),
                         userRequestDto.getUser_introduction(),
                         userRequestDto.getUser_job(),
-                        userRequestDto.getUser_field()
+                        userRequestDto.getUser_field(),
+                        userRequestDto.getUser_area()
                 );
 
                 // ✅ 저장

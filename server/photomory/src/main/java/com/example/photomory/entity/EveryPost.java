@@ -12,7 +12,7 @@ import java.util.HashSet; // ★★★ 이 줄 추가 ★★★
 import java.util.Set;
 
 @Entity
-@Table(name = "EveryPost")
+@Table(name = "every_post")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -39,7 +39,7 @@ public class EveryPost {
     private String location;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "album_id", nullable = false)
+    @JoinColumn(name = "album_id", nullable = true)
     private EveryAlbum everyAlbum;
 
     @OneToMany(mappedBy = "everyPost", cascade = CascadeType.ALL, orphanRemoval = true)
