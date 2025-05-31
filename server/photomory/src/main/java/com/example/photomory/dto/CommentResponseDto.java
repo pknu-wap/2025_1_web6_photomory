@@ -1,13 +1,10 @@
 package com.example.photomory.dto;
 
 import com.example.photomory.entity.Comment;
-import com.example.photomory.entity.Post; // Post 임포트 추가
-import com.example.photomory.entity.Album; // Album 임포트 추가
-import com.example.photomory.entity.UserEntity; // UserEntity 임포트 추가
+
 
 import java.time.format.DateTimeFormatter;
 
-// Lombok 어노테이션을 사용하여 코드를 간결하게 만드는 것을 권장합니다.
 // @Getter
 // @Setter
 // @NoArgsConstructor
@@ -41,13 +38,12 @@ public class CommentResponseDto {
         // Comment 엔티티에 getAlbum(), getPost(), getUser(), getCommentsText(), getCommentTime()이 있어야 합니다.
         return new CommentResponseDto(
                 comment.getCommentId(),
-                // Comment 엔티티에 album 필드가 추가되었다면 사용
-                comment.getAlbum() != null ? comment.getAlbum().getAlbumId() : null,
-                comment.getPost() != null ? comment.getPost().getPostId() : null,
+                comment.getEveryAlbum() != null ? comment.getEveryAlbum().getAlbumId() : null,
+                comment.getEveryPost() != null ? comment.getEveryPost().getPostId() : null,
                 comment.getUser() != null ? comment.getUser().getUserId() : null,
                 comment.getUser() != null ? comment.getUser().getUserName() : null,
-                comment.getCommentText(), // 엔티티 필드명 `commentsText`
-                comment.getCommentTime() != null // 엔티티 필드명 `commentTime`
+                comment.getCommentText(),
+                comment.getCommentTime() != null
                         ? comment.getCommentTime().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                         : null
         );

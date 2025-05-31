@@ -24,7 +24,7 @@ public class EveryCommentDto {
     public static EveryCommentDto from(Comment comment, String userName) {
         return EveryCommentDto.builder()
                 .commentId(comment.getCommentId())
-                .postId(comment.getOurPost().getPostId())
+                .postId(comment.getEveryPost().getPostId())  // everyPost로 바꿈
                 .comment(comment.getCommentText())
                 .createdAt(comment.getCommentTime())
                 .userId(comment.getUser().getUserId())

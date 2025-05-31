@@ -5,9 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.*;
-
-import java.util.HashSet;
+import lombok.Setter;
+import java.util.HashSet; // ★★★ 이 줄 추가 ★★★
 import java.util.Set;
 
 @Entity
@@ -27,22 +26,33 @@ public class Tag {
     @Column(name = "tag_name", nullable = false)
     private String tagName;
 
-    // Post와 ManyToMany 관계 유지
     @ManyToMany(mappedBy = "tags")
-    private Set<Post> posts = new HashSet<>();
+    @Builder.Default
+    private Set<EveryPost> everyPosts = new HashSet<>();
 
-    // Comment와 ManyToOne 관계 추가 (null 허용)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    // 생성자
-    public Tag(String tagName) {
-        this.tagName = tagName;
+    public void addEveryPost(EveryPost everyPost) {
+        if (this.everyPosts == null) {
+            this.everyPosts = new HashSet<>();
+        }
+        this.everyPosts.add(everyPost);
     }
-    public void setPost(Post post) {
-        this.posts = new HashSet<>();
-        this.posts.add(post);
+    @ManyToMany(mappedBy = "tags")
+    @Builder.Default
+    private Set<OurPost> ourPosts = new HashSet<>();
+
+    @ManyToMany(mappedBy = "tags")
+    @Builder.Default
+    private Set<MyPost> myPosts = new HashSet<>();
+
+
+    public void removeEveryPost(EveryPost everyPost) {
+        if (this.everyPosts != null) {
+            this.everyPosts.remove(everyPost);
+        }
     }
 
 }

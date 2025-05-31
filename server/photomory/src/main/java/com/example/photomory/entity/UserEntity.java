@@ -7,7 +7,7 @@ import java.util.Objects; // Objects 클래스 임포트
 
 @Entity
 @Setter
-@Table(name = "USERS") // 테이블 이름이 "USERS"로 되어 있네요. MyAlbum의 MyAlbumId와 UserEntity의 UserId가 같이 사용되는 AlbumMembers 엔티티에서 일관성 유지에 도움이 됩니다.
+@Table(name = "USERS") //
 public class UserEntity {
 
     @Id

@@ -1,11 +1,7 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -24,16 +20,25 @@ public class Comment {
     private Integer commentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "album_id", nullable = false)
-    private OurAlbum ourAlbum; //
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private OurPost ourPost; //
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "every_post_id", nullable = true)
+    private EveryPost everyPost;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "our_post_id", nullable = true)
+    private OurPost ourPost;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "every_album_id", nullable = true)
+    private EveryAlbum everyAlbum;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "our_album_id", nullable = true)
+    private OurAlbum ourAlbum;
 
     @Column(name = "comment_text", nullable = false, length = 500)
     private String commentText;
@@ -41,4 +46,22 @@ public class Comment {
     @Column(name = "comment_time", nullable = false)
     private LocalDateTime commentTime;
 
+    @PrePersist @PreUpdate
+    public void validateParentRelationship() {
+        int parentCount = 0;
+        if (everyPost != null) parentCount++;
+        if (ourPost != null) parentCount++;
+        // if (myPost != null) parentCount++;
+
+        if (everyAlbum != null) parentCount++;
+        if (ourAlbum != null) parentCount++;
+
+        if (parentCount != 1) {
+            throw new IllegalStateException("댓글은 정확히 하나의 게시물 또는 앨범에만 연결되어야 합니다.");
+        }
+
+        if (commentTime == null) {
+            commentTime = LocalDateTime.now();
+        }
+    }
 }

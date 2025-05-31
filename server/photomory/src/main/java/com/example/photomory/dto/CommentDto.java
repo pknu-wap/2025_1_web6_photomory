@@ -22,7 +22,7 @@ public class CommentDto {
     public static CommentDto fromEntity(Comment comment) {
         return CommentDto.builder()
                 .commentId(comment.getCommentId() != null ? comment.getCommentId().longValue() : null)
-                .postId(comment.getPost() != null ? comment.getPost().getPostId() : null)
+                .postId(comment.getEveryPost() != null ? comment.getEveryPost().getPostId() : null)
                 .userId(comment.getUser() != null ? comment.getUser().getUserId() : null)
                 .userName(comment.getUser() != null ? comment.getUser().getUserName() : "알 수 없음")
                 .commentsText(comment.getCommentText())

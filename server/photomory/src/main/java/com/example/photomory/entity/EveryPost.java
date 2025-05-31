@@ -7,18 +7,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime; // LocalDateTime은 사용되지 않지만, 다른 엔티티에서 필요할 수 있으므로 유지
-import java.util.HashSet;
+import java.time.LocalDateTime;
+import java.util.HashSet; // ★★★ 이 줄 추가 ★★★
 import java.util.Set;
 
 @Entity
-@Table(name = "MyPost")
+@Table(name = "EveryPost")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MyPost {
+public class EveryPost {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,18 +40,40 @@ public class MyPost {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "album_id", nullable = false)
-    private MyAlbum myAlbum;
+    private EveryAlbum everyAlbum;
 
-    @OneToMany(mappedBy = "myPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "everyPost", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private Set<Photo> photos = new HashSet<>();
 
+    @OneToMany(mappedBy = "everyPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Comment> comments = new HashSet<>();
+
+    @Column(name = "likes_count", nullable = false)
+    @Builder.Default
+    private Integer likesCount = 0;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "photo_url", length = 500)
+    private String photoUrl;
+
+    @Column(name = "making_time")
+    private LocalDateTime makingTime;
+
     @ManyToMany
     @JoinTable(
-            name = "my_post_tag",
-            joinColumns = @JoinColumn(name = "my_post_id"),
+            name = "every_post_tags",
+            joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     @Builder.Default
     private Set<Tag> tags = new HashSet<>();
+
+    @Column(name = "comment_count", nullable = false)
+    @Builder.Default
+    private Integer commentCount = 0;
 }

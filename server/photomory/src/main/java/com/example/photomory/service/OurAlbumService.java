@@ -197,7 +197,7 @@ public class OurAlbumService {
         }
 
         Comment comment = new Comment();
-        comment.setOurAlbum(ourAlbum); //
+        comment.setOurAlbum(ourAlbum);
         comment.setOurPost(ourPost);
         comment.setUser(user);
         comment.setCommentText(text);

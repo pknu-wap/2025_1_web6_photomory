@@ -37,7 +37,7 @@ public class AlbumResponseDto {
                 .albumName(ourAlbum.getAlbumName())
                 .albumDescription(ourAlbum.getAlbumDescription())
                 .albumMakingTime(ourAlbum.getAlbumMakingTime()) // 필드명은 소문자 't'에서 대문자 'T'로 통일되어야 합니다.
-                .groupId(ourAlbum.getMyAlbum() != null ? ourAlbum.getMyAlbum().getMyalbumId().longValue() : null)
+                .groupId(ourAlbum.getUser() != null ? ourAlbum.getUser().getUserId().longValue() : null)
                 .posts(ourAlbum.getPosts() != null ? // OurAlbum에 getPosts()가 있다고 가정
                         ourAlbum.getPosts().stream()
                                 .map(post -> PostResponseDto.fromEntity(post)) // PostResponseDto::fromEntity를 호출

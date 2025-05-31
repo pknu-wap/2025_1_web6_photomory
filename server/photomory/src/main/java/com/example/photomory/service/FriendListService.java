@@ -62,7 +62,7 @@ public class FriendListService {
         List<Friend> friends = friendRepository.findByUserIdAndAreWeFriendTrue(loginUserId);
 
         // 이미 그룹에 속한 사용자 ID들 조회
-        List<Long> memberUserIds = albumMembersRepository.findUserIdsByMyAlbumId(groupId);
+        List<Long> memberUserIds = albumMembersRepository.findUserIdsByOurAlbumId(groupId.intValue());
 
         // 친구 중에, 그룹 멤버가 아닌 친구만 필터링
         return friends.stream()

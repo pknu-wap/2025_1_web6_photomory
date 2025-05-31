@@ -1,3 +1,4 @@
+// AlbumConnect.java 파일의 내용 (이렇게 변경해야 합니다)
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
@@ -5,45 +6,54 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "ALBUM_CONNECT")
+@Table(name = "ALBUM_CONNECT") // 이 테이블명은 유지
 @IdClass(AlbumConnect.AlbumConnectId.class)
 public class AlbumConnect {
 
     @Id
-    @Column(name = "album_id2")
-    private Integer albumId2;
+    @Column(name = "our_album_id") // OurAlbum의 ID를 참조
+    private Integer ourAlbumId;
+
+    // 만약 EveryAlbum과의 연결도 필요하다면 아래를 추가
+    // @Id
+    // @Column(name = "every_album_id")
+    // private Integer everyAlbumId;
 
     @Id
-    @Column(name = "user_id2")
-    private Long userId2;
+    @Column(name = "user_id") // UserEntity의 ID를 참조
+    private Long userId;
 
     // Getters and setters
-    public Integer getAlbumId2() {
-        return albumId2;
+    public Integer getOurAlbumId() {
+        return ourAlbumId;
     }
 
-    public void setAlbumId2(Integer albumId2) {
-        this.albumId2 = albumId2;
+    public void setOurAlbumId(Integer ourAlbumId) {
+        this.ourAlbumId = ourAlbumId;
     }
 
-    public Long getUserId2() {
-        return userId2;
+    // public Integer getEveryAlbumId() { ... } (everyAlbumId 추가 시)
+    // public void setEveryAlbumId(Integer everyAlbumId) { ... } (everyAlbumId 추가 시)
+
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUserId2(Long userId2) {
-        this.userId2 = userId2;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     // Composite key class
     public static class AlbumConnectId implements Serializable {
-        private Integer albumId2;
-        private Long userId2;
+        private Integer ourAlbumId;
+        // private Integer everyAlbumId; // everyAlbumId 추가 시
+        private Long userId;
 
         public AlbumConnectId() {}
 
-        public AlbumConnectId(Integer albumId2, Long userId2) {
-            this.albumId2 = albumId2;
-            this.userId2 = userId2;
+        public AlbumConnectId(Integer ourAlbumId, Long userId) { // everyAlbumId 추가 시 생성자 변경
+            this.ourAlbumId = ourAlbumId;
+            this.userId = userId;
         }
 
         @Override
@@ -51,13 +61,19 @@ public class AlbumConnect {
             if (this == o) return true;
             if (!(o instanceof AlbumConnectId)) return false;
             AlbumConnectId that = (AlbumConnectId) o;
-            return Objects.equals(albumId2, that.albumId2) &&
-                    Objects.equals(userId2, that.userId2);
+            return Objects.equals(ourAlbumId, that.ourAlbumId) &&
+                    Objects.equals(userId, that.userId);
+            // everyAlbumId 추가 시 변경:
+            // return Objects.equals(ourAlbumId, that.ourAlbumId) &&
+            //        Objects.equals(everyAlbumId, that.everyAlbumId) &&
+            //        Objects.equals(userId, that.userId);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(albumId2, userId2);
+            return Objects.hash(ourAlbumId, userId);
+            // everyAlbumId 추가 시 변경:
+            // return Objects.hash(ourAlbumId, everyAlbumId, userId);
         }
     }
 }

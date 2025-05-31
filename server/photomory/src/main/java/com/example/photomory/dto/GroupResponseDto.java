@@ -20,7 +20,6 @@ public class GroupResponseDto {
     private String groupDescription;
     private LocalDateTime createdAt;
 
-    // MyAlbum 엔티티로부터 DTO 생성
     public static GroupResponseDto fromEntity(MyAlbum myAlbum) {
         return GroupResponseDto.builder()
                 .groupId(myAlbum.getMyalbumId() != null ? myAlbum.getMyalbumId().longValue() : null)
@@ -30,13 +29,12 @@ public class GroupResponseDto {
                 .build();
     }
 
-    // OurAlbum 엔티티로부터 DTO 생성 (새롭게 추가된 오버로드 메서드)
     public static GroupResponseDto fromEntity(OurAlbum ourAlbum) {
         return GroupResponseDto.builder()
                 .groupId(ourAlbum.getAlbumId() != null ? ourAlbum.getAlbumId().longValue() : null)
                 .groupName(ourAlbum.getAlbumName())
                 .groupDescription(ourAlbum.getAlbumDescription())
-                .createdAt(ourAlbum.getAlbumMakingtime())
+                .createdAt(ourAlbum.getAlbumMakingTime()) // 여기 대소문자 주의
                 .build();
     }
 }

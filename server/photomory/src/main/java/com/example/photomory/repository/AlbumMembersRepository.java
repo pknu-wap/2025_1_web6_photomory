@@ -26,5 +26,6 @@ public interface AlbumMembersRepository extends JpaRepository<AlbumMembers, Albu
     long countByOurAlbum_AlbumId(Integer albumId);
 
     @Query("SELECT am.userEntity.userId FROM AlbumMembers am WHERE am.ourAlbum.albumId = :albumId")
-    List<Long> findUserIdsByOurAlbumId(@Param("albumId") Integer albumId); // Long 대신 Integer로 변경 (OurAlbum의 ID 타입에 맞춤)
+    List<Long> findUserIdsByOurAlbumId(@Param("albumId") Integer albumId);
+
 }

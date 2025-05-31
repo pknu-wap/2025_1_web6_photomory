@@ -7,51 +7,54 @@ import com.example.photomory.entity.*;
 import com.example.photomory.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.HashSet;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class EveryPostService {
 
-    private final PostRepository postRepository;
+    private final EveryPostRepository everyPostRepository;
     private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final PhotoRepository photoRepository;
     private final S3Service s3Service;
 
+    @Transactional(readOnly = true)
     public List<EveryPostResponseDto> getAllPostsWithComments() {
-        List<Post> posts = postRepository.findAll();
+        List<EveryPost> everyPosts = everyPostRepository.findAll();
 
-        return posts.stream().map(post -> {
+        return everyPosts.stream().map(everyPost -> {
             EveryPostResponseDto dto = new EveryPostResponseDto();
-            dto.setPostId(post.getPostId());
+            dto.setPostId(everyPost.getPostId());
 
-            if (post.getUser() != null) {
-                dto.setUserId(post.getUser().getUserId());
-                dto.setUserName(post.getUser().getUserName());
-                dto.setUserPhotourl(post.getUser().getUserPhotourl());
+            if (everyPost.getUser() != null) {
+                dto.setUserId(everyPost.getUser().getUserId());
+                dto.setUserName(everyPost.getUser().getUserName());
+                dto.setUserPhotourl(everyPost.getUser().getUserPhotourl());
             }
 
-            dto.setPostText(post.getPostText());
-            dto.setPostDescription(post.getPostDescription());
-            dto.setLikesCount(post.getLikesCount());
-            dto.setLocation(post.getLocation());
-            dto.setCreatedAt(post.getCreatedAt());
-            dto.setPhotoUrl(post.getPhotoUrl());
+            dto.setPostText(everyPost.getPostText());
+            dto.setPostDescription(everyPost.getPostDescription());
+            dto.setLikesCount(everyPost.getLikesCount());
+            dto.setLocation(everyPost.getLocation());
+            dto.setCreatedAt(everyPost.getCreatedAt());
+            dto.setPhotoUrl(everyPost.getPhotoUrl());
 
-            if (post.getTags() != null) {
-                dto.setTags(post.getTags().stream()
+            if (everyPost.getTags() != null) {
+                dto.setTags(everyPost.getTags().stream()
                         .map(Tag::getTagName)
                         .collect(Collectors.toList()));
             }
 
-            List<EveryCommentDto> commentDtos = commentRepository.findByPost_PostId(post.getPostId().longValue())
+            List<EveryCommentDto> commentDtos = commentRepository.findByEveryPost_PostId(everyPost.getPostId())
                     .stream()
                     .map(comment -> {
                         UserEntity commenter = comment.getUser();
@@ -71,6 +74,7 @@ public class EveryPostService {
         }).collect(Collectors.toList());
     }
 
+    @Transactional
     public void createPost(EveryPostRequestDto dto, String userEmail) {
         UserEntity user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
@@ -84,7 +88,7 @@ public class EveryPostService {
 
         LocalDateTime time = LocalDateTime.parse(dto.getPhotoMakingTime());
 
-        Post post = Post.builder()
+        EveryPost everyPost = EveryPost.builder()
                 .user(user)
                 .postText(dto.getPostText())
                 .postDescription(dto.getPostDescription())
@@ -92,15 +96,14 @@ public class EveryPostService {
                 .likesCount(0)
                 .photoUrl(photoUrl)
                 .makingTime(time)
+                .createdAt(LocalDateTime.now())
                 .build();
-        postRepository.save(post);
+        everyPostRepository.save(everyPost);
 
         Photo photo = Photo.builder()
-                .post(post)
-                .userId(user.getUserId())
+                .everyPost(everyPost)
                 .photoUrl(photoUrl)
                 .photoName(dto.getPhotoName())
-                .photoComment(dto.getPhotoComment())
                 .photoMakingTime(time)
                 .date(time.toLocalDate())
                 .title(dto.getPhotoName())
@@ -108,10 +111,16 @@ public class EveryPostService {
         photoRepository.save(photo);
 
         for (String tagName : dto.getTags()) {
-            Tag tag = Tag.builder()
-                    .tagName(tagName)
-                    .posts(Collections.singleton(post))
-                    .build();
+            Tag tag = tagRepository.findByTagName(tagName)
+                    .orElse(Tag.builder().tagName(tagName).build());
+
+            Set<EveryPost> everyPostsForTag = tag.getEveryPosts();
+            if (everyPostsForTag == null) {
+                everyPostsForTag = new HashSet<>();
+                tag.setEveryPosts(everyPostsForTag);
+            }
+            everyPostsForTag.add(everyPost);
+
             tagRepository.save(tag);
         }
     }

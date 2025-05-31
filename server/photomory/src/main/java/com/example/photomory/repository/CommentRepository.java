@@ -9,21 +9,29 @@ import java.util.Collection;
 import java.util.List;
 
 @Repository
-public interface CommentRepository extends JpaRepository<Comment, Long> { // Comment의 ID가 Long임을 확인
+public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-    // 특정 게시물(postId)에 달린 댓글 조회
-    List<Comment> findByPost_PostId(Long postId); // Post ID가 Long임을 확인
+    // OurPost에 달린 댓글 조회
+    List<Comment> findByOurPost_PostId(Integer postId);
 
-    // 특정 앨범(albumId) 내 특정 게시물(postId)의 댓글 조회
-    List<Comment> findByAlbum_AlbumIdAndPost_PostId(Long albumId, Long postId); // Album ID와 Post ID가 Long임을 확인
+    // EveryPost에 달린 댓글 조회
+    List<Comment> findByEveryPost_PostId(Integer postId);
 
-    List<Comment> findByPost_PostIdIn(List<Long> postIds); // Post ID가 Long임을 확인
+    // OurAlbum + OurPost 조합으로 댓글 조회
+    List<Comment> findByOurAlbum_AlbumIdAndOurPost_PostId(Integer albumId, Integer postId);
 
-    @Transactional // 이 메소드에서 데이터 삭제가 발생하므로 @Transactional 어노테이션을 붙여야 합니다.
-    void deleteByPost_PostId(Long postId); // Post ID가 Long임을 확인
+    // EveryAlbum + EveryPost 조합으로 댓글 조회
+    List<Comment> findByEveryAlbum_AlbumIdAndEveryPost_PostId(Integer albumId, Integer postId);
 
+    // OurPost 여러 개에 달린 댓글 한꺼번에 조회
+    List<Comment> findByOurPost_PostIdIn(Collection<Long> ourPostIds);
+
+    // 삭제 메서드 - ourPost 기준
+    @Transactional
     void deleteByOurPost_PostId(Integer postId);
 
-    List<Comment> findByOurPost_PostIdIn(Collection<Long> ourPostIds);
+    // 삭제 메서드 - everyPost 기준
+    @Transactional
+    void deleteByEveryPost_PostId(Integer postId);
 }
 

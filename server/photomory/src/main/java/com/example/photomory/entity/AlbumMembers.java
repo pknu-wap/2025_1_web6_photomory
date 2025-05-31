@@ -1,11 +1,11 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor; // Lombok AllArgsConstructor 추가
-import lombok.Builder;             // Lombok Builder 추가
-import lombok.Getter;              // Lombok Getter 추가
-import lombok.NoArgsConstructor;   // Lombok NoArgsConstructor 추가
-import lombok.Setter;              // Lombok Setter 추가
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -13,11 +13,11 @@ import java.util.Objects;
 @Entity
 @Table(name = "ALBUM_MEMBERS")
 @IdClass(AlbumMembers.AlbumMembersId.class)
-@Getter // 모든 필드에 대한 Getter 자동 생성
-@Setter // 모든 필드에 대한 Setter 자동 생성
-@NoArgsConstructor // 인자 없는 생성자 자동 생성
-@AllArgsConstructor // 모든 필드를 인자로 받는 생성자 자동 생성
-@Builder // 빌더 패턴 사용 가능
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AlbumMembers {
 
     @Id
@@ -27,12 +27,12 @@ public class AlbumMembers {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "album_id", nullable = false)
-    private OurAlbum ourAlbum; // 필드 이름이 'ourAlbum'이므로 setOurAlbum() 메서드가 사용됩니다.
+    @JoinColumn(name = "our_album_id", nullable = false) // 'album_id'에서 'our_album_id'로 컬럼명 변경
+    private OurAlbum ourAlbum;
 
     public static class AlbumMembersId implements Serializable {
-        private Long userEntity;   // UserEntity PK 타입과 일치 (user_id)
-        private Integer ourAlbum;  // OurAlbum PK 타입과 일치 (album_id)
+        private Long userEntity;   // UserEntity PK 타입과 일치해야 합니다. (user_id)
+        private Integer ourAlbum;  // OurAlbum PK 타입과 일치해야 합니다. (our_album_id)
 
         public AlbumMembersId() {}
 
