@@ -305,7 +305,7 @@ public class OurAlbumService {
                 albumMembersRepository.save(member);
 
                 // 알림 전송: 그룹 초대 알림
-                String message = inviter.getUserName() + "님의 " + group.getMyAlbumName() + " 그룹에 초대되었습니다.";
+                String message = inviter.getUserName() + "님의 " + group.getMyalbumName() + " 그룹에 초대되었습니다.";
                 notificationService.sendNotification(
                         friend.getUserId(), // 수신자: 초대받은 친구
                         inviter.getUserId(), // 발신자: 초대한 사람

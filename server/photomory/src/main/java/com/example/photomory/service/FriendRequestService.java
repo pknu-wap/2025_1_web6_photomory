@@ -1,5 +1,6 @@
 package com.example.photomory.service;
 
+import com.example.photomory.dto.FriendListDto;
 import com.example.photomory.dto.NonFriendUserDto;
 import com.example.photomory.entity.RequestStatus;
 import com.example.photomory.domain.NotificationType;
@@ -137,6 +138,5 @@ public class FriendRequestService {
                 ))
                 .toList();
     }
-
 
 }
