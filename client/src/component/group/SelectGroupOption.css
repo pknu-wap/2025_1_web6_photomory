@@ -9,6 +9,23 @@
   z-index: 1000;
 }
 
+.selectGroupButton {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+/* 마우스를 올렸을 때: 살짝 위로 올라감 */
+.selectGroupButton:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* 클릭했을 때: 눌림 효과 */
+.selectGroupButton:active {
+  transform: translateY(1px) scale(0.97);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 .select-option {
   padding: 8px 12px;
   cursor: pointer;

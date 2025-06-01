@@ -1,32 +1,64 @@
 package com.example.photomory.service;
 
-import com.example.photomory.dto.CommentRequestDto;
-import com.example.photomory.entity.Album;
+import com.example.photomory.domain.NotificationType;
+import com.example.photomory.dto.EveryCommentRequestDto;
 import com.example.photomory.entity.Comment;
-import com.example.photomory.repository.AlbumRepository;
+import com.example.photomory.entity.EveryPost;
+import com.example.photomory.entity.UserEntity;
 import com.example.photomory.repository.CommentRepository;
+import com.example.photomory.repository.EveryPostRepository;
+import com.example.photomory.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EveryCommentService {
 
     private final CommentRepository commentRepository;
-    private final AlbumRepository albumRepository;
+    private final EveryPostRepository everyPostRepository;  // 변경
+    private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
-    public void addComment(CommentRequestDto dto) {
-        Album album = albumRepository.findById(dto.getAlbumId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 앨범이 존재하지 않습니다."));
+    public void addComment(EveryCommentRequestDto dto, String userEmail) {
+        UserEntity user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("유저 못 찾음"));
 
-        Comment comment = new Comment();
-        comment.setAlbumId(dto.getAlbumId());
-        comment.setPostId(dto.getPostId());
-        comment.setAlbum(album);
-        comment.setUserId(dto.getUserId());
-        comment.setCommentsText(dto.getCommentsText());
-        comment.setCommentCount(1);
+        EveryPost post = everyPostRepository.findById(dto.getPostId())
+                .orElseThrow(() -> new RuntimeException("게시글 못 찾음"));
 
+        Comment comment = Comment.builder()
+                .user(user)
+                .everyPost(post)  // 여기 post는 EveryPost 타입입니다.
+                .commentText(dto.getCommentsText())
+                .commentTime(LocalDateTime.now())
+                .build();
         commentRepository.save(comment);
+
+        post.setCommentCount(post.getCommentCount() + 1);
+        everyPostRepository.save(post);
+
+        // 알림 전송
+        UserEntity postWriter = post.getUser(); // 게시글 작성자
+        if (!user.getUserId().equals(postWriter.getUserId())) { // 자기 댓글은 알림 안 보냄
+            String postTitle = post.getPhotos().stream()
+                    .map(photo -> photo.getTitle())
+                    .findAny()
+                    .orElse("제목 없음");
+
+            String message = user.getUserName() + "님이 " + postTitle + " 게시글에 댓글을 남겼습니다.";
+
+            notificationService.sendNotification(
+                    postWriter.getUserId(),
+                    user.getUserId(),
+                    message,
+                    NotificationType.COMMENT,
+                    post.getPostId().longValue()
+            );
+        }
     }
 }

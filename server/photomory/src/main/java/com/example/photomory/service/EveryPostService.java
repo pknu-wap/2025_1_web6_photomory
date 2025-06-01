@@ -1,77 +1,203 @@
 package com.example.photomory.service;
 
+import com.example.photomory.dto.EveryPostRequestDto;
 import com.example.photomory.dto.EveryPostResponseDto;
 import com.example.photomory.dto.EveryCommentDto;
-import com.example.photomory.entity.Photo;
-import com.example.photomory.entity.Post;
-import com.example.photomory.entity.Tag;
-import com.example.photomory.entity.UserEntity;
-import com.example.photomory.entity.Comment;
-import com.example.photomory.repository.CommentRepository;
-import com.example.photomory.repository.PhotoRepository;
-import com.example.photomory.repository.PostRepository;
-import com.example.photomory.repository.TagRepository;
-import com.example.photomory.repository.UserRepository;
+import com.example.photomory.dto.EveryPostUpdateDto;
+import com.example.photomory.entity.*;
+import com.example.photomory.repository.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class EveryPostService {
 
-    private final PostRepository postRepository;
-    private final PhotoRepository photoRepository;
+    private final EveryPostRepository everyPostRepository;
     private final TagRepository tagRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final PhotoRepository photoRepository;
+    private final LikeRepository likeRepository;
+    private final S3Service s3Service;
 
-    public List<EveryPostResponseDto> getAllPostsWithComments() {
-        List<Post> posts = postRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<EveryPostResponseDto> getAllPostsWithComments(String userEmail) {
+        UserEntity user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("유저 정보를 찾을 수 없습니다."));
 
-        return posts.stream().map(post -> {
+        List<EveryPost> everyPosts = everyPostRepository.findAll();
+
+        return everyPosts.stream().map(everyPost -> {
             EveryPostResponseDto dto = new EveryPostResponseDto();
+            dto.setPostId(everyPost.getPostId());
 
-            dto.setPostId(post.getPostId());
-            dto.setUserId(post.getUser().getUserId());
-            dto.setUserName(post.getUser().getUserName());
-            dto.setUserPhotourl(post.getUser().getUserPhotourl());
-            dto.setPostText(post.getPostText());
-            dto.setPostDescription(post.getPostDescription());
-            dto.setLikesCount(post.getLikesCount());
-            dto.setLocation(post.getLocation());
+            if (everyPost.getUser() != null) {
+                dto.setUserId(everyPost.getUser().getUserId());
+                dto.setUserName(everyPost.getUser().getUserName());
+                dto.setUserPhotourl(everyPost.getUser().getUserPhotourl());
+            }
 
+            dto.setPostText(everyPost.getPostText());
+            dto.setPostDescription(everyPost.getPostDescription());
+            dto.setLocation(everyPost.getLocation());
+            dto.setCreatedAt(everyPost.getCreatedAt());
+            dto.setPhotoUrl(everyPost.getPhotoUrl());
 
-            Photo photo = photoRepository.findByPost(post).orElse(null);
-            dto.setPhotoUrl(photo != null ? photo.getPhotoUrl() : null);
+            // 좋아요 수 및 여부
+            Long likeCount = likeRepository.countByEveryPost(everyPost);
+            dto.setLikesCount(likeCount.intValue());
+            boolean isLiked = likeRepository.findByUserAndEveryPost(user, everyPost).isPresent();
+            dto.setLiked(isLiked);
 
+            // 태그
+            if (everyPost.getTags() != null) {
+                dto.setTags(everyPost.getTags().stream()
+                        .map(Tag::getTagName)
+                        .collect(Collectors.toList()));
+            }
 
-            List<String> tags = tagRepository.findByPost(post).stream()
-                    .map(Tag::getTagName)
-                    .toList();
-            dto.setTags(tags);
-
-
-            List<EveryCommentDto> commentDtos = commentRepository.findByPostId(post.getPostId()).stream()
-                    .map(comment -> {
-                        EveryCommentDto cdto = new EveryCommentDto();
-
-
-                        Long commenterId = comment.getUserId() != null ? comment.getUserId().longValue() : null;
-                        UserEntity commenter = commenterId != null ? userRepository.findById(commenterId).orElse(null) : null;
-
-                        cdto.setUserId(comment.getUserId());
-                        cdto.setUserName(commenter != null ? commenter.getUserName() : "알 수 없음");
-                        cdto.setUserPhotourl(commenter != null ? commenter.getUserPhotourl() : null);
-                        cdto.setCommentText(comment.getCommentsText());
-                        return cdto;
-                    }).toList();
+            // 댓글 (수정된 부분)
+            List<EveryCommentDto> commentDtos = commentRepository.findByEveryPost_PostId(everyPost.getPostId())
+                    .stream()
+                    .map(comment -> EveryCommentDto.from(comment, comment.getUser().getUserName()))
+                    .collect(Collectors.toList());
 
             dto.setComments(commentDtos);
             dto.setCommentCount(commentDtos.size());
 
             return dto;
-        }).toList();
+        }).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public EveryPostResponseDto createPost(EveryPostRequestDto dto, String userEmail) {
+        UserEntity user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
+
+        String photoUrl;
+        try {
+            photoUrl = s3Service.uploadFile(dto.getPhoto());
+        } catch (IOException e) {
+            throw new RuntimeException("사진 업로드 실패", e);
+        }
+
+        LocalDateTime time = LocalDateTime.parse(dto.getPhotoMakingTime());
+
+        EveryPost everyPost = EveryPost.builder()
+                .user(user)
+                .postText(dto.getPostText())
+                .postDescription(dto.getPostDescription())
+                .location(dto.getLocation())
+                .likesCount(0)
+                .photoUrl(photoUrl)
+                .makingTime(time)
+                .everyAlbum(null)
+                .createdAt(LocalDateTime.now())
+                .build();
+        everyPostRepository.save(everyPost);
+
+        Photo photo = Photo.builder()
+                .postType("EVERY")
+                .postId(everyPost.getPostId())
+                .photoUrl(photoUrl)
+                .photoName(dto.getPhotoName())
+                .photoMakingTime(time)
+                .date(time.toLocalDate())
+                .title(dto.getPhotoName())
+                .everyPost(everyPost)
+                .build();
+        photo.setUser(user);
+        photoRepository.save(photo);
+
+        Set<Tag> tagSet = new HashSet<>();
+        for (String tagName : dto.getTags()) {
+            Tag tag = tagRepository.findByTagName(tagName)
+                    .orElse(Tag.builder()
+                            .tagName(tagName)
+                            .postType("EVERY")
+                            .postId(everyPost.getPostId())
+                            .build());
+
+            tag.getEveryPosts().add(everyPost);
+            tagRepository.save(tag);
+            tagSet.add(tag);
+        }
+        everyPost.setTags(tagSet);
+
+        return EveryPostResponseDto.builder()
+                .postId(everyPost.getPostId())
+                .userId(user.getUserId())
+                .userName(user.getUserName())
+                .userPhotourl(user.getUserPhotourl())
+                .postText(everyPost.getPostText())
+                .postDescription(everyPost.getPostDescription())
+                .location(everyPost.getLocation())
+                .likesCount(0)
+                .isLiked(false)
+                .createdAt(everyPost.getCreatedAt())
+                .photoUrl(everyPost.getPhotoUrl())
+                .tags(dto.getTags())
+                .commentCount(0)
+                .comments(Collections.emptyList())
+                .build();
+    }
+
+    @Transactional
+    public void updatePost(Integer postId, EveryPostUpdateDto dto, String userEmail) {
+        EveryPost post = everyPostRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+
+        if (!post.getUser().getUserEmail().equals(userEmail)) {
+            throw new RuntimeException("게시글 수정 권한이 없습니다.");
+        }
+
+        post.setPostText(dto.getPostText());
+        post.setPostDescription(dto.getPostDescription());
+        post.setLocation(dto.getLocation());
+
+        if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
+            String photoUrl;
+            try {
+                photoUrl = s3Service.uploadFile(dto.getPhoto());
+            } catch (IOException e) {
+                throw new RuntimeException("사진 업로드 실패", e);
+            }
+            post.setPhotoUrl(photoUrl);
+            post.setMakingTime(LocalDateTime.parse(dto.getPhotoMakingTime()));
+        }
+
+        post.getTags().clear();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            List<String> tagList = objectMapper.readValue(dto.getTagsJson(), new TypeReference<List<String>>() {});
+            Set<Tag> newTags = new HashSet<>();
+
+            for (String tagName : tagList) {
+                Tag tag = tagRepository.findByTagName(tagName)
+                        .orElse(Tag.builder()
+                                .tagName(tagName)
+                                .postType("EVERY")
+                                .postId(postId)
+                                .build());
+
+                tag.getEveryPosts().add(post);
+                tagRepository.save(tag);
+                newTags.add(tag);
+            }
+
+            post.setTags(newTags);
+        } catch (Exception e) {
+            throw new RuntimeException("태그 파싱 오류", e);
+        }
     }
 }

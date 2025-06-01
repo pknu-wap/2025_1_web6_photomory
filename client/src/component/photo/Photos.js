@@ -6,7 +6,7 @@ import PaginationBar from "../common/PaginationBar";
 import privateIcon from "../../assets/privateIcon.svg";
 import PhotoGrid from "./PhotoGrid";
 import "./Photos.css";
-function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
+function Photos({ type, albumTitle, photoList = [], onDeltePhoto }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null); //선택된 이미지 상태
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
   let photosPerPage; //한 페이지당  사진 갯수
@@ -23,7 +23,7 @@ function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
   // 전체 페이지 수 계산
   const totalPages = Math.ceil(photoList.length / photosPerPage);
 
-  // 현재 페이지의 사진진들
+  // 현재 페이지의 사진들
   const indexOfLastPhoto = currentPage * photosPerPage; //마지막앨범
   const indexOfFirstPhoto = indexOfLastPhoto - photosPerPage; //첫번째앨범
   const currentPhotos = photoList.slice(indexOfFirstPhoto, indexOfLastPhoto); //앨범 범위
@@ -35,19 +35,24 @@ function Photos({ type, albumTitle, photoList, onDeltePhoto }) {
 
   return (
     <div className="photosContainer">
-      {/* private 타입일 때만 제목영역 + 아이콘 보여주기 */}
-      {type === "private" && (
-        <div className="privateHeader">
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+      {/* private 타입일 때만  아이콘 보여주기 */}
+      <div className="privateHeader">
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          {type === "private" && (
             <img src={privateIcon} alt="privateIcon" className="privateIcon" />
-            <h2 className="albumTitleByPrivate">#{albumTitle}</h2>
-          </div>
-          <p>현재 보고 계신 앨범은 "{albumTitle}"태그의 사진들입니다.</p>
+          )}
+          <h2 className="albumTitleByPrivate">#{albumTitle}</h2>
         </div>
-      )}
+        <p>현재 보고 계신 앨범은 "{albumTitle}"태그의 사진들입니다.</p>
+      </div>
 
       {/* type에 따라 다르게 사진 렌더링 */}
-      {type === "private" ? (
+      {currentPhotos.length === 0 ? (
+        <div className="noPhotosCard">
+          <p>📭 아직 등록된 사진이 없습니다.</p>
+          <p>지금 첫 번째 추억을 추가해보세요!</p>
+        </div>
+      ) : type === "private" ? (
         <PhotoGrid
           photoList={currentPhotos}
           photo={selectedPhoto}

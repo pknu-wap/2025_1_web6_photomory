@@ -4,13 +4,11 @@ import Footer from "../component/common/Footer";
 import Container from "../component/common/Container";
 import Calender from "../component/calender/Calender";
 import AddAlbum from "../component/add/AddAlbum";
-import AllAlbumTags from "../component/tag/AllalbumTags";
 import CurrentGroup from "../component/group/CurrentGroup";
 import Groups from "../component/group/Groups";
 import AlbumList from "../component/album/AlbumList";
-
-import { getOurAlbumData } from "../api/ourAlbumApi"; //서버 연동 준비용
-import { normalizeOurAlbumData } from "../utils/normalizers";
+import getGroup from "../api/getGroup";
+import getGroupAlbums from "../api/getGroupAlbums";
 
 function OurAlbumPage() {
   const [groupList, setGroupList] = useState([]); // 그룹명과 해당 그룹 멤버들의 리스트
@@ -24,8 +22,14 @@ function OurAlbumPage() {
   //태그 선택 헨들러
   const handleTagClick = (tag) => {
     setSelectedTags((prev) =>
+      //기존 태그 선택 취소, 태그 선택
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
+  };
+
+  //태그 추가 헨들러
+  const handleAddTagClick = (tags) => {
+    setCurrentTags((prev) => Array.from(new Set([...prev, ...tags])));
   };
 
   // 새로운 그룹 추가 핸들러 (AddGroupButton에서 사용할 예정)
@@ -58,67 +62,34 @@ function OurAlbumPage() {
 
   //초기 그룹 정보, 앨범 가져오기
   useEffect(() => {
-    (async () => {
-      try {
-        const rawData = await getOurAlbumData();
-        const normalizedData = normalizeOurAlbumData(rawData); // 데이터 정규화
+    const groups = getGroup(); // 그룹 데이터 불러오기
 
-        // 그룹 정보만 추출
-        const minimalGroupList = normalizedData.map(
-          ({ group_id, group_name, members }) => ({
-            group_id,
-            group_name,
-            members,
-          })
+    setGroupList(groups);
+    if (groups.length > 0) {
+      const firstGroup = groups[0]; //항상 첫번째 그룹 선택
+      const firstGroupAlbums = getGroupAlbums(firstGroup.group_id); //항상 첫번째 그룹의 앨범 선택
+
+      setSelectedGroupId(firstGroup.group_id); // 선택된 그룹 ID
+      setGroupAlbums(firstGroupAlbums); // 선택된 그룹의 앨범 전체 데이터
+      const initTitlesByGroup = {};
+      groups.forEach((group) => {
+        //처음부터 모든 그룹의 앨범 제목 목록을 한 번에 저장
+        const albums = getGroupAlbums(group.group_id);
+        initTitlesByGroup[group.group_id] = albums.map(
+          (album) => album.album_name
         );
-        setGroupList(minimalGroupList);
-
-        if (normalizedData.length > 0) {
-          const firstGroup = normalizedData[0];
-          setSelectedGroupId(firstGroup.group_id);
-          setGroupAlbums(firstGroup.albums);
-
-          const titlesByGroup = {};
-          const albumsMap = {};
-
-          //그룹 id에 따른 앨범명, 앨범 정보 매핑
-          for (const group of normalizedData) {
-            titlesByGroup[group.group_id] = group.albums.map(
-              (a) => a.album_name
-            );
-            albumsMap[group.group_id] = group.albums;
-          }
-
-          setAlbumTitlesByGroup(titlesByGroup);
-          setAlbumsByGroupId(albumsMap);
-
-          // 초기 태그 설정
-          const tags = Array.from(
-            new Set(firstGroup.albums.flatMap((album) => album.album_tag || []))
-          );
-          setCurrentTags(tags);
-        }
-      } catch (error) {
-        console.error("서버 데이터 로드 실패:", error);
-      }
-    })();
+      });
+      setAlbumTitlesByGroup(initTitlesByGroup);
+    }
   }, []);
 
-  // 그룹 선택될 때 해당 그룹의 앨범을 albumsByGroupId에서 꺼냄, 태그 변경
+  //그룹id가 바뀔 대마다 그룹 앨범 가져오기
   useEffect(() => {
-    if (selectedGroupId && albumsByGroupId[selectedGroupId]) {
-      const albums = albumsByGroupId[selectedGroupId];
-      setGroupAlbums(albums);
-
-      const tags = Array.from(
-        new Set(albums.flatMap((album) => album.album_tag || []))
-      );
-      setCurrentTags(tags);
-    } else {
-      setGroupAlbums([]);
-      setCurrentTags([]);
+    if (selectedGroupId) {
+      const albums = getGroupAlbums(selectedGroupId); // 그룹 ID로 앨범 가져오기
+      setGroupAlbums(albums); // 상태에 저장
     }
-  }, [selectedGroupId, albumsByGroupId]);
+  }, [selectedGroupId]);
 
   return (
     <>
@@ -156,6 +127,7 @@ function OurAlbumPage() {
               albumTitlesByGroup={albumTitlesByGroup}
               setAlbumTitlesByGroup={setAlbumTitlesByGroup}
               setGroupAlbums={setGroupAlbums}
+              handleAddTagClick={handleAddTagClick}
             />
             <AllAlbumTags
               tags={currentTags}
@@ -180,7 +152,7 @@ function OurAlbumPage() {
             <div>
               {/*그룹별 앨범 목록을 보여주는 컴포넌트*/}
               <AlbumList
-                albums={filteredGroupAlbums}
+                albums={groupAlbums}
                 type="group"
                 selectedGroupId={selectedGroupId}
                 basePath="/our-album"

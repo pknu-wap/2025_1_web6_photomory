@@ -14,6 +14,18 @@
     rgba(0, 0, 0, 0.1) 0px 4px 6px -1px;
 }
 
+.noPhotosCard {
+  margin: 40px auto;
+  padding: 32px 24px;
+  max-width: 600px;
+  background-color: #f9f9f9;
+  border: 2px dashed #d0d0d0;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  color: #555;
+}
+
 .privateIcon {
   width: 25px;
   height: 25px;
