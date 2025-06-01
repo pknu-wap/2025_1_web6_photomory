@@ -42,15 +42,14 @@ public class EveryCommentService {
         post.setCommentCount(post.getCommentCount() + 1);
         everyPostRepository.save(post);
 
-        // 알림 전송
-        UserEntity postWriter = post.getUser(); // 게시글 작성자
-        if (!user.getUserId().equals(postWriter.getUserId())) { // 자기 댓글은 알림 안 보냄
-            String postTitle = post.getPhotos().stream()
-                    .map(photo -> photo.getTitle())
-                    .findAny()
-                    .orElse("제목 없음");
+        //알림 전송 (postText를 그대로 제목으로 사용!)
+        UserEntity postWriter = post.getUser();
+        if (!user.getUserId().equals(postWriter.getUserId())) {
+            String postText = post.getPostText() != null && !post.getPostText().isEmpty()
+                    ? post.getPostText()
+                    : "제목 없음";
 
-            String message = user.getUserName() + "님이 " + postTitle + " 게시글에 댓글을 남겼습니다.";
+            String message = user.getUserName() + "님이 '" + postText + "' 게시글에 댓글을 남겼습니다.";
 
             notificationService.sendNotification(
                     postWriter.getUserId(),
