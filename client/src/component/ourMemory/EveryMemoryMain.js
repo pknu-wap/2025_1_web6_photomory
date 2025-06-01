@@ -108,6 +108,8 @@ async function updateLikeCount(postId,retries=0,maxRetries=3){ //좋아요 수 �
 }
 
 
+
+
 async function updateComment(postId, comment, retries=0, maxRetries=3){ //댓글 수, 댓글 내용 관리.    
     let accessToken= localStorage.getItem('accessToken')
     const refreshToken =localStorage.getItem('refreshToken')
