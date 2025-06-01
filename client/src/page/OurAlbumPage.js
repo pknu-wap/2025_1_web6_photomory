@@ -8,15 +8,15 @@ import AllAlbumTags from "../component/tag/AllAlbumTags";
 import CurrentGroup from "../component/group/CurrentGroup";
 import Groups from "../component/group/Groups";
 import AlbumList from "../component/album/AlbumList";
-import getGroup from "../api/getGroup";
-import getGroupAlbums from "../api/getGroupAlbums";
+import { getOurAlbumData } from "../api/ourAlbumApi";
+import { normalizeOurAlbumData } from "../utils/normalizers";
 
 function OurAlbumPage() {
   const [groupList, setGroupList] = useState([]); // 그룹명과 해당 그룹 멤버들의 리스트
   const [selectedGroupId, setSelectedGroupId] = useState(""); // 선택된 그룹 ID를 App에서 관리
   const [groupAlbums, setGroupAlbums] = useState([]); // 그룹별 앨범 리스트
   const [albumTitlesByGroup, setAlbumTitlesByGroup] = useState({}); //그룹ID에 대한 앨범 목록 객체
-  const [albumsByGroupId, setAlbumsByGroupId] = useState({}); //그룹 id별 앨범 데이터터
+  const [albumsByGroupId, setAlbumsByGroupId] = useState({}); //그룹 id별 앨범 데이터
   const [selectedTags, setSelectedTags] = useState([]); //선택된 태그 배열 상태
   const [currentTags, setCurrentTags] = useState([]); //현재 그룹의 태그 배열 상태
 
@@ -63,34 +63,66 @@ function OurAlbumPage() {
 
   //초기 그룹 정보, 앨범 가져오기
   useEffect(() => {
-    const groups = getGroup(); // 그룹 데이터 불러오기
+    (async () => {
+      try {
+        const rawData = await getOurAlbumData();
+        const normalizedData = normalizeOurAlbumData(rawData); // 데이터 정규화
 
-    setGroupList(groups);
-    if (groups.length > 0) {
-      const firstGroup = groups[0]; //항상 첫번째 그룹 선택
-      const firstGroupAlbums = getGroupAlbums(firstGroup.group_id); //항상 첫번째 그룹의 앨범 선택
-
-      setSelectedGroupId(firstGroup.group_id); // 선택된 그룹 ID
-      setGroupAlbums(firstGroupAlbums); // 선택된 그룹의 앨범 전체 데이터
-      const initTitlesByGroup = {};
-      groups.forEach((group) => {
-        //처음부터 모든 그룹의 앨범 제목 목록을 한 번에 저장
-        const albums = getGroupAlbums(group.group_id);
-        initTitlesByGroup[group.group_id] = albums.map(
-          (album) => album.album_name
+        // 그룹 정보만 추출
+        const minimalGroupList = normalizedData.map(
+          ({ group_id, group_name, members }) => ({
+            group_id,
+            group_name,
+            members,
+          })
         );
-      });
-      setAlbumTitlesByGroup(initTitlesByGroup);
-    }
+        setGroupList(minimalGroupList);
+
+        if (normalizedData.length > 0) {
+          const firstGroup = normalizedData[0];
+          setSelectedGroupId(firstGroup.group_id);
+          setGroupAlbums(firstGroup.albums);
+
+          const titlesByGroup = {};
+          const albumsMap = {};
+
+          //그룹 id에 따른 앨범명, 앨범 정보 매핑
+          for (const group of normalizedData) {
+            titlesByGroup[group.group_id] = group.albums.map(
+              (a) => a.album_name
+            );
+            albumsMap[group.group_id] = group.albums;
+          }
+          setAlbumTitlesByGroup(titlesByGroup);
+          setAlbumsByGroupId(albumsMap);
+
+          // 초기 태그 설정
+          const tags = Array.from(
+            new Set(firstGroup.albums.flatMap((album) => album.album_tag || []))
+          );
+          setCurrentTags(tags);
+        }
+      } catch (error) {
+        console.error("서버 데이터 로드 실패:", error);
+      }
+    })();
   }, []);
 
-  //그룹id가 바뀔 대마다 그룹 앨범 가져오기
+  // 그룹 선택될 때 해당 그룹의 앨범을 albumsByGroupId에서 꺼냄, 태그 변경
   useEffect(() => {
-    if (selectedGroupId) {
-      const albums = getGroupAlbums(selectedGroupId); // 그룹 ID로 앨범 가져오기
-      setGroupAlbums(albums); // 상태에 저장
+    if (selectedGroupId && albumsByGroupId[selectedGroupId]) {
+      const albums = albumsByGroupId[selectedGroupId];
+      setGroupAlbums(albums);
+
+      const tags = Array.from(
+        new Set(albums.flatMap((album) => album.album_tag || []))
+      );
+      setCurrentTags(tags);
+    } else {
+      setGroupAlbums([]);
+      setCurrentTags([]);
     }
-  }, [selectedGroupId]);
+  }, [selectedGroupId, albumsByGroupId]);
 
   return (
     <>
@@ -153,7 +185,7 @@ function OurAlbumPage() {
             <div>
               {/*그룹별 앨범 목록을 보여주는 컴포넌트*/}
               <AlbumList
-                albums={groupAlbums}
+                albums={filteredGroupAlbums}
                 type="group"
                 selectedGroupId={selectedGroupId}
                 basePath="/our-album"
