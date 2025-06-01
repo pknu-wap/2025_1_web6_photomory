@@ -31,15 +31,17 @@ function MyAlbumPage() {
 
   //초기 렌더링시 배열로 앨범과 각 사진정보 받기
   useEffect(() => {
-    const rawAlbums = fetchMyMemoryAlbums();
+    (async () => {
+      try {
+        const rawAlbums = fetchMyMemoryAlbums();
 
-    if (!Array.isArray(rawAlbums) || rawAlbums.length === 0) {
-      setMyAlbums([]); // 빈 배열로 처리
-      return;
-    }
-
-    const normalizedAlbums = rawAlbums.map(normalizeMyAlbumData); //정규화 처리
-    setMyAlbums(normalizedAlbums);
+        const normalizedAlbums = rawAlbums.map(normalizeMyAlbumData); //정규화 처리
+        setMyAlbums(normalizedAlbums);
+      } catch (error) {
+        console.log("앨범 불러오기 실패:", error);
+        setMyAlbums([]);
+      }
+    })();
   }, []);
 
   //앨범 제목만 따로 추출한 배열
