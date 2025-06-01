@@ -22,3 +22,16 @@
   border-radius: 50%;
   display: inline-block;
 }
+
+/*모달 오픈시 클래스 상속 제어*/
+body.modal-open .day:hover,
+body.modal-open .day:active {
+  transform: none !important; /*이동 효과 제거 */
+  box-shadow: none !important; /*그림자 효과 제거 */
+  cursor: default;
+}
+
+/*.day의 transition을 모달 열릴 때 비활성화*/
+body.modal-open .day {
+  transition: none !important;
+}

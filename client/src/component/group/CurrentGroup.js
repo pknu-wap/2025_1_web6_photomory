@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AddGroupButton from "../add/AddGroupButton";
 import SelectGroupOptions from "../group/SelectGroupOptions.js";
+import defaultProfileIcon from "../../assets/defaultProfileIcon.svg";
 import "./CurrentGroup.css";
 
 function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
@@ -33,43 +34,45 @@ function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
 
   return (
     <div className="currentGroupCard">
-      {selectedGroup && (
-        <>
-          {/*그룹명*/}
-          <h4 className="groupTitle">{selectedGroup.group_name}</h4>
-          <ul className="groupMembers">
-            {selectedGroup.members.map((member, index) => (
-              <li
-                className="member"
-                key={index}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: "8px",
-                }}
-              >
-                <img
-                  src={member.user_photourl}
-                  alt={member.user_name}
-                  style={{ width: "24px", height: "24px", borderRadius: "50%" }}
-                />
-                <span>{member.user_name}</span>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-      <div style={{ display: "flex", gap: "16px" }}>
-        {/* 그룹선택 옵션*/}
-        <SelectGroupOptions
-          groupList={groupList}
-          onSelect={handleChange} //그룹 선택 핸들러
-        />
-
-        {/*그룹추가버튼 컴포넌트*/}
-        <AddGroupButton onAddGroup={onAddGroup} />
+      <div className="groupInfoArea">
+        {selectedGroup.group_id ? (
+          <>
+            <h4 className="groupTitle">{selectedGroup.group_name}</h4>
+            <ul className="groupMembers">
+              {selectedGroup.members.map((member, index) => (
+                <li
+                  className="member"
+                  key={index}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <img
+                    src={member.user_photourl || defaultProfileIcon}
+                    alt={member.user_name}
+                    style={{
+                      width: "24px",
+                      height: "24px",
+                      borderRadius: "50%",
+                    }}
+                  />
+                  <span>{member.user_name}</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <div className="noGroupPlaceholder">
+            <p>👥 선택된 그룹이 없습니다.</p>
+          </div>
+        )}
       </div>
+
+      {/*그룹추가버튼 컴포넌트*/}
+      <AddGroupButton onAddGroup={onAddGroup} />
     </div>
   );
 }

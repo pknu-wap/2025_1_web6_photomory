@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AlbumTitleList from "../album/AlbumTitleList";
-import addAlbumButton from "../../assets/addAlbumButton.svg";
+import { createGroupAlbum } from "../../api/ourAlbumApi";
+import { normalizeGroupAlbum } from "../../utils/normalizers";
 import "./AddAlbum.css";
 
 const MAX_ALBUM_COUNT = 7; //최대 앨범 갯수
@@ -14,6 +15,7 @@ function AddAlbum({
   setGroupAlbums, //그룹 앨범 추가
   albumTitles = [], //나만의 추억에서만 쓸 앨범명 목록
   setMyAlbums, //나만의 추억  앨범 상태 변화 함수
+  handleAddTagClick, //우리의 추억 앨범 생성 시 태그 추가
 }) {
   const [newAlbumData, setNewAlbumData] = useState({
     album_name: "", //제목
@@ -76,68 +78,97 @@ function AddAlbum({
       photos: [], //사진은 나중에 추가
     };
 
-    //타입에 따라 분기기
-    if (type === "group") {
-      // 그룹 앨범 추가 로직
-      const updatedTitles = [
-        ...(albumTitlesByGroup[selectedGroupId] || []),
-        album_name,
-      ];
-      // 그룹 id별 앨범 제목 객체 업데이트
-      setAlbumTitlesByGroup((prev) => ({
-        ...prev,
-        [selectedGroupId]: updatedTitles,
-      }));
+    const handleSubmit = async () => {
+      try {
+        if (type === "group") {
+          // 1. 서버에 앨범 생성 요청
+          const createdAlbum = await createGroupAlbum(selectedGroupId, {
+            albumName: album_name,
+            albumTags: tags,
+            albumMakingTime: new Date().toISOString(),
+            albumDescription: album_description,
+          });
 
-      setGroupAlbums((prev) => [...prev, newAlbum]);
-    } else if (type === "private") {
-      // 나만의 앨범 추가 로직
-      setMyAlbums((prev) => [...prev, newAlbum]);
-    }
+          // 2. 응답값 정규화
+          const normalizedAlbum = normalizeMyAlbumData(createdAlbum);
 
-    // 입력값 초기화
-    setNewAlbumData({
-      album_name: "",
-      album_description: "",
-    });
-  };
+          // 3. 그룹별 앨범 제목 업데이트
+          const updatedTitles = [
+            ...(albumTitlesByGroup[selectedGroupId] || []),
+            album_name,
+          ];
+          setAlbumTitlesByGroup((prev) => ({
+            ...prev,
+            [selectedGroupId]: updatedTitles,
+          }));
 
-  return (
-    <div className="addAlbumCard">
-      <div className="AddAlbumInner">
-        <h3 style={{ marginBottom: "16px" }} className="AddAlbumtitle">
-          앨범 추가
-        </h3>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="albumTitle">앨범 제목</label>
-          <input
-            id="albumTitle"
-            type="text"
-            name="album_name"
-            value={newAlbumData.album_name}
-            onChange={handleChange}
-            placeholder="앨범 제목을 입력하세요."
-            className="albumTitleInput"
-          />
-          <label htmlFor="albumDescription">설명</label>
-          <textarea
-            id="albumDescription"
-            name="album_description"
-            value={newAlbumData.album_description}
-            onChange={handleChange}
-            rows={4}
-            placeholder="앨범에 대한 설명을 입력하세요."
-            className="albumDescription"
-          />
-          {/*앨범 제목 목록 컴포넌트*/}
-          <AlbumTitleList albumTitles={currentAlbumTitles} />
-          <button type="submit" className="addAlbumButton">
-            <img src={addAlbumButton} alt="addAlbumButton" />
-          </button>
-        </form>
+          // 4. 그룹 앨범 목록에 추가
+          setGroupAlbums((prev) => [...prev, normalizedAlbum]);
+
+          // 5. 태그 추가 핸들러 (선택적 호출)
+          handleAddTagClick?.(normalizedAlbum.album_tag);
+        } else if (type === "private") {
+          // 나만의 앨범 생성
+          const newAlbum = {
+            album_id: Date.now(), // 임시 ID
+            album_name,
+            album_description,
+            album_makingtime: new Date().toISOString(),
+            tags,
+            photos: [],
+          };
+          setMyAlbums((prev) => [...prev, newAlbum]);
+        }
+
+        // 6. 입력값 초기화
+        setNewAlbumData({
+          album_name: "",
+          album_description: "",
+          tags: [],
+        });
+      } catch (error) {
+        console.error("앨범 생성 오류:", error);
+        alert("앨범 생성 중 문제가 발생했습니다.");
+      }
+    };
+
+    return (
+      <div className="addAlbumCard">
+        <div className="AddAlbumInner">
+          <h3 style={{ marginBottom: "16px" }} className="AddAlbumtitle">
+            앨범 추가
+          </h3>
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="albumTitle">앨범 제목</label>
+            <input
+              id="albumTitle"
+              type="text"
+              name="album_name"
+              value={newAlbumData.album_name}
+              onChange={handleChange}
+              placeholder="앨범 제목을 입력하세요."
+              className="albumTitleInput"
+            />
+            <label htmlFor="albumDescription">설명</label>
+            <textarea
+              id="albumDescription"
+              name="album_description"
+              value={newAlbumData.album_description}
+              onChange={handleChange}
+              rows={4}
+              placeholder="앨범에 대한 설명을 입력하세요."
+              className="albumDescription"
+            />
+            {/*앨범 제목 목록 컴포넌트*/}
+            <AlbumTitleList albumTitles={currentAlbumTitles} />
+            <button type="submit" className="addAlbumButton">
+              앨범 만들기
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 }
 
 export default AddAlbum;

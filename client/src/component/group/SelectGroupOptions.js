@@ -20,7 +20,7 @@ function SelectGroupOptions({ groupList, onSelect }) {
 
       <img
         onClick={() => setIsOpen((prev) => !prev)}
-        style={{ cursor: "pointer" }}
+        className="selectGroupButton"
         src={selectGroupButton}
         alt="그룹 선택 버튼"
       />

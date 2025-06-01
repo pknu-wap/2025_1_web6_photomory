@@ -20,7 +20,7 @@ function GroupsTest({ groupList, selectedGroupId }) {
         <h3>그룹 관리</h3>
         <Link
           to={`/our-album/${selectedGroupId}/groupEdit`}
-          style={{ display: "inline-block" }}
+          className="groupEditLink"
         >
           <img src={GroupControlButton} alt="GroupControlButton" />
         </Link>

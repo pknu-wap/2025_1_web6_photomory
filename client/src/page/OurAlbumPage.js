@@ -15,6 +15,51 @@ function OurAlbumPage() {
   const [selectedGroupId, setSelectedGroupId] = useState(""); // 선택된 그룹 ID를 App에서 관리
   const [groupAlbums, setGroupAlbums] = useState([]); // 그룹별 앨범 리스트
   const [albumTitlesByGroup, setAlbumTitlesByGroup] = useState({}); //그룹ID에 대한 앨범 목록 객체
+  const [albumsByGroupId, setAlbumsByGroupId] = useState({}); //그룹 id별 앨범 데이터터
+  const [selectedTags, setSelectedTags] = useState([]); //선택된 태그 배열 상태
+  const [currentTags, setCurrentTags] = useState([]); //현재 그룹의 태그 배열 상태
+
+  //태그 선택 헨들러
+  const handleTagClick = (tag) => {
+    setSelectedTags((prev) =>
+      //기존 태그 선택 취소, 태그 선택
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  };
+
+  //태그 추가 헨들러
+  const handleAddTagClick = (tags) => {
+    setCurrentTags((prev) => Array.from(new Set([...prev, ...tags])));
+  };
+
+  // 새로운 그룹 추가 핸들러 (AddGroupButton에서 사용할 예정)
+  const handleAddGroup = (newGroupRaw) => {
+    const myName = localStorage.getItem("userName") || "나";
+
+    // groupList에 맞는 필드 구조로 정규화
+    const newGroup = {
+      group_id: newGroupRaw.groupId,
+      group_name: newGroupRaw.groupName,
+      members: [
+        {
+          user_id: "me",
+          user_name: myName,
+          user_photourl: null,
+        },
+      ],
+    };
+    //그룹 리스트 상태 최신화
+    setGroupList((prev) => [...prev, newGroup]);
+  };
+
+  //선택된 태그에 따라 필터링된 앨범들
+  const filteredGroupAlbums =
+    selectedTags.length === 0
+      ? groupAlbums
+      : groupAlbums.filter((album) =>
+          selectedTags.every((tag) => album.album_tag?.includes(tag))
+        );
+
   //초기 그룹 정보, 앨범 가져오기
   useEffect(() => {
     const groups = getGroup(); // 그룹 데이터 불러오기
@@ -46,11 +91,6 @@ function OurAlbumPage() {
     }
   }, [selectedGroupId]);
 
-  // 새로운 그룹 추가 핸들러 (AddGroupButton에서 사용할 예정)
-  const handleAddGroup = (newGroup) => {
-    setGroupList((prev) => [...prev, newGroup]);
-  };
-
   return (
     <>
       <Header />
@@ -72,14 +112,29 @@ function OurAlbumPage() {
 
         {/* 앨범 추가 오른쪽 영역을 가로 배치 */}
         <div style={{ display: "flex", gap: "24px", marginTop: "32px" }}>
-          {/* 왼쪽: 앨범 추가 영역 */}
-          <AddAlbum
-            type="group"
-            selectedGroupId={selectedGroupId} //해당그룹의 ID
-            albumTitlesByGroup={albumTitlesByGroup} // 앨범 제목 목록 객체
-            setAlbumTitlesByGroup={setAlbumTitlesByGroup} // 앨범 제목 목록 객체 세터 함수
-            setGroupAlbums={setGroupAlbums} //현재 앨범 목록 변경용
-          />
+          {/* 왼쪽: 앨범 추가 + 태그 필터 */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              width: "256px",
+              gap: "24px",
+            }}
+          >
+            <AddAlbum
+              type="group"
+              selectedGroupId={selectedGroupId}
+              albumTitlesByGroup={albumTitlesByGroup}
+              setAlbumTitlesByGroup={setAlbumTitlesByGroup}
+              setGroupAlbums={setGroupAlbums}
+              handleAddTagClick={handleAddTagClick}
+            />
+            <AllAlbumTags
+              tags={currentTags}
+              selectedTags={selectedTags}
+              onTagClick={handleTagClick}
+            />
+          </div>
 
           {/* 오른쪽 영역 */}
           <div style={{ flex: 1 }}>

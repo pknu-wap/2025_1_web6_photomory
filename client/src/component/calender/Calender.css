@@ -68,6 +68,17 @@
   box-sizing: border-box;
   width: 173.72px;
   height: 88px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.day:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.day:active {
+  transform: translateY(1px) scale(0.97);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .day,
