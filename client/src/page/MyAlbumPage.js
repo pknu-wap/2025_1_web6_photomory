@@ -28,13 +28,14 @@ function MyAlbumPage() {
       : myAlbums.filter((album) =>
           selectedTags.every((tag) => album.tags.includes(tag))
         );
+
   //초기 렌더링시 배열로 앨범과 각 사진정보 받기
   useEffect(() => {
     (async () => {
       try {
-        const rawAlbums = fetchMyMemoryAlbums();
-
-        const normalizedAlbums = rawAlbums.map(normalizeMyAlbumData); //정규화 처리
+        const rawAlbums = await fetchMyMemoryAlbums();
+        console.log("rawAlbums 결과:", rawAlbums); // 여기서 구조 확인!
+        const normalizedAlbums = normalizeMyAlbumData(rawAlbums);
         setMyAlbums(normalizedAlbums);
       } catch (error) {
         console.log("앨범 불러오기 실패:", error);
@@ -43,11 +44,17 @@ function MyAlbumPage() {
     })();
   }, []);
 
+  if (!myAlbums) return <div>로딩 중...</div>;
+
   //앨범 제목만 따로 추출한 배열
   const albumTitles = myAlbums.map((album) => album.album_name);
+  console.log(albumTitles);
 
   // 모든 태그 중복 없이 추출
   const allTags = Array.from(new Set(myAlbums.flatMap((album) => album.tags)));
+
+  // 전체 앨범 개수 구하기
+  const allAlbumsCount = myAlbums.length;
 
   return (
     <>
@@ -121,6 +128,7 @@ function MyAlbumPage() {
                 albums={filteredAlbums}
                 type="private"
                 basePath="/my-album"
+                allAlbumsCount={allAlbumsCount}
               />
             </div>
           </div>

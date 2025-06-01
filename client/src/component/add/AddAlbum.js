@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AlbumTitleList from "../album/AlbumTitleList";
 import { createGroupAlbum } from "../../api/ourAlbumApi";
+import { createMyMemoryAlbum } from "../../api/myAlbumAPi";
 import { normalizeGroupAlbum } from "../../utils/normalizers";
 import "./AddAlbum.css";
 
@@ -29,6 +30,7 @@ function AddAlbum({
   const currentAlbumTitles =
     type === "group" ? albumTitlesByGroup[selectedGroupId] || [] : albumTitles;
 
+  //앨범 정보 입력 헨들러
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewAlbumData((prev) => ({
@@ -58,19 +60,16 @@ function AddAlbum({
     }));
   };
 
-  // 앨범 생성 처리
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const { album_name, album_description, tags } = newAlbumData;
 
-    // 입력값이 모두 있을 때만 실행
     if (!album_name || !album_description) {
       alert("앨범 제목과 설명을 모두 입력해주세요.");
       return;
     }
 
-    // 현재 앨범 제목 목록과 현재 전체 앨범 개수 가져오기
     const currentTitles =
       type === "group"
         ? albumTitlesByGroup[selectedGroupId] || []
@@ -81,27 +80,18 @@ function AddAlbum({
         ? albumTitlesByGroup[selectedGroupId]?.length || 0
         : albumTitles.length;
 
-    // 최대 7개 제한
     if (currentAlbumCount >= MAX_ALBUM_COUNT) {
       alert("❗앨범은 최대 7개까지 생성할 수 있습니다.");
       return;
     }
 
-    // 제목 중복 확인
     if (currentTitles.includes(album_name)) {
       alert("❗이미 존재하는 앨범 제목입니다.");
       return;
     }
 
-    const newAlbum = {
-      album_name,
-      album_description,
-      tags,
-    };
-
     try {
       if (type === "group") {
-        // 서버에 앨범 생성 요청
         const createdAlbum = await createGroupAlbum(selectedGroupId, {
           albumName: album_name,
           albumTags: tags,
@@ -121,9 +111,16 @@ function AddAlbum({
         }));
         setGroupAlbums((prev) => [...prev, normalizedAlbum]);
       } else if (type === "private") {
-        setMyAlbums((prev) => [...prev, newAlbum]);
+        const createdMyAlbum = await createMyMemoryAlbum({
+          myalbumName: album_name,
+          myalbumDescription: album_description,
+          mytags: tags,
+        });
+
+        setMyAlbums((prev) => [...prev, createdMyAlbum]);
       }
 
+      // 초기화
       setNewAlbumData({
         album_name: "",
         album_description: "",

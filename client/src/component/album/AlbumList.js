@@ -26,7 +26,7 @@ function AlbumList({
   const handlePageClick = (page) => {
     setCurrentPage(page);
   };
-  console.log(allAlbumsCount);
+
   if (!albums || albums.length === 0) {
     return (
       <div
