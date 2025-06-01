@@ -10,6 +10,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -64,10 +67,8 @@ public class OurAlbumService {
     // 앨범 생성
     @Transactional
     public AlbumResponseDto createAlbum(Long groupId, AlbumCreateRequestDto requestDto, UserEntity user) {
-        Integer groupIdInt = groupId.intValue();
-
-        OurAlbum group = ourAlbumRepository.findById(groupIdInt)
-                .orElseThrow(() -> new EntityNotFoundException("그룹(OurAlbum)을 찾을 수 없습니다."));
+        UserGroup group = userGroupRepository.findById(groupId)
+                .orElseThrow(() -> new EntityNotFoundException("그룹(UserGroup)을 찾을 수 없습니다."));
 
         OurAlbum newOurAlbum = new OurAlbum();
         newOurAlbum.setAlbumName(requestDto.getAlbumName());
@@ -82,15 +83,23 @@ public class OurAlbumService {
         newOurAlbum.setAlbumMakingTime(requestDto.getAlbumMakingTime());
         newOurAlbum.setAlbumDescription(requestDto.getAlbumDescription());
         newOurAlbum.setUser(user);
+        newOurAlbum.setIsGroup(false);
+
+        newOurAlbum.setUserGroup(group);
 
         OurAlbum savedAlbum = ourAlbumRepository.save(newOurAlbum);
+        System.out.println("albumTags = " + requestDto.getAlbumTags());
+        String tags = String.join(",", requestDto.getAlbumTags());
+        System.out.println("joined tags = " + tags);
+        newOurAlbum.setAlbumTag(tags);
 
         return AlbumResponseDto.fromEntity(savedAlbum);
     }
 
+
     // 앨범 상세정보 + 포스트 목록
     @Transactional(readOnly = true)
-    public AlbumWithPostsResponseDto getAlbumWithPosts(Long albumId, int page, int size) {
+    public AlbumWithPostsResponseDto getAlbumWithPosts(Integer albumId, int page, int size) {
         Integer albumIdInt = albumId.intValue();
 
         OurAlbum ourAlbum = ourAlbumRepository.findById(albumIdInt)
@@ -104,10 +113,8 @@ public class OurAlbumService {
 
     // 게시물 생성
     @Transactional
-    public PostResponseDto createPost(Long albumId, PostCreateRequestDto requestDto, MultipartFile photoFile, Long userId) throws IOException {
-        Integer albumIdInt = albumId.intValue();
-
-        OurAlbum ourAlbum = ourAlbumRepository.findById(albumIdInt)
+    public PostResponseDto createPost(Integer albumId, PostCreateRequestDto requestDto, MultipartFile photoFile, Long userId) throws IOException {
+        OurAlbum ourAlbum = ourAlbumRepository.findById(albumId)
                 .orElseThrow(() -> new EntityNotFoundException("앨범을 찾을 수 없습니다."));
 
         UserEntity user = userRepository.findById(userId)
@@ -133,11 +140,20 @@ public class OurAlbumService {
             photo.setPhotoMakingTime(requestDto.getPhotoMakingTime());
             photo.setUser(user);
 
+            // photoMakingTime이 null이 아닐 경우에 LocalDate로 변환하여 photo_date 필드에 저장
+            if (requestDto.getPhotoMakingTime() != null) {
+                photo.setDate(requestDto.getPhotoMakingTime().toLocalDate());
+            } else {
+                photo.setDate(LocalDate.now());  // null일 경우 현재 날짜로 설정 (필요에 따라 수정 가능)
+            }
+
             photoRepository.save(photo);
         }
 
         return PostResponseDto.fromEntity(savedPost);
     }
+
+
 
     // 게시글 삭제
     @Transactional
@@ -358,7 +374,6 @@ public class OurAlbumService {
                 .build();
     }
 
-    // 우리의 추억 페이지 기본 데이터 반환
     @Transactional(readOnly = true)
     public List<OurAlbumResponseDefaultDto> getAllGroupsDetailForUser(Long userId) {
         List<AlbumMembers> groupMemberships = albumMembersRepository.findGroupMembershipsByUserId(userId);
@@ -399,17 +414,23 @@ public class OurAlbumService {
                 .build();
     }
 
+
+    // 우리의 추억 페이지 기본 데이터 반환
     private OurAlbumResponseDefaultDto.Album toAlbumDto(OurAlbum album) {
         Set<OurPost> posts = album.getPosts();
 
         List<OurAlbumResponseDefaultDto.Post> postsDto = posts.stream()
                 .map(post -> {
-                    List<OurAlbumResponseDefaultDto.Photo> photosDto = post.getPhotos()
-                            .stream()
-                            .map(photo -> OurAlbumResponseDefaultDto.Photo.builder()
-                                    .photoId(photo.getPhotoId())
-                                    .photoName(photo.getPhotoName())
-                                    .photoUrl(photo.getPhotoUrl())
+                    String firstPhotoUrl = post.getPhotos().stream()
+                            .findFirst()
+                            .map(photo -> photo.getPhotoUrl())
+                            .orElse(null);
+
+                    // 댓글 매핑
+                    List<OurAlbumResponseDefaultDto.Comment> commentsDto = post.getComments().stream()
+                            .map(comment -> OurAlbumResponseDefaultDto.Comment.builder()
+                                    .userId(comment.getUser().getUserId())
+                                    .commentText(comment.getCommentText())
                                     .build())
                             .collect(Collectors.toList());
 
@@ -417,6 +438,8 @@ public class OurAlbumService {
                             .postId(post.getPostId())
                             .postContent(post.getPostText())
                             .postMakingTime(post.getMakingTime().toString())
+                            .postImageUrl(firstPhotoUrl)
+                            .comments(commentsDto)  // 댓글 추가
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -425,8 +448,8 @@ public class OurAlbumService {
                 .albumId(album.getAlbumId())
                 .albumName(album.getAlbumName())
                 .albumDescription(album.getAlbumDescription())
-                .albumTag(album.getAlbumTag()) // ← 필요 시 추가
-                .albumMakingtime(album.getAlbumMakingTime().toString()) // 필드명에 맞게 수정
+                .albumTag(album.getAlbumTag())
+                .albumMakingtime(album.getAlbumMakingTime().toString())
                 .posts(postsDto)
                 .build();
     }

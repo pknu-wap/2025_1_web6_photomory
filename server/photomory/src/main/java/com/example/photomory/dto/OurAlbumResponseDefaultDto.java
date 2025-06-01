@@ -41,8 +41,7 @@ public class OurAlbumResponseDefaultDto {
         private String albumDescription;
         private String albumTag;
         private String albumMakingtime;
-        private List<Photo> photos;
-        private List<Comment> comments;
+        // photos, comments 삭제
         private List<Post> posts;  // Post 리스트 추가
     }
 
@@ -65,8 +64,6 @@ public class OurAlbumResponseDefaultDto {
     @AllArgsConstructor
     @Builder
     public static class Comment {
-        private Integer albumId;
-        private Integer photoId;
         private Long userId;
         private String commentText;
     }
@@ -76,10 +73,11 @@ public class OurAlbumResponseDefaultDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class Post {  // 새로 추가된 Post DTO
+    public static class Post {
         private Integer postId;
         private String postContent;
         private String postImageUrl;
         private String postMakingTime;
+        private List<Comment> comments;
     }
 }
