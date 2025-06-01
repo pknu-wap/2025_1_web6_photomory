@@ -32,5 +32,11 @@ public class FriendRequest {
     private RequestStatus status;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    //구 요청을 받은 사용자 ID를 꺼내주는 편의 메서드
+    public Long getReceiverId() {
+        return receiver != null ? receiver.getUserId() : null;
+    }
+
 }
 

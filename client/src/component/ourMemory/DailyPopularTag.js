@@ -5,16 +5,15 @@ import emptyImage from "../../assets/emptyImage.svg";
 
 export default function DailyPopularTag({
   post,
-  handleLikeNum,
-  handleCommentClickForModal,
-  handleImageClick
+  handleLikeClick,
+  handleCommentClick,
 }) {
   return (
     <div className={styles.todayTagContainer}>
       <span
         className={styles.todayTagImage}
-        style={{ backgroundImage: `url(${post?.photoUrl || { emptyImage }})` }}
-        onClick={handleImageClick}></span>
+        style={{ backgroundImage: `url(${post?.photo_url || { emptyImage }})` }}
+      ></span>
       <div className={styles.forFlexTodayTag1}>
         <div className={styles.forFlexTodayTag2}>
           {/*여기 아이콘은 빼야 할 듯*/}
@@ -28,21 +27,14 @@ export default function DailyPopularTag({
           {/*설명 받기*/}
         </p>
         <div className={styles.forFlexTodayTag3}>
-          <div className={styles.heartContainer} onClick={(e) => {
-            e.stopPropagation();
-            handleLikeNum();
-          }}>
+          <div className={styles.heartContainer} onClick={handleLikeClick}>
             <img src={heart} alt="" className={styles.todayTagHeartIcon}></img>
             <span className={styles.todayTagheartText}>
-              {post?.likesCount || "3.2k"}
+              {post?.likes_count || "3.2k"}
               {/*하트 갯수 받기*/}
             </span>
           </div>
-          <div className={styles.commentContainer} 
-          onClick={(e) => {
-            e.stopPropagation();
-            handleCommentClickForModal(post);
-          }}>
+          <div className={styles.commentContainer} onClick={handleCommentClick}>
             <img
               src={comment}
               alt=""
@@ -50,7 +42,7 @@ export default function DailyPopularTag({
             ></img>
             <span className={styles.forFlextodayTagCommentText}>
               <span className={styles.todayTagCommentText}>
-                {post?.commentsCount || "80"}
+                {post?.comments_count || "80"}
                 {/*댓글 갯수 받기*/}
               </span>
             </span>

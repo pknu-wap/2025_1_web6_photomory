@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import AlbumTitleList from "../album/AlbumTitleList";
 import addAlbumButton from "../../assets/addAlbumButton.svg";
-import { createGroupAlbum } from "../../api/ourAlbumApi";
-import { normalizeGroupAlbum } from "../../utils/normalizers";
 import "./AddAlbum.css";
 
 const MAX_ALBUM_COUNT = 7; //최대 앨범 갯수
@@ -17,55 +15,36 @@ function AddAlbum({
   albumTitles = [], //나만의 추억에서만 쓸 앨범명 목록
   setMyAlbums, //나만의 추억  앨범 상태 변화 함수
 }) {
-  // 앨범 제목, 설명, 태그를 포함한 상태 객체
   const [newAlbumData, setNewAlbumData] = useState({
-    album_name: "",
-    album_description: "",
-    tags: [], //공통 태그 필드
-  });
+    album_name: "", //제목
+    album_description: "", //설명
+  }); // 앨범 생성 폼의 입력값(제목, 설명)을 저장하는 객체
 
-  const [newTagInput, setNewTagInput] = useState(""); // 새 태그 입력값
+  //타입이 "group"이면 그룹별 앨범명 배열, "private"이면 개인별 앨범명 배열 사용
+  const currentAlbumTitles =
+    type === "group" ? albumTitlesByGroup[selectedGroupId] || [] : albumTitles;
 
-  // 앨범명/설명 입력 처리
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setNewAlbumData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
-
-  // 새 태그 추가
-  const handleAddNewTag = () => {
-    const trimmed = newTagInput.trim();
-    //이미 추가된 태그에 포함되지 않았을 때
-    if (trimmed && !newAlbumData.tags.includes(trimmed)) {
-      setNewAlbumData((prev) => ({
-        ...prev,
-        tags: [...prev.tags, trimmed],
-      }));
-    }
-    setNewTagInput("");
-  };
-
-  // 태그 제거 버튼
-  const handleRemoveTag = (tagToRemove) => {
-    setNewAlbumData((prev) => ({
-      ...prev,
-      tags: prev.tags.filter((tag) => tag !== tagToRemove),
-    }));
-  };
-
   // 앨범 생성 처리
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const { album_name, album_description, tags } = newAlbumData;
 
+    const { album_name, album_description } = newAlbumData;
+
+    // 입력값이 모두 있을 때만 실행
     if (!album_name || !album_description) {
       alert("앨범 제목과 설명을 모두 입력해주세요.");
       return;
     }
 
+    // 현재 앨범 제목 목록과 현재 전체 앨범 개수 가져오기
     const currentTitles =
       type === "group"
         ? albumTitlesByGroup[selectedGroupId] || []
@@ -76,61 +55,52 @@ function AddAlbum({
         ? albumTitlesByGroup[selectedGroupId]?.length || 0
         : albumTitles.length;
 
+    // 최대 7개 제한
     if (currentAlbumCount >= MAX_ALBUM_COUNT) {
       alert("❗앨범은 최대 7개까지 생성할 수 있습니다.");
       return;
     }
 
+    // 제목 중복 확인
     if (currentTitles.includes(album_name)) {
       alert("❗이미 존재하는 앨범 제목입니다.");
       return;
     }
 
+    //새 앨범 객체
     const newAlbum = {
+      album_id: `album-${Date.now()}`, //임시 고유 ID
       album_name,
       album_description,
-      tags,
+      album_makingtime: new Date().toISOString().slice(0, 10), //YYYY-MM-DD
+      photos: [], //사진은 나중에 추가
     };
-    console.log(tags);
-    try {
-      if (type === "group") {
-        // 서버에 앨범 생성 요청
-        const createdAlbum = await createGroupAlbum(selectedGroupId, {
-          albumName: album_name,
-          albumTags: tags,
-          albumMakingTime: new Date().toISOString(),
-          albumDescription: album_description,
-        });
 
-        const normalizedAlbum = normalizeGroupAlbum(createdAlbum);
+    //타입에 따라 분기기
+    if (type === "group") {
+      // 그룹 앨범 추가 로직
+      const updatedTitles = [
+        ...(albumTitlesByGroup[selectedGroupId] || []),
+        album_name,
+      ];
+      // 그룹 id별 앨범 제목 객체 업데이트
+      setAlbumTitlesByGroup((prev) => ({
+        ...prev,
+        [selectedGroupId]: updatedTitles,
+      }));
 
-        const updatedTitles = [
-          ...(albumTitlesByGroup[selectedGroupId] || []),
-          album_name,
-        ];
-        setAlbumTitlesByGroup((prev) => ({
-          ...prev,
-          [selectedGroupId]: updatedTitles,
-        }));
-        setGroupAlbums((prev) => [...prev, normalizedAlbum]);
-      } else if (type === "private") {
-        setMyAlbums((prev) => [...prev, newAlbum]);
-      }
-
-      setNewAlbumData({
-        album_name: "",
-        album_description: "",
-        tags: [],
-      });
-    } catch (error) {
-      console.error("앨범 생성 오류:", error);
-      alert("앨범 생성 중 문제가 발생했습니다.");
+      setGroupAlbums((prev) => [...prev, newAlbum]);
+    } else if (type === "private") {
+      // 나만의 앨범 추가 로직
+      setMyAlbums((prev) => [...prev, newAlbum]);
     }
-  };
 
-  // 현재 앨범 제목 목록
-  const currentAlbumTitles =
-    type === "group" ? albumTitlesByGroup[selectedGroupId] || [] : albumTitles;
+    // 입력값 초기화
+    setNewAlbumData({
+      album_name: "",
+      album_description: "",
+    });
+  };
 
   return (
     <div className="addAlbumCard">
@@ -149,7 +119,6 @@ function AddAlbum({
             placeholder="앨범 제목을 입력하세요."
             className="albumTitleInput"
           />
-
           <label htmlFor="albumDescription">설명</label>
           <textarea
             id="albumDescription"
@@ -160,43 +129,8 @@ function AddAlbum({
             placeholder="앨범에 대한 설명을 입력하세요."
             className="albumDescription"
           />
-
-          <label htmlFor="tagInput">태그 추가</label>
-          <div className="tagContainer">
-            <input
-              id="tagInput"
-              type="text"
-              value={newTagInput}
-              onChange={(e) => setNewTagInput(e.target.value)}
-              placeholder="태그를 입력하세요"
-              className="albumTagInput"
-            />
-            <button
-              type="button"
-              className="tagAddButton"
-              onClick={handleAddNewTag}
-            >
-              +
-            </button>
-          </div>
-
-          <div className="selectedTagList">
-            {newAlbumData.tags.map((tag) => (
-              <span key={tag} className="selectedTag">
-                #{tag}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveTag(tag)}
-                  className="cancelTagButton"
-                >
-                  ❌
-                </button>
-              </span>
-            ))}
-          </div>
-
+          {/*앨범 제목 목록 컴포넌트*/}
           <AlbumTitleList albumTitles={currentAlbumTitles} />
-
           <button type="submit" className="addAlbumButton">
             <img src={addAlbumButton} alt="addAlbumButton" />
           </button>
