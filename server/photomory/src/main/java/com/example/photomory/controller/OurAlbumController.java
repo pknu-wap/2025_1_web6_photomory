@@ -59,7 +59,7 @@ public class OurAlbumController {
 
     // 3. 앨범 생성
     @PostMapping("/group/{groupId}/album")
-    public ResponseEntity<AlbumResponseDto> createAlbum(@PathVariable Long groupId,
+    public ResponseEntity<AlbumResponseDto> createAlbum(@PathVariable("groupId") Long groupId,
                                                         @RequestBody @Valid AlbumCreateRequestDto requestDto,
                                                         @AuthenticationPrincipal CustomUserDetails userDetails) {
         UserEntity user = getAuthenticatedUser(userDetails);
@@ -67,22 +67,28 @@ public class OurAlbumController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
+
     // 4. 앨범 상세정보 + 포스트 목록 (페이징 적용)
     @GetMapping("/album/{albumId}")
     public ResponseEntity<AlbumWithPostsResponseDto> getAlbumWithPosts(
-            @PathVariable Long albumId,
-            @RequestParam(name = "page", defaultValue = "4") int page,
-            @RequestParam(name = "size", defaultValue = "4") int size) {
+            @PathVariable("albumId") Integer albumId,  // Integer로 명시하고 변수명도 지정
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+
         AlbumWithPostsResponseDto responseDto = ourAlbumService.getAlbumWithPosts(albumId, page, size);
         return ResponseEntity.ok(responseDto);
+
     }
+
 
     // 5. 게시물 생성 (파일 포함)
     @PostMapping("/album/{albumId}/post")
-    public ResponseEntity<PostResponseDto> createPost(@PathVariable Long albumId,
-                                                      @RequestPart(name = "requestDtoJson") String requestDtoJson,
-                                                      @RequestPart(name = "photo", required = false) MultipartFile photo,
-                                                      @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
+    public ResponseEntity<PostResponseDto> createPost(
+            @PathVariable("albumId") Integer albumId,
+            @RequestPart(name = "requestDtoJson") String requestDtoJson,
+            @RequestPart(name = "photo", required = false) MultipartFile photo,
+            @AuthenticationPrincipal CustomUserDetails userDetails) throws IOException {
+
         UserEntity user = getAuthenticatedUser(userDetails);
 
         PostCreateRequestDto requestDto;
@@ -96,12 +102,15 @@ public class OurAlbumController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
+
     // 7. 댓글 작성
     @PostMapping("/{albumId}/post/{postId}/comment")
-    public ResponseEntity<CommentResponseDto> createComment(@PathVariable Integer albumId,
-                                                            @PathVariable Integer postId,
-                                                            @RequestBody @Valid CommentRequestDto requestDto,
-                                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<CommentResponseDto> createComment(
+            @PathVariable("albumId") Integer albumId,
+            @PathVariable("postId") Integer postId,
+            @RequestBody @Valid CommentRequestDto requestDto,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
         UserEntity user = getAuthenticatedUser(userDetails);
 
         if (!albumId.equals(requestDto.getAlbumId()) || !postId.equals(requestDto.getPostId())) {
@@ -111,6 +120,7 @@ public class OurAlbumController {
         CommentResponseDto response = ourAlbumService.createComment(albumId, postId, user, requestDto.getCommentsText());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
 
     // 9. 초대 가능한 친구 목록 조회 (그룹 멤버 제외)
     @GetMapping("/group/{groupId}/invitable-friends")
