@@ -1,21 +1,19 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.Setter;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Objects; // Objects 클래스 임포트
 
 @Entity
+@Setter
 @Table(name = "USERS")
-public class UserEntity implements UserDetails {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private int userId;
+    private Long userId;
 
     @Column(name = "user_name", nullable = false)
     private String userName;
@@ -41,6 +39,11 @@ public class UserEntity implements UserDetails {
     @Column(name = "user_field", nullable = false)
     private String userField;
 
+    @Column(name = "user_area")
+    private String userArea;
+
+
+
     public UserEntity() {}
 
     public UserEntity(
@@ -51,7 +54,8 @@ public class UserEntity implements UserDetails {
             String userEquipment,
             String userIntroduction,
             String userJob,
-            String userField
+            String userField,
+            String userArea
     ) {
         this.userEmail = userEmail;
         this.userName = userName;
@@ -61,73 +65,72 @@ public class UserEntity implements UserDetails {
         this.userIntroduction = userIntroduction;
         this.userJob = userJob;
         this.userField = userField;
+        this.userArea = userArea;
     }
 
+    // Setter for userPassword (기존 코드)
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
 
-    // ✅ 추가된 getter
-    public String getUserPassword() {
-        return this.userPassword;
+    // Getters (기존 코드)
+    public Long getUserId() {
+        return userId;
     }
 
     public String getUserName() {
-        return this.userName;
+        return userName;
     }
 
     public String getUserEmail() {
-        return this.userEmail;
+        return userEmail;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
     }
 
     public String getUserPhotourl() {
-        return this.userPhotourl;
+        return userPhotourl;
     }
 
     public String getUserEquipment() {
-        return this.userEquipment;
+        return userEquipment;
     }
 
     public String getUserIntroduction() {
-        return this.userIntroduction;
+        return userIntroduction;
     }
 
     public String getUserJob() {
-        return this.userJob;
+        return userJob;
     }
 
     public String getUserField() {
-        return this.userField;
+        return userField;
     }
 
-    public int getUserId() {
-        return this.userId;
+    public String getUserArea() {return userArea;}
+
+
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserEntity that = (UserEntity) o;
+        // userId가 null일 수 있으므로 Objects.equals를 사용합니다.
+        // 영속성 컨텍스트에 없는 엔티티는 userId가 null일 수 있기 때문입니다.
+        // 하지만 일반적으로 PK는 null이 아니어야 합니다.
+        // DB에서 조회된 엔티티는 userId가 항상 존재하므로, userId만 비교하는 것이 가장 견고합니다.
+        return Objects.equals(userId, that.userId);
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + userJob));
+    public int hashCode() {
+        // userId가 null일 수 있으므로 Objects.hash를 사용합니다.
+        return Objects.hash(userId);
     }
 
-    @Override
-    public String getPassword() {
-        return this.userPassword;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.userEmail;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() { return true; }
-
-    @Override
-    public boolean isAccountNonLocked() { return true; }
-
-    @Override
-    public boolean isCredentialsNonExpired() { return true; }
-
-    @Override
-    public boolean isEnabled() { return true; }
 }

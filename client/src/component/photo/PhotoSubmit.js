@@ -3,6 +3,7 @@ import "./PhotoSubmit.css";
 import submitFileImage from "../../assets/submitFileImage.svg";
 import { addPhotosToMyAlbum } from "../../api/myAlbumAPi";
 import { createGroupAlbumPost } from "../../api/ourAlbumApi";
+
 function PhotoSubmit({ type, albumId, handleAddPhoto }) {
   const [newPhotoData, setNewPhotoData] = useState({
     imgFile: null,
@@ -56,9 +57,7 @@ function PhotoSubmit({ type, albumId, handleAddPhoto }) {
       }
 
       if (result) {
-        console.log("서버에서 응답받은 데이터:", result);
-
-        //현재 사진들들 상태 업데이트
+        // 로컬 목록에 추가 (렌더링용)
         handleAddPhoto({
           photo_id: Date.now(),
           photo_name: newPhotoData.photo_name,
@@ -66,7 +65,7 @@ function PhotoSubmit({ type, albumId, handleAddPhoto }) {
           photo_url: URL.createObjectURL(newPhotoData.imgFile),
         });
 
-        //입력 초기화화
+        // 입력 초기화
         resetForm();
       } else {
         alert("서버 업로드에 실패했습니다.");

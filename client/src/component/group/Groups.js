@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import PaginationBar from "../common/PaginationBar";
 import GroupControlButton from "../../assets/groupControlButton.svg";
 import "./Groups.css";
-function Groups({ groupList, selectedGroupId }) {
+function GroupsTest({ groupList, selectedGroupId }) {
   const [currentPage, setCurrentPage] = useState(1); //초기 페이지 번호
 
   const groupsPerPage = 4; //한 페이지당 그룹 수
@@ -88,4 +88,4 @@ function Groups({ groupList, selectedGroupId }) {
   );
 }
 
-export default Groups;
+export default GroupsTest;

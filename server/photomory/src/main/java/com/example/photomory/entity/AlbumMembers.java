@@ -1,76 +1,44 @@
 package com.example.photomory.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "ALBUM_MEMBERS")
 @IdClass(AlbumMembers.AlbumMembersId.class)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AlbumMembers {
 
     @Id
-    @Column(name = "user_id", insertable = false, updatable = false)
-    private Integer userId;
-
-    @Id
-    @Column(name = "group_id", insertable = false, updatable = false)
-    private Integer groupId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userEntity;
 
+    @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", nullable = false)
-    private MyAlbum myAlbum;
+    @JoinColumn(name = "our_album_id", nullable = false) // 'album_id'에서 'our_album_id'로 컬럼명 변경
+    private OurAlbum ourAlbum;
 
-    // 기본 생성자
-    public AlbumMembers() {}
-
-    // getter/setter
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Integer getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Integer groupId) {
-        this.groupId = groupId;
-    }
-
-    public UserEntity getUserEntity() {
-        return userEntity;
-    }
-
-    public void setUserEntity(UserEntity userEntity) {
-        this.userEntity = userEntity;
-    }
-
-    public MyAlbum getMyAlbum() {
-        return myAlbum;
-    }
-
-    public void setMyAlbum(MyAlbum myAlbum) {
-        this.myAlbum = myAlbum;
-    }
-
-    // Composite key class
     public static class AlbumMembersId implements Serializable {
-        private Integer userId;
-        private Integer groupId;
+        private Long userEntity;   // UserEntity PK 타입과 일치해야 합니다. (user_id)
+        private Integer ourAlbum;  // OurAlbum PK 타입과 일치해야 합니다. (our_album_id)
 
         public AlbumMembersId() {}
 
-        public AlbumMembersId(Integer userId, Integer groupId) {
-            this.userId = userId;
-            this.groupId = groupId;
+        public AlbumMembersId(Long userEntity, Integer ourAlbum) {
+            this.userEntity = userEntity;
+            this.ourAlbum = ourAlbum;
         }
 
         @Override
@@ -78,13 +46,13 @@ public class AlbumMembers {
             if (this == o) return true;
             if (!(o instanceof AlbumMembersId)) return false;
             AlbumMembersId that = (AlbumMembersId) o;
-            return Objects.equals(userId, that.userId) &&
-                    Objects.equals(groupId, that.groupId);
+            return Objects.equals(userEntity, that.userEntity) &&
+                    Objects.equals(ourAlbum, that.ourAlbum);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(userId, groupId);
+            return Objects.hash(userEntity, ourAlbum);
         }
     }
 }

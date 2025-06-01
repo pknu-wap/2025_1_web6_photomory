@@ -19,7 +19,7 @@ function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
     }
   }, [groupList]); //groupList가 바뀔 때마다 실행
 
-  //선택 그룹 변경 헨들러
+  //선택 그룹룹 변경 헨들러
   const handleChange = (e) => {
     const name = e.target.value; // 선택된 <option>의 value 값 (즉, 그룹 이름)을 가져옴
     const group = groupList.find((g) => g.group_name === name);
@@ -71,10 +71,8 @@ function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
         )}
       </div>
 
-      <div className="groupActionAreaFixed">
-        <SelectGroupOptions groupList={groupList} onSelect={handleChange} />
-        <AddGroupButton onAddGroup={onAddGroup} />
-      </div>
+      {/*그룹추가버튼 컴포넌트*/}
+      <AddGroupButton onAddGroup={onAddGroup} />
     </div>
   );
 }

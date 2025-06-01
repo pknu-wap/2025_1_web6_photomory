@@ -1,51 +1,56 @@
 package com.example.photomory.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
+import com.example.photomory.entity.OurPost;
+import com.example.photomory.entity.MyPost;
+import com.example.photomory.entity.EveryPost;
+import com.example.photomory.entity.UserEntity;
+
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "LIKES")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Like {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "like_id")
+    private Long likesId;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false, referencedColumnName = "post_id")
-    private Post post;
+    @Column(name = "post_type", nullable = false)
+    private String postType;
+
+    @Column(name = "post_id", nullable = false)
+    private Long postId;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+
+    // OurPost 좋아요용
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "our_post_id")
+    private OurPost ourPost;
+
+    // MyPost 좋아요용
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "my_post_id")
+    private MyPost myPost;
+
+    // EveryPost 좋아요용
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "every_post_id")
+    private EveryPost everyPost;
+
+    @Column(name = "comment_id", nullable = false)
+    private Integer commentId = 0; // 게시글 좋아요만 할 거니까 항상 0
 
     @Column(name = "likes_count", nullable = false)
-    private Integer likesCount;
-
-    // Getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    public Integer getLikesCount() {
-        return likesCount;
-    }
-
-    public void setLikesCount(Integer likesCount) {
-        this.likesCount = likesCount;
-    }
+    private Integer likesCount = 0;
 }
