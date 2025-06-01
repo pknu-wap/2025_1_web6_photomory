@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getMyAlbums } from "../api/getMyAlbum";
+import { fetchMyMemoryAlbums } from "../api/myAlbumAPi";
 import Container from "../component/common/Container";
 import Calender from "../component/calender/Calender";
 import Header from "../component/common/Header";
@@ -7,13 +7,23 @@ import AddAlbum from "../component/add/AddAlbum";
 import AlbumList from "../component/album/AlbumList";
 import Footer from "../component/common/Footer";
 import privateIcon from "../assets/privateIcon.svg";
+import { normalizeMyAlbumData } from "../utils/normalizers";
 function MyAlbumPage() {
   const [myAlbums, setMyAlbums] = useState([]); //나의 앨범 상태
 
   //초기 렌더링시 배열로 앨범과 각 사진정보 받기
   useEffect(() => {
-    const albums = getMyAlbums();
-    setMyAlbums(albums);
+    (async () => {
+      try {
+        const rawAlbums = fetchMyMemoryAlbums();
+
+        const normalizedAlbums = rawAlbums.map(normalizeMyAlbumData); //정규화 처리
+        setMyAlbums(normalizedAlbums);
+      } catch (error) {
+        console.log("앨범 불러오기 실패:", error);
+        setMyAlbums([]);
+      }
+    })();
   }, []);
 
   //앨범 제목만 따로 추출한 배열
