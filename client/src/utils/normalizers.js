@@ -15,6 +15,23 @@ export function normalizeMyAlbumData(rawAlbums) {
   }));
 }
 
+//앨범 생성 시 앨범 상태 정규화 함수
+export function normalizeMyAlbum(myAlbum) {
+  return {
+    album_id: myAlbum.myalbumId,
+    album_name: myAlbum.myalbumName,
+    album_description: myAlbum.myalbumDescription,
+    album_makingtime: myAlbum.myalbumMakingtime,
+    photos: myAlbum.myphotos.map((p) => ({
+      photo_id: p.myphotoId,
+      photo_name: p.myphotoName,
+      photo_url: p.myphotoUrl,
+      photo_makingtime: p.myphotoMakingtime,
+    })),
+    tags: myAlbum.mytags,
+  };
+}
+
 // 우리의 추억 페이지 필드명 변환 함수 (정규화 함수)
 export function normalizeOurAlbumData(rawData) {
   return rawData.map((group) => ({
@@ -48,7 +65,7 @@ export function normalizeOurAlbumData(rawData) {
   }));
 }
 
-//앨범 생성 시 앨범 상태 정규화 함수
+//우리의 추억 앨범 생성 시 앨범 상태 정규화 함수
 export function normalizeGroupAlbum(apiAlbum) {
   return {
     album_id: apiAlbum.albumId,

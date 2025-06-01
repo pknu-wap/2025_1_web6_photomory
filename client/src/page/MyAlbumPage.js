@@ -34,8 +34,8 @@ function MyAlbumPage() {
     (async () => {
       try {
         const rawAlbums = await fetchMyMemoryAlbums();
-        console.log("rawAlbums 결과:", rawAlbums); // 여기서 구조 확인!
         const normalizedAlbums = normalizeMyAlbumData(rawAlbums);
+        console.log(normalizedAlbums);
         setMyAlbums(normalizedAlbums);
       } catch (error) {
         console.log("앨범 불러오기 실패:", error);

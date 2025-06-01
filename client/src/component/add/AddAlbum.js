@@ -3,6 +3,7 @@ import AlbumTitleList from "../album/AlbumTitleList";
 import { createGroupAlbum } from "../../api/ourAlbumApi";
 import { createMyMemoryAlbum } from "../../api/myAlbumAPi";
 import { normalizeGroupAlbum } from "../../utils/normalizers";
+import { normalizeMyAlbum } from "../../utils/normalizers";
 import "./AddAlbum.css";
 
 const MAX_ALBUM_COUNT = 7; //최대 앨범 갯수
@@ -100,11 +101,12 @@ function AddAlbum({
         });
 
         const normalizedAlbum = normalizeGroupAlbum(createdAlbum);
-
+        //해당 그룹 앨범명 업데이트트
         const updatedTitles = [
           ...(albumTitlesByGroup[selectedGroupId] || []),
           album_name,
         ];
+        //그룹별 앨범명 업데이트
         setAlbumTitlesByGroup((prev) => ({
           ...prev,
           [selectedGroupId]: updatedTitles,
@@ -116,8 +118,8 @@ function AddAlbum({
           myalbumDescription: album_description,
           mytags: tags,
         });
-
-        setMyAlbums((prev) => [...prev, createdMyAlbum]);
+        const normalizedAlbum = normalizeMyAlbum(createdMyAlbum);
+        setMyAlbums((prev) => [...prev, normalizedAlbum]);
       }
 
       // 초기화
