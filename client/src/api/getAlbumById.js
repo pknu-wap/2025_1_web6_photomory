@@ -1,33 +1,25 @@
-import final_group_album_data from "./final_group_album_data";
-import final_my_album_data from "./final_my_album_data";
+import { fetchMyMemoryAlbums } from "../api/myAlbumAPi"; // 개인 앨범 전체 불러오기 API
+import { normalizeMyAlbumData } from "../utils/normalizers"; // 정규화 함수
 
-// album_id + type을 받아서 앨범 찾아오는 함수
-export default function getAlbumById(album_id, type, group_id) {
-  if (!type) return null;
-  //그룹의 앨범을 그룹id, 앨범 아이디를 이용해서 찾기
-  if (type === "group") {
-    const group = final_group_album_data.find((g) => g.group_id === group_id);
-    if (!group) return null; // groupId가 진짜 없을 경우만 null 반환
+// album_id를 받아서 개인 앨범 중 하나를 찾아 리턴
+export async function getMyAlbumById(album_id) {
+  try {
+    const rawAlbums = await fetchMyMemoryAlbums(); // 서버에서 전체 앨범 받아오기
+    const normalizedAlbums = normalizeMyAlbumData(rawAlbums); // 앨범 데이터 정규화화
 
-    const album = group.albums.find((a) => a.album_id === album_id);
+    //앨범 id를 통한 특정 앨범 조회
+    const matchedAlbum = normalizedAlbums.find(
+      (album) => album.album_id === parseInt(album_id)
+    );
+
+    if (!matchedAlbum) return null;
 
     return {
-      album: album || null, // 앨범이 없으면 null
-      description: album?.album_description || null,
-      groupMembers: group.members,
-      groupName: group.group_name,
+      album: matchedAlbum,
+      description: matchedAlbum.album_description,
     };
+  } catch (error) {
+    console.error("개인 앨범 불러오기 실패:", error);
+    return null;
   }
-  //개인 앨범을 id를 이용해서 찾기
-  else if (type === "private") {
-    const myAlbum = final_my_album_data.find((a) => a.album_id === album_id);
-    if (myAlbum) {
-      return {
-        album: myAlbum,
-        description: myAlbum.album_description,
-      };
-    }
-  }
-
-  return null; // 둘 다 없으면 NULL 반환
 }

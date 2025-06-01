@@ -1,67 +1,61 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Container from "../component/common/Container";
 import Photos from "../component/photo/Photos";
 import { getPhotoPeriod } from "../utils/getPhotoPeriod";
 import PhotoInfo from "../component/photo/PhotoInfo";
 import PhotoSubmit from "../component/photo/PhotoSubmit";
-import getAlbumById from "../api/getAlbumById";
+import { getMyAlbumById } from "../api/getAlbumById";
 import Header from "../component/common/Header";
 import Footer from "../component/common/Footer";
+
 function MyAlbumDetailPage() {
   const { albumId } = useParams();
-  const result = getAlbumById(parseInt(albumId), "private");
-  //TODO: 서버 연동시 수정 필요
-  const album = result?.album || {
-    album_name: "(제목 없음)",
-    photos: [],
-  };
+  const [album, setAlbum] = useState(null);
+  const [description, setDescription] = useState("");
+  const [photoList, setPhotoList] = useState([]);
 
-  //앨범 설명
-  const description =
-    result?.description || "목 데이터 기반이라서 아직 설명 추가를 못함";
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await getMyAlbumById(albumId);
+        if (result && result.album) {
+          setAlbum(result.album);
+          setDescription(result.description);
+          setPhotoList(result.album.photos || []);
+        }
+      } catch (error) {
+        console.error("앨범 불러오기 실패:", error);
+      }
+    })();
+  }, [albumId]);
 
-  //앨범에 대한 사진 배열 상태
-  const [photoList, setPhotoList] = useState(album.photos || []);
-
-  //사진 추가 헨들러
+  // 사진 추가 헨들러
   const handleAddPhoto = (newPhoto) => {
     setPhotoList((prev) => [newPhoto, ...prev]);
   };
 
-  //사진 삭제 헨들러
-  const handleDeltePhoto = (photo_id) => {
-    setPhotoList((prev) => prev.filter((p) => p.photo_id !== photo_id));
-  };
+  if (!album) return <div>로딩 중...</div>;
 
-  const albumPeriod = getPhotoPeriod(photoList); //앨범 기간
-  const albumTitle = album.album_name; // 앨범이름
-  const Count = photoList.length; //사진갯수
+  const albumPeriod = getPhotoPeriod(photoList); //촬영기간
+  const albumTitle = album.album_name; //앨범명
+  const Count = photoList.length; //사진 갯수수
+
   return (
     <>
       <Header />
-      <Container
-        style={{
-          margin: "0 auto", // 좌우 가운데 정렬
-          padding: "40px 24px", // 위아래/좌우 여백
-        }}
-      >
-        <div
-          style={{
-            margin: "0px auto",
-            width: "1056px",
-          }}
-        >
-          <div
-            style={{
-              width: "1056px",
-            }}
-          >
+      <Container style={{ margin: "0 auto", padding: "40px 24px" }}>
+        <div style={{ margin: "0px auto", width: "1056px" }}>
+          <div style={{ width: "1056px" }}>
             <Photos
               type="private"
               albumTitle={albumTitle}
               photoList={photoList}
-              onDeltePhoto={handleDeltePhoto}
+              onDeltePhoto={(photo_id) =>
+                setPhotoList((prev) =>
+                  prev.filter((p) => p.photo_id !== photo_id)
+                )
+              }
             />
             <PhotoInfo
               albumTitle={albumTitle}
