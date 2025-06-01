@@ -4,6 +4,7 @@ import Footer from "../component/common/Footer";
 import Container from "../component/common/Container";
 import Calender from "../component/calender/Calender";
 import AddAlbum from "../component/add/AddAlbum";
+import AllAlbumTags from "../component/tag/AllAlbumTags";
 import CurrentGroup from "../component/group/CurrentGroup";
 import Groups from "../component/group/Groups";
 import AlbumList from "../component/album/AlbumList";
