@@ -25,7 +25,6 @@ public class OurAlbumController {
     private final OurAlbumService ourAlbumService;
     private final ObjectMapper objectMapper;
 
-    // 인증된 사용자 가져오기 및 검증 헬퍼
     private UserEntity getAuthenticatedUser(CustomUserDetails userDetails) {
         if (userDetails == null) {
             throw new UnauthorizedException("인증 정보가 없습니다. 로그인해주세요.");
@@ -52,7 +51,7 @@ public class OurAlbumController {
 
     // 2. 그룹 정보 + 구성원 반환
     @GetMapping("/group/{groupId}")
-    public ResponseEntity<OurAlbumResponseDefaultDto> getGroupFullInfo(@PathVariable Long groupId) {
+    public ResponseEntity<OurAlbumResponseDefaultDto> getGroupFullInfo(@PathVariable("groupId") Long groupId) {
         OurAlbumResponseDefaultDto responseDto = ourAlbumService.getGroupFullInfo(groupId);
         return ResponseEntity.ok(responseDto);
     }
@@ -67,19 +66,15 @@ public class OurAlbumController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
-
-    // 4. 앨범 상세정보 + 포스트 목록 (페이징 적용)
+    // 4. 앨범 상세정보 + 포스트 목록
     @GetMapping("/album/{albumId}")
     public ResponseEntity<AlbumWithPostsResponseDto> getAlbumWithPosts(
-            @PathVariable("albumId") Integer albumId,  // Integer로 명시하고 변수명도 지정
+            @PathVariable("albumId") Integer albumId,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
-
         AlbumWithPostsResponseDto responseDto = ourAlbumService.getAlbumWithPosts(albumId, page, size);
         return ResponseEntity.ok(responseDto);
-
     }
-
 
     // 5. 게시물 생성 (파일 포함)
     @PostMapping("/album/{albumId}/post")
@@ -102,7 +97,6 @@ public class OurAlbumController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
-
     // 7. 댓글 작성
     @PostMapping("/{albumId}/post/{postId}/comment")
     public ResponseEntity<CommentResponseDto> createComment(
@@ -121,10 +115,9 @@ public class OurAlbumController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
-    // 9. 초대 가능한 친구 목록 조회 (그룹 멤버 제외)
+    // 9. 초대 가능한 친구 목록 조회
     @GetMapping("/group/{groupId}/invitable-friends")
-    public ResponseEntity<List<UserSummaryDto>> getInvitableFriends(@PathVariable Long groupId,
+    public ResponseEntity<List<UserSummaryDto>> getInvitableFriends(@PathVariable("groupId") Long groupId,
                                                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
         UserEntity user = getAuthenticatedUser(userDetails);
         List<UserSummaryDto> friends = ourAlbumService.getFriendsExcludingGroup(groupId, user.getUserId());
@@ -133,7 +126,7 @@ public class OurAlbumController {
 
     // 10. 친구를 그룹에 초대
     @PostMapping("/group/{groupId}/invite")
-    public ResponseEntity<String> inviteToGroup(@PathVariable Long groupId,
+    public ResponseEntity<String> inviteToGroup(@PathVariable("groupId") Long groupId,
                                                 @RequestBody List<Long> friendIds,
                                                 @AuthenticationPrincipal CustomUserDetails userDetails) {
         UserEntity inviter = getAuthenticatedUser(userDetails);
@@ -143,8 +136,8 @@ public class OurAlbumController {
 
     // 11. 친구 그룹에서 삭제
     @DeleteMapping("/group/{groupId}/member/{userIdToRemove}")
-    public ResponseEntity<Void> removeMemberFromGroup(@PathVariable Long groupId,
-                                                      @PathVariable Long userIdToRemove,
+    public ResponseEntity<Void> removeMemberFromGroup(@PathVariable("groupId") Long groupId,
+                                                      @PathVariable("userIdToRemove") Long userIdToRemove,
                                                       @AuthenticationPrincipal CustomUserDetails userDetails) {
         UserEntity currentUser = getAuthenticatedUser(userDetails);
         ourAlbumService.removeMemberFromGroup(groupId, userIdToRemove, currentUser);
@@ -153,8 +146,8 @@ public class OurAlbumController {
 
     // 12. 특정 앨범에서 게시글 삭제
     @DeleteMapping("/album/{albumId}/post/{postId}")
-    public ResponseEntity<Void> deletePostInAlbum(@PathVariable Integer albumId,
-                                                  @PathVariable Integer postId,
+    public ResponseEntity<Void> deletePostInAlbum(@PathVariable("albumId") Integer albumId,
+                                                  @PathVariable("postId") Integer postId,
                                                   @AuthenticationPrincipal CustomUserDetails userDetails) {
         UserEntity currentUser = getAuthenticatedUser(userDetails);
         ourAlbumService.deletePostWithFile(albumId, postId, currentUser);
@@ -163,7 +156,7 @@ public class OurAlbumController {
 
     // 13. 앨범 삭제
     @DeleteMapping("/album/{albumId}")
-    public ResponseEntity<Void> deleteAlbum(@PathVariable Long albumId,
+    public ResponseEntity<Void> deleteAlbum(@PathVariable("albumId") Long albumId,
                                             @AuthenticationPrincipal CustomUserDetails userDetails) {
         UserEntity currentUser = getAuthenticatedUser(userDetails);
         ourAlbumService.deleteAlbum(albumId, currentUser);
