@@ -23,6 +23,8 @@ function AddAlbum({
     tags: [], //태그 목록 (옵션)
   }); // 앨범 생성 폼의 입력값(제목, 설명, 태그)을 저장하는 객체
 
+  const [newTagInput, setNewTagInput] = useState(""); // 새 태그 입력값
+
   // 타입이 "group"이면 그룹별 앨범명 배열, "private"이면 개인별 앨범명 배열 사용
   const currentAlbumTitles =
     type === "group" ? albumTitlesByGroup[selectedGroupId] || [] : albumTitles;
@@ -32,6 +34,27 @@ function AddAlbum({
     setNewAlbumData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  // 새 태그 추가
+  const handleAddNewTag = () => {
+    const trimmed = newTagInput.trim();
+    //이미 추가된 태그에 포함되지 않았을 때
+    if (trimmed && !newAlbumData.tags.includes(trimmed)) {
+      setNewAlbumData((prev) => ({
+        ...prev,
+        tags: [...prev.tags, trimmed],
+      }));
+    }
+    setNewTagInput("");
+  };
+
+  // 태그 제거 버튼
+  const handleRemoveTag = (tagToRemove) => {
+    setNewAlbumData((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
 
@@ -70,6 +93,12 @@ function AddAlbum({
       return;
     }
 
+    const newAlbum = {
+      album_name,
+      album_description,
+      tags,
+    };
+
     try {
       if (type === "group") {
         // 서버에 앨범 생성 요청
@@ -80,35 +109,21 @@ function AddAlbum({
           albumDescription: album_description,
         });
 
-        // 응답값 정규화
         const normalizedAlbum = normalizeGroupAlbum(createdAlbum);
 
-        // 그룹별 앨범 제목 업데이트
-        const updatedTitles = [...currentTitles, album_name];
+        const updatedTitles = [
+          ...(albumTitlesByGroup[selectedGroupId] || []),
+          album_name,
+        ];
         setAlbumTitlesByGroup((prev) => ({
           ...prev,
           [selectedGroupId]: updatedTitles,
         }));
-
-        // 그룹 앨범 목록에 추가
         setGroupAlbums((prev) => [...prev, normalizedAlbum]);
-
-        //태그 추가 핸들러 (선택적으로 실행)
-        handleAddTagClick?.(normalizedAlbum.album_tag);
       } else if (type === "private") {
-        // 나만의 앨범 생성
-        const newAlbum = {
-          album_id: Date.now(), // 임시 ID
-          album_name,
-          album_description,
-          album_makingtime: new Date().toISOString().slice(0, 10), //YYYY-MM-DD
-          tags,
-          photos: [],
-        };
         setMyAlbums((prev) => [...prev, newAlbum]);
       }
 
-      //입력값 초기화
       setNewAlbumData({
         album_name: "",
         album_description: "",
@@ -146,6 +161,40 @@ function AddAlbum({
             placeholder="앨범에 대한 설명을 입력하세요."
             className="albumDescription"
           />
+
+          <label htmlFor="tagInput">태그 추가</label>
+          <div className="tagContainer">
+            <input
+              id="tagInput"
+              type="text"
+              value={newTagInput}
+              onChange={(e) => setNewTagInput(e.target.value)}
+              placeholder="태그를 입력하세요"
+              className="albumTagInput"
+            />
+            <button
+              type="button"
+              className="tagAddButton"
+              onClick={handleAddNewTag}
+            >
+              +
+            </button>
+          </div>
+
+          <div className="selectedTagList">
+            {newAlbumData.tags.map((tag) => (
+              <span key={tag} className="selectedTag">
+                #{tag}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveTag(tag)}
+                  className="cancelTagButton"
+                >
+                  ❌
+                </button>
+              </span>
+            ))}
+          </div>
 
           {/*앨범 제목 목록 컴포넌트*/}
           <AlbumTitleList albumTitles={currentAlbumTitles} />
