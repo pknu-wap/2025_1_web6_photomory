@@ -58,36 +58,9 @@ function AddGroupButton({ onAddGroup }) {
 
       {/* 모달창 (조건부 렌더링) */}
       {showModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            background: "#fff",
-            padding: "32px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-            zIndex: 1000,
-            width: "436px",
-            height: "320px",
-            borderRadius: "8px",
-          }}
-        >
-          <h3
-            style={{
-              fontSize: "24px",
-              fontWeight: "bold",
-              lineHeight: "32px",
-              letterSpacing: "0px",
-              marginBottom: "24px",
-            }}
-          >
-            새 그룹 만들기
-          </h3>
-          <label
-            htmlFor="groupName"
-            style={{ display: "block", marginBottom: "8px" }}
-          >
+        <div className="modalContainer">
+          <h3 className="modalTitle">새 그룹 만들기</h3>
+          <label htmlFor="groupName" className="modalLabel">
             그룹이름
           </label>
           <input
@@ -96,18 +69,9 @@ function AddGroupButton({ onAddGroup }) {
             placeholder="그룹명을 입력하세요"
             value={groupInfo.groupName}
             onChange={handleInputChange}
-            style={{
-              padding: "8px",
-              width: "100%",
-              marginBottom: "16px",
-              border: "1px solid #E5E7EB",
-              height: "42px",
-            }}
+            className="modalInput"
           />
-          <label
-            htmlFor="groupDescription"
-            style={{ display: "block", marginBottom: "8px" }}
-          >
+          <label htmlFor="groupDescription" className="modalLabel">
             그룹 설명
           </label>
           <input
@@ -117,28 +81,10 @@ function AddGroupButton({ onAddGroup }) {
             placeholder="그룹 설명을 입력하세요"
             value={groupInfo.groupDescription}
             onChange={handleInputChange}
-            style={{
-              padding: "8px",
-              width: "100%",
-              marginBottom: "16px",
-              border: "1px solid #E5E7EB",
-              height: "42px",
-            }}
+            className="modalInput"
           />
-          <div
-            style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
-          >
-            <button
-              onClick={handleCloseModal}
-              style={{
-                width: "81.45px",
-                height: "48px",
-                border: "2px solid #D1D5DB",
-                cursor: "pointer",
-                borderRadius: "8px",
-                background: "rgba(0, 0, 0, 0)",
-              }}
-            >
+          <div className="modalButtonArea">
+            <button onClick={handleCloseModal} className="cancelModalButton">
               취소
             </button>
             <button
@@ -159,20 +105,7 @@ function AddGroupButton({ onAddGroup }) {
       )}
 
       {/* 모달 외부 어두운 배경 */}
-      {showModal && (
-        <div
-          onClick={handleCloseModal}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0, 0, 0, 0.4)",
-            zIndex: 999,
-          }}
-        />
-      )}
+      {showModal && <div onClick={handleCloseModal} className="modalOverlay" />}
     </div>
   );
 }
