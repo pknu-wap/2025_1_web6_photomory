@@ -65,6 +65,7 @@ function AddGroupButton({ onAddGroup }) {
           </label>
           <input
             id="groupName"
+            name="groupName"
             type="text"
             placeholder="그룹명을 입력하세요"
             value={groupInfo.groupName}
