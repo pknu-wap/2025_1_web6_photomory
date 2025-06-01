@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.example.photomory.entity.UserGroup;
 
 import java.time.LocalDateTime;
 
@@ -37,4 +38,14 @@ public class GroupResponseDto {
                 .createdAt(ourAlbum.getAlbumMakingTime()) // 여기 대소문자 주의
                 .build();
     }
+
+    public static GroupResponseDto fromEntity(UserGroup userGroup) {
+        return GroupResponseDto.builder()
+                .groupId(userGroup.getId())
+                .groupName(userGroup.getGroupName())
+                .groupDescription(userGroup.getGroupDescription())
+                .createdAt(userGroup.getCreatedAt())
+                .build();
+    }
+
 }

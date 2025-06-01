@@ -33,7 +33,7 @@ public class AlbumInviteService {
         List<Friend> friends = friendRepository.findByUserIdAndAreWeFriendTrue(loginUserId);
 
         // 친구 중 이미 그룹에 들어간 사람은 제외
-        List<Long> memberUserIds = albumMembersRepository.findUserIdsByOurAlbumId(groupId.intValue()); // groupId를 Integer로 캐스팅
+        List<Long> memberUserIds = albumMembersRepository.findUserIdsByUserGroupId(groupId);
 
         //검색어 포함 + 멤버가 아닌 친구만 걸러내기
         return friends.stream()
