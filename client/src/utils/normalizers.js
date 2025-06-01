@@ -4,7 +4,7 @@ export function normalizeMyAlbumData(rawAlbums) {
     album_id: album.myalbumId,
     album_name: album.myalbumName,
     album_description: album.myalbumDescription,
-    album_makingtime: album.myalbumMakingtime,
+    album_makingtime: album.myalbumMakingtime.slice(0, 10),
     photos: (album.myphotos || []).map((p) => ({
       photo_id: p.myphotoId,
       photo_name: p.myphotoName,
@@ -15,7 +15,7 @@ export function normalizeMyAlbumData(rawAlbums) {
   }));
 }
 
-//앨범 생성 시 앨범 상태 정규화 함수
+//나만의 추억 앨범 생성 시 앨범 상태 정규화 함수
 export function normalizeMyAlbum(myAlbum) {
   return {
     album_id: myAlbum.myalbumId,
