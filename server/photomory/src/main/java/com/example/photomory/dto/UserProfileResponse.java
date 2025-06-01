@@ -10,6 +10,9 @@ import java.util.List;
 @NoArgsConstructor
 public class UserProfileResponse {
 
+    @JsonProperty("user_id")
+    private Long userId;
+
     @JsonProperty("name")
     private String name;
 

@@ -16,7 +16,7 @@ public class MyAlbum {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "album_id") // 실제 DB 컬럼명이 'album_id'인 경우
+    @Column(name = "myalbum_id")
     private Integer myalbumId;
 
     @Column(name = "myalbum_name") // ⚠️ 수정: DB 컬럼명과 정확히 일치시킴
