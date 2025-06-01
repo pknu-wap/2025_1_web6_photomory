@@ -1,0 +1,46 @@
+.general-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+
+.general-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ccc;
+  object-fit: cover;
+}
+
+.general-message {
+  flex: 1;
+  margin: 0 12px;
+  font-size: 14px;
+}
+
+.general-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.accept {
+  background-color: #000;
+  color: white;
+}
+
+.reject {
+  background-color: #eee;
+  color: #333;
+}
