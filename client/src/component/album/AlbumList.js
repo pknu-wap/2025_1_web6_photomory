@@ -4,7 +4,13 @@ import PaginationBar from "../common/PaginationBar.js";
 import emptyImage from "../../assets/emptyImage.svg";
 import "./AlbumList.css";
 //개인 앨범, 공유 앨범에서 각 앨범을 보여주는 컴포넌트
-function AlbumList({ albums, type = "", selectedGroupId = "", basePath = "" }) {
+function AlbumList({
+  albums,
+  type = "",
+  selectedGroupId = "",
+  basePath = "",
+  allAlbumsCount,
+}) {
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
   const albumsPerPage = 4; //한 페이지당 앨범 갯수
 
@@ -20,9 +26,25 @@ function AlbumList({ albums, type = "", selectedGroupId = "", basePath = "" }) {
   const handlePageClick = (page) => {
     setCurrentPage(page);
   };
-
+  console.log(allAlbumsCount);
   if (!albums || albums.length === 0) {
-    return <p>앨범이 없습니다.</p>;
+    return (
+      <div
+        style={{
+          padding: "40px",
+          backgroundColor: "#f9f9f9",
+          borderRadius: "8px",
+          textAlign: "center",
+          color: "#999",
+          fontSize: "16px",
+          marginTop: "20px",
+        }}
+      >
+        {allAlbumsCount === 0
+          ? "아직 생성된 앨범이 없습니다. 첫 앨범을 만들어보세요!"
+          : "선택된 태그에 해당하는 앨범이 없습니다."}
+      </div>
+    );
   }
 
   return (
