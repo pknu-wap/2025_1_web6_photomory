@@ -1,130 +1,40 @@
 .friendListContainer{
-    min-width: 230px;
-    width: 100%;
+    width: clamp(230px, auto, 470px);
     display: flex;
     flex-direction: row;
     position:relative;
     align-items: center;
-    background-color: #F9F6FB;
-    border-radius: 12px;
-    margin: 7.5px 15px;
-    padding: 12px;
-    box-sizing: border-box;
-    transition: all 0.3s ease;
-    border: 1px solid #E8D5E4;
+    border: 1px solid black;
+    border-radius: 7px;
+    margin: 15px;
+    padding: 15px 0px 15px 15px;
 }
-
-.friendListContainer:hover {
-    box-shadow: 0 4px 8px rgba(155, 142, 169, 0.1);
-    background-color: #EDE4F3;
-    transform: translateY(-2px);
-}
-
 .forFlexLeft{
     display: flex;
     flex-direction: row;
     align-items: center;
 }
 .image{
-    border: 1px solid #E8D5E4;
-    width: 48px;
-    height: 48px;
+    width: clamp(50px ,55px ,60px);
+    height: clamp(50px ,55px ,60px);
     margin: 0px 10px 0px 0px;
+    border: 1px solid black;
     border-radius: 100%;
 }
-
 .name{
     margin: 0px;
     font-weight: 500;
-    white-space: nowrap;
-    max-width: 150px;
-    color: #6B4E71;
 }
-
 .id{
     margin: 0px;
     font-weight: 300;
     font-size: clamp(12px, 13px, 16px);
-    color: #9B8EA9;
-    white-space: nowrap;
+    color: rgb(130, 130,130);
 }
 .addFriend{
-    font-size: clamp(12px, 1.5vw, 15px);
+    font-size: clamp(14px, 15px, 17px);
     right: 15px;
     position: absolute;
     height: auto;
-    color: #B8A7C9;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-    white-space: nowrap;
-    padding: 4px 8px;
-    border-radius: 4px;
-    background-color: transparent;
-    border: 1px solid transparent;
-}
-
-.addFriend:hover {
-    color: #9B8EA9;
-    background-color: rgba(184, 167, 201, 0.1);
-    border-color: #B8A7C9;
-    transform: translateY(-1px);
-}
-
-.addFriend:active {
-    transform: translateY(0);
-    transition: all 0.1s ease;
-}
-
-@media (max-width: 768px) {
-    .friendListContainer {
-        margin: 10px;
-        padding: 8px;
-    }
-
-    .image {
-        width: 40px;
-        height: 40px;
-        margin: 0px 8px 0px 0px;
-    }
-
-    .name {
-        max-width: 120px;
-    }
-
-    .id {
-        max-width: 80px;
-    }
-
-    .addFriend {
-        right: 8px;
-        font-size: clamp(11px, 1.2vw, 13px);
-    }
-}
-
-@media (max-width: 480px) {
-    .friendListContainer {
-        margin: 8px;
-        padding: 6px;
-    }
-
-    .image {
-        width: 36px;
-        height: 36px;
-        margin: 0px 6px 0px 0px;
-    }
-
-    .name {
-        max-width: 100px;
-        font-size: 14px;
-    }
-
-    .id {
-        max-width: 60px;
-        font-size: 12px;
-    }
-
-    .addFriend {
-        right: 6px;
-        font-size: clamp(10px, 1vw, 12px);
-    }
+    color: #6B8E23;
 }

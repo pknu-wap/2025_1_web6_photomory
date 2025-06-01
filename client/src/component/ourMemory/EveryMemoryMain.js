@@ -12,16 +12,14 @@ import twinkle from "../../assets/twinkle.svg";
 import WeeklyPopularTag from "./WeeklyPopularTag.js";
 import DailyPopularTag from "./DailyPopularTag.js";
 import DailyPopularTagModal from "./DailyPopularTagModal";
-import CommentModal from "./CommnetModal.js";
 import { useState, useEffect, useMemo, useRef } from "react";
 
-async function fetchUserposts(retries=0, maxRetries=3) {
-    let accessToken = localStorage.getItem('accessToken')
-    const refreshToken = localStorage.getItem('refreshToken')
+async function fetchUserposts(accessToken) {
     try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`, {
             method: 'GET',
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`,
             },
         });
@@ -35,16 +33,9 @@ async function fetchUserposts(retries=0, maxRetries=3) {
 
         const posts = await response.json();
         return posts;
-    } catch (error){
-        if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
-            accessToken = await refreshAccessToken(refreshToken);
-            if (accessToken) {
-                const result = await fetchUserposts(retries+1, maxRetries);
-                return result
-            }
-        }
-        console.error('Failed to get post')
-        return null
+    } catch (error) {
+        console.error('Error fetching user posts:', error);
+        throw error;
     }
 }
 
@@ -63,9 +54,6 @@ async function refreshAccessToken(refreshToken) {
         }
 
         const data = await response.json();
-        if (data.accessToken) {
-            localStorage.setItem('accessToken', data.accessToken);
-        }
         return data.accessToken;
     }
     catch (error) {
@@ -74,11 +62,31 @@ async function refreshAccessToken(refreshToken) {
     }
 }
 
-async function updateLikeCount(postId,retries=0,maxRetries=3){ //좋아요 수 관리
-    let accessToken= localStorage.getItem('accessToken')
-    const refreshToken= localStorage.getItem('refreshToken')
+async function getUserPosts() {
+    let accessToken= localStorage.getItem('accessToken');
+    const refreshToken= localStorage.getItem('refreshToken');
     try{
-        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/posts/every/${postId}/like`,{/* 이거 엔드포인트 뭐임..?*/
+        const posts = await fetchUserposts(accessToken)
+        return posts
+    }
+    catch (error){
+        if (error.message === 'Unauthorized' && refreshToken) { //리프토큰 없으면 요청 안 되게게
+            accessToken=await refreshAccessToken(refreshToken);
+            if (accessToken) {
+                localStorage.setItem('accessToken', accessToken);
+                const posts = await fetchUserposts(accessToken);
+                return posts
+            }
+        }
+        console.log('Failed to fetch user posts')
+        return null
+    }
+}
+
+async function updateLikeCommentCount(postId){
+    try{
+        const accessToken= localStorage.getItem('accessToken')
+        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{/* 이거 엔드포인트 뭐임..?*/
             method: 'POST',
             headers:{
                 'Content-Type': 'application/json',
@@ -95,59 +103,18 @@ async function updateLikeCount(postId,retries=0,maxRetries=3){ //좋아요 수 �
         return await response.json();
     }
     catch(error){
-        if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
-            accessToken=await refreshAccessToken(refreshToken);
-        if (accessToken) {
-            const result = await updateLikeCount(accessToken,retries+1, maxRetries);
-            return result
-        }
-    }
-    console.error('Failed to upload like')
-    return null
+        console.error('Error updating count:', error)
+        throw error;
     }
 }
 
-async function updateComment(postId, comment, retries=0, maxRetries=3){ //댓글 수, 댓글 내용 관리.    
-    let accessToken= localStorage.getItem('accessToken')
-    const refreshToken =localStorage.getItem('refreshToken')
-    try{
-        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/comments`,{
-            method: 'POST',
-            headers:{
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`
-            },
-            body: JSON.stringify({ postId, userId: comment.userId, commentText: comment.commentText })
-        })
-        if(!response.ok){
-            if(response.status===401){
-                throw new Error('Unauthorized')
-            }
-            throw new Error('Failed to upload count:' `${response.status}`)
-        }
-        return await response.json();
-    }
-    catch (error){
-        if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
-            accessToken=await refreshAccessToken(refreshToken);
-        if (accessToken) {
-            const result = await updateComment(accessToken,retries+1, maxRetries);
-            return result
-        }
-    }
-    console.error('Failed to upload comment')
-    return null
-    }
-}
-async function uploadingImage(uploadImage, retries=0,maxRetries=3) {
-        const refreshToken=localStorage.getItem('refreshToken')
-        let accessToken= localStorage.getItem('accessToken')
-
+async function uploadingImage(uploadImage) {
     try {
         if (!uploadImage || !uploadImage.images || uploadImage.images.length === 0) {
             throw new Error('이미지를 선택해주세요.');
         }
 
+        const accessToken = localStorage.getItem('accessToken');
         if (!accessToken) {
             throw new Error('로그인이 필요합니다.');
         }
@@ -177,13 +144,12 @@ async function uploadingImage(uploadImage, retries=0,maxRetries=3) {
         // 다른 데이터 추가
         formData.append('postText', uploadImage.postText || '');
         formData.append('postDescription', uploadImage.postDescription || '');
-        formData.append('location', uploadImage.postLocation || '');
-        formData.append('tags', uploadImage.postTag || '');
+        formData.append('postLocation', uploadImage.postLocation || '');
+        formData.append('postTag', uploadImage.postTag || '');
 
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/images/upload`, {
             method: 'POST',
             headers:{
-                'Content-Type': `multipart/form-data;`,
                 'Authorization': `Bearer ${accessToken}`
             },
             body: formData
@@ -199,16 +165,9 @@ async function uploadingImage(uploadImage, retries=0,maxRetries=3) {
         const result = await response.json();
         alert('이미지가 성공적으로 업로드되었습니다.');
         return result;
-    }    catch (error){
-        if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
-            accessToken=await refreshAccessToken(refreshToken);
-            if (accessToken) {
-                const result = await uploadingImage(accessToken,retries+1, maxRetries);
-                return result
-            }
-        }
-        console.error('Failed to upload image')
-        return null
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        alert(error.message);
     }
 }
 
@@ -218,14 +177,13 @@ export default function EveryMemoryMain(){
     const [randomTagText, setRandomTagText] = useState();
     const [randomPosts, setRandomPosts]= useState([]); //랜덤 태그에 해당하는 포스트 중 좋아요 순을 위한
     // 지금은 undefined가 뜨기에 일단 해둠
-    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-    const [isCommentModalOpen, setIsCommentModalOpen]= useState(false);
-    const [selectedPostForModal, setSelectedPostForModal] = useState(null); //모달 띄울 때 선택한 거 포스트 하나.
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedPost, setSelectedPost] = useState(null);
     const [uploadImage, setUploadImage]= useState(null);
 
     const fetchPosts= async ()=>{
         try{
-            const posts= await fetchUserposts();
+            const posts= await getUserPosts();
             if (posts && Array.isArray(posts)) {
                 const sortedPosts = [...posts].sort((a,b)=>b.likesCount-a.likesCount);
                 setPosts(sortedPosts); // 태그 상관 없이 좋아요 내림차순으로 posts 객체 정리
@@ -249,47 +207,49 @@ export default function EveryMemoryMain(){
             const allTag=[...new Set(posts.flatMap((post)=>post.tags))] //중복 없는 하나의 배열로 만들기
             if (allTag.length>0) { //set은 생성자 함수, 하지만 일반 함수처럼 호출 불가. 따라서 new랑 짝궁=>set 객체 만들어짐=>[...new~]=>배열열
                 const randomIndex = Math.floor(Math.random()*allTag.length); //0이상 allTag.length이하의 난수 생성
-                localStorage.setItem('randomIndex', randomIndex) //랜덤태그 이름 저장장
                 setRandomTagText(allTag[randomIndex])
+                console.log('selected tag:', allTag[randomIndex])
                 const filteredPosts= posts.filter((post)=>(post.tags || []).includes(allTag[randomIndex]));
                 setRandomPosts(filteredPosts);
             }
         }
     }, [posts]); //뭔가 posts말고 posts 좋아요 순서가 바뀐다면으로 하는 게 더 좋을 거 같은데..
 
-    const handleLikeNum =async(postId)=>{   
-        const rollBackPosts= [...posts]
+    const handleLikeClick =async(postId)=>{
         try{
-            setPosts((prevPosts) => //낙관적 업뎃(하트 증가)
+            setPosts((prevPosts) => //낙관적 업뎃
                 prevPosts.map((post)=> post.postId=== postId
-                    ? post.isLikeCountUp===false
-                        ? { ...post, likesCount: post.likesCount + 1 , isLikeCountUp: !post.isLikeCountUp}  //서버에서 어떤 값을 주는지 정해지면 또 수정하자.. 
-                        : { ...post, likesCount: post.likesCount - 1 , isLikeCountUp: !post.isLikeCountUp}  
+                    ? { ...post, likesCount: post.likesCount + 1 } //이미 {}여기엔 속성이라 post.을 안 붙임
                     : post).sort((a, b) => b.likesCount - a.likesCount)
             );
-            await updateLikeCount(postId); //서버 업뎃
+
+            const updatedPostByLike = await updateLikeCommentCount(postId); //서버 업뎃
+            setPosts((prevPosts) =>
+                prevPosts.map((post) =>post.postId=== postId
+                    ? { ...post, likesCount: updatedPostByLike.likesCount }
+                    :post).sort((a, b) => b.likesCount - a.likesCount)
+            );
         }
         catch (error) {
             console.error('Error uploading like count', error);
-            setPosts(rollBackPosts) //낙관적 업뎃 롤백
         }
     }
-    const handleCommentNum=async(modalPost, comment)=>{ //댓글 수, 내용.
-        const rollBackPosts= [...posts]
+    const handleCommentClick=async(postId)=>{
         try{
             setPosts((prevPosts)=> //낙관적 업뎃
-                prevPosts.map((post)=>post.postId===modalPost.postId
-                ? {
-                    ...post,
-                    commentsCount: post.commentsCount + 1,
-                    comments:[...post.comments, comment]} //코멘트에선 코멘트 텍스트와 유저 아이디만 준다.
-                : post)
+                prevPosts.map((post)=>post.postId===postId
+                ? {...post, commentsCount: post.commentsCount+1}
+                    : post)
             );
-            await updateComment(modalPost.postId, comment) //서버 업뎃
+            const updatedPostByComment= await updateLikeCommentCount(postId) //서버 업뎃
+            setPosts((prevPosts)=>
+                prevPosts.map((post)=>post.postId===postId
+                ? {...post, commentsCount: updatedPostByComment.commentsCount}
+                    : post)
+            );
         }
         catch(error){
             console.error('Error uploading like count', error);
-            setPosts(rollBackPosts)
         }
     }
 
@@ -327,21 +287,14 @@ export default function EveryMemoryMain(){
         }
     }
 
-    const handleImageClick = (post) => {
-        setIsImageModalOpen(true);
-        setSelectedPostForModal(post);
-    };
-    const handleCommentClickForModal=()=>{
-        setIsCommentModalOpen(true);
-    }
-
-    const handleCloseImageModal = () => {
-        setIsImageModalOpen(false);
+    const handleTagClick = (post) => {
+        setIsModalOpen(true);
+        setSelectedPost(post);
     };
 
-    const handleCloseCommentModal=()=>{
-        setIsCommentModalOpen(false)
-    }
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
 
     const fileInputRef= useRef(null);
     const handleContainerClick=()=>{
@@ -433,37 +386,34 @@ export default function EveryMemoryMain(){
             <div className={styles.mainContainer}>
                 {error && <p className={styles.error}>{error}</p>}
                 <p className={styles.weeklyTag}>
-                    <span className={styles.weeklyTagCamera}>📷</span>
+                    <img src={camera} alt='' className={styles.weeklyTagCamera}></img>
                     <span className={styles.weeklyTagText}>
-                        주간 인기 {randomTagText? randomTagText: "'Unknown'"} 사진 갤러리
+                        오늘의 태그 #{randomTagText} - 주간 인기 {randomTagText} 사진 갤러리
                     </span>
                 </p>
                 <div className={styles.forFlexTagBox}>
                     <div className={styles.tagBox}>
                         <img src={landscape} alt='' className={styles.tagBoxLandscape}></img>
-                        <span className={styles.tagBoxText}>#{randomTagText? randomTagText: 'Unknown'}</span>
+                        <span className={styles.tagBoxText}>#{randomTagText}</span>
                     </div>
                 </div>
                 <div className={styles.forFlexweeklyTag1}>
                     <WeeklyPopularTag
                         post= {[weeklyPosts[0]]}
-                        handleLikeNum={handleLikeNum}
-                        handleCommentClickForModal={handleCommentClickForModal}
-                        handleImageClick={handleImageClick}
-                        />
-                    {/*------*/}
-                    <WeeklyPopularTag
-                        post= {[weeklyPosts[1]]}
-                        handleLikeNum={handleLikeNum}
-                        handleCommentClickForModal={handleCommentClickForModal}
-                        handleImageClick={handleImageClick}
+                        handleLikeClick={handleLikeClick}
+                        handleCommentClick={handleCommentClick}
                     />
                     {/*------*/}
                     <WeeklyPopularTag
-                        post= {[weeklyPosts[2]]} 
-                        handleLikeNum={handleLikeNum}
-                        handleCommentClickForModal={handleCommentClickForModal}
-                        handleImageClick={handleImageClick}
+                        post= {[weeklyPosts[1]]}
+                        handleLikeClick={handleLikeClick}
+                        handleCommentClick={handleCommentClick}
+                    />
+                    {/*------*/}
+                    <WeeklyPopularTag
+                        post= {[weeklyPosts[2]]}
+                        handleLikeClick={handleLikeClick}
+                        handleCommentClick={handleCommentClick}
                     />
                     {/*------*/}
                 </div>
@@ -472,57 +422,76 @@ export default function EveryMemoryMain(){
                     <span className={styles.todayTag}>오늘의 태그 인기 사진</span>
                 </div>
                 <div className={styles.todayTagAllContainer}>
-                    <div className={styles.forModalContainer}>
+                    <div className={styles.forModalContainer}
+                        onClick={() => {
+                            handleTagClick(dailyPosts[nextPage[0]]);
+                        }}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
-                            handleLikeNum={handleLikeNum}
-                            handleCommentClickForModal={handleCommentClickForModal}
-                            handleImageClick={()=>{handleImageClick(dailyPosts[nextPage[0]])}}
+                            handleLikeClick={handleLikeClick}
+                            handleCommentClick={handleCommentClick}
                         />
                     </div>
+                    <DailyPopularTagModal
+                        isOpen={isModalOpen}
+                        onClose={handleCloseModal}
+                        post={selectedPost ? [selectedPost] : []}
+                        handleLikeClick={handleLikeClick}
+                        handleCommentClick={handleCommentClick}
+                    />
                     {/*-------*/}
-                    <div className={styles.forModalContainer}>
+                    <div className={styles.forModalContainer}
+                        onClick={() => {
+                            handleTagClick(dailyPosts[nextPage[0]]);
+                        }}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
-                            handleLikeNum={handleLikeNum}
-                            handleCommentClickForModal={handleCommentClickForModal}
-                            handleImageClick={()=>{handleImageClick(dailyPosts[nextPage[0]])}}
+                            handleLikeClick={handleLikeClick}
+                            handleCommentClick={handleCommentClick}
                         />
                     </div>
                     {/*--------*/}
-                    <div className={styles.forModalContainer}>
+                    <div className={styles.forModalContainer}
+                        onClick={() => {
+                            handleTagClick(dailyPosts[nextPage[0]]);
+                        }}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
-                            handleLikeNum={handleLikeNum}
-                            handleCommentClickForModal={handleCommentClickForModal}
-                            handleImageClick={()=>{handleImageClick(dailyPosts[nextPage[0]])}}
+                            handleLikeClick={handleLikeClick}
+                            handleCommentClick={handleCommentClick}
                         />
                     </div>
                     {/*--------*/}
-                    <div className={styles.forModalContainer}>
+                    <div className={styles.forModalContainer}
+                        onClick={() => {
+                            handleTagClick(dailyPosts[nextPage[0]]);
+                        }}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
-                            handleLikeNum={handleLikeNum}
-                            handleCommentClickForModal={handleCommentClickForModal}
-                            handleImageClick={()=>{handleImageClick(dailyPosts[nextPage[0]])}}
+                            handleLikeClick={handleLikeClick}
+                            handleCommentClick={handleCommentClick}
                         />
                     </div>
                     {/*--------*/}
-                    <div className={styles.forModalContainer}>
+                    <div className={styles.forModalContainer}
+                        onClick={() => {
+                            handleTagClick(dailyPosts[nextPage[0]]);
+                        }}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
-                            handleLikeNum={handleLikeNum}
-                            handleCommentClickForModal={handleCommentClickForModal}
-                            handleImageClick={()=>{handleImageClick(dailyPosts[nextPage[0]])}}
+                            handleLikeClick={handleLikeClick}
+                            handleCommentClick={handleCommentClick}
                         />
                     </div>
                     {/*--------*/}
-                    <div className={styles.forModalContainer}>
+                    <div className={styles.forModalContainer}
+                        onClick={() => {
+                            handleTagClick(dailyPosts[nextPage[0]]);
+                        }}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
-                            handleLikeNum={handleLikeNum}
-                            handleCommentClickForModal={handleCommentClickForModal}
-                            handleImageClick={()=>{handleImageClick(dailyPosts[nextPage[0]])}}
+                            handleLikeClick={handleLikeClick}
+                            handleCommentClick={handleCommentClick}
                         />
                     </div>
                     {/*--------*/}
@@ -598,28 +567,6 @@ export default function EveryMemoryMain(){
                     </div>
                 </div>
             </div>
-                <DailyPopularTagModal
-                    isOpen={isImageModalOpen}
-                    onClose={handleCloseImageModal}
-                    post={selectedPostForModal ? [selectedPostForModal] : []}
-                />
-                <CommentModal
-                    isOpen={isCommentModalOpen}
-                    onClose={handleCloseCommentModal}
-                    post={selectedPostForModal ? [selectedPostForModal] : []}
-                    handleCommentNum={(commentText) => {
-                        if (selectedPostForModal && selectedPostForModal.postId) { //먼저 selected 안 해주고 .postId하면 오류날 수 있어 먼저 .이 없는 걸로
-                            handleCommentNum(selectedPostForModal, 
-                                { //위에서 comment로 받을 거.
-                                    userId: selectedPostForModal.commets.userId,
-                                    userName: selectedPostForModal.commets.userName,
-                                    userPhotourl: selectedPostForModal.commets.userPhotourl,
-                                    commentText: commentText
-                                } //코멘트모달에서 코멘트텍스트만 받고 다른 건 에브리에서 통괄
-                            );
-                        }
-                    }}
-                />
         </div>
     )
 }

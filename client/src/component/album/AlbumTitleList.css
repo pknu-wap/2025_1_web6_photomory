@@ -1,9 +1,9 @@
 .titleList {
   list-style-type: none;
   padding-left: 0;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
 
-  height: 140px; /* 고정 높이 */
+  height: 160px; /* 고정 높이 */
   overflow-y: auto;
   overflow-x: hidden;
 

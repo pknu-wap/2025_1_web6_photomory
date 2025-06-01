@@ -4,73 +4,37 @@
     flex-direction: row;
     position:relative;
     align-items: center;
-    border: 1px solid #E8D5E4;
+    border: 1px solid black;
     border-radius: 7px;
     margin: 15px;
     padding: 15px 0px 15px 15px;
-    background-color: #F5F0F7;
-    transition: all 0.3s ease;
 }
-
-.myFriendItemContainer:hover {
-    background-color: #EDE4F3;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 4px rgba(155, 142, 169, 0.1);
-}
-
 .myFriendItemContainerForFlexLeft{
     display: flex;
     flex-direction: row;
     align-items: center;
 }
-
 .myFieldItemImage{
     width: clamp(40px ,55px ,60px);
     height: clamp(40px ,55px ,60px);
     margin: 0px 10px 0px 0px;
-    border: 1px solid #E8D5E4;
+    border: 1px solid black;
     border-radius: 100%;
 }
-
 .myFriendItemDeleteRight{
     position:absolute;
     height: auto;
     right: 15px;
     font-size: clamp(14px, 15px, 17px);
-    color: #9B8EA9;
-    transition: all 0.3s ease;
-    cursor: pointer;
+    color: #DC143C;
 }
-
-.myFriendItemDeleteRight:hover {
-    color: #6B4E71;
-}
-
 .myFieldItemName{
     margin: 0px;
     font-weight: 500;
-    color: #6B4E71;
 }
-
 .myFriendItemShortIntro{
     margin: 0px;
     font-weight: 300;
     font-size: clamp(12px, 13px, 16px);
-    color: #9B8EA9;
-}
-
-.friendListContainer{
-    min-width: 230px;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    position:relative;
-    align-items: center;
-    background-color: #F9F6FB;
-    border-radius: 12px;
-    margin: 7.5px 15px;
-    padding: 12px;
-    box-sizing: border-box;
-    transition: all 0.3s ease;
-    border: 1px solid #E8D5E4;
+    color: rgb(130, 130,130);
 }
