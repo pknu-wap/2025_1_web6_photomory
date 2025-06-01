@@ -167,9 +167,11 @@ public class OurAlbumService {
     @Transactional
     public CommentResponseDto createComment(Integer albumId, Integer postId, UserEntity user, String commentsText) {
         Comment comment = new Comment();
+        OurPost post = null;
 
+        // 앨범과 게시글 중 하나만 연결
         if (postId != null) {
-            OurPost post = ourPostRepository.findById(postId)
+            post = ourPostRepository.findById(postId)
                     .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
             comment.setOurPost(post);
             comment.setOurAlbum(null);
@@ -192,6 +194,28 @@ public class OurAlbumService {
         comment.validateParentRelationship();
 
         Comment savedComment = commentRepository.save(comment);
+
+        // 알림 전송 (postText만 이용, 변수명도 postText로 통일)
+        if (post != null) {
+            UserEntity postWriter = post.getUser();
+
+            // 본인이 자기 글에 단 댓글은 알림 전송 X
+            if (!user.getUserId().equals(postWriter.getUserId())) {
+                String postText = post.getPostText() != null && !post.getPostText().isEmpty()
+                        ? post.getPostText()
+                        : "제목 없음";
+
+                String message = user.getUserName() + "님이 '" + postText + "' 게시글에 댓글을 달았습니다.";
+
+                notificationService.sendNotification(
+                        postWriter.getUserId(),
+                        user.getUserId(),
+                        message,
+                        NotificationType.COMMENT,
+                        post.getPostId().longValue()
+                );
+            }
+        }
 
         return CommentResponseDto.fromEntity(savedComment);
     }
