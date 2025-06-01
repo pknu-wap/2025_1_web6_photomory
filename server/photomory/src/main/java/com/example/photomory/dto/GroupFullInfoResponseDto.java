@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor; // @NoArgsConstructor 추가: 빌더 사용 시 필요
 
+import com.example.photomory.entity.UserGroup;
+
 import java.util.List;
 
 @Data
@@ -29,6 +31,14 @@ public class GroupFullInfoResponseDto {
                 .groupId(ourAlbum.getAlbumId() != null ? ourAlbum.getAlbumId().longValue() : null) // OurAlbum의 ID를 Long으로 변환
                 .groupName(ourAlbum.getAlbumName()) // OurAlbum의 이름 필드 사용
                 .groupDescription(ourAlbum.getAlbumDescription()) // OurAlbum의 설명 필드 사용
+                .members(members)
+                .build();
+    }
+    public static GroupFullInfoResponseDto from(UserGroup userGroup, List<UserSummaryDto> members) {
+        return GroupFullInfoResponseDto.builder()
+                .groupId(userGroup.getId())
+                .groupName(userGroup.getGroupName())
+                .groupDescription(userGroup.getGroupDescription())
                 .members(members)
                 .build();
     }

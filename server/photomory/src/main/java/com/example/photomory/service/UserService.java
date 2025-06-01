@@ -39,6 +39,7 @@ public class UserService {
                 .collect(Collectors.toList());
 
         return new UserProfileResponse(
+                userEntity.getUserId(),
                 userEntity.getUserName(),
                 userEntity.getUserEmail(),
                 userEntity.getUserField(),

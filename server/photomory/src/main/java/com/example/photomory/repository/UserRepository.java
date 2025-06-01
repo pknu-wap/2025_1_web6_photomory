@@ -16,7 +16,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByUserEmail(String userEmail);
 
     // 그룹(우리 앨범) ID를 기준으로 속한 사용자 ID 조회
-    @Query("SELECT am.userEntity.userId FROM AlbumMembers am WHERE am.ourAlbum.albumId = :groupId")
+    @Query("SELECT am.userEntity.userId FROM AlbumMembers am WHERE am.userGroup.id = :groupId")
     List<Long> findUserIdsByGroupId(@Param("groupId") Long groupId);
 
     // 친구 아닌 사용자 조회

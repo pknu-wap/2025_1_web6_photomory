@@ -1,4 +1,4 @@
-package com.example.photomory.dto; // 실제 패키지 경로에 맞게 수정해주세요.
+package com.example.photomory.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,14 +19,12 @@ public class OurAlbumResponseDefaultDto {
     private List<Member> members;
     private List<Album> albums;
 
-    // --- 중첩 클래스 정의 시작 ---
-
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class Member { // static 키워드 중요!
+    public static class Member {
         private Long userId;
         private String userName;
         private String userPhotourl;
@@ -37,14 +35,15 @@ public class OurAlbumResponseDefaultDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class Album { // static 키워드 중요!
-        private Long albumId;
+    public static class Album {
+        private Integer albumId;
         private String albumName;
         private String albumDescription;
         private String albumTag;
-        private String albumMakingtime; // 날짜 형식이면 LocalDate 또는 String
+        private String albumMakingtime;
         private List<Photo> photos;
         private List<Comment> comments;
+        private List<Post> posts;  // Post 리스트 추가
     }
 
     @Getter
@@ -52,12 +51,12 @@ public class OurAlbumResponseDefaultDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class Photo { // static 키워드 중요!
-        private Long photoId;
+    public static class Photo {
+        private Integer photoId;
         private String photoUrl;
         private String photoName;
-        private Long postId;
-        private String photoMakingtime; // 날짜 형식이면 LocalDate 또는 String
+        private Integer postId;
+        private String photoMakingtime;
     }
 
     @Getter
@@ -65,10 +64,22 @@ public class OurAlbumResponseDefaultDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class Comment { // static 키워드 중요!
-        private Long albumId;
-        private Long photoId;
+    public static class Comment {
+        private Integer albumId;
+        private Integer photoId;
         private Long userId;
         private String commentText;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class Post {  // 새로 추가된 Post DTO
+        private Integer postId;
+        private String postContent;
+        private String postImageUrl;
+        private String postMakingTime;
     }
 }
