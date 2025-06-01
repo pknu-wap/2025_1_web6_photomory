@@ -70,7 +70,7 @@ function MyAlbumDetailPage() {
               photoCount={Count}
             />
           </div>
-          <PhotoSubmit albumId={albumId} handleAddPhoto={handleAddPhoto} />
+          <PhotoSubmit handleAddPhoto={handleAddPhoto} />
         </div>
       </Container>
       <Footer />

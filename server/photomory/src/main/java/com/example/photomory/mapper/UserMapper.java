@@ -14,6 +14,7 @@ public class UserMapper {
     String user_equipment;
     String user_introduction;
     String user_field;
+    String user_area;
 
     public UserEntity userMapper(RegisterRequestDto userRequestDto) {
         this.user_name = userRequestDto.getUser_name();
@@ -24,6 +25,7 @@ public class UserMapper {
         this.user_equipment = userRequestDto.getUser_equipment();
         this.user_introduction = userRequestDto.getUser_introduction();
         this.user_field = userRequestDto.getUser_field();
+        this.user_area = userRequestDto.getUser_area();
 
         return new UserEntity(
                 user_email,
@@ -33,7 +35,8 @@ public class UserMapper {
                 user_equipment,
                 user_introduction,
                 user_job,
-                user_field
+                user_field,
+                user_area
                 );
     }
 }
