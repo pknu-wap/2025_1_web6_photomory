@@ -108,6 +108,7 @@ public class NotificationService {
 
         // SSE 전송
         emitters.send(image.getUserId(), dto);
+
     }
 
     // 안 읽은 알림 개수
