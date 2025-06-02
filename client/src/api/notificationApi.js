@@ -57,43 +57,68 @@ export async function getReceivedFriendRequests(userId) {
   }
 }
 
-export function subscribeToNotifications(onMessageCallback) {
-  const token = localStorage.getItem("accessToken"); // 또는 'token'
-
+// SSE api 연동 함수
+export function subscribeToNotifications(
+  onMessageCallbackByType,
+  reconnectDelay = 5000
+) {
+  const token = localStorage.getItem("accessToken");
   if (!token) {
     console.error("❗ accessToken이 없습니다. SSE 연결 중단");
-    return;
+    return null;
   }
 
-  fetchEventSource(`${BASE_URL}/api/notifications/subscribe`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  const controller = new AbortController();
+  let retryTimeout = null;
 
-    onopen(response) {
-      console.log("✅ SSE 연결 성공:", response.status);
-    },
+  const connect = () => {
+    console.log("🔗 SSE 연결 시도 중...(with Authorization header)");
 
-    onmessage(event) {
-      console.log("📩 서버로부터 알림:", event.data);
-      try {
-        const data = JSON.parse(event.data);
-        onMessageCallback(data); // 콜백에 알림 객체 전달
-      } catch (err) {
-        console.error("❗ 알림 파싱 오류:", err);
-      }
-    },
+    fetchEventSource(`${BASE_URL}/api/notifications/subscribe`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`, // ✅ 헤더로 토큰 전송
+      },
+      signal: controller.signal,
 
-    onclose() {
-      console.log("🔌 SSE 연결 종료");
-    },
+      onopen(res) {
+        if (res.ok) {
+          console.log("✅ SSE 연결 성공");
+        } else {
+          throw new Error(`❗ 서버 응답 오류: ${res.status}`);
+        }
+      },
 
-    onerror(err) {
-      console.error("❗ SSE 연결 오류 발생:", err);
-      // fetch-event-source는 자동으로 재시도합니다 (AbortController로 끊을 수 있음)
-    },
+      onmessage(event) {
+        const type = event.event;
+        try {
+          const data = JSON.parse(event.data);
+          console.log(`📩 [${type}] 알림 수신`, data);
+          onMessageCallbackByType(type, data);
+        } catch (err) {
+          console.error("❗ 데이터 파싱 오류:", err);
+        }
+      },
+
+      onerror(err) {
+        console.error("❗ SSE 오류:", err);
+        retry();
+      },
+    });
+  };
+
+  const retry = () => {
+    if (retryTimeout) return;
+    console.log(`🔄 ${reconnectDelay / 1000}초 후 SSE 재연결 시도`);
+    retryTimeout = setTimeout(connect, reconnectDelay);
+  };
+
+  controller.signal.addEventListener("abort", () => {
+    if (retryTimeout) clearTimeout(retryTimeout);
   });
+
+  connect();
+  return controller;
 }
 
 //알림 목록 조회 api함수
