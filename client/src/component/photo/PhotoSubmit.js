@@ -50,7 +50,7 @@ function PhotoSubmit({ type, albumId, handleAddPhoto }) {
             date: newPhotoData.photo_makingtime,
           },
         ];
-        formData.append("photoData", photoMeta);
+        formData.append("photoData", JSON.stringify(photoMeta));
         result = await addPhotosToMyAlbum(albumId, formData);
       } else {
         // 우리의 추억 게시글 생성 API 호출

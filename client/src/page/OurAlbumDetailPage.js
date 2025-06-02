@@ -30,6 +30,18 @@ function OurAlbumDetailPage() {
     })();
   }, [groupId, albumId]);
 
+  useEffect(() => {
+    const urlsToRevoke =
+      photoList
+        .filter((photo) => photo.photo_url?.startsWith("blob:"))
+        .map((photo) => photo.photo_url) || [];
+
+    return () => {
+      // 페이지 나갈 때 blob URL 해제
+      urlsToRevoke.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [photoList]); // mount → unmount 시점에 한 번만 실행
+
   // 초기 상태 방어
   if (!albumData) {
     return <p>앨범 데이터를 불러오는 중입니다...</p>;
