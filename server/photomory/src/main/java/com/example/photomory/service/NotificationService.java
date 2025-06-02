@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ public class NotificationService {
     private final UserRepository userRepository;
     private final ImageRepository imageRepository;
     private final SseEmitters emitters;
+    private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
     //SSE 구독
     public SseEmitter subscribe(Long userId) {
@@ -71,7 +74,8 @@ public class NotificationService {
                 .isRead(false)
                 .build();
 
-        // SSE 전송
+        // SSE 전thd
+        log.info("Sending friend request notification to userId: {}", receiverId);
         emitters.send(receiverId, response);
     }
 
