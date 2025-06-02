@@ -101,7 +101,11 @@ function AddAlbum({
         });
 
         const normalizedAlbum = normalizeGroupAlbum(createdAlbum);
-        //해당 그룹 앨범명 업데이트트
+
+        // 태그를 태그 영역에 추가
+        handleAddTagClick(normalizedAlbum.album_tag);
+
+        //해당 그룹 앨범명 업데이트
         const updatedTitles = [
           ...(albumTitlesByGroup[selectedGroupId] || []),
           album_name,
@@ -111,6 +115,7 @@ function AddAlbum({
           ...prev,
           [selectedGroupId]: updatedTitles,
         }));
+        //현재 그룹 앨범 데이터 업데이트
         setGroupAlbums((prev) => [...prev, normalizedAlbum]);
       } else if (type === "private") {
         const createdMyAlbum = await createMyMemoryAlbum({
