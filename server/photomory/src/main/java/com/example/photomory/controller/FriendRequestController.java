@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,12 +32,16 @@ public class FriendRequestController {
     private final UserRepository userRepository;
     private final FriendRequestService friendRequestService;
     private final AuthService authService;
+    private static final Logger log = LoggerFactory.getLogger(FriendRequestController.class);
 
     @PostMapping("/send")
     public ResponseEntity<Map<String, Long>> sendFriendRequest(
             @RequestHeader("Authorization") String token,
             @RequestParam Long receiverId) {
         Long senderId = authService.extractUserId(token);
+
+        log.info("sendFriendRequest 호출 - senderId: {}, receiverId: {}", senderId, receiverId);
+
         Long requestId = friendRequestService.sendRequest(senderId, receiverId);
 
         Map<String, Long> response = new HashMap<>();
