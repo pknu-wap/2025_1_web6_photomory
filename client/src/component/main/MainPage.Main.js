@@ -10,8 +10,11 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../assets/photomory_logo.svg";
 import image1 from "../../assets/mainPageImage1.svg";
 import image2 from "../../assets/mainPageImage2.svg";
+import image3 from "../../assets/mainPageImage3.svg";
+import image4 from "../../assets/mainPageImage4.svg";
 import DailyPopularTagModal from "../ourMemory/DailyPopularTagModal"; //일간은 아니지만 그냥 쓰는 거
 import { useState, useEffect } from "react";
+import { useRandomIndex } from "../../contexts/RandomIndexContext";
 
 async function fetchUserEveryPosts(retries=0, maxRetries=3) {
     let accessToken=localStorage.getItem('accessToken')
@@ -175,6 +178,7 @@ function MainPageMain() {
   const [randomPosts, setRandomPosts]= useState([])
   const [isOpen, setIsOpen]= useState(false);
   const [imageForModal, setImageForModal]= useState('')
+  const { randomIndex, updateRandomIndex } = useRandomIndex();
   console.log(error)
 
   const fetchPosts = async () => {
@@ -209,15 +213,18 @@ function MainPageMain() {
 
   useEffect(() => {
     if (posts.length > 0) {
-      const allTag = [...new Set(posts.flatMap((post) => post.tags))]; //중복 없는 하나의 배열로 만들기
-      if (allTag.length > 0) { //set은 생성자 함수, 하지만 일반 함수처럼 호출 불가. 따라서 new랑 짝궁=>set 객체 만들어짐=>[...new~]=>배열열
-        const randomIndex = localStorage.getItem('randomIndex') //에브리에서 받아와서 에브리랑 다른 태그 선택 안 되게 설정
+      const allTag = [...new Set(posts.flatMap((post) => post.tags))];
+      if (allTag.length > 0) {
+        if (randomIndex === null) {
+          const newRandomIndex = Math.floor(Math.random() * allTag.length);
+          updateRandomIndex(newRandomIndex);
+        }
         setRandomTagText(allTag[randomIndex]);
         const filteredPosts = posts.filter((post) => (post.tags || []).includes(allTag[randomIndex]));
-        setRandomPosts(filteredPosts);//뭔가 posts말고 posts 좋아요 순서가 바뀐다면으로 하는 게 더 좋을 거 같은데..
+        setRandomPosts(filteredPosts);
       }
     }
-  }, [posts]); //이거 에브리에서 받아오든 여기서 에브리가 받아 가든으로 고쳐야 한다.
+  }, [posts, randomIndex, updateRandomIndex]);
 
 
     const handleLikeNum =async(postId)=>{ //이거 islikecountup을 기준으로 크게 두 개로 나눠야 함
@@ -284,9 +291,9 @@ function MainPageMain() {
           특별한 순간을 다른 사람들과 함께 나누고 소통하세요
         </p>
         <div className={styles.ourMemoryImageContainer}>
-          <img src={ourAlbums[0]?.albums[0]?.photos[0] || image1} alt="" className={styles.ourMemoryImage1}
+          <img src={ourAlbums[0]?.albums[0]?.photos[0] || image3} alt="" className={styles.ourMemoryImage1}
           onClick={(e) => imageModalOpen(e, ourAlbums[0]?.albums[0]?.photos[0] || '')}/>
-          <img src={ourAlbums[0]?.albums[0]?.photos[1] || image2} alt="" className={styles.ourMemoryImage2}
+          <img src={ourAlbums[0]?.albums[0]?.photos[1] || image4} alt="" className={styles.ourMemoryImage2}
           onClick={(e) => imageModalOpen(e, ourAlbums[0]?.albums[1]?.photos[0] || '')}/>
         </div>
       </div>
