@@ -55,6 +55,9 @@ public class SseEmitters {
             for (SseEmitter emitter : userEmitters) {
                 try {
                     emitter.send(SseEmitter.event().data(data));
+                } catch (IllegalStateException e) {
+                    log.warn("SSE 이미 완료됨 - userId: {}", userId, e);
+                    remove(userId, emitter);
                 } catch (IOException e) {
                     log.warn("SSE 전송 실패 - userId: {}", userId, e);
                     remove(userId, emitter);
@@ -72,10 +75,13 @@ public class SseEmitters {
             for (SseEmitter emitter : userEmitters) {
                 try {
                     emitter.send(SseEmitter.event()
-                            .name(response.getType().name())  // 이벤트 이름으로 타입 전송
-                            .data(response));                 // 데이터로 NotificationResponse 전송
+                            .name(response.getType().name())
+                            .data(response));
+                } catch (IllegalStateException e) {
+                    log.warn("SSE 이미 완료됨 - userId: {}", userId, e);
+                    remove(userId, emitter);
                 } catch (IOException e) {
-                    log.warn("SSE 전송(NotificationResponse) 실패 - userId: {}", userId, e);
+                    log.warn("SSE 전송 실패 - userId: {}", userId, e);
                     remove(userId, emitter);
                 }
             }
