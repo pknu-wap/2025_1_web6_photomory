@@ -35,9 +35,11 @@ function PhotoSubmit({ type, albumId, handleAddPhoto }) {
     let result;
     try {
       if (type === "private") {
-        // 개인 앨범 FormData 구성 및 업로드 요청
+        // 나만의 추억 FormData 구성 및 업로드 요청
+        console.log(newPhotoData);
+
         const formData = new FormData();
-        formData.append("photos", newPhotoData.imgfile);
+        formData.append("photos", newPhotoData.imgFile);
         //사진 메타데이터
         const photoMeta = [
           {
@@ -48,7 +50,7 @@ function PhotoSubmit({ type, albumId, handleAddPhoto }) {
         formData.append("photoData", JSON.stringify(photoMeta));
         result = await addPhotosToMyAlbum(albumId, formData);
       } else {
-        // 공유 앨범 게시글 생성 API 호출
+        // 우리의 추억 게시글 생성 API 호출
         result = await createGroupAlbumPost(albumId, {
           postTitle: newPhotoData.photo_name,
           postTime: newPhotoData.photo_makingtime,

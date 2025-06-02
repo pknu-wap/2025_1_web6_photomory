@@ -11,13 +11,14 @@ import Footer from "../component/common/Footer";
 
 function MyAlbumDetailPage() {
   const { albumId } = useParams();
-  const [album, setAlbum] = useState(null);
-  const [description, setDescription] = useState("");
-  const [photoList, setPhotoList] = useState([]);
+  const [album, setAlbum] = useState(null); //앨범
+  const [description, setDescription] = useState(""); //앨범명
+  const [photoList, setPhotoList] = useState([]); //사진 배열
 
   useEffect(() => {
     (async () => {
       try {
+        //albumid를 통한 상세 앨범 조회
         const result = await getMyAlbumById(albumId);
         if (result && result.album) {
           setAlbum(result.album);
@@ -39,7 +40,7 @@ function MyAlbumDetailPage() {
 
   const albumPeriod = getPhotoPeriod(photoList); //촬영기간
   const albumTitle = album.album_name; //앨범명
-  const Count = photoList.length; //사진 갯수수
+  const Count = photoList.length; //사진 갯수
 
   return (
     <>
@@ -64,7 +65,7 @@ function MyAlbumDetailPage() {
               photoCount={Count}
             />
           </div>
-          <PhotoSubmit handleAddPhoto={handleAddPhoto} />
+          <PhotoSubmit type="private" handleAddPhoto={handleAddPhoto} />
         </div>
       </Container>
       <Footer />
