@@ -22,22 +22,20 @@ function OurAlbumDetailPage() {
         const rowAlbum = await fetchGroupAlbumDetail(albumId); //앨범 상세 데이터 불러오기
         const rowGroup = await fetchGroupInfo(groupId); //그룹 정보 가져오기
         const normalized = normalizeGroupAlbumDetail(rowAlbum, rowGroup);
-
         setAlbumData(normalized); // 정규화된 전체 데이터 저장
-        setPhotoList(normalized.photos); //
+        setPhotoList(normalized.album.photos); //사젠 데이터 추출
       } catch (e) {
         console.error(e);
       }
     })();
   }, [groupId, albumId]);
 
-  // ✅ 초기 상태 방어
+  // 초기 상태 방어
   if (!albumData) {
     return <p>앨범 데이터를 불러오는 중입니다...</p>;
   }
 
   const { album, description, groupName, groupMembers } = albumData; //앨범 정보 구조 분해
-
   //사진 추가 헨들러
   const handleAddPhoto = (newPhoto) => {
     setPhotoList((prev) => [newPhoto, ...prev]);
@@ -79,6 +77,7 @@ function OurAlbumDetailPage() {
               albumTitle={albumTitle}
               photoList={photoList}
               onDeltePhoto={handleDeltePhoto}
+              albumId={albumId}
             />
             <PhotoInfo
               albumTitle={albumTitle}
