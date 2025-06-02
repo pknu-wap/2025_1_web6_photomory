@@ -124,7 +124,13 @@ public class OurAlbumService {
         ourPost.setOurAlbum(ourAlbum);
         ourPost.setUser(user);
         ourPost.setPostText(requestDto.getPostTitle());
-        ourPost.setMakingTime(requestDto.getPostTime() != null ? requestDto.getPostTime() : LocalDateTime.now());
+        ourPost.setMakingTime(
+                requestDto.getPostTime() != null
+                        ? requestDto.getPostTime()
+                        : LocalDate.now()
+        );
+
+
 
         OurPost savedPost = ourPostRepository.save(ourPost);
 
@@ -142,7 +148,7 @@ public class OurAlbumService {
 
             // photoMakingTime이 null이 아닐 경우에 LocalDate로 변환하여 photo_date 필드에 저장
             if (requestDto.getPhotoMakingTime() != null) {
-                photo.setDate(requestDto.getPhotoMakingTime().toLocalDate());
+                photo.setDate(requestDto.getPhotoMakingTime());
             } else {
                 photo.setDate(LocalDate.now());  // null일 경우 현재 날짜로 설정 (필요에 따라 수정 가능)
             }

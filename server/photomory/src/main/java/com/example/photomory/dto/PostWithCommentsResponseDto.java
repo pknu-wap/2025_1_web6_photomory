@@ -44,7 +44,11 @@ public class PostWithCommentsResponseDto {
         return PostWithCommentsResponseDto.builder()
                 .postId(ourPost.getPostId())
                 .postText(ourPost.getPostText())
-                .makingTime(ourPost.getMakingTime())
+                .makingTime(
+                        ourPost.getMakingTime() != null
+                                ? ourPost.getMakingTime().atStartOfDay()
+                                : LocalDateTime.now()
+                )
                 .comments(commentDtos)
                 .photos(photoDtos) // 사진 정보 포함
                 .build();

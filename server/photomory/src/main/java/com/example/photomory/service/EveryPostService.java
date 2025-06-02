@@ -109,7 +109,7 @@ public class EveryPostService {
                 .postType("EVERY")
                 .postId(everyPost.getPostId())
                 .photoUrl(photoUrl)
-                .photoMakingTime(time)
+                .photoMakingTime(time.toLocalDate())
                 .date(time.toLocalDate())
                 .title("사진")
                 .everyPost(everyPost)

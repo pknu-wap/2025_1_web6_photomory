@@ -25,7 +25,7 @@ public class PhotoResponseDto {
                 .photoUrl(photo.getPhotoUrl())
                 .photoName(photo.getPhotoName())
                 // LocalDateTime을 String으로 변환
-                .photoMakingTime(photo.getPhotoMakingTime() != null ? photo.getPhotoMakingTime().toLocalDate().toString() : null)
+                .photoMakingTime(photo.getPhotoMakingTime() != null ? photo.getPhotoMakingTime().toString() : null)
                 .build();
     }
 }

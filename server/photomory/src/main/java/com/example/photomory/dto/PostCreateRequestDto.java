@@ -1,25 +1,24 @@
 package com.example.photomory.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import java.time.LocalDate; // 이 임포트는 더 이상 postTime에서 사용하지 않으므로 필요없을 수 있습니다.
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class PostCreateRequestDto {
 
     private String postTitle;
 
-    // postTime 필드를 LocalDate에서 LocalDateTime으로 변경하고 패턴도 조정
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss") // <-- 변경: 날짜와 시간 포함
-    private LocalDateTime postTime; // <-- 변경: LocalDate -> LocalDateTime
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate postTime;
 
     private String photoName;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime photoMakingTime;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate photoMakingTime;
 
     public PostCreateRequestDto() {
     }
 
-    public PostCreateRequestDto(String postTitle, LocalDateTime postTime, String photoName, LocalDateTime photoMakingTime) {
+    public PostCreateRequestDto(String postTitle, LocalDate postTime, String photoName, LocalDate photoMakingTime) {
         this.postTitle = postTitle;
         this.postTime = postTime;
         this.photoName = photoName;
@@ -34,12 +33,11 @@ public class PostCreateRequestDto {
         this.postTitle = postTitle;
     }
 
-    // Getter 및 Setter도 변경된 타입에 맞춰 수정
-    public LocalDateTime getPostTime() { // <-- 반환 타입 변경
+    public LocalDate getPostTime() {
         return postTime;
     }
 
-    public void setPostTime(LocalDateTime postTime) { // <-- 파라미터 타입 변경
+    public void setPostTime(LocalDate postTime) {
         this.postTime = postTime;
     }
 
@@ -51,11 +49,11 @@ public class PostCreateRequestDto {
         this.photoName = photoName;
     }
 
-    public LocalDateTime getPhotoMakingTime() {
+    public LocalDate getPhotoMakingTime() {
         return photoMakingTime;
     }
 
-    public void setPhotoMakingTime(LocalDateTime photoMakingTime) {
+    public void setPhotoMakingTime(LocalDate photoMakingTime) {
         this.photoMakingTime = photoMakingTime;
     }
 }

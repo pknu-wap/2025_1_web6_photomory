@@ -41,7 +41,7 @@
                         .title(title)
                         .date(date)
                         .photoUrl(photoUrl)
-                        .photoMakingTime(LocalDateTime.now()) // Photo 엔티티에 이 필드가 있으므로, 현재 시간으로 초기화
+                        .photoMakingTime(LocalDate.now())
                         .photoName(file.getOriginalFilename()) // 업로드된 파일의 원본 이름도 저장
                         .build();
                 imageRepository.save(photo);
