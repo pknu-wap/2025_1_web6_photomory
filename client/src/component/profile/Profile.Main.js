@@ -108,17 +108,16 @@ const getMyInfo= async (retries=0, maxRetries=3)=>{ //내 정보 가져오기
   }
 }
 
-const postMyinfo= async (myInfo, retries=0, maxRetries=3)=>{ 
+const postMyinfo= async (formData, retries=0, maxRetries=3)=>{ 
   let accessToken= localStorage.getItem('accessToken');
   const refreshToken= localStorage.getItem('refreshToken');
   try{
-    const response= await fetch(`${process.env.REACT_APP_API_URL}/api/user/profile `,{
+    const response= await fetch(`${process.env.REACT_APP_API_URL}/api/user/profile`,{
       method:'PUT',
       headers:{
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
+        'Authorization': `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({myInfo})
+      body: formData
     })
     if(!response.ok){
       if(response.status===401){
@@ -129,10 +128,10 @@ const postMyinfo= async (myInfo, retries=0, maxRetries=3)=>{
     return response.json();
   }
   catch(error){
-    if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+    if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) {
       accessToken=await refreshAccessToken(refreshToken);
       if (accessToken) {
-        const response = await postMyinfo(myInfo, retries+1, maxRetries);
+        const response = await postMyinfo(formData, retries+1, maxRetries);
         return response
       }
     }
@@ -150,26 +149,25 @@ const addFriend= async (id, retries=0, maxRetries=3)=>{ //친추
       headers:{
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`
-      },
-      body: JSON.stringify({id})
+      }
     })
     if(!response.ok){
       if(response.status===401){
         throw new Error('Unauthorized')
       }
-      throw new Error('Failed to post MyInfo:' `${response.status}`)
+      throw new Error('Failed to send friend request:' `${response.status}`)
     }
-    return response.json();
+    return await response.json();
   }
   catch(error){
-    if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) { //리프토큰 없으면 요청 안 되게게
+    if (error.message === 'Unauthorized' && refreshToken && retries<maxRetries) {
       accessToken=await refreshAccessToken(refreshToken);
       if (accessToken) {
         const response = await addFriend(id, retries+1, maxRetries);
         return response
       }
     }
-    console.error('Failed to update Friend')
+    console.error('Failed to send friend request')
     return null
   }
 }
@@ -277,13 +275,13 @@ function ProfileMain() {
         const myData = await getMyInfo();
         if (myData) {
           setProfileData({
-            id: myData.id || "",
-            name: myData.name || "",
-            job: myData.job || "",
-            field: myData.field || "",
-            equipment: myData.equipment || "",
-            area: myData.area || "",
-            introduction: myData.introduction || "",
+            id: myData.id || "Unknown",
+            name: myData.name || "Unknown",
+            job: myData.job || "Unknown",
+            field: myData.field || "Unknown",
+            equipment: myData.equipment || "Unknown",
+            area: myData.area || "Unknown",
+            introduction: myData.introduction || "Unknown",
             profileImage: myData.user_photourl || defaultProfile
           });
         }
@@ -411,26 +409,46 @@ function ProfileMain() {
 
   const editHandle = async (e) => {
     e.preventDefault();
-    // 저장 시에만 양 끝의 공백을 제거
-    const trimmedData = {
-      ...profileData,
-      user_name: profileData?.name?.trim() || '',
-      user_introduction: profileData?.introduction?.trim() || '',
-      user_job: profileData?.job?.trim() || '',
-      user_equipment: profileData?.equipment?.trim() || '',
-      user_field: profileData?.field?.trim() || '',
-      user_photourl: profileData?.photourl?.trim() || '',
-    };
-      setIsEdit((prev)=>!prev)
-    try {
-      if(e.target.value==='save'){
-        const response = await postMyinfo(trimmedData);
+    if (e.target.value === 'save') {
+      // 저장 시에만 양 끝의 공백을 제거하고 빈 값은 'Unknown'으로 설정
+      const trimmedData = {
+        ...profileData,
+        user_name: profileData?.name?.trim() || 'Unknown',
+        user_introduction: profileData?.introduction?.trim() || 'Unknown',
+        user_job: profileData?.job?.trim() || 'Unknown',
+        user_equipment: profileData?.equipment?.trim() || 'Unknown',
+        user_field: profileData?.field?.trim() || 'Unknown',
+        user_area: profileData?.area?.trim() || 'Unknown',
+      };
+
+      setIsEdit(false);
+      try {
+        const formData = new FormData();
+        
+        // 프로필 이미지가 변경되었고 base64 형식인 경우
+        if (profileImage && profileImage.startsWith('data:image')) {
+          // base64를 Blob으로 변환
+          const response = await fetch(profileImage);
+          const blob = await response.blob();
+          formData.append('profile_photourl', blob, 'profile.jpg');
+        }
+
+        // 다른 프로필 정보 추가
+        Object.keys(trimmedData).forEach(key => {
+          if (key !== 'user_photourl') { // 이미지는 별도로 처리했으므로 제외
+            formData.append(key, trimmedData[key]);
+          }
+        });
+
+        const response = await postMyinfo(formData);
         if (response) {
           setProfileData(trimmedData);
         }
+      } catch (error) {
+        console.error('Error saving profile:', error);
       }
-    } catch (error) {
-      console.error('Error saving profile:', error);
+    } else {
+      setIsEdit(true);
     }
   };
 
@@ -545,16 +563,18 @@ function ProfileMain() {
               <input
                 className={styles.name}
                 onChange={handleInputChange}
-                value={profileData?.name ||'unKnown'}
+                value={profileData?.name || ''}
                 placeholder="이름을 알려주세요."
+                disabled={!isEdit}
               />
               <input
                 className={styles.job}
                 onChange={handleInputChange}
-                value={profileData?.job || "unKnown"}
+                value={profileData?.job || ''}
                 placeholder="직업을 알려주세요."
+                disabled={!isEdit}
               />
-              <div className={styles.id}>ID: {profileData?.id ||'unKnown'}</div>
+              <div className={styles.id}>ID: {profileData?.id || ''}</div>
             </div>
           </div>
           <div className={styles.forFlexSetting}>
@@ -564,15 +584,22 @@ function ProfileMain() {
               <img src={logout} alt="" className={styles.logoutIcon}></img>
               로그아웃
             </button>
-            {isEdit? (
-              <button className={styles.save}
-              onClick={editHandle}
-              value='save'
-              >저장하기</button> 
-            ):(
-              <button className={styles.edit}
-              onClick={editHandle}
-              >수정하기</button>
+            {isEdit ? (
+              <button 
+                className={styles.save}
+                onClick={editHandle}
+                value='save'
+              >
+                저장하기
+              </button> 
+            ) : (
+              <button 
+                className={styles.edit}
+                onClick={editHandle}
+                value='eidt'
+              >
+                수정하기
+              </button>
             )}
           </div>
         </div>
@@ -585,7 +612,8 @@ function ProfileMain() {
               placeholder="풍경 사진"
               className={styles.myFieldInput}
               onChange={handleInputChange}
-              value={profileData?.field || 'unKnown'}
+              value={profileData?.field || ''}
+              disabled={!isEdit}
             />
           </div>
           <div className={styles.myEquipmentContainer}>
@@ -595,17 +623,19 @@ function ProfileMain() {
               placeholder="sony A7 IV"
               className={styles.myEquipmentInput}
               onChange={handleInputChange}
-              value={profileData?.equipment || 'unKnown'}
+              value={profileData?.equipment || ''}
+              disabled={!isEdit}
             />
           </div>
           <div className={styles.myAreaContainer}>
             <p className={styles.myArea}>활동 지역</p>
             <input
               type="text"
-              placeholder="서울, 강원"
+              placeholder="활동 지역"
               className={styles.myAreaInput}
               onChange={handleInputChange}
-              value={profileData?.area || 'unKnown'}
+              value={profileData?.area || ''}
+              disabled={!isEdit}
             />
           </div>
         </div>
@@ -616,7 +646,8 @@ function ProfileMain() {
             className={styles.introduction}
             placeholder="제가 누구냐면요.."
             onChange={handleInputChange}
-            value={profileData?.introduction || 'unKnown'}
+            value={profileData?.introduction || ''}
+            disabled={!isEdit}
           />
         </div>
       </div>
@@ -651,11 +682,11 @@ function ProfileMain() {
             <div className={styles.forFlexFriendList}>
               {numLimitedFilteredUsers.map(user => (
                 <SearchFriend
-                  key={user.id}
-                  userId={user.id} 
-                  userName={user.name} 
+                  key={user.userId}
+                  userId={user.userId} 
+                  userName={user.userName} 
                   userImage={user.Userphotourl}
-                  addFriend={addFriendhandle} //유저 아이디 보내줌
+                  addFriend={addFriendhandle}
                 />))}
             </div>
           </div>
