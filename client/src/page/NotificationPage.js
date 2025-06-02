@@ -27,17 +27,31 @@ function NotificationPage() {
     fetchData();
   }, []);
 
-  // 2. SSE 구독 - 알림 오면 콘솔에 출력
   useEffect(() => {
-    const unsubscribe = subscribeToNotifications((data) => {
-      console.log("🚀 실시간 알림 수신:", data);
+    console.log("[SSE] 구독 useEffect 진입");
+
+    const controller = subscribeToNotifications((type, data) => {
+      console.log(`[${type}] 알림 수신됨`, data);
+
+      // 테스트용 더미 처리 로직
+      switch (type) {
+        case "FRIEND_REQUEST":
+          alert(`친구 요청 알림: ${data.noti_message || JSON.stringify(data)}`);
+          break;
+        case "REMIND":
+          alert(`리마인드 알림: ${data.noti_message || JSON.stringify(data)}`);
+          break;
+        default:
+          alert(
+            `📢 [${type}] 알림: ${data.noti_message || JSON.stringify(data)}`
+          );
+          break;
+      }
     });
 
-    // 수동 종료용: fetch-event-source 사용 시 AbortController 설정 가능
     return () => {
-      if (unsubscribe && typeof unsubscribe.abort === "function") {
-        unsubscribe.abort(); // optional
-      }
+      console.log("[SSE] useEffect cleanup: 연결 중단");
+      controller?.abort();
     };
   }, []);
 
