@@ -3,8 +3,10 @@ import Footer from "../component/common/Footer";
 import Header from "../component/common/Header";
 import MemoryNotificationBox from "../component/notification/MemoryNotificationBox";
 import GeneralNotificationBox from "../component/notification/GeneralNotificationBox";
-import { getnotificationList } from "../api/getNotificationList";
-import { subscribeToNotifications } from "../api/notificationApi"; // SSE 구독 함수
+import {
+  subscribeToNotifications,
+  fetchnotificationList,
+} from "../api/notificationApi"; // SSE 구독 함수
 
 function NotificationPage() {
   const [memoryNotifications, setMemoryNotifications] = useState([]);
@@ -14,7 +16,7 @@ function NotificationPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await getnotificationList(); // 목데이터
+        const data = await fetchnotificationList(); // 알림 목록 불러오기
         const memory = data.filter((item) => item.type === "REMIND");
         const general = data.filter((item) => item.type !== "REMIND");
         setMemoryNotifications(memory);
@@ -42,9 +44,7 @@ function NotificationPage() {
           alert(`리마인드 알림: ${data.noti_message || JSON.stringify(data)}`);
           break;
         default:
-          alert(
-            `📢 [${type}] 알림: ${data.noti_message || JSON.stringify(data)}`
-          );
+          alert(`[${type}] 알림: ${data.noti_message || JSON.stringify(data)}`);
           break;
       }
     });

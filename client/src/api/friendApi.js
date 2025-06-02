@@ -76,8 +76,7 @@ export async function acceptFriendRequest(requestId) {
       throw new Error(`친구 요청 수락 실패: ${response.status}`);
     }
 
-    const result = await response.json();
-    return result;
+    return true;
   } catch (error) {
     console.error("친구 요청 수락 중 오류 발생:", error);
     throw error;
