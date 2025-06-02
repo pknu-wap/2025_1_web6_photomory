@@ -263,7 +263,6 @@ function ProfileMain() {
   const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef(null);
   const canvasRef = useRef(null);
-  const [crop, setCrop] = useState({ x: 0, y: 0, width: 200, height: 200 });
   const [imageScale, setImageScale] = useState(1);
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -448,9 +447,8 @@ function ProfileMain() {
         reader.onload = (event) => {
             const img = new Image();
             img.onload = () => {
-                // 이미지 크기에 맞게 초기 스케일 설정
-                const scale = Math.max(200 / img.width, 200 / img.height);
-                setImageScale(scale);
+                setImageScale(1);
+                setImagePosition({ x: 0, y: 0 });
                 setProfileImage(event.target.result);
                 setIsEditing(true);
             };
@@ -485,47 +483,8 @@ function ProfileMain() {
     if (!isEditing) return;
     e.preventDefault();
     const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    setImageScale(prev => Math.min(Math.max(prev * delta, 0.5), 3));
-  };
-
-  const handleSave = () => {
-    if (canvasRef.current && profileImage) {
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        
-        // 캔버스 초기화
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // 원형 클리핑 영역 생성
-        ctx.beginPath();
-        ctx.arc(100, 100, 100, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.clip();
-        
-        // 이미지 그리기
-        const img = new Image();
-        img.onload = () => {
-            ctx.drawImage(
-                img,
-                imagePosition.x,
-                imagePosition.y,
-                200 * imageScale,
-                200 * imageScale
-            );
-            
-            // 캔버스의 내용을 이미지로 변환
-            const croppedImage = canvas.toDataURL('image/jpeg');
-            setProfileImage(croppedImage);
-            setIsEditing(false);
-        };
-        img.src = profileImage;
-    }
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    setImageScale(1);
-    setImagePosition({ x: 0, y: 0 });
+    const newScale = Math.min(Math.max(imageScale * delta, 0.5), 3);
+    setImageScale(newScale);
   };
 
   return (
@@ -533,45 +492,54 @@ function ProfileMain() {
       <div className={styles.myInfoContainer}>
         <div className={styles.myDetailInfoContainer1}>
           <div className={styles.forFlexLeft}>
-            <div 
-              className={styles.profileImageContainer}
-              onClick={handleImageClick}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-              onWheel={handleWheel}
-            >
-              {profileImage ? (
-                <img
-                  src={profileImage}
-                  alt="Profile"
-                  className={styles.profileImage}
-                  style={{
-                    transform: `scale(${imageScale})`,
-                    transformOrigin: 'center',
-                    position: isEditing ? 'absolute' : 'relative',
-                    left: isEditing ? imagePosition.x : 'auto',
-                    top: isEditing ? imagePosition.y : 'auto',
-                    cursor: isEditing ? 'move' : 'pointer'
-                  }}
+            <div className={styles.profileImageWrapper}>
+              <div 
+                className={styles.profileImageContainer}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onWheel={handleWheel}
+              >
+                {profileImage ? (
+                  <img
+                    src={profileImage}
+                    alt="Profile"
+                    className={styles.profileImage}
+                    style={{
+                      transform: `scale(${imageScale})`,
+                      transformOrigin: 'center',
+                      position: isEditing ? 'absolute' : 'relative',
+                      left: isEditing ? imagePosition.x : 'auto',
+                      top: isEditing ? imagePosition.y : 'auto',
+                      cursor: isEditing ? 'move' : 'default'
+                    }}
+                  />
+                ) : (
+                  <img src={defaultProfile} alt=""></img>
+                )}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  accept="image/*"
+                  style={{ display: 'none' }}
                 />
-              ) : (
-                <img src={defaultProfile} alt=""></img>
+                <canvas
+                  ref={canvasRef}
+                  width={200}
+                  height={200}
+                  style={{ display: 'none' }}
+                />
+              </div>
+              {isEdit && (
+                <div 
+                  className={styles.editImageIcon}
+                  onClick={handleImageClick}
+                >
+                  <FontAwesomeIcon icon={faCamera} />
+                </div>
               )}
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                accept="image/*"
-                style={{ display: 'none' }}
-              />
-              <canvas
-                ref={canvasRef}
-                width={200}
-                height={200}
-                style={{ display: 'none' }}
-              />
             </div>
             <div className={styles.forFlex}>
               <input
