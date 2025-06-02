@@ -83,8 +83,8 @@ function OurAlbumPage() {
           setSelectedGroupId(firstGroup.group_id);
           setGroupAlbums(firstGroup.albums);
 
-          const titlesByGroup = {};
-          const albumsMap = {};
+          const titlesByGroup = {}; //그룹별 앨범명
+          const albumsMap = {}; //그룹별 앨범 데이터
 
           //그룹 id에 따른 앨범명, 앨범 정보 매핑
           for (const group of normalizedData) {
@@ -123,6 +123,9 @@ function OurAlbumPage() {
       setCurrentTags([]);
     }
   }, [selectedGroupId, albumsByGroupId]);
+
+  // 전체 앨범 개수 구하기
+  const allAlbumsCount = groupAlbums.length;
 
   return (
     <>
@@ -189,6 +192,7 @@ function OurAlbumPage() {
                 type="group"
                 selectedGroupId={selectedGroupId}
                 basePath="/our-album"
+                allAlbumsCount={allAlbumsCount}
               />
             </div>
           </div>
