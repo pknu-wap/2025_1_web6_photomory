@@ -4,19 +4,19 @@ import Header from "../component/common/Header";
 import MemoryNotificationBox from "../component/notification/MemoryNotificationBox";
 import GeneralNotificationBox from "../component/notification/GeneralNotificationBox";
 import { getnotificationList } from "../api/getNotificationList";
-// import { fetchnotificationList } from "../api/notificationApi";
+import { subscribeToNotifications } from "../api/notificationApi"; // SSE 구독 함수
+
 function NotificationPage() {
   const [memoryNotifications, setMemoryNotifications] = useState([]);
   const [generalNotifications, setGeneralNotifications] = useState([]);
 
+  // 1. 초기 알림 목록 불러오기
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await getnotificationList(); // 목데이터 배열, TODO: api함수 교체
-
+        const data = await getnotificationList(); // 목데이터
         const memory = data.filter((item) => item.type === "REMIND");
         const general = data.filter((item) => item.type !== "REMIND");
-
         setMemoryNotifications(memory);
         setGeneralNotifications(general);
       } catch (error) {
@@ -25,6 +25,20 @@ function NotificationPage() {
     }
 
     fetchData();
+  }, []);
+
+  // 2. SSE 구독 - 알림 오면 콘솔에 출력
+  useEffect(() => {
+    const unsubscribe = subscribeToNotifications((data) => {
+      console.log("🚀 실시간 알림 수신:", data);
+    });
+
+    // 수동 종료용: fetch-event-source 사용 시 AbortController 설정 가능
+    return () => {
+      if (unsubscribe && typeof unsubscribe.abort === "function") {
+        unsubscribe.abort(); // optional
+      }
+    };
   }, []);
 
   return (
