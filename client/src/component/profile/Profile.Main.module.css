@@ -75,6 +75,47 @@ body{
   font-size: 14px;
   color: #757575;
 }
+.name, 
+.job,
+.myFieldInput, 
+.myEquipmentInput, 
+.myAreaInput, 
+.introduction,
+.searchBar {
+    transition: all 0.3s ease;
+}
+
+.name:hover,
+.job:hover,
+.myFieldInput:hover,
+.myEquipmentInput:hover,
+.myAreaInput:hover,
+.introduction:hover,
+.searchBar:hover{
+    cursor: pointer;
+    border-color: #E8D5E4;
+}
+
+.name:focus,
+.job:focus,
+.myFieldInput:focus,
+.myEquipmentInput:focus,
+.myAreaInput:focus,
+.introduction:focus,
+.searchBar:focus {
+    border-color: #8B6E91;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(139, 110, 145, 0.1);
+}
+
+.name:disabled,
+.job:disabled,
+.myFieldInput:disabled,
+.myEquipmentInput:disabled,
+.myAreaInput:disabled,
+.introduction:disabled {
+    pointer-events: none;
+}
 .forFlexSetting {
   height: 100%;
   width: auto;
@@ -102,7 +143,7 @@ body{
   min-width: 69px;
   font-weight: 500;
   color: #9E9E9E;
-  border: 2px solid #E0E0E0;
+  border: 1px solid #E0E0E0;
   margin-bottom: 10px;
   padding: 5px 8px;
   transition: all 0.3s ease;
@@ -216,29 +257,6 @@ body{
   transition: all 0.3s ease;
 }
 
-.myFieldInput:hover,
-.myEquipmentInput:hover,
-.myAreaInput:hover,
-.searchBar:hover,
-.introduction:hover,
-.job:hover,
-.name:hover {
-  cursor: pointer;
-  border-color: #BDBDBD;
-}
-
-.myFieldInput:focus,
-.myEquipmentInput:focus,
-.myAreaInput:focus,
-.name:focus,
-.job:focus,
-.searchBar:focus,
-.introduction:focus {
-  border-color: #9E9E9E;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(158, 158, 158, 0.1);
-}
-
 .forFlex2 {
   width: clamp(500px, 70%, 1000px);
   text-align: left;
@@ -280,6 +298,7 @@ body{
   width: 50%;
   border: 1px solid #E8D5E4;
   padding: 20px;
+  height: 475px;
 }
 .myFriendListTop {
   font-weight: 700;
@@ -289,15 +308,33 @@ body{
 .searchFriendContainer {
   width: 50%;
   margin: 15px;
-  border-radius: 8px;
-  border: 1px solid #E8D5E4;
   padding: 20px;
-}
-.forFlexFriendList{
+  border: 1px solid #E8D5E4;
+  border-radius: 8px;
+  height: 475px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-top: 7.5px;
+}
+.forFlexFriendList {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 10px;
+}
+.forFlexFriendList::-webkit-scrollbar {
+  width: 8px;
+}
+.forFlexFriendList::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+.forFlexFriendList::-webkit-scrollbar-thumb {
+  background: #9E9E9E;
+  border-radius: 4px;
+}
+.forFlexFriendList::-webkit-scrollbar-thumb:hover {
+  background: #757575;
 }
 .myFriendItemContainer{
   background: rgba(0, 0, 0, 0.05);
@@ -356,3 +393,63 @@ body{
     flex-direction: column;
   }
 }
+
+.profileContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.profileImageWrapper {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+}
+
+.profileImageContainer {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profileImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.editImageIcon {
+    position: absolute;
+    top: -8px;
+    right: -20px;
+    width: 28px;
+    height: 28px;
+    background-color: #8B6E91;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.editImageIcon svg {
+    color: white;
+    font-size: 14px;
+}
+
+.editImageIcon:hover {
+    background-color: #6B4E71;
+}
+
