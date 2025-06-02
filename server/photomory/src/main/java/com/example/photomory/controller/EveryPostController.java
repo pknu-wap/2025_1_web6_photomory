@@ -20,7 +20,7 @@ import java.util.List;
 public class EveryPostController {
 
     private final EveryPostService everyPostService;
-    
+
     @GetMapping
     public ResponseEntity<List<EveryPostResponseDto>> getAllPosts(@AuthenticationPrincipal(expression = "user") UserEntity user) {
         List<EveryPostResponseDto> posts = everyPostService.getAllPostsWithComments(user.getUserEmail());
@@ -35,7 +35,7 @@ public class EveryPostController {
             @RequestPart("postDescription") String postDescription,
             @RequestPart("location") String location,
             @RequestPart("photo") MultipartFile photo,
-            @RequestPart("photoMakingTime") String photoMakingTime,
+            @RequestPart(value = "photoMakingTime",required = false) String photoMakingTime,
             @RequestPart("tagsJson") String tagsJson
     ) {
         EveryPostRequestDto dto = new EveryPostRequestDto();
@@ -60,7 +60,7 @@ public class EveryPostController {
             @RequestPart("postDescription") String postDescription,
             @RequestPart("location") String location,
             @RequestPart(value = "photo", required = false) MultipartFile photo,
-            @RequestPart("photoMakingTime") String photoMakingTime,
+            @RequestPart(value = "photoMakingTime", required = false) String photoMakingTime,
             @RequestPart("tagsJson") String tagsJson
     ) {
         EveryPostUpdateDto dto = new EveryPostUpdateDto();
