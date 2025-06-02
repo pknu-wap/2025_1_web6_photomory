@@ -90,7 +90,13 @@ public class EveryPostService {
             throw new RuntimeException("사진 업로드 실패", e);
         }
 
-        LocalDateTime time = LocalDateTime.parse(dto.getPhotoMakingTime());
+        // ✅ 수정된 부분
+        LocalDateTime time;
+        if (dto.getPhotoMakingTime() != null && !dto.getPhotoMakingTime().isBlank()) {
+            time = LocalDateTime.parse(dto.getPhotoMakingTime());
+        } else {
+            time = LocalDateTime.now();
+        }
 
         EveryPost everyPost = EveryPost.builder()
                 .user(user)
@@ -172,7 +178,15 @@ public class EveryPostService {
                 throw new RuntimeException("사진 업로드 실패", e);
             }
             post.setPhotoUrl(photoUrl);
-            post.setMakingTime(LocalDateTime.parse(dto.getPhotoMakingTime()));
+
+            // ✅ 수정된 부분
+            LocalDateTime photoTime;
+            if (dto.getPhotoMakingTime() != null && !dto.getPhotoMakingTime().isBlank()) {
+                photoTime = LocalDateTime.parse(dto.getPhotoMakingTime());
+            } else {
+                photoTime = LocalDateTime.now();
+            }
+            post.setMakingTime(photoTime);
         }
 
         post.getTags().clear();
