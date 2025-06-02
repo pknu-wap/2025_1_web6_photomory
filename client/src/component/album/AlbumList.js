@@ -67,7 +67,9 @@ function AlbumList({
             <div className="albumInfo">
               <p>
                 총 {currentAlbum.photos.length}장의 사진들 | 생성일:{" "}
-                {currentAlbum.album_makingtime}
+                {type === "group"
+                  ? currentAlbum.album_makingtime.slice(0, 10) // 그룹일 땐 날짜만
+                  : currentAlbum.album_makingtime}{" "}
               </p>
             </div>
           </div>
