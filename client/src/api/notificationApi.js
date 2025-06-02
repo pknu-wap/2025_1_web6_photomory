@@ -1,3 +1,4 @@
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 //친구 요청 목록 불러오기 api함수
@@ -56,27 +57,43 @@ export async function getReceivedFriendRequests(userId) {
   }
 }
 
-//SSE 구독 함수
 export function subscribeToNotifications(onMessageCallback) {
-  const token = localStorage.getItem("accessToken");
+  const token = localStorage.getItem("accessToken"); // 또는 'token'
 
-  const url = `${BASE_URL}/api/notifications/subscribe?token=${token}`;
+  if (!token) {
+    console.error("❗ accessToken이 없습니다. SSE 연결 중단");
+    return;
+  }
 
-  const eventSource = new EventSource(url);
+  fetchEventSource(`${BASE_URL}/api/notifications/subscribe`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
 
-  // 새 알림 도착 시 콜백 실행
-  eventSource.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    onMessageCallback(data); // 알림을 상태에 저장하거나 처리
-  };
+    onopen(response) {
+      console.log("✅ SSE 연결 성공:", response.status);
+    },
 
-  // 에러 처리
-  eventSource.onerror = (error) => {
-    console.error("SSE 연결 오류:", error);
-    eventSource.close();
-  };
+    onmessage(event) {
+      console.log("📩 서버로부터 알림:", event.data);
+      try {
+        const data = JSON.parse(event.data);
+        onMessageCallback(data); // 콜백에 알림 객체 전달
+      } catch (err) {
+        console.error("❗ 알림 파싱 오류:", err);
+      }
+    },
 
-  return eventSource; // 나중에 수동으로 닫고 싶을 때 사용
+    onclose() {
+      console.log("🔌 SSE 연결 종료");
+    },
+
+    onerror(err) {
+      console.error("❗ SSE 연결 오류 발생:", err);
+      // fetch-event-source는 자동으로 재시도합니다 (AbortController로 끊을 수 있음)
+    },
+  });
 }
 
 //알림 목록 조회 api함수
