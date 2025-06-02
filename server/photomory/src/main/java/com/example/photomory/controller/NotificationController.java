@@ -4,6 +4,7 @@ import com.example.photomory.dto.NotificationResponse;
 import com.example.photomory.service.AuthService;
 import com.example.photomory.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
+@Slf4j
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -26,6 +28,7 @@ public class NotificationController {
 
         // SSE 연결 생성 및 등록
         SseEmitter emitter = notificationService.subscribe(userId);
+        log.info("SSE 연결 직전! userId: {}", userId);
 
         try {
             emitter.send(SseEmitter.event()
