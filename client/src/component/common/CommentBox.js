@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import sendIcon from "../../assets/sendIcon.svg";
+import { useAuth } from "../../contexts/AuthContext";
 import { writeComment } from "../../api/ourAlbumApi";
 function CommentBox({ albumId, photoId }) {
   const [comment, setComment] = useState(""); //입력할 댓글
   const [comments, setComments] = useState([]); // 댓글 리스트
+  const { name } = useAuth(); // 로그인한 사용자 이름 가져오기
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -12,6 +14,7 @@ function CommentBox({ albumId, photoId }) {
     const newComment = {
       text: comment, // 댓글
       date: new Date(), //현재 시간 저장
+      author: name,
     };
 
     try {
@@ -60,7 +63,9 @@ function CommentBox({ albumId, photoId }) {
                 fontSize: "14px",
               }}
             >
-              <p style={{ marginBottom: "4px" }}>사용자이름 : {c.text}</p>
+              <p style={{ marginBottom: "4px" }}>
+                {c.author} : {c.text}
+              </p>
               <p style={{ fontSize: "12px", color: "#888" }}>
                 {c.date.toLocaleDateString("ko-KR")}
               </p>
