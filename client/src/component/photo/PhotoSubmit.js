@@ -36,7 +36,6 @@ function PhotoSubmit({ type, albumId, handleAddPhoto }) {
     try {
       if (type === "private") {
         // 나만의 추억 FormData 구성 및 업로드 요청
-        console.log(newPhotoData);
 
         const formData = new FormData();
         formData.append("photos", newPhotoData.imgFile);
