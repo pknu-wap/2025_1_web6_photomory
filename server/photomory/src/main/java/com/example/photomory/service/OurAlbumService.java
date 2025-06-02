@@ -299,7 +299,10 @@ public class OurAlbumService {
                 UserEntity friend = userRepository.findById(friendId)
                         .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
+                AlbumMembers.AlbumMembersId id = new AlbumMembers.AlbumMembersId(friend.getUserId(), group.getId());
+
                 AlbumMembers member = AlbumMembers.builder()
+                        .id(id)
                         .userEntity(friend)
                         .userGroup(group)
                         .build();
