@@ -83,3 +83,28 @@ export async function acceptFriendRequest(requestId) {
     throw error;
   }
 }
+
+//친구 요청 거절 api 함수
+export async function rejectFriendRequest(requestId) {
+  const accessToken = localStorage.getItem("accessToken");
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/friend-list/${requestId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`친구 요청 거절 실패: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("친구 요청 거절 중 오류:", error);
+    throw error;
+  }
+}
