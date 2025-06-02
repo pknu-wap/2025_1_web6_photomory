@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,20 +30,20 @@ public class NotificationService {
     private final ImageRepository imageRepository;
     private final SseEmitters emitters;
 
-    // 1. SSE 구독
+    //SSE 구독
     public SseEmitter subscribe(Long userId) {
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+        SseEmitter emitter = new SseEmitter(0L); // 무제한 연결
         emitters.add(userId, emitter);
         return emitter;
     }
 
-    // 2. Remind를 제외한 모든 알림 전송 (발신자 정보 포함)
+    // 일반 알림 전송 (발신자 정보 포함)
     public void sendNotification(Long receiverId, Long senderId, String message, NotificationType type, Long requestId) {
 
         UserEntity sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new RuntimeException("발신자 정보 없음"));
 
-        // 1) DB 저장
+        // 알림 저장
         Notification notification = Notification.builder()
                 .userId(receiverId)
                 .senderId(senderId)
@@ -56,11 +57,11 @@ public class NotificationService {
                 .build();
         notificationRepository.save(notification);
 
-        // 3) DTO 생성
+        // DTO로 변환
         NotificationResponse response = NotificationResponse.builder()
                 .id(notification.getId())
-                .userId(receiverId) //알림받는사람
-                .senderId(senderId) //알림보내는사람
+                .userId(receiverId)
+                .senderId(senderId)
                 .senderName(sender.getUserName())
                 .senderPhotourl(sender.getUserPhotourl())
                 .message(message)
@@ -70,11 +71,11 @@ public class NotificationService {
                 .isRead(false)
                 .build();
 
-        // 4) SSE 전송
+        // SSE 전송
         emitters.send(receiverId, response);
     }
 
-    // 3. Remind 알림 (발신자 정보 불필요)
+    // Remind 알림 전송 (발신자 정보 X)
     public void sendRemindNotification() {
         LocalDate targetDate = LocalDate.now().minusDays(3);
         List<Photo> images = imageRepository.findByDate(targetDate);
@@ -82,6 +83,7 @@ public class NotificationService {
 
         Photo image = images.get(new Random().nextInt(images.size()));
 
+        // 알림 저장
         Notification notification = Notification.builder()
                 .userId(image.getUserId())
                 .type(NotificationType.REMIND)
@@ -91,7 +93,7 @@ public class NotificationService {
                 .build();
         notificationRepository.save(notification);
 
-        // RemindNotificationDto로 전송
+        // RemindNotificationDto 생성
         RemindNotificationDto dto = RemindNotificationDto.builder()
                 .type("REMIND")
                 .title(image.getTitle())
@@ -100,15 +102,16 @@ public class NotificationService {
                 .message("3일 전 오늘")
                 .build();
 
+        // SSE 전송
         emitters.send(image.getUserId(), dto);
     }
 
-    // 4. 안 읽은 알림 개수
+    // 안 읽은 알림 개수
     public int countUnread(Long userId) {
         return notificationRepository.countByUserIdAndIsReadFalse(userId);
     }
 
-    // 5. 전체 알림 조회 + 읽음 처리 + 발신자 정보 포함
+    // 전체 알림 조회 + 읽음 처리
     @Transactional
     public List<NotificationResponse> getNotificationsAndMarkAllRead(Long userId) {
         List<Notification> notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
@@ -116,7 +119,7 @@ public class NotificationService {
 
         return notifications.stream()
                 .map(n -> {
-                    // Remind 알림은 senderId가 없을 수 있으므로 분기
+                    // Remind 알림 처리
                     if (n.getSenderId() == null) {
                         return NotificationResponse.builder()
                                 .id(n.getId())
@@ -132,7 +135,7 @@ public class NotificationService {
                                 .build();
                     }
 
-                    // senderId가 있으면 UserEntity에서 발신자 정보 꺼내서 채워줌
+                    // 일반 알림은 발신자 정보 채워줌
                     UserEntity sender = userRepository.findById(n.getSenderId())
                             .orElse(null);
 
@@ -149,6 +152,6 @@ public class NotificationService {
                             .requestId(n.getRequestId())
                             .build();
                 })
-                .toList();
+                .collect(Collectors.toList());
     }
 }
