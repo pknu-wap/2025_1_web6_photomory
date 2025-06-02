@@ -25,9 +25,8 @@ public class MyAlbum {
     @Column(name = "myalbum_tag")
     private String myalbumTag; // 예: "자연,풍경,감성"
 
-    @Column(name = "myalbum_makingtime")
+    @Column(name = "album_makingtime")
     private LocalDateTime myalbumMakingtime;
-
 
     @Column(name = "myalbum_description")
     private String myalbumDescription;
