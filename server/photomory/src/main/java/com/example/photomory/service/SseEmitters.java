@@ -23,6 +23,7 @@ public class SseEmitters {
      */
     public void add(Long userId, SseEmitter emitter) {
         emitters.computeIfAbsent(userId, k -> new CopyOnWriteArrayList<>()).add(emitter);
+        log.info("SSE 연결 등록됨 - userId: {}", userId);
 
         // 연결 종료/타임아웃/오류 시 자동으로 제거
         emitter.onCompletion(() -> remove(userId, emitter));
