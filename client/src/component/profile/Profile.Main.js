@@ -1,10 +1,12 @@
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import styles from "./Profile.Main.module.css";
 import FriendManage from "../friend/Friend.Manage";
 import SearchFriend from "../friend/Search.Friend";
 import logout from '../../assets/logout.svg'
 import defaultProfile from "../../assets/defaultProfileIcon.svg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCamera } from "@fortawesome/free-solid-svg-icons";
 
 const getNonFriendsList = async (retries=0, maxRetries=3) => {
     const refreshToken= localStorage.getItem('refreshToken')
@@ -257,6 +259,15 @@ function ProfileMain() {
   const [search, setSearch] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([])
   const [isEdit, setIsEdit]= useState(false)
+  const [profileImage, setProfileImage] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const fileInputRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0, width: 200, height: 200 });
+  const [imageScale, setImageScale] = useState(1);
+  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   
     // 사용자 데이터 가져오기
@@ -424,17 +435,144 @@ function ProfileMain() {
     }
   };
 
+  const handleImageClick = () => {
+    if (fileInputRef.current) {
+        fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                // 이미지 크기에 맞게 초기 스케일 설정
+                const scale = Math.max(200 / img.width, 200 / img.height);
+                setImageScale(scale);
+                setProfileImage(event.target.result);
+                setIsEditing(true);
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+  };
+
+  const handleMouseDown = (e) => {
+    if (!isEditing) return;
+    setIsDragging(true);
+    setDragStart({
+        x: e.clientX - imagePosition.x,
+        y: e.clientY - imagePosition.y
+    });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging || !isEditing) return;
+    setImagePosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleWheel = (e) => {
+    if (!isEditing) return;
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+    setImageScale(prev => Math.min(Math.max(prev * delta, 0.5), 3));
+  };
+
+  const handleSave = () => {
+    if (canvasRef.current && profileImage) {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        
+        // 캔버스 초기화
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // 원형 클리핑 영역 생성
+        ctx.beginPath();
+        ctx.arc(100, 100, 100, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        
+        // 이미지 그리기
+        const img = new Image();
+        img.onload = () => {
+            ctx.drawImage(
+                img,
+                imagePosition.x,
+                imagePosition.y,
+                200 * imageScale,
+                200 * imageScale
+            );
+            
+            // 캔버스의 내용을 이미지로 변환
+            const croppedImage = canvas.toDataURL('image/jpeg');
+            setProfileImage(croppedImage);
+            setIsEditing(false);
+        };
+        img.src = profileImage;
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setImageScale(1);
+    setImagePosition({ x: 0, y: 0 });
+  };
 
   return (
     <div className={styles.allContainer}>
       <div className={styles.myInfoContainer}>
         <div className={styles.myDetailInfoContainer1}>
           <div className={styles.forFlexLeft}>
-            <img 
-              src={profileData?.profileImage || defaultProfile} 
-              alt="Profile" 
-              className={styles.image}
-            />
+            <div 
+              className={styles.profileImageContainer}
+              onClick={handleImageClick}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onWheel={handleWheel}
+            >
+              {profileImage ? (
+                <img
+                  src={profileImage}
+                  alt="Profile"
+                  className={styles.profileImage}
+                  style={{
+                    transform: `scale(${imageScale})`,
+                    transformOrigin: 'center',
+                    position: isEditing ? 'absolute' : 'relative',
+                    left: isEditing ? imagePosition.x : 'auto',
+                    top: isEditing ? imagePosition.y : 'auto',
+                    cursor: isEditing ? 'move' : 'pointer'
+                  }}
+                />
+              ) : (
+                <img src={defaultProfile} alt=""></img>
+              )}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="image/*"
+                style={{ display: 'none' }}
+              />
+              <canvas
+                ref={canvasRef}
+                width={200}
+                height={200}
+                style={{ display: 'none' }}
+              />
+            </div>
             <div className={styles.forFlex}>
               <input
                 className={styles.name}
