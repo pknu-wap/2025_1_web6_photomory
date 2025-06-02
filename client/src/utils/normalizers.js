@@ -53,12 +53,11 @@ export function normalizeOurAlbumData(rawData) {
           : [], //태그 배열 처리
         album_makingtime: a.albumMakingtime,
         photos:
-          a.photos?.map((p) => ({
-            photo_id: p.photoId,
-            photo_url: p.photoUrl,
-            photo_name: p.photoName,
-            photo_makingtime: p.photoMakingtime,
-            post_id: p.postId,
+          a.posts?.map((p) => ({
+            photo_id: p.postId,
+            photo_url: p.postImageUrl,
+            photo_name: p.postContent,
+            photo_makingtime: p.postMakingTime,
           })) ?? [],
         comments: a.comments ?? [],
       })) ?? [],
