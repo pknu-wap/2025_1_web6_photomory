@@ -144,8 +144,8 @@ export default function EveryMemoryMain() {
     const [uploadFileInfo, setUploadFileInfo] = useState({
         postText: '',
         postDescription: '',
-        postLocation: '',
-        postTag: ''
+        location: '',
+        tagsJson: ''
     });
     const { randomIndex, updateRandomIndex } = useRandomIndex();
 
@@ -196,8 +196,8 @@ export default function EveryMemoryMain() {
             }
             formData.append('postText', uploadFileInfo.postText || '');
             formData.append('postDescription', uploadFileInfo.postDescription || '');
-            formData.append('postLocation', uploadFileInfo.postLocation || '');
-            formData.append('postTag', uploadFileInfo.postTag || '');
+            formData.append('location', uploadFileInfo.location || '');
+            formData.append('tagsJson', uploadFileInfo.tagsJson || '');
 
             // FormData 내용 확인용 디버깅
             for (let [key, value] of formData.entries()) {
@@ -215,7 +215,7 @@ export default function EveryMemoryMain() {
                 },
                 body: formData
             });
-
+            
             if (!response.ok) {
                 if (response.status === 401) {
                     throw new Error('Unauthorized');
@@ -227,7 +227,7 @@ export default function EveryMemoryMain() {
             const result = await response.json();
             alert('이미지가 성공적으로 업로드되었습니다.');
             setUploadFiles([]); // 업로드 성공 시 파일 초기화
-            setUploadFileInfo({ postText: '', postDescription: '', postLocation: '', postTag: '' }); // 입력 초기화
+            setUploadFileInfo({ postText: '', postDescription: '', location: '', tagsJson: '' }); // 입력 초기화
             return result;
         } catch (error) {
             console.error('Upload error:', error);
@@ -252,6 +252,7 @@ export default function EveryMemoryMain() {
 
     useEffect(() => {
         let intervalId = null;
+
         const updateRandomIndexValue = () => {
             if (posts && posts.length > 0) {
                 const allTags = posts.reduce((tags, post) => {
@@ -260,31 +261,57 @@ export default function EveryMemoryMain() {
                     }
                     return tags;
                 }, []);
+                
                 const uniqueTags = [...new Set(allTags)];
                 if (uniqueTags.length > 0) {
                     const newRandomIndex = Math.floor(Math.random() * uniqueTags.length);
                     updateRandomIndex(newRandomIndex);
+                    // localStorage에 현재 인덱스와 업데이트 시간 저장
+                    localStorage.setItem('randomIndex', newRandomIndex);
+                    localStorage.setItem('lastUpdateTime', new Date().getTime());
                 }
             }
         };
 
-        if (randomIndex === null && posts && posts.length > 0) {
+        // localStorage에서 저장된 값 확인
+        const savedIndex = localStorage.getItem('randomIndex');
+        const lastUpdateTime = localStorage.getItem('lastUpdateTime');
+        const now = new Date().getTime();
+        const oneWeek = 7 * 24 * 60 * 60 * 1000; // 1주일을 밀리초로
+
+        if (savedIndex && lastUpdateTime) {
+            // 마지막 업데이트로부터 1주일이 지났는지 확인
+            if (now - parseInt(lastUpdateTime) >= oneWeek) {
+                updateRandomIndexValue();
+            } else {
+                // 1주일이 지나지 않았다면 저장된 인덱스 사용
+                updateRandomIndex(parseInt(savedIndex));
+            }
+        } else if (posts && posts.length > 0) {
+            // 저장된 값이 없는 경우 초기 설정
             const allTags = posts.reduce((tags, post) => {
                 if (post && post.tags && Array.isArray(post.tags)) {
                     return [...tags, ...post.tags];
                 }
                 return tags;
             }, []);
+            
             const uniqueTags = [...new Set(allTags)];
             if (uniqueTags.length > 0) {
                 const newRandomIndex = Math.floor(Math.random() * uniqueTags.length);
                 updateRandomIndex(newRandomIndex);
+                localStorage.setItem('randomIndex', newRandomIndex);
+                localStorage.setItem('lastUpdateTime', now);
             }
         }
 
+        // 다음 토요일까지의 시간 계산
         const timeUntilNextSaturday = getTimeUntilNextSaturday();
+        
+        // 타이머 설정
         const timer = setTimeout(() => {
             updateRandomIndexValue();
+            // 이후 매주 토요일마다 갱신
             intervalId = setInterval(updateRandomIndexValue, 7 * 24 * 60 * 60 * 1000);
         }, timeUntilNextSaturday);
 
@@ -580,18 +607,18 @@ export default function EveryMemoryMain() {
                     />
                     <p className={styles.postImageLocation}>위치</p>
                     <input
-                        name="postLocation"
+                        name="location"
                         className={styles.inputLocation}
                         placeholder='예: 제주도특별자치도 서귀포시 성산읍'
-                        value={uploadFileInfo.postLocation}
+                        value={uploadFileInfo.location}
                         onChange={handleOnchangeUploadFileInfo}
                     />
                     <p className={styles.postImageTag}>태그</p>
                     <input
-                        name="postTag"
+                        name="tagsJson"
                         className={styles.postImageTagInput}
                         placeholder='#에 의해 나눠집니다. 예: #가족#일본#겨울'
-                        value={uploadFileInfo.postTag}
+                        value={uploadFileInfo.tagsJson}
                         onChange={handleOnchangeUploadFileInfo}
                     />
                     <div className={styles.forflexPostImage}>
@@ -601,7 +628,7 @@ export default function EveryMemoryMain() {
                         </button>
                         <button className={styles.cancelButton} onClick={() => {
                             setUploadFiles([]);
-                            setUploadFileInfo({ postText: '', postDescription: '', postLocation: '', postTag: '' });
+                            setUploadFileInfo({ postText: '', postDescription: '', location: '', tagsJson: '' });
                         }}>취소하기</button>
                     </div>
                 </div>
