@@ -369,7 +369,7 @@ function ProfileMain() {
     } catch (error) {
       console.error('로그아웃 중 오류 발생:', error);
     }
-  }, []);
+  }, [setIsLogged]);
 
   // 검색 핸들러
   const handleSearch = useCallback((e) => {
