@@ -18,7 +18,6 @@ function GroupEditPage() {
     (async () => {
       try {
         const myFriend = await getInvitableFriends(groupId);
-        console.log(myFriend);
         if (myFriend) {
           setFriends(myFriend);
           setFilteredFriends(myFriend);
