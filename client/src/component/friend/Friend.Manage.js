@@ -1,8 +1,8 @@
 import styles from './Friend.Manage.module.css'
 
-function FriendManage({ userId, userName="이름 없음", userField, onRemoveFriend }) {
+function FriendManage({ userId, userName="이름 없음", userField, handleRemoveFriend }) {
     const handleRemove=()=>{
-        onRemoveFriend(userId)
+        handleRemoveFriend(userId)
     }
     return(
         <>

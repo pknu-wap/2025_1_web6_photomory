@@ -1,34 +1,52 @@
+body{
+  min-width: 656px;
+}
 .myInfoContainer {
   background-color: #ffffff;
   margin: 20px auto;
   width: clamp(600px, 70%, 1000px);
   height: auto;
-  border-radius: 7px;
+  border-radius: 5px;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 .myDetailInfoContainer1 {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 15px;
-  align-items: center;
+  padding: 25px;
+  gap: 20px;
 }
+
 .forFlexLeft {
   display: flex;
   flex-direction: row;
+  align-items: center;
+  gap: 20px;
 }
+
 .image {
-  width: clamp(60px, 5vw, 70px);
-  height: clamp(60px, 5vw, 70px);
-  margin-right: 15px;
-  border: 1px solid black;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  transform: translate(0, -10%);
 }
+
+.image:hover {
+  transform: scale(1.1) translate(0, -10%);
+}
+
 .forFlex {
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
+
 .name {
   width:90%;
   font-weight: 700;
@@ -170,7 +188,10 @@
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  padding: 20px;
+  gap: 20px;
 }
+
 .myFieldContainer,
 .myEquipmentContainer,
 .myAreaContainer {
@@ -211,27 +232,14 @@
   border: 1px solid #E0E0E0;
   padding: 8px 12px;
   text-align: center;
+  width: 100%;
+  transition: all 0.5s ease;
 }
-.name,
-.job,
-.introduction {
-  background-color: transparent;
-  border-radius: 7px;
-  border: none;
-  margin: 5px;
-}
-.myFieldInput:focus,
-.myEquipmentInput:focus,
-.myAreaInput:focus,
-.name:focus,
-.job:focus,
-.searchBar:focus {
-  border: none;
-  outline: none;
-}
+
 .myDetailInfoContainer3 {
-  padding: 15px;
+  padding: 25px;
 }
+
 .introTop {
   font-weight: 700;
   margin: 0px 5px 5px 5px;
@@ -248,17 +256,12 @@
   padding: 8px 12px;
   transition: all 0.3s ease;
 }
+
 .forFlex2 {
   width: clamp(500px, 70%, 1000px);
   text-align: left;
 }
-.manageFriendTop {
-  margin-bottom: 5px;
-  width: clamp(600px, 70%, 1000px);
-  text-align: left;
-  font-weight: 600;
-  margin-top: 100px;
-}
+
 .manageFriendContainer {
   background-color: #ffffff;
   width: clamp(600px, 70%, 1000px);
@@ -286,12 +289,12 @@
 .forFlexFriend{
   display: flex;
   flex-direction: row;
-  border-radius: 7px;
-  justify-content: center;
+  gap: 20px;
+  flex: 1;
 }
 .myFriendsListContainer {
   margin: 15px;
-  border-radius: 7px;
+  border-radius: 8px;
   width: 50%;
   border: 1px solid #E8D5E4;
   padding: 20px;
@@ -352,6 +355,7 @@
   color: #6B4E71;
   font-size: 18px;
 }
+
 .searchBar {
   margin: 15px 0;
   width: 100%;

@@ -251,14 +251,9 @@ const FIELD_MAPPING = {
 };
 
 function ProfileMain() {
-  const [users, setUsers] = useState([]);
-  const [id, setId] = useState();
-  const [name, setName] = useState("");
-  const [job, setJob] = useState("");
-  const [field, setField] = useState("");
-  const [myEquipment, setMyEquipment] = useState("");
-  const [myArea, setMyArea] = useState("");
-  const [introduction, setIntroduction] = useState("");
+  const [profileData, setProfileData] = useState(initialProfileState);
+  const [nonFriendUsers, setNonFriendUsers] = useState([]);
+  const [friendUsers, setFriendUsers] = useState([])
   const [search, setSearch] = useState("");
   const [filteredUsers, setFilteredUsers] = useState([])
   const [isEdit, setIsEdit]= useState(false)
@@ -337,17 +332,70 @@ function ProfileMain() {
       setNonFriendUsers(rollBackNonFriends)
       setFriendUsers(rollBackFriends)
     }
-    if (e.target.className === styles.myEquipmentInput) {
-      setMyEquipment(e.target.value);
+  }
+
+  const handleRemoveFriend= async(userId)=>{ //친구 제거 핸들러
+    if(!userId) return;
+    const rollBackNonFriends= [...nonFriendUsers]
+    const rollBackFriends= [...friendUsers]
+    const findMatchUser=nonFriendUsers.find((user)=>user.userId === userId)
+    const matchUser= {...findMatchUser, isFriend: false};
+
+    setFriendUsers((prevUsers) => //친구인 거에서 제거
+      prevUsers.filter((user) => 
+        user.userId !== userId
+      )
+    );
+    setNonFriendUsers((prevUsers)=>[...prevUsers, matchUser]) //친구인 거에 추가가
+    try{
+      const response = await editFriend(userId)
+      if(!response || !response.success){
+        throw new Error('친구 제거에 실패했습니다.')
+      }
+    } catch(error){
+      setNonFriendUsers(rollBackNonFriends)
+      setFriendUsers(rollBackFriends)
     }
-    if (e.target.className === styles.myAreaInput) {
-      setMyArea(e.target.value);
+  }
+
+  const { setIsLogged } = useAuth();
+
+  // 로그아웃 핸들러
+  const handleLogout = useCallback(() => {
+    try {
+      setIsLogged(false)
+      window.location.href = '/login';
+      localStorage.removeItem('accessToken');
+    } catch (error) {
+      console.error('로그아웃 중 오류 발생:', error);
     }
-    if (e.target.className === styles.introduction) {
-      setIntroduction(e.target.value);
+  }, []);
+
+  // 검색 핸들러
+  const handleSearch = useCallback((e) => {
+    setSearch(e.target.value);
+  }, []);
+
+  // 입력 필드 변경 핸들러
+  const handleInputChange = useCallback((e) => {
+    const { className, value } = e.target;
+    const field = FIELD_MAPPING[className];
+    if (field) {
+      setProfileData(prev => ({
+        ...prev,
+        [field]: value  // 입력 중에는 trim() 하지 않음
+      }));
     }
-    if (e.target.className === styles.name) {
-      setName(e.target.value);
+  }, []);
+
+  useEffect(()=>{ //친구 검색
+    if(search){
+      const filtered=nonFriendUsers.filter((user)=>
+        user.userName.toLowerCase().includes(search.toLowerCase())
+      )
+      setFilteredUsers(filtered)
+    } else{
+      setFilteredUsers(nonFriendUsers)
     }
   }, [search, nonFriendUsers])
 
@@ -458,7 +506,7 @@ function ProfileMain() {
   };
 
   return (
-    <>
+    <div className={styles.allContainer}>
       <div className={styles.myInfoContainer}>
         <div className={styles.myDetailInfoContainer1}>
           <div className={styles.forFlexLeft}>
@@ -555,6 +603,7 @@ function ProfileMain() {
             )}
           </div>
         </div>
+
         <div className={styles.myDetailInfoContainer2}>
           <div className={styles.myFieldContainer}>
             <p className={styles.myField}>전문 분야</p>
@@ -590,11 +639,11 @@ function ProfileMain() {
             />
           </div>
         </div>
+
         <div className={styles.myDetailInfoContainer3}>
           <p className={styles.introTop}>소개</p>
           <textarea
             className={styles.introduction}
-            type="text"
             placeholder="제가 누구냐면요.."
             onChange={handleInputChange}
             value={profileData?.introduction || ''}
@@ -602,24 +651,24 @@ function ProfileMain() {
           />
         </div>
       </div>
-      <p className={styles.manageFriendTop}>친구 관리</p>
-      <div className={styles.manageFriendContainer}>
-        <div className={styles.myFriendsListContainer}>
-          <p className={styles.myFriendListTop}>내 친구 목록</p>
-          {users.length > 0 && users.some(user => user.isFriend) ? (
-            users.filter(user => user.isFriend).map(user => (
+
+      <div className={styles.manageFriendContainer}> {/*애니 효과 추가하기*/}
+        <p className={styles.manageFriendTop}>친구 관리</p>
+        <div className={styles.forFlexFriend}>
+          <div className={styles.myFriendsListContainer}>
+            <p className={styles.myFriendListTop}>내 친구 목록</p>
+            {friends.length > 0 ? friends.map((user) => ( //친구가 어느 정도 이상이면 오버플로우로 스크롤할 수 있게 
               <FriendManage
                 key={user.id}
                 userId={user.id}
                 userName={user.name}
                 userField={user.field}
                 isFriend={user.isFriend}
-                onRemoveFriend={handleRemoverFriend}
+                handleRemoveFriend={handleRemoveFriend}
               />
-            ))
-          ) : (
-            <p className={styles.zeroFriend}>앗, 친구가 없어요.😓</p>
-          )}
+            )) : (
+              <p className={styles.zeroFriend}>앗, 친구가 없어요.😓</p>
+            )}
           </div>
           <div className={styles.searchFriendContainer}>
             <p className={styles.searchMyFriendTop}>친구 검색</p> {/*아이콘 넣기 */}
@@ -642,7 +691,8 @@ function ProfileMain() {
             </div>
           </div>
         </div>
-    </>
+      </div>
+    </div>
   );
 }
 
