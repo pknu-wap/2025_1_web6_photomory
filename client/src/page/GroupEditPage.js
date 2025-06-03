@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import Header from "../component/common/Header";
 import GroupEditor from "../component/group/GroupEditor";
 import Footer from "../component/common/Footer";
-import { getFriends } from "../api/getFriends";
+import { getInvitableFriends } from "../api/ourAlbumApi";
 import { fetchGroupInfo } from "../api/ourAlbumApi";
 import { normalizeMember } from "../utils/normalizers";
 
@@ -17,7 +17,8 @@ function GroupEditPage() {
   useEffect(() => {
     (async () => {
       try {
-        const myFriend = getFriends();
+        const myFriend = await getInvitableFriends(groupId);
+        console.log(myFriend);
         if (myFriend) {
           setFriends(myFriend);
           setFilteredFriends(myFriend);

@@ -1,9 +1,10 @@
 import "./AddFriendList.css";
+import defaultProfileIcon from "../../assets/defaultProfileIcon.svg";
 //친구 초대 목록 컴포넌트
 function AddFriendList({ friends }) {
   //친구 초대 알림 헨들러
   const handleInviteClick = (friend) => {
-    alert(`${friend.name}님을 초대했습니다!`);
+    alert(`${friend.username}님을 초대했습니다!`);
   };
 
   return (
@@ -15,11 +16,11 @@ function AddFriendList({ friends }) {
           {friends.map((friend) => (
             <li key={friend.userId} className="friendItem">
               <img
-                src={friend.photoUrl}
-                alt={friend.name}
+                src={friend.profileImageUrl || defaultProfileIcon}
+                alt={friend.username}
                 className="friendImage"
               />
-              <span className="friendName">{friend.name}</span>
+              <span className="friendName">{friend.username}</span>
               <button
                 className="inviteButton"
                 onClick={() => handleInviteClick(friend)}
