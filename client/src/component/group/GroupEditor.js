@@ -9,6 +9,7 @@ function GroupEditor({
   addedMembers,
   setAddedMembers,
   onFriendSearch,
+  handleInviteClick,
   onRemoveMember,
 }) {
   return (
@@ -18,7 +19,10 @@ function GroupEditor({
       <FriendSearchBar friends={friends} onSearch={onFriendSearch} />
       <div className="groupEditorBody">
         {/*친구 현황 목록 및 초대 가능 컴포넌트*/}
-        <AddFriendList friends={friends} />
+        <AddFriendList
+          friends={friends}
+          handleInviteClick={handleInviteClick}
+        />
         {/*그룹 멤버 현황 목록 및 초대 가능 컴포넌트*/}
         <AddedMemberList
           addedMembers={addedMembers}

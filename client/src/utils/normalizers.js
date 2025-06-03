@@ -114,7 +114,7 @@ export function normalizeGroupAlbumDetail(apiData, groupInfo) {
 export function normalizeMember(member) {
   return {
     user_id: member.userId,
-    user_name: member.username,
-    user_photourl: member.profileImageUrl,
+    user_name: member.userName,
+    user_photourl: member.userPhotourl,
   };
 }

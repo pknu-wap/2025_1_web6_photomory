@@ -4,13 +4,6 @@ const MAX_MEMBERS = 20; // 최대 인원 20명
 
 //현재 그룹 멤버 컴포넌트
 function AddedMemberList({ addedMembers, onRemoveMember }) {
-  //삭제 알림 헨들러
-  const handleRemoveClick = (member) => {
-    if (window.confirm(`${member.user_name}님을 삭제하시겠습니까?`)) {
-      onRemoveMember(member.user_id);
-    }
-  };
-
   return (
     <div className="addedMemberContainer">
       <h3 className="addedMemberTitle">현재 그룹 멤버</h3>
@@ -29,7 +22,7 @@ function AddedMemberList({ addedMembers, onRemoveMember }) {
             />
             <span className="addedMemberName">{member.user_name}</span>
             <button
-              onClick={() => handleRemoveClick(member)}
+              onClick={() => onRemoveMember(member.user_id, member.user_name)}
               className="removeButton"
             >
               삭제
