@@ -1,3 +1,5 @@
+const BASE_URL = process.env.REACT_APP_API_URL;
+
 export async function inviteFriendToGroup(groupId, userId) {
   const accessToken = localStorage.getItem("accessToken");
 
@@ -25,6 +27,31 @@ export async function inviteFriendToGroup(groupId, userId) {
     return result;
   } catch (error) {
     console.error("친구 초대 중 오류:", error);
+    throw error;
+  }
+}
+
+export async function removeFriendFromGroup(groupId, userIdToRemove) {
+  const accessToken = localStorage.getItem("accessToken");
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/api/our-album/group/${groupId}/member/${userIdToRemove}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (response.status === 204) {
+      return "삭제 성공";
+    } else {
+      throw new Error(`삭제 실패: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("친구 삭제 중 오류:", error);
     throw error;
   }
 }
