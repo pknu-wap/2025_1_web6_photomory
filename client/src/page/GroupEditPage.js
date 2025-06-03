@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../component/common/Header";
 import GroupEditor from "../component/group/GroupEditor";
 import Footer from "../component/common/Footer";
 import { getInvitableFriends } from "../api/ourAlbumApi";
 import { inviteFriendToGroup } from "../api/groupApi";
+import { removeFriendFromGroup } from "../api/groupApi";
 import { fetchGroupInfo } from "../api/ourAlbumApi";
 import { normalizeMember } from "../utils/normalizers";
 
 function GroupEditPage() {
   const { groupId } = useParams(); //GroupId 불러오기
+  const navigate = useNavigate();
+
   const [friends, setFriends] = useState([]); //친구 목록 배열 원본
   const [filteredFriends, setFilteredFriends] = useState([]); // 검색 결과 상태 추가
   const [groupName, setGroupName] = useState(""); //그룹명
@@ -61,9 +64,29 @@ function GroupEditPage() {
     }
   };
 
-  //현재 그룹 인원 삭제 핸들러
-  const handleRemoveMember = (userId) => {
-    setAddedMembers((prev) => prev.filter((m) => m.user_id !== userId));
+  const myUsername = localStorage.getItem("userName");
+
+  //그룹 인원 삭제 헨들러
+  const handleRemoveMember = async (userId, username) => {
+    const confirmed = window.confirm(
+      `${username}님을 정말로 그룹에서 삭제하시겠습니까?`
+    );
+    if (!confirmed) return;
+
+    try {
+      const ok = await removeFriendFromGroup(groupId, userId);
+      if (ok) {
+        if (username === myUsername) {
+          alert("당신은 이 그룹에서 나갔습니다.");
+          navigate("/our-album"); // 그룹 목록이나 홈 화면으로 이동
+        } else {
+          alert(`${username}님이 그룹에서 삭제되었습니다`);
+          setAddedMembers((prev) => prev.filter((m) => m.user_id !== userId));
+        }
+      }
+    } catch (e) {
+      alert("삭제 실패");
+    }
   };
 
   return (

@@ -45,11 +45,7 @@ export async function removeFriendFromGroup(groupId, userIdToRemove) {
       }
     );
 
-    if (response.status === 204) {
-      return "삭제 성공";
-    } else {
-      throw new Error(`삭제 실패: ${response.status}`);
-    }
+    return response.status === 204;
   } catch (error) {
     console.error("친구 삭제 중 오류:", error);
     throw error;
