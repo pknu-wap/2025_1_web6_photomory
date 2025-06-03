@@ -6,9 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.Set;
+
+import java.time.LocalDate;
 import java.util.HashSet;
-import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "OurPost")
@@ -35,8 +36,9 @@ public class OurPost {
     @Column(name = "post_text", length = 500)
     private String postText;
 
+    // 변경된 부분
     @Column(name = "making_time", nullable = false)
-    private LocalDateTime makingTime;
+    private LocalDate makingTime;
 
     @OneToMany(mappedBy = "ourPost", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
@@ -55,4 +57,3 @@ public class OurPost {
     @Builder.Default
     private Set<Tag> tags = new HashSet<>();
 }
-

@@ -6,8 +6,6 @@ import com.example.photomory.dto.EveryCommentDto;
 import com.example.photomory.dto.EveryPostUpdateDto;
 import com.example.photomory.entity.*;
 import com.example.photomory.repository.*;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,7 +63,7 @@ public class EveryPostService {
                         .collect(Collectors.toList()));
             }
 
-            // 댓글 (수정된 부분)
+            // 댓글
             List<EveryCommentDto> commentDtos = commentRepository.findByEveryPost_PostId(everyPost.getPostId())
                     .stream()
                     .map(comment -> EveryCommentDto.from(comment, comment.getUser().getUserName()))
@@ -80,6 +78,8 @@ public class EveryPostService {
 
     @Transactional
     public EveryPostResponseDto createPost(EveryPostRequestDto dto, String userEmail) {
+        dto.parseTags();
+
         UserEntity user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("유저를 찾을 수 없습니다."));
 
@@ -90,7 +90,13 @@ public class EveryPostService {
             throw new RuntimeException("사진 업로드 실패", e);
         }
 
-        LocalDateTime time = LocalDateTime.parse(dto.getPhotoMakingTime());
+        // ✅ 수정된 부분
+        LocalDateTime time;
+        if (dto.getPhotoMakingTime() != null && !dto.getPhotoMakingTime().isBlank()) {
+            time = LocalDateTime.parse(dto.getPhotoMakingTime());
+        } else {
+            time = LocalDateTime.now();
+        }
 
         EveryPost everyPost = EveryPost.builder()
                 .user(user)
@@ -109,10 +115,9 @@ public class EveryPostService {
                 .postType("EVERY")
                 .postId(everyPost.getPostId())
                 .photoUrl(photoUrl)
-                .photoName(dto.getPhotoName())
-                .photoMakingTime(time)
+                .photoMakingTime(time.toLocalDate())
                 .date(time.toLocalDate())
-                .title(dto.getPhotoName())
+                .title("사진")
                 .everyPost(everyPost)
                 .build();
         photo.setUser(user);
@@ -126,7 +131,6 @@ public class EveryPostService {
                             .postType("EVERY")
                             .postId(everyPost.getPostId())
                             .build());
-
             tag.getEveryPosts().add(everyPost);
             tagRepository.save(tag);
             tagSet.add(tag);
@@ -153,6 +157,8 @@ public class EveryPostService {
 
     @Transactional
     public void updatePost(Integer postId, EveryPostUpdateDto dto, String userEmail) {
+        dto.parseTags();
+
         EveryPost post = everyPostRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
@@ -172,32 +178,32 @@ public class EveryPostService {
                 throw new RuntimeException("사진 업로드 실패", e);
             }
             post.setPhotoUrl(photoUrl);
-            post.setMakingTime(LocalDateTime.parse(dto.getPhotoMakingTime()));
+
+            // ✅ 수정된 부분
+            LocalDateTime photoTime;
+            if (dto.getPhotoMakingTime() != null && !dto.getPhotoMakingTime().isBlank()) {
+                photoTime = LocalDateTime.parse(dto.getPhotoMakingTime());
+            } else {
+                photoTime = LocalDateTime.now();
+            }
+            post.setMakingTime(photoTime);
         }
 
         post.getTags().clear();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            List<String> tagList = objectMapper.readValue(dto.getTagsJson(), new TypeReference<List<String>>() {});
-            Set<Tag> newTags = new HashSet<>();
-
-            for (String tagName : tagList) {
-                Tag tag = tagRepository.findByTagName(tagName)
-                        .orElse(Tag.builder()
-                                .tagName(tagName)
-                                .postType("EVERY")
-                                .postId(postId)
-                                .build());
-
-                tag.getEveryPosts().add(post);
-                tagRepository.save(tag);
-                newTags.add(tag);
-            }
-
-            post.setTags(newTags);
-        } catch (Exception e) {
-            throw new RuntimeException("태그 파싱 오류", e);
+        Set<Tag> newTags = new HashSet<>();
+        for (String tagName : dto.getTags()) {
+            Tag tag = tagRepository.findByTagName(tagName)
+                    .orElse(Tag.builder()
+                            .tagName(tagName)
+                            .postType("EVERY")
+                            .postId(postId)
+                            .build());
+            tag.getEveryPosts().add(post);
+            tagRepository.save(tag);
+            newTags.add(tag);
         }
+
+        post.setTags(newTags);
     }
 }

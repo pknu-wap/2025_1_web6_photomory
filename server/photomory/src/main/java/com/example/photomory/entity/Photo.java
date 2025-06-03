@@ -47,7 +47,7 @@ public class Photo {
     private String photoName;
 
     @Column(name = "photo_making_time")
-    private LocalDateTime photoMakingTime;
+    private LocalDate photoMakingTime;
 
     @Column(name = "title", length = 255)
     private String title;

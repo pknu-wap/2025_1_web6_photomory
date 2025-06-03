@@ -21,12 +21,12 @@ public class EveryPostController {
 
     private final EveryPostService everyPostService;
 
-    // ✅ 수정된 부분: 사용자 정보 받아서 Service에 넘김
     @GetMapping
     public ResponseEntity<List<EveryPostResponseDto>> getAllPosts(@AuthenticationPrincipal(expression = "user") UserEntity user) {
         List<EveryPostResponseDto> posts = everyPostService.getAllPostsWithComments(user.getUserEmail());
         return ResponseEntity.ok(posts);
     }
+
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<EveryPostResponseDto> createPost(
@@ -35,24 +35,22 @@ public class EveryPostController {
             @RequestPart("postDescription") String postDescription,
             @RequestPart("location") String location,
             @RequestPart("photo") MultipartFile photo,
-            @RequestPart("photoName") String photoName,
-            @RequestPart("photoComment") String photoComment,
-            @RequestPart("photoMakingTime") String photoMakingTime,
-            @RequestPart("tags") String tagsJson
+            @RequestPart(value = "photoMakingTime",required = false) String photoMakingTime,
+            @RequestPart("tagsJson") String tagsJson
     ) {
         EveryPostRequestDto dto = new EveryPostRequestDto();
         dto.setPostText(postText);
         dto.setPostDescription(postDescription);
         dto.setLocation(location);
         dto.setPhoto(photo);
-        dto.setPhotoName(photoName);
-        dto.setPhotoComment(photoComment);
         dto.setPhotoMakingTime(photoMakingTime);
         dto.setTagsJson(tagsJson);
+        dto.parseTags();
 
         EveryPostResponseDto response = everyPostService.createPost(dto, user.getUserEmail());
         return ResponseEntity.ok(response);
     }
+
 
     @PatchMapping(value = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updatePost(
@@ -62,18 +60,17 @@ public class EveryPostController {
             @RequestPart("postDescription") String postDescription,
             @RequestPart("location") String location,
             @RequestPart(value = "photo", required = false) MultipartFile photo,
-            @RequestPart("photoName") String photoName,
-            @RequestPart("photoMakingTime") String photoMakingTime,
-            @RequestPart("tags") String tagsJson
+            @RequestPart(value = "photoMakingTime", required = false) String photoMakingTime,
+            @RequestPart("tagsJson") String tagsJson
     ) {
         EveryPostUpdateDto dto = new EveryPostUpdateDto();
         dto.setPostText(postText);
         dto.setPostDescription(postDescription);
         dto.setLocation(location);
         dto.setPhoto(photo);
-        dto.setPhotoName(photoName);
         dto.setPhotoMakingTime(photoMakingTime);
         dto.setTagsJson(tagsJson);
+        dto.parseTags();
 
         everyPostService.updatePost(postId, dto, user.getUserEmail());
         return ResponseEntity.ok("게시글이 수정되었습니다.");

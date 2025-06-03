@@ -15,23 +15,28 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Component
 public class SseEmitters {
 
-    // 다중 연결을 지원하기 위해 List로 변경
+    // 사용자별로 여러 개의 SSE 연결을 관리
     private final Map<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
-    // SSE 연결 추가 (다중 기기 지원)
+    /**
+     * 사용자별로 SSE Emitter 추가
+     */
     public void add(Long userId, SseEmitter emitter) {
         emitters.computeIfAbsent(userId, k -> new CopyOnWriteArrayList<>()).add(emitter);
+        log.info("SSE 연결 등록됨 - userId: {}", userId);
 
-        // 연결이 끊기거나 타임아웃되면 emitter 제거
+        // 연결 종료/타임아웃/오류 시 자동으로 제거
         emitter.onCompletion(() -> remove(userId, emitter));
         emitter.onTimeout(() -> remove(userId, emitter));
-        emitter.onError((e) -> {
-            log.warn("SSE 연결 끊김/ 타임아웃 - userId: {}", userId, e);
+        emitter.onError(e -> {
+            log.warn("SSE 연결 오류 - userId: {}", userId, e);
             remove(userId, emitter);
         });
     }
 
-    // 개별 emitter 제거
+    /**
+     * 특정 emitter 제거
+     */
     public void remove(Long userId, SseEmitter emitter) {
         List<SseEmitter> userEmitters = emitters.get(userId);
         if (userEmitters != null) {
@@ -42,22 +47,29 @@ public class SseEmitters {
         }
     }
 
-    // 알림 전송 (모든 연결에)
+    /**
+     * 사용자에게 단순 데이터 전송
+     */
     public void send(Long userId, Object data) {
         List<SseEmitter> userEmitters = emitters.get(userId);
         if (userEmitters != null) {
             for (SseEmitter emitter : userEmitters) {
                 try {
                     emitter.send(SseEmitter.event().data(data));
+                } catch (IllegalStateException e) {
+                    log.warn("SSE 이미 완료됨 - userId: {}", userId, e);
+                    remove(userId, emitter);
                 } catch (IOException e) {
-                    log.warn("SSE 전송(send) 실패 - userId: {}", userId, e);
+                    log.warn("SSE 전송 실패 - userId: {}", userId, e);
                     remove(userId, emitter);
                 }
             }
         }
     }
 
-    // NotificationResponse를 이벤트 이름과 함께 전송
+    /**
+     * NotificationResponse를 이벤트 이름과 함께 전송
+     */
     public void send(Long userId, NotificationResponse response) {
         List<SseEmitter> userEmitters = emitters.get(userId);
         if (userEmitters != null) {
@@ -66,15 +78,20 @@ public class SseEmitters {
                     emitter.send(SseEmitter.event()
                             .name(response.getType().name())
                             .data(response));
+                } catch (IllegalStateException e) {
+                    log.warn("SSE 이미 완료됨 - userId: {}", userId, e);
+                    remove(userId, emitter);
                 } catch (IOException e) {
-                    log.warn("SSE 전송(notiresponse) 실패 - userId: {}", userId, e);
+                    log.warn("SSE 전송 실패 - userId: {}", userId, e);
                     remove(userId, emitter);
                 }
             }
         }
     }
 
-    // (선택) 현재 연결 상태 확인용
+    /**
+     * 현재 연결된 emitter 리스트 반환 (선택적 디버그용)
+     */
     public List<SseEmitter> get(Long userId) {
         return emitters.get(userId);
     }

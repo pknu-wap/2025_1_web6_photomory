@@ -45,9 +45,6 @@ public class Tag {
     @Builder.Default
     private Set<MyPost> myPosts = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
-    private Comment comment;
 
     public void addEveryPost(EveryPost everyPost) {
         if (this.everyPosts == null) {

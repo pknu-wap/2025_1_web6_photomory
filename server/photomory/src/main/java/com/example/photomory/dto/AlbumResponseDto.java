@@ -29,25 +29,27 @@ public class AlbumResponseDto {
 
     private List<PostResponseDto> posts; // 필드명을 photos에서 posts로 변경하여 Post 엔티티와 일관성 유지
 
-    // OurAlbum 엔티티로부터 DTO 생성
-    public static AlbumResponseDto fromEntity(OurAlbum ourAlbum) { // Album 대신 OurAlbum 사용
-        // Lombok의 @Builder를 사용하여 더 간결하게 DTO를 생성합니다.
+    public static AlbumResponseDto fromEntity(OurAlbum ourAlbum) {
         return AlbumResponseDto.builder()
                 .albumId(ourAlbum.getAlbumId() != null ? ourAlbum.getAlbumId().longValue() : null)
                 .albumName(ourAlbum.getAlbumName())
                 .albumDescription(ourAlbum.getAlbumDescription())
-                .albumMakingTime(ourAlbum.getAlbumMakingTime()) // 필드명은 소문자 't'에서 대문자 'T'로 통일되어야 합니다.
-                .groupId(ourAlbum.getUser() != null ? ourAlbum.getUser().getUserId().longValue() : null)
-                .posts(ourAlbum.getPosts() != null ? // OurAlbum에 getPosts()가 있다고 가정
-                        ourAlbum.getPosts().stream()
-                                .map(post -> PostResponseDto.fromEntity(post)) // PostResponseDto::fromEntity를 호출
-                                .collect(Collectors.toList()) :
-                        List.of())
-                .albumTags(ourAlbum.getAlbumTag() != null && !ourAlbum.getAlbumTag().isEmpty() ?
-                        Arrays.stream(ourAlbum.getAlbumTag().split(","))
-                                .map(String::trim)
-                                .collect(Collectors.toList()) :
-                        List.of())
+                .albumMakingTime(ourAlbum.getAlbumMakingTime())
+                .groupId(
+                        ourAlbum.getUserGroup() != null
+                                ? ourAlbum.getUserGroup().getId()
+                                : null
+                )
+                .posts(ourAlbum.getPosts() != null
+                        ? ourAlbum.getPosts().stream()
+                        .map(PostResponseDto::fromEntity)
+                        .collect(Collectors.toList())
+                        : List.of())
+                .albumTags(ourAlbum.getAlbumTag() != null && !ourAlbum.getAlbumTag().isEmpty()
+                        ? Arrays.stream(ourAlbum.getAlbumTag().split(","))
+                        .map(String::trim)
+                        .collect(Collectors.toList())
+                        : List.of())
                 .build();
     }
 }

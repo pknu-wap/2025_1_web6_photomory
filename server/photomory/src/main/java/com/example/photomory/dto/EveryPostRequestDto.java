@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -15,19 +16,21 @@ public class EveryPostRequestDto {
     private String location;
 
     private MultipartFile photo;
-    private String photoName;
-    private String photoComment;
     private String photoMakingTime;
 
+    private String tagsJson; // "#일상#여행" 형식
     private List<String> tags;
 
-    // Postman에서 문자열로 전달된 JSON 배열을 List로 변환
-    public void setTagsJson(String tagsJson) {
-        // ["하늘", "일상"] → 리스트로 파싱
-        this.tags = Arrays.asList(tagsJson
-                .replace("[", "")
-                .replace("]", "")
-                .replace("\"", "")
-                .split(","));
+    public void parseTags() {
+        if (tagsJson != null && !tagsJson.trim().isEmpty()) {
+            this.tags = Arrays.stream(tagsJson.split("#"))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(Collectors.toList());
+        }
+    }
+
+    public String getTagsRaw() {
+        return tagsJson;
     }
 }
