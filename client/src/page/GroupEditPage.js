@@ -4,6 +4,7 @@ import Header from "../component/common/Header";
 import GroupEditor from "../component/group/GroupEditor";
 import Footer from "../component/common/Footer";
 import { getInvitableFriends } from "../api/ourAlbumApi";
+import { inviteFriendToGroup } from "../api/groupApi";
 import { fetchGroupInfo } from "../api/ourAlbumApi";
 import { normalizeMember } from "../utils/normalizers";
 
@@ -37,7 +38,6 @@ function GroupEditPage() {
 
   //친구 검색 핸들러
   const handleFriendSearch = (keyword) => {
-    console.log(keyword);
     if (keyword.trim() === "") {
       // 검색어가 없으면 전체 friends 복원
       setFilteredFriends(friends);
@@ -48,6 +48,16 @@ function GroupEditPage() {
           friend.username.toLowerCase().includes(keyword.toLowerCase()) //keyword를 하나라도 포함한다면 배열에 추가
       );
       setFilteredFriends(filtered);
+    }
+  };
+
+  //친구 초대  헨들러
+  const handleInviteClick = async (friend) => {
+    try {
+      const message = await inviteFriendToGroup(groupId, friend.userId);
+      alert(`${friend.username} ${message}`); //초대 성공 알람
+    } catch (error) {
+      alert("초대에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -65,6 +75,7 @@ function GroupEditPage() {
         addedMembers={addedMembers}
         setAddedMembers={setAddedMembers}
         onFriendSearch={handleFriendSearch} // 검색 핸들러
+        handleInviteClick={handleInviteClick} //친구 초대 헨들러
         onRemoveMember={handleRemoveMember} //삭제 헨들러
       />
       <Footer />

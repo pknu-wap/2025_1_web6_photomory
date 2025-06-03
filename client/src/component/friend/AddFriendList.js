@@ -1,12 +1,7 @@
 import "./AddFriendList.css";
 import defaultProfileIcon from "../../assets/defaultProfileIcon.svg";
 //친구 초대 목록 컴포넌트
-function AddFriendList({ friends }) {
-  //친구 초대 알림 헨들러
-  const handleInviteClick = (friend) => {
-    alert(`${friend.username}님을 초대했습니다!`);
-  };
-
+function AddFriendList({ friends, handleInviteClick }) {
   return (
     <div className="addFriendContainer">
       <h3 className="addFriendTitle">나의 친구 목록</h3>
