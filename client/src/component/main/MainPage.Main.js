@@ -355,7 +355,7 @@ function MainPageMain() {
             onClick={(e) => imageModalOpen(e, ourAlbums?.[0]?.albums?.[0]?.photos?.[0] || '')}
           />
           <img 
-            src={ourAlbums?.[0]?.albums?.[0]?.photos?.[1] || image3} 
+            src={ourAlbums?.[0]?.albums?.[0]?.photos?.[1] || image4} 
             alt="" 
             className={styles.ourMemoryImage1}
             onClick={(e) => imageModalOpen(e, ourAlbums?.[0]?.albums?.[0]?.photos?.[1] || '')}
