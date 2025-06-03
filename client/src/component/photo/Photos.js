@@ -6,10 +6,12 @@ import PaginationBar from "../common/PaginationBar";
 import privateIcon from "../../assets/privateIcon.svg";
 import PhotoGrid from "./PhotoGrid";
 import "./Photos.css";
-function Photos({ type, albumTitle, photoList = [], onDeltePhoto }) {
+function Photos({ type, albumId, albumTitle, photoList = [], onDeltePhoto }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null); //선택된 이미지 상태
   const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
+
   let photosPerPage; //한 페이지당  사진 갯수
+
   if (type === "private") {
     photosPerPage = 8; //개인앨범일 때 한 페이지 당 8개의 사진
   } else {
@@ -20,6 +22,11 @@ function Photos({ type, albumTitle, photoList = [], onDeltePhoto }) {
   //모달 닫기 헨들러
   const handleCloseModal = () => setSelectedPhoto(null);
 
+  // 페이지 이동 핸들러
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
+
   // 전체 페이지 수 계산
   const totalPages = Math.ceil(photoList.length / photosPerPage);
 
@@ -27,11 +34,6 @@ function Photos({ type, albumTitle, photoList = [], onDeltePhoto }) {
   const indexOfLastPhoto = currentPage * photosPerPage; //마지막앨범
   const indexOfFirstPhoto = indexOfLastPhoto - photosPerPage; //첫번째앨범
   const currentPhotos = photoList.slice(indexOfFirstPhoto, indexOfLastPhoto); //앨범 범위
-
-  // 페이지 이동 핸들러
-  const handlePageClick = (page) => {
-    setCurrentPage(page);
-  };
 
   return (
     <div className="photosContainer">
@@ -75,7 +77,9 @@ function Photos({ type, albumTitle, photoList = [], onDeltePhoto }) {
                 {dayjs(photo.photo_makingtime).format("YYYY/MM/DD")}
               </p>
               {/* group 타입일 때만 댓글 입력창 */}
-              {type === "group" && <CommentBox />}
+              {type === "group" && (
+                <CommentBox albumId={albumId} photoId={photo.photo_id} />
+              )}
             </div>
           </div>
         ))

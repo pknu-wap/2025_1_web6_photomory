@@ -3,13 +3,16 @@ import "./PhotoSubmit.css";
 import submitFileImage from "../../assets/submitFileImage.svg";
 import { addPhotosToMyAlbum } from "../../api/myAlbumAPi";
 import { createGroupAlbumPost } from "../../api/ourAlbumApi";
+import LoadingModal from "../../component/common/LoadingModal";
 
 function PhotoSubmit({ type, albumId, handleAddPhoto }) {
   const [newPhotoData, setNewPhotoData] = useState({
+    //추가할 사진 데이터 상태
     imgFile: null,
     photo_name: "",
     photo_makingtime: "",
   });
+  const [isLoading, setIsLoading] = useState(false); //로딩 상태
   const fileInputRef = useRef(null); // 파일 input을 직접 제어하기 위한 ref
 
   const handleChange = (e) => {
@@ -31,13 +34,15 @@ function PhotoSubmit({ type, albumId, handleAddPhoto }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // 로딩 시작
 
     let result;
     try {
       if (type === "private") {
-        // 개인 앨범 FormData 구성 및 업로드 요청
+        // 나만의 추억 FormData 구성 및 업로드 요청
+
         const formData = new FormData();
-        formData.append("photos", newPhotoData.imgfile);
+        formData.append("photos", newPhotoData.imgFile);
         //사진 메타데이터
         const photoMeta = [
           {
@@ -48,7 +53,7 @@ function PhotoSubmit({ type, albumId, handleAddPhoto }) {
         formData.append("photoData", JSON.stringify(photoMeta));
         result = await addPhotosToMyAlbum(albumId, formData);
       } else {
-        // 공유 앨범 게시글 생성 API 호출
+        // 우리의 추억 게시글 생성 API 호출
         result = await createGroupAlbumPost(albumId, {
           postTitle: newPhotoData.photo_name,
           postTime: newPhotoData.photo_makingtime,
@@ -59,7 +64,7 @@ function PhotoSubmit({ type, albumId, handleAddPhoto }) {
       if (result) {
         // 로컬 목록에 추가 (렌더링용)
         handleAddPhoto({
-          photo_id: Date.now(),
+          photo_id: result.postId,
           photo_name: newPhotoData.photo_name,
           photo_makingtime: newPhotoData.photo_makingtime,
           photo_url: URL.createObjectURL(newPhotoData.imgFile),
@@ -73,6 +78,8 @@ function PhotoSubmit({ type, albumId, handleAddPhoto }) {
     } catch (error) {
       alert("서버 요청 중 오류가 발생했습니다.");
       console.error(error);
+    } finally {
+      setIsLoading(false); // 로딩 종료
     }
   };
 
@@ -90,6 +97,7 @@ function PhotoSubmit({ type, albumId, handleAddPhoto }) {
 
   return (
     <div className="photoSubmitContainer">
+      {isLoading && <LoadingModal message="사진 업로드 중입니다..." />}
       <h2 className="photoSubmitTitle">새 사진 업로드</h2>
       <form onSubmit={handleSubmit} className="photoSubmitForm">
         <label htmlFor="upload" className="uploadLabel">

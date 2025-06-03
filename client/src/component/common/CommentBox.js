@@ -1,22 +1,30 @@
 import React, { useState } from "react";
 import sendIcon from "../../assets/sendIcon.svg";
-function CommentBox({ photoId }) {
+import { useAuth } from "../../contexts/AuthContext";
+import { writeComment } from "../../api/ourAlbumApi";
+function CommentBox({ albumId, photoId }) {
   const [comment, setComment] = useState(""); //입력할 댓글
   const [comments, setComments] = useState([]); // 댓글 리스트
+  const { name } = useAuth(); // 로그인한 사용자 이름 가져오기
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (comment.trim() === "") return;
 
     const newComment = {
       text: comment, // 댓글
       date: new Date(), //현재 시간 저장
+      author: name,
     };
-    console.log(newComment.date);
-    // 댓글 서버 전송
-    console.log(`📸 ${photoId}번 사진 댓글:`, comment);
-    setComments((prev) => [...prev, newComment]); //댓글추가
-    setComment(""); // 작성 후 초기화
+
+    try {
+      await writeComment(albumId, photoId, comment);
+      setComments((prev) => [...prev, newComment]); // 성공 후 추가
+      setComment(""); // 작성 후 초기화
+    } catch (err) {
+      console.error("❗ 댓글 작성 실패:", err);
+      alert("댓글 작성에 실패했습니다.");
+    }
   };
 
   return (
@@ -55,7 +63,9 @@ function CommentBox({ photoId }) {
                 fontSize: "14px",
               }}
             >
-              <p style={{ marginBottom: "4px" }}>사용자이름 : {c.text}</p>
+              <p style={{ marginBottom: "4px" }}>
+                {c.author} : {c.text}
+              </p>
               <p style={{ fontSize: "12px", color: "#888" }}>
                 {c.date.toLocaleDateString("ko-KR")}
               </p>

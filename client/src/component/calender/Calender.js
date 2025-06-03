@@ -11,7 +11,7 @@ import moveCalenderLeft from "../../assets/moveCalenderLeft.svg";
 import moveCalenderRight from "../../assets/moveCalenderRight.svg";
 
 // 달력 컴포넌트
-function CalenderTest({
+function Calender({
   type = "", // "group | private"
   groupAlbums = [],
   selectedGroupId,
@@ -154,4 +154,4 @@ function CalenderTest({
   );
 }
 
-export default CalenderTest;
+export default Calender;

@@ -34,22 +34,17 @@ function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
 
   return (
     <div className="currentGroupCard">
+      {/* 그룹 정보 영역 */}
       <div className="groupInfoArea">
-        {selectedGroup.group_id ? (
+        {selectedGroup && selectedGroup.group_id ? (
           <>
+            {/* 그룹명 */}
             <h4 className="groupTitle">{selectedGroup.group_name}</h4>
+
+            {/* 그룹 멤버 목록 */}
             <ul className="groupMembers">
               {selectedGroup.members.map((member, index) => (
-                <li
-                  className="member"
-                  key={index}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    gap: "8px",
-                  }}
-                >
+                <li className="member" key={index}>
                   <img
                     src={member.user_photourl || defaultProfileIcon}
                     alt={member.user_name}
@@ -71,8 +66,11 @@ function CurrentGroup({ groupList, setSelectedGroupId, onAddGroup }) {
         )}
       </div>
 
-      {/*그룹추가버튼 컴포넌트*/}
-      <AddGroupButton onAddGroup={onAddGroup} />
+      {/* 그룹 선택/추가 옵션 */}
+      <div className="groupActionAreaFixed">
+        <SelectGroupOptions groupList={groupList} onSelect={handleChange} />
+        <AddGroupButton onAddGroup={onAddGroup} />
+      </div>
     </div>
   );
 }
