@@ -12,310 +12,152 @@ import twinkle from "../../assets/twinkle.svg";
 import WeeklyPopularTag from "./WeeklyPopularTag.js";
 import DailyPopularTag from "./DailyPopularTag.js";
 import DailyPopularTagModal from "./DailyPopularTagModal";
+import CommentModal from "./CommnetModal.js";
 import { useState, useEffect, useMemo, useRef } from "react";
+import { useRandomIndex } from "../../contexts/RandomIndexContext";
 
-async function fetchUserposts(accessToken) {
+async function fetchUserposts(retries = 0, maxRetries = 3) {
+    let accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
     try {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${accessToken}`,
-            },
+                'Authorization': `Bearer ${accessToken}`
+            }
         });
-
         if (!response.ok) {
-            if (response.status===401) {
-                throw new Error('Unauthorized'); //토큰 만료
+            if (response.status === 401) {
+                throw new Error('Unauthorized');
             }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-
         const posts = await response.json();
         return posts;
     } catch (error) {
-        console.error('Error fetching user posts:', error);
-        throw error;
+        if (error.message === 'Unauthorized' && refreshToken && retries < maxRetries) {
+            accessToken = await refreshAccessToken(refreshToken);
+            if (accessToken) {
+                return await fetchUserposts(retries + 1, maxRetries);
+            }
+        }
+        console.error('Failed to get post');
+        return null;
     }
 }
 
 async function refreshAccessToken(refreshToken) {
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/refresh-token`, { //이건 벡엔드에서 추후 변경 예정
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/refresh-token`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({refreshToken})
+            body: JSON.stringify({ refreshToken })
         });
-
         if (!response.ok) {
-            throw new Error(`Token refredh failed status: ${response.status}`);
+            throw new Error(`Token refresh failed status: ${response.status}`);
         }
-
         const data = await response.json();
+        if (data.accessToken) {
+            localStorage.setItem('accessToken', data.accessToken);
+        }
         return data.accessToken;
-    }
-    catch (error) {
+    } catch (error) {
         console.error('Error fetching token:', error);
         return null;
     }
 }
 
-async function getUserPosts() {
-    let accessToken= localStorage.getItem('accessToken');
-    const refreshToken= localStorage.getItem('refreshToken');
-    try{
-        const posts = await fetchUserposts(accessToken)
-        return posts
-    }
-    catch (error){
-        if (error.message === 'Unauthorized' && refreshToken) { //리프토큰 없으면 요청 안 되게게
-            accessToken=await refreshAccessToken(refreshToken);
-            if (accessToken) {
-                localStorage.setItem('accessToken', accessToken);
-                const posts = await fetchUserposts(accessToken);
-                return posts
-            }
-        }
-        console.log('Failed to fetch user posts')
-        return null
-    }
-}
-
-async function updateLikeCommentCount(postId){
-    try{
-        const accessToken= localStorage.getItem('accessToken')
-        const response= await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`,{/* 이거 엔드포인트 뭐임..?*/
-            method: 'POST',
-            headers:{
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`
-            },
-            body: JSON.stringify({postId})
-        })
-        if(!response.ok){
-            if(response.status===401){
-                throw new Error('Unauthorized')
-            }
-            throw new Error('Failed to upload count:' `${response.status}`)
-        }
-        return await response.json();
-    }
-    catch(error){
-        console.error('Error updating count:', error)
-        throw error;
-    }
-}
-
-async function uploadingImage(uploadImage) {
+async function updateLikeCount(postId, retries = 0, maxRetries = 3) {
+    let accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
     try {
-        if (!uploadImage || !uploadImage.images || uploadImage.images.length === 0) {
-            throw new Error('이미지를 선택해주세요.');
-        }
-
-        const accessToken = localStorage.getItem('accessToken');
-        if (!accessToken) {
-            throw new Error('로그인이 필요합니다.');
-        }
-        if (
-            uploadImage.postText==='' ||
-            uploadImage.postDescription==='' ||
-            uploadImage.postLocation==='' ||
-            uploadImage.postTag==='' || false
-        ) {
-            throw new Error('사진의 정보를 완성해주세요.')
-        }
-        const formData = new FormData();
-        // 이미지 데이터를 FormData에 추가
-        uploadImage.images.forEach((image, index) => { //base64는 data:image/jpeg;base64,실제데이터 이렇게 생김
-            // Base64 이미지를 Blob으로 변환
-            const byteString = atob(image.split(',')[1]); //실제 데이터를 디코딩(?)한다(바이너리 문자열{바이트 문자열})
-            const mimeString = image.split(',')[0].split(':')[1].split(';')[0];//image/jpeg 타입 저장, 이는 나중에 blob만들 때 필요.
-            const ab = new ArrayBuffer(byteString.length);// ArrayBuffer은 byteString.length 만큼의 크기로 바이너리 데이터를 저장할 수 있는 메모리 공간 
-            const ia = new Uint8Array(ab); //Uint8Array는 ArrayBuffer를 8비트(0~255) 배열로 다룰 수 있게 해준다.
-            for (let i = 0; i < byteString.length; i++) {
-                ia[i] = byteString.charCodeAt(i); //charCodeAt 유니코드
-            }
-            const blob = new Blob([ab], { type: mimeString });
-            formData.append('photoUrl', blob, `image${index}.${mimeString.split('/')[1]}`);
-        });
-
-        // 다른 데이터 추가
-        formData.append('postText', uploadImage.postText || '');
-        formData.append('postDescription', uploadImage.postDescription || '');
-        formData.append('postLocation', uploadImage.postLocation || '');
-        formData.append('postTag', uploadImage.postTag || '');
-
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/images/upload`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/posts/every/${postId}/like`, {
             method: 'POST',
-            headers:{
+            headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
             },
-            body: formData
+            body: JSON.stringify({ postId })
         });
-        if(!response.ok){
-            if (response.status===401) {
-                throw new Error('Unauthorized')
+        if (!response.ok) {
+            if (response.status === 401) {
+                throw new Error('Unauthorized');
             }
-            const errorText = await response.text();
-            throw new Error(`이미지 업로드 실패: ${response.status} - ${errorText}`);
+            throw new Error(`Failed to upload count: ${response.status}`);
         }
-
-        const result = await response.json();
-        alert('이미지가 성공적으로 업로드되었습니다.');
-        return result;
+        return await response.json();
     } catch (error) {
-        console.error('Error uploading image:', error);
-        alert(error.message);
+        if (error.message === 'Unauthorized' && refreshToken && retries < maxRetries) {
+            accessToken = await refreshAccessToken(refreshToken);
+            if (accessToken) {
+                return await updateLikeCount(postId, retries + 1, maxRetries);
+            }
+        }
+        console.error('Failed to upload like');
+        return null;
     }
 }
 
-export default function EveryMemoryMain(){
-    const [posts, setPosts] = useState([]) //모든 태그의 포스트 중 좋아요 순을 위한
+async function updateComment(postId, comment, retries = 0, maxRetries = 3) {
+    let accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/every/comments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({ postId, userId: comment.userId, commentText: comment.commentText })
+        });
+        if (!response.ok) {
+            if (response.status === 401) {
+                throw new Error('Unauthorized');
+            }
+            throw new Error(`Failed to upload comment: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        if (error.message === 'Unauthorized' && refreshToken && retries < maxRetries) {
+            accessToken = await refreshAccessToken(refreshToken);
+            if (accessToken) {
+                return await updateComment(postId, comment, retries + 1, maxRetries);
+            }
+        }
+        console.error('Failed to upload comment');
+        return null;
+    }
+}
+
+export default function EveryMemoryMain() {
+    const [posts, setPosts] = useState([]);
     const [error, setError] = useState();
     const [randomTagText, setRandomTagText] = useState();
-    const [randomPosts, setRandomPosts]= useState([]); //랜덤 태그에 해당하는 포스트 중 좋아요 순을 위한
-    // 지금은 undefined가 뜨기에 일단 해둠
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedPost, setSelectedPost] = useState(null);
-    const [uploadImage, setUploadImage]= useState(null);
-
-    const fetchPosts= async ()=>{
-        try{
-            const posts= await getUserPosts();
-            if (posts && Array.isArray(posts)) {
-                const sortedPosts = [...posts].sort((a,b)=>b.likesCount-a.likesCount);
-                setPosts(sortedPosts); // 태그 상관 없이 좋아요 내림차순으로 posts 객체 정리
-            }
-            else{
-                setError('데이터를 불러오지 못했습니다.')
-            }
-        }
-        catch(error){
-            console.log('Error in fetchPosts', error)
-            setError('서버 오류가 발생했습니다. 나중에 다시 시도해주세요.')
-        }
-    }
-
-    useEffect(()=>{
-        fetchPosts();
-    },[]); //무한루프 때문에.
-
-    useEffect(()=>{
-        if (posts.length>0) {
-            const allTag=[...new Set(posts.flatMap((post)=>post.tags))] //중복 없는 하나의 배열로 만들기
-            if (allTag.length>0) { //set은 생성자 함수, 하지만 일반 함수처럼 호출 불가. 따라서 new랑 짝궁=>set 객체 만들어짐=>[...new~]=>배열열
-                const randomIndex = Math.floor(Math.random()*allTag.length); //0이상 allTag.length이하의 난수 생성
-                setRandomTagText(allTag[randomIndex])
-                console.log('selected tag:', allTag[randomIndex])
-                const filteredPosts= posts.filter((post)=>(post.tags || []).includes(allTag[randomIndex]));
-                setRandomPosts(filteredPosts);
-            }
-        }
-    }, [posts]); //뭔가 posts말고 posts 좋아요 순서가 바뀐다면으로 하는 게 더 좋을 거 같은데..
-
-    const handleLikeClick =async(postId)=>{
-        try{
-            setPosts((prevPosts) => //낙관적 업뎃
-                prevPosts.map((post)=> post.postId=== postId
-                    ? { ...post, likesCount: post.likesCount + 1 } //이미 {}여기엔 속성이라 post.을 안 붙임
-                    : post).sort((a, b) => b.likesCount - a.likesCount)
-            );
-
-            const updatedPostByLike = await updateLikeCommentCount(postId); //서버 업뎃
-            setPosts((prevPosts) =>
-                prevPosts.map((post) =>post.postId=== postId
-                    ? { ...post, likesCount: updatedPostByLike.likesCount }
-                    :post).sort((a, b) => b.likesCount - a.likesCount)
-            );
-        }
-        catch (error) {
-            console.error('Error uploading like count', error);
-        }
-    }
-    const handleCommentClick=async(postId)=>{
-        try{
-            setPosts((prevPosts)=> //낙관적 업뎃
-                prevPosts.map((post)=>post.postId===postId
-                ? {...post, commentsCount: post.commentsCount+1}
-                    : post)
-            );
-            const updatedPostByComment= await updateLikeCommentCount(postId) //서버 업뎃
-            setPosts((prevPosts)=>
-                prevPosts.map((post)=>post.postId===postId
-                ? {...post, commentsCount: updatedPostByComment.commentsCount}
-                    : post)
-            );
-        }
-        catch(error){
-            console.error('Error uploading like count', error);
-        }
-    }
-
-    const weeklyPosts= randomPosts.slice(0,3); //아 여기선 먼저 useState([])에서[]로 됐다가 다시 비동기로 값을 받는다 usestate에서 useState() 그냥 이렇게 하면 비동기라서 이 코드가 먼저 실행될 떄 undefined가 떠서 타입 오류가 뜬다. slice는 undefined이면 오류가 뜬다. 따라서 []을 쓴다. 그 후 값이 들어온다.
-
-    const weeklyPostIds = useMemo(() => new Set(weeklyPosts.map((weeklyPost) => weeklyPost.postId)), [weeklyPosts]);
-    const dailyPosts = useMemo(() => posts.filter((post) => !weeklyPostIds.has(post.postId)), [posts, weeklyPostIds]); //has는 Set,Map에 사용하는 include,some보다 빠르게 작동함.
-
-    const [nextPage, setNextPage] = useState([0,1,2,3,4,5]);
-    const onClickNextPage=(value)=>{ 
-        const page=[
-            [0,1,2,3,4,5],
-            [6,7,8,9,10,11],
-            [12,13,14,15,16,17],
-            [18,19,20,21,22,23]
-        ]
-        if(value==='<'){
-            if(nextPage[0]===0){
-                setNextPage(nextPage.map((num)=>num+18))
-            }
-            else{
-                setNextPage(nextPage.map((num)=>num-6))
-            }
-        }
-        else if (value==='>') {
-            if (nextPage[0]===18) {
-                setNextPage(nextPage.map((num)=>num-18))
-            }
-            else{
-                setNextPage(nextPage.map((num)=>num+6))
-            }
-        }
-        else{
-            setNextPage(page[value]);
-        }
-    }
-
-    const handleTagClick = (post) => {
-        setIsModalOpen(true);
-        setSelectedPost(post);
-    };
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
-
-    const fileInputRef= useRef(null);
-    const handleContainerClick=()=>{
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
-        }
-    }
-
-    const [uploadfileUrl, setUploadFileUrl]= useState([])
+    const [randomPosts, setRandomPosts] = useState([]);
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+    const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
+    const [selectedPostForModal, setSelectedPostForModal] = useState(null);
+    const [uploadFiles, setUploadFiles] = useState([]);
+    const [uploadFileInfo, setUploadFileInfo] = useState({
+        postText: '',
+        postDescription: '',
+        location: '',
+        tagsJson: ''
+    });
+    const { randomIndex, updateRandomIndex } = useRandomIndex();
 
     const handleFileChange = (e) => {
         if (!e.target.files || e.target.files.length === 0) {
             alert('파일 업로드를 다시 해주세요.');
             return;
         }
-
         if (e.target.files.length > 5) {
             alert('한 번에 올릴 수 있는 파일 갯수: 5개');
             return;
         }
-
         const files = Array.from(e.target.files);
         const selectedFiles = files.filter((file) => {
             if (file.size > 5 * 1024 ** 2) {
@@ -329,186 +171,392 @@ export default function EveryMemoryMain(){
             }
             return true;
         });
-
         if (selectedFiles.length === 0) {
             alert('유효한 파일이 없습니다. 파일 업로드를 다시 해주세요.');
             return;
         }
-
-        const promises = selectedFiles.map((file) => {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.onerror = () => reject(new Error('파일 읽기 중 오류가 발생했습니다.'));
-                reader.readAsDataURL(file); //비동기
-            });
-        });
-
-        Promise.all(promises)
-            .then((results) => {
-                setUploadFileUrl(results); //배열.
-            })
-            .catch(() => {
-                alert('파일 읽기 중 오류가 발생했습니다.');
-            });
+        setUploadFiles(selectedFiles);
     };
 
-    const handleCancelButton=()=>{
-        setUploadFileUrl([])
-    }
-    const [uploadFileInfo, setuploadFileInfo]= useState({})
-    const handleOnchangeUploadFileInfo=(e)=>{
-        if(e.target.className==='inputTitle'){
-            setuploadFileInfo((uploadFileInfo)=>({...uploadFileInfo, postText:e.target.value})) //제목
-            return;
+    const uploadingImage = async (retries = 0, maxRetries = 3) => {
+        const refreshToken = localStorage.getItem('refreshToken');
+        let accessToken = localStorage.getItem('accessToken');
+
+        try {
+            if (!uploadFiles || uploadFiles.length === 0) {
+                throw new Error('이미지를 선택해주세요.');
+            }
+            if (!accessToken) {
+                throw new Error('로그인이 필요합니다.');
+            }
+
+            const formData = new FormData();
+            for (const file of uploadFiles) {
+                formData.append('photo', file);
+            }
+            formData.append('postText', uploadFileInfo.postText || '');
+            formData.append('postDescription', uploadFileInfo.postDescription || '');
+            formData.append('location', uploadFileInfo.location || '');
+            formData.append('tagsJson', uploadFileInfo.tagsJson || '');
+
+            // FormData 내용 확인용 디버깅
+            for (let [key, value] of formData.entries()) {
+                if (value instanceof File) {
+                    console.log(`${key}: ${value.name}, ${value.size} bytes, type: ${value.type}`);
+                } else {
+                    console.log(`${key}: ${value}`);
+                }
+            }
+
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/every/posts`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: formData
+            });
+            
+            if (!response.ok) {
+                if (response.status === 401) {
+                    throw new Error('Unauthorized');
+                }
+                const errorData = await response.json();
+                throw new Error(`이미지 업로드 실패: ${response.status} - ${errorData.message || 'Bad Request'}`);
+            }
+
+            const result = await response.json();
+            alert('이미지가 성공적으로 업로드되었습니다.');
+            setUploadFiles([]); // 업로드 성공 시 파일 초기화
+            setUploadFileInfo({ postText: '', postDescription: '', location: '', tagsJson: '' }); // 입력 초기화
+            return result;
+        } catch (error) {
+            console.error('Upload error:', error);
+            if (error.message === 'Unauthorized' && refreshToken && retries < maxRetries) {
+                accessToken = await refreshAccessToken(refreshToken);
+                if (accessToken) {
+                    return await uploadingImage(retries + 1, maxRetries);
+                }
+            }
+            alert(error.message || '이미지 업로드에 실패했습니다.');
+            return null;
         }
-        if(e.target.className==='inputExplain'){
-            setuploadFileInfo((uploadFileInfo)=>({ ...uploadFileInfo, postDescription: e.target.value })) //설명
-            return;
-        }
-        if(e.target.className==='postImageLocation'){
-            setuploadFileInfo((uploadFileInfo)=>({...uploadFileInfo, postLocation:e.target.value})) //설명
-            return;
-        }
-        if(e.target.className==='postImageTagInput'){
-            setuploadFileInfo((uploadFileInfo)=>({...uploadFileInfo, postTag:e.target.value})) //설명
-            return;
-        }
-    }
+    };
+
+    const getTimeUntilNextSaturday = () => {
+        const now = new Date();
+        const nextSaturday = new Date(now);
+        nextSaturday.setDate(now.getDate() + (6 + 7 - now.getDay()) % 7);
+        nextSaturday.setHours(23, 59, 59, 999);
+        return nextSaturday.getTime() - now.getTime();
+    };
 
     useEffect(() => {
-        const sumUploadImageInfo = { ...uploadFileInfo, images: uploadfileUrl };
-        setUploadImage(sumUploadImageInfo);
-    }, [uploadFileInfo, uploadfileUrl]);
+        let intervalId = null;
+
+        const updateRandomIndexValue = () => {
+            if (posts && posts.length > 0) {
+                const allTags = posts.reduce((tags, post) => {
+                    if (post && post.tags && Array.isArray(post.tags)) {
+                        return [...tags, ...post.tags];
+                    }
+                    return tags;
+                }, []);
+                
+                const uniqueTags = [...new Set(allTags)];
+                if (uniqueTags.length > 0) {
+                    const newRandomIndex = Math.floor(Math.random() * uniqueTags.length);
+                    updateRandomIndex(newRandomIndex);
+                    // localStorage에 현재 인덱스와 업데이트 시간 저장
+                    localStorage.setItem('randomIndex', newRandomIndex);
+                    localStorage.setItem('lastUpdateTime', new Date().getTime());
+                }
+            }
+        };
+
+        // localStorage에서 저장된 값 확인
+        const savedIndex = localStorage.getItem('randomIndex');
+        const lastUpdateTime = localStorage.getItem('lastUpdateTime');
+        const now = new Date().getTime();
+        const oneWeek = 7 * 24 * 60 * 60 * 1000; // 1주일을 밀리초로
+
+        if (savedIndex && lastUpdateTime) {
+            // 마지막 업데이트로부터 1주일이 지났는지 확인
+            if (now - parseInt(lastUpdateTime) >= oneWeek) {
+                updateRandomIndexValue();
+            } else {
+                // 1주일이 지나지 않았다면 저장된 인덱스 사용
+                updateRandomIndex(parseInt(savedIndex));
+            }
+        } else if (posts && posts.length > 0) {
+            // 저장된 값이 없는 경우 초기 설정
+            const allTags = posts.reduce((tags, post) => {
+                if (post && post.tags && Array.isArray(post.tags)) {
+                    return [...tags, ...post.tags];
+                }
+                return tags;
+            }, []);
+            
+            const uniqueTags = [...new Set(allTags)];
+            if (uniqueTags.length > 0) {
+                const newRandomIndex = Math.floor(Math.random() * uniqueTags.length);
+                updateRandomIndex(newRandomIndex);
+                localStorage.setItem('randomIndex', newRandomIndex);
+                localStorage.setItem('lastUpdateTime', now);
+            }
+        }
+
+        // 다음 토요일까지의 시간 계산
+        const timeUntilNextSaturday = getTimeUntilNextSaturday();
+        
+        // 타이머 설정
+        const timer = setTimeout(() => {
+            updateRandomIndexValue();
+            // 이후 매주 토요일마다 갱신
+            intervalId = setInterval(updateRandomIndexValue, 7 * 24 * 60 * 60 * 1000);
+        }, timeUntilNextSaturday);
+
+        return () => {
+            clearTimeout(timer);
+            if (intervalId) clearInterval(intervalId);
+        };
+    }, [posts, updateRandomIndex]);
+
+    useEffect(() => {
+        if (posts && posts.length > 0) {
+            const allTags = posts.reduce((tags, post) => {
+                if (post && post.tags && Array.isArray(post.tags)) {
+                    return [...tags, ...post.tags];
+                }
+                return tags;
+            }, []);
+            const uniqueTags = [...new Set(allTags)];
+            if (uniqueTags.length > 0 && randomIndex !== null) {
+                setRandomTagText(uniqueTags[randomIndex]);
+                const filteredPosts = posts.filter((post) =>
+                    post && post.tags && Array.isArray(post.tags) &&
+                    post.tags.includes(uniqueTags[randomIndex])
+                );
+                setRandomPosts(filteredPosts);
+            }
+        }
+    }, [posts, randomIndex]);
+
+    const fetchPosts = async () => {
+        try {
+            const posts = await fetchUserposts();
+            if (posts && Array.isArray(posts)) {
+                const sortedPosts = [...posts].sort((a, b) => b.likesCount - a.likesCount);
+                setPosts(sortedPosts);
+            } else {
+                setError('데이터를 불러오지 못했습니다.');
+            }
+        } catch (error) {
+            console.log('Error in fetchPosts', error);
+            setError('서버 오류가 발생했습니다. 나중에 다시 시도해주세요.');
+        }
+    };
+
+    useEffect(() => {
+        fetchPosts();
+    }, []);
+
+    const handleLikeNum = async (postId) => {
+        const rollBackPosts = [...posts];
+        try {
+            setPosts((prevPosts) =>
+                prevPosts.map((post) => post.postId === postId
+                    ? post.isLikeCountUp === false
+                        ? { ...post, likesCount: post.likesCount + 1, isLikeCountUp: true }
+                        : { ...post, likesCount: post.likesCount - 1, isLikeCountUp: false }
+                    : post).sort((a, b) => b.likesCount - a.likesCount)
+            );
+            await updateLikeCount(postId);
+        } catch (error) {
+            console.error('Error uploading like count', error);
+            setPosts(rollBackPosts);
+        }
+    };
+
+    const handleCommentNum = async (modalPost, comment) => {
+        const rollBackPosts = [...posts];
+        try {
+            setPosts((prevPosts) =>
+                prevPosts.map((post) => post.postId === modalPost.postId
+                    ? {
+                        ...post,
+                        commentsCount: post.commentsCount + 1,
+                        comments: [...post.comments, comment]
+                    }
+                    : post)
+            );
+            await updateComment(modalPost.postId, comment);
+        } catch (error) {
+            console.error('Error uploading comment', error);
+            setPosts(rollBackPosts);
+        }
+    };
+
+    const weeklyPosts = randomPosts.slice(0, 3);
+    const weeklyPostIds = useMemo(() => new Set(weeklyPosts.map((weeklyPost) => weeklyPost.postId)), [weeklyPosts]);
+    const dailyPosts = useMemo(() => posts.filter((post) => !weeklyPostIds.has(post.postId)), [posts, weeklyPostIds]);
+
+    const [nextPage, setNextPage] = useState([0, 1, 2, 3, 4, 5]);
+    const onClickNextPage = (value) => {
+        const page = [
+            [0, 1, 2, 3, 4, 5],
+            [6, 7, 8, 9, 10, 11],
+            [12, 13, 14, 15, 16, 17],
+            [18, 19, 20, 21, 22, 23]
+        ];
+        if (value === '<') {
+            if (nextPage[0] === 0) {
+                setNextPage(nextPage.map((num) => num + 18));
+            } else {
+                setNextPage(nextPage.map((num) => num - 6));
+            }
+        } else if (value === '>') {
+            if (nextPage[0] === 18) {
+                setNextPage(nextPage.map((num) => num - 18));
+            } else {
+                setNextPage(nextPage.map((num) => num + 6));
+            }
+        } else {
+            setNextPage(page[value]);
+        }
+    };
+
+    const handleImageClick = (post) => {
+        setIsImageModalOpen(true);
+        setSelectedPostForModal(post);
+    };
+
+    const handleCommentClickForModal = () => {
+        setIsCommentModalOpen(true);
+    };
+
+    const handleCloseImageModal = () => {
+        setIsImageModalOpen(false);
+    };
+
+    const handleCloseCommentModal = () => {
+        setIsCommentModalOpen(false);
+    };
+
+    const fileInputRef = useRef(null);
+    const handleContainerClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleOnchangeUploadFileInfo = (e) => {
+        const { name, value } = e.target;
+        setUploadFileInfo((prev) => ({ ...prev, [name]: value }));
+    };
 
     return (
-        <div >
+        <div>
             <div className={styles.mainContainer}>
                 {error && <p className={styles.error}>{error}</p>}
                 <p className={styles.weeklyTag}>
-                    <img src={camera} alt='' className={styles.weeklyTagCamera}></img>
+                    <span className={styles.weeklyTagCamera}>📷</span>
                     <span className={styles.weeklyTagText}>
-                        오늘의 태그 #{randomTagText} - 주간 인기 {randomTagText} 사진 갤러리
+                        주간 인기 {randomTagText ? randomTagText : "'Unknown'"} 사진 갤러리
                     </span>
                 </p>
                 <div className={styles.forFlexTagBox}>
                     <div className={styles.tagBox}>
                         <img src={landscape} alt='' className={styles.tagBoxLandscape}></img>
-                        <span className={styles.tagBoxText}>#{randomTagText}</span>
+                        <span className={styles.tagBoxText}>#{randomTagText ? randomTagText : 'Unknown'}</span>
                     </div>
                 </div>
                 <div className={styles.forFlexweeklyTag1}>
                     <WeeklyPopularTag
-                        post= {[weeklyPosts[0]]}
-                        handleLikeClick={handleLikeClick}
-                        handleCommentClick={handleCommentClick}
+                        post={[weeklyPosts[0]]}
+                        handleLikeNum={handleLikeNum}
+                        handleCommentClickForModal={handleCommentClickForModal}
+                        handleImageClick={handleImageClick}
                     />
-                    {/*------*/}
                     <WeeklyPopularTag
-                        post= {[weeklyPosts[1]]}
-                        handleLikeClick={handleLikeClick}
-                        handleCommentClick={handleCommentClick}
+                        post={[weeklyPosts[1]]}
+                        handleLikeNum={handleLikeNum}
+                        handleCommentClickForModal={handleCommentClickForModal}
+                        handleImageClick={handleImageClick}
                     />
-                    {/*------*/}
                     <WeeklyPopularTag
-                        post= {[weeklyPosts[2]]}
-                        handleLikeClick={handleLikeClick}
-                        handleCommentClick={handleCommentClick}
+                        post={[weeklyPosts[2]]}
+                        handleLikeNum={handleLikeNum}
+                        handleCommentClickForModal={handleCommentClickForModal}
+                        handleImageClick={handleImageClick}
                     />
-                    {/*------*/}
                 </div>
                 <div className={styles.todayTagTopContainer}>
-                    <img src={twinkle} alt=''className={styles.twinkleIcon}></img>
-                    <span className={styles.todayTag}>오늘의 태그 인기 사진</span>
+                    <img src={twinkle} alt='' className={styles.twinkleIcon}></img>
+                    <span className={styles.todayTag}>오늘의 인기 사진</span>
                 </div>
                 <div className={styles.todayTagAllContainer}>
-                    <div className={styles.forModalContainer}
-                        onClick={() => {
-                            handleTagClick(dailyPosts[nextPage[0]]);
-                        }}>
+                    <div className={styles.forModalContainer}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
-                            handleLikeClick={handleLikeClick}
-                            handleCommentClick={handleCommentClick}
+                            handleLikeNum={handleLikeNum}
+                            handleCommentClickForModal={handleCommentClickForModal}
+                            handleImageClick={() => { handleImageClick(dailyPosts[nextPage[0]]) }}
                         />
                     </div>
-                    <DailyPopularTagModal
-                        isOpen={isModalOpen}
-                        onClose={handleCloseModal}
-                        post={selectedPost ? [selectedPost] : []}
-                        handleLikeClick={handleLikeClick}
-                        handleCommentClick={handleCommentClick}
-                    />
-                    {/*-------*/}
-                    <div className={styles.forModalContainer}
-                        onClick={() => {
-                            handleTagClick(dailyPosts[nextPage[0]]);
-                        }}>
+                    <div className={styles.forModalContainer}>
                         <DailyPopularTag
-                            post={[dailyPosts[nextPage[0]]]}
-                            handleLikeClick={handleLikeClick}
-                            handleCommentClick={handleCommentClick}
+                            post={[dailyPosts[nextPage[1]]]}
+                            handleLikeNum={handleLikeNum}
+                            handleCommentClickForModal={handleCommentClickForModal}
+                            handleImageClick={() => { handleImageClick(dailyPosts[nextPage[1]]) }}
                         />
                     </div>
-                    {/*--------*/}
-                    <div className={styles.forModalContainer}
-                        onClick={() => {
-                            handleTagClick(dailyPosts[nextPage[0]]);
-                        }}>
+                    <div className={styles.forModalContainer}>
                         <DailyPopularTag
-                            post={[dailyPosts[nextPage[0]]]}
-                            handleLikeClick={handleLikeClick}
-                            handleCommentClick={handleCommentClick}
+                            post={[dailyPosts[nextPage[2]]]}
+                            handleLikeNum={handleLikeNum}
+                            handleCommentClickForModal={handleCommentClickForModal}
+                            handleImageClick={() => { handleImageClick(dailyPosts[nextPage[2]]) }}
                         />
                     </div>
-                    {/*--------*/}
-                    <div className={styles.forModalContainer}
-                        onClick={() => {
-                            handleTagClick(dailyPosts[nextPage[0]]);
-                        }}>
+                    <div className={styles.forModalContainer}>
                         <DailyPopularTag
-                            post={[dailyPosts[nextPage[0]]]}
-                            handleLikeClick={handleLikeClick}
-                            handleCommentClick={handleCommentClick}
+                            post={[dailyPosts[nextPage[3]]]}
+                            handleLikeNum={handleLikeNum}
+                            handleCommentClickForModal={handleCommentClickForModal}
+                            handleImageClick={() => { handleImageClick(dailyPosts[nextPage[3]]) }}
                         />
                     </div>
-                    {/*--------*/}
-                    <div className={styles.forModalContainer}
-                        onClick={() => {
-                            handleTagClick(dailyPosts[nextPage[0]]);
-                        }}>
+                    <div className={styles.forModalContainer}>
                         <DailyPopularTag
-                            post={[dailyPosts[nextPage[0]]]}
-                            handleLikeClick={handleLikeClick}
-                            handleCommentClick={handleCommentClick}
+                            post={[dailyPosts[nextPage[4]]]}
+                            handleLikeNum={handleLikeNum}
+                            handleCommentClickForModal={handleCommentClickForModal}
+                            handleImageClick={() => { handleImageClick(dailyPosts[nextPage[4]]) }}
                         />
                     </div>
-                    {/*--------*/}
-                    <div className={styles.forModalContainer}
-                        onClick={() => {
-                            handleTagClick(dailyPosts[nextPage[0]]);
-                        }}>
+                    <div className={styles.forModalContainer}>
                         <DailyPopularTag
-                            post={[dailyPosts[nextPage[0]]]}
-                            handleLikeClick={handleLikeClick}
-                            handleCommentClick={handleCommentClick}
+                            post={[dailyPosts[nextPage[5]]]}
+                            handleLikeNum={handleLikeNum}
+                            handleCommentClickForModal={handleCommentClickForModal}
+                            handleImageClick={() => { handleImageClick(dailyPosts[nextPage[5]]) }}
                         />
                     </div>
-                    {/*--------*/}
                 </div>
                 <div className={styles.forFlexButton}>
                     <img alt='' src={leftButton} className={styles.leftButton}
-                        onClick={()=>onClickNextPage('<')}/>
+                        onClick={() => onClickNextPage('<')} />
                     <img alt='' src={num1} className={styles.num1Icon}
-                        onClick={()=>onClickNextPage(0)}/>
+                        onClick={() => onClickNextPage(0)} />
                     <img alt='' src={num2} className={styles.num2Icon}
-                        onClick={()=>onClickNextPage(1)}/>
+                        onClick={() => onClickNextPage(1)} />
                     <img alt='' src={num3} className={styles.num3Icon}
-                        onClick={()=>onClickNextPage(2)}/>
+                        onClick={() => onClickNextPage(2)} />
                     <img alt='' src={num4} className={styles.num4Icon}
-                        onClick={()=>onClickNextPage(3)}/>
+                        onClick={() => onClickNextPage(3)} />
                     <img alt='' src={rightButton} className={styles.rightButton}
-                        onClick={()=>onClickNextPage('>')}/>
+                        onClick={() => onClickNextPage('>')} />
                 </div>
                 <div className={styles.postImageContainerOutter}>
                     <img src={camera} alt='' className={styles.postImageIconOutter}></img>
@@ -518,10 +566,10 @@ export default function EveryMemoryMain(){
                     <img src={camera} alt='' className={styles.postImageIconInner}></img>
                     <span className={styles.postImageTextInner}>새로운 풍경 사진 업로드</span>
                     <div className={styles.postImageToolContainer}>
-                    {uploadfileUrl.length>0? 
+                        {uploadFiles.length > 0 ?
                             <div className={styles.postImageToolContainer2}>
-                        {uploadfileUrl.map((url)=>(
-                            <img className={styles.uploadedImage} src={url} alt=''/>
+                                {uploadFiles.map((file, index) => (
+                                    <img key={index} className={styles.uploadedImage} src={URL.createObjectURL(file)} alt='' />
                                 ))}
                             </div>
                             :
@@ -542,31 +590,69 @@ export default function EveryMemoryMain(){
                         }
                     </div>
                     <p className={styles.postImageTitle}>제목</p>
-                    <input className={styles.inputTitle}
+                    <input
+                        name="postText"
+                        className={styles.inputTitle}
                         placeholder='예: 제주도 성산일출봉의 아름다운 일출'
-                        onChange={handleOnchangeUploadFileInfo}></input>
+                        value={uploadFileInfo.postText}
+                        onChange={handleOnchangeUploadFileInfo}
+                    />
                     <p className={styles.postImageExplain}>설명</p>
-                    <textarea className={styles.inputExplain}
-                        placeholder='사진에 담긴 이야기나 촬영 시 느낀 감정을 자류롭게 작성해주세요.'
-                        onChange={handleOnchangeUploadFileInfo}></textarea>
+                    <textarea
+                        name="postDescription"
+                        className={styles.inputExplain}
+                        placeholder='사진에 담긴 이야기나 촬영 시 느낀 감정을 자유롭게 작성해주세요.'
+                        value={uploadFileInfo.postDescription}
+                        onChange={handleOnchangeUploadFileInfo}
+                    />
                     <p className={styles.postImageLocation}>위치</p>
-                    <input className={styles.inputLocation}
+                    <input
+                        name="location"
+                        className={styles.inputLocation}
                         placeholder='예: 제주도특별자치도 서귀포시 성산읍'
-                        onChange={handleOnchangeUploadFileInfo}></input>
+                        value={uploadFileInfo.location}
+                        onChange={handleOnchangeUploadFileInfo}
+                    />
                     <p className={styles.postImageTag}>태그</p>
-                    <input className={styles.postImageTagInput}
+                    <input
+                        name="tagsJson"
+                        className={styles.postImageTagInput}
                         placeholder='#에 의해 나눠집니다. 예: #가족#일본#겨울'
-                        onChange={handleOnchangeUploadFileInfo}></input>
+                        value={uploadFileInfo.tagsJson}
+                        onChange={handleOnchangeUploadFileInfo}
+                    />
                     <div className={styles.forflexPostImage}>
-                        <button className={styles.uploadImageButtonContainer}>
+                        <button className={styles.uploadImageButtonContainer} onClick={uploadingImage}>
                             <img src={twinkle} alt='' className={styles.twinkleIcon2}></img>
-                            <span className={styles.upLoadImageText}
-                            onClick={()=>uploadingImage(uploadImage)}>사진 업로드하기</span>
+                            <span className={styles.upLoadImageText}>사진 업로드하기</span>
                         </button>
-                        <button className={styles.cancelButton} onClick={handleCancelButton}>취소하기</button>
+                        <button className={styles.cancelButton} onClick={() => {
+                            setUploadFiles([]);
+                            setUploadFileInfo({ postText: '', postDescription: '', location: '', tagsJson: '' });
+                        }}>취소하기</button>
                     </div>
                 </div>
             </div>
+            <DailyPopularTagModal
+                isOpen={isImageModalOpen}
+                onClose={handleCloseImageModal}
+                post={selectedPostForModal ? [selectedPostForModal] : []}
+            />
+            <CommentModal
+                isOpen={isCommentModalOpen}
+                onClose={handleCloseCommentModal}
+                post={selectedPostForModal ? [selectedPostForModal] : []}
+                handleCommentNum={(commentText) => {
+                    if (selectedPostForModal && selectedPostForModal.postId) {
+                        handleCommentNum(selectedPostForModal, {
+                            userId: selectedPostForModal.comments.userId,
+                            userName: selectedPostForModal.comments.userName,
+                            userPhotourl: selectedPostForModal.comments.userPhotourl,
+                            commentText: commentText
+                        });
+                    }
+                }}
+            />
         </div>
-    )
+    );
 }
