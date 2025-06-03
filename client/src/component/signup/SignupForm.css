@@ -45,6 +45,7 @@
 .signupSelect,
 .signupInput {
   margin-bottom: 4px;
+  padding-left: 7px;
   width: 384px;
   height: 42px;
   border-radius: 6px;
