@@ -34,8 +34,24 @@
 }
 
 .addAlbumButton {
-  all: unset;
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 16px;
   cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  width: 208px;
+  height: 40px;
+  border-radius: 4px;
+}
+
+.addAlbumButton:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.addAlbumButton:active {
+  transform: translateY(1px) scale(0.96);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .albumTagInput {
@@ -89,6 +105,17 @@
   padding: 6px 12px;
   border-radius: 8px;
   cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.tagAddButton:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.tagAddButton:active {
+  transform: translateY(1px) scale(0.96);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .tagContainer {

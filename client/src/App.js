@@ -5,6 +5,7 @@ import LoginPage from "./page/LoginPage.js";
 import Loged from "./component/login/Loged.js";
 import ProfilePage from "./page/ProfilePage.js";
 import NotificationPage from "./page/NotificationPage.js";
+
 import OurAlbumPage from "./page/OurAlbumPage";
 import OurAlbumDetailPage from "./page/OurAlbumDetailPage";
 import GroupEditPage from "../src/page/GroupEditPage";
@@ -13,7 +14,6 @@ import MyAlbumPage from "./page/MyAlbumPage.js";
 import MyAlbumDetailPage from "./page/MyAlbumDetailPage.js";
 import SignupConfirmPage from "./page/SignupConfirmPage.js";
 import EveryMemoryPage from "./page/EveryMemoryPage.js";
-import ApiTestPage from "./page/ApiTestPage.js";
 
 function App() {
   return (
@@ -39,7 +39,6 @@ function App() {
             element={<GroupEditPage />}
           />
           <Route path="/everyMemory" element={<EveryMemoryPage />} />
-          <Route path="/ApiTestPage" element={<ApiTestPage />} />
         </Routes>
       </Router>
     </AuthProvider>

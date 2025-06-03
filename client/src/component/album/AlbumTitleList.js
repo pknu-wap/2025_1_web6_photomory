@@ -5,10 +5,7 @@ function AlbumTitleListTest({ albumTitles }) {
     <>
       <h3 style={{ marginBottom: "4px" }}>앨범 목록</h3>
       {/* 리스트 스타일 제거: 점 없애고 들여쓰기 제거 */}
-      <ul
-        className="titleList"
-        style={{ display: "flex", flexDirection: "column", height: "135px" }}
-      >
+      <ul className="titleList">
         {/* 앨범 제목들을 하나씩 렌더링 */}
         {albumTitles.map((albumTitle, index) => (
           <li key={index} className="title">

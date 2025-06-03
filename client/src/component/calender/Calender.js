@@ -70,7 +70,7 @@ function Calender({
 
       //각 앨범을 돌며 해당 날짜에 맞는 사진 찾아내기
       albums.forEach((album) => {
-        (album.photos || []).forEach((photo) => {
+        album.photos.forEach((photo) => {
           const createdDate = new Date(photo.photo_makingtime);
           const photoYear = createdDate.getFullYear();
           const photoMonth = createdDate.getMonth(); // 0부터 시작

@@ -1,5 +1,5 @@
 import "./AddedMemberList.css";
-
+import defaultProfileIcon from "../../assets/defaultProfileIcon.svg";
 const MAX_MEMBERS = 20; // 최대 인원 20명
 
 //현재 그룹 멤버 컴포넌트
@@ -23,7 +23,7 @@ function AddedMemberList({ addedMembers, onRemoveMember }) {
         {addedMembers.map((member) => (
           <li key={member.user_id} className="addedMemberItem">
             <img
-              src={member.user_photourl}
+              src={member.user_photourl || defaultProfileIcon}
               alt={member.user_name}
               className="addedMemberImg"
             />

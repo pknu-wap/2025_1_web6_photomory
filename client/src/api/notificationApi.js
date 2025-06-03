@@ -1,3 +1,4 @@
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 //친구 요청 목록 불러오기 api함수
@@ -56,35 +57,76 @@ export async function getReceivedFriendRequests(userId) {
   }
 }
 
-//SSE 구독 함수
-export function subscribeToNotifications(onMessageCallback) {
+// SSE api 연동 함수
+export function subscribeToNotifications(
+  onMessageCallbackByType,
+  reconnectDelay = 5000
+) {
   const token = localStorage.getItem("accessToken");
+  if (!token) {
+    console.error("❗ accessToken이 없습니다. SSE 연결 중단");
+    return null;
+  }
 
-  const url = `${BASE_URL}/api/notifications/subscribe?token=${token}`;
+  const controller = new AbortController();
+  let retryTimeout = null;
 
-  const eventSource = new EventSource(url);
+  const connect = () => {
+    console.log("🔗 SSE 연결 시도 중...(with Authorization header)");
 
-  // 새 알림 도착 시 콜백 실행
-  eventSource.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    onMessageCallback(data); // 알림을 상태에 저장하거나 처리
+    fetchEventSource(`${BASE_URL}/api/notifications/subscribe`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`, // ✅ 헤더로 토큰 전송
+      },
+      signal: controller.signal,
+
+      onopen(res) {
+        if (res.ok) {
+          console.log("✅ SSE 연결 성공");
+        } else {
+          throw new Error(`❗ 서버 응답 오류: ${res.status}`);
+        }
+      },
+
+      onmessage(event) {
+        const type = event.event;
+        try {
+          const data = JSON.parse(event.data);
+          console.log(`📩 [${type}] 알림 수신`, data);
+          onMessageCallbackByType(type, data);
+        } catch (err) {
+          console.error("❗ 데이터 파싱 오류:", err);
+        }
+      },
+
+      onerror(err) {
+        console.error("❗ SSE 오류:", err);
+        retry();
+      },
+    });
   };
 
-  // 에러 처리
-  eventSource.onerror = (error) => {
-    console.error("SSE 연결 오류:", error);
-    eventSource.close();
+  const retry = () => {
+    if (retryTimeout) return;
+    console.log(`🔄 ${reconnectDelay / 1000}초 후 SSE 재연결 시도`);
+    retryTimeout = setTimeout(connect, reconnectDelay);
   };
 
-  return eventSource; // 나중에 수동으로 닫고 싶을 때 사용
+  controller.signal.addEventListener("abort", () => {
+    if (retryTimeout) clearTimeout(retryTimeout);
+  });
+
+  connect();
+  return controller;
 }
 
 //알림 목록 조회 api함수
-export async function getnotificationList() {
+export async function fetchnotificationList() {
   const token = localStorage.getItem("accessToken"); // 또는 context 등에서
 
   try {
-    const response = await fetch(`${BASE_URL}/api/notifications`, {
+    const response = await fetch(`${BASE_URL}/api/notifications/list-read`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

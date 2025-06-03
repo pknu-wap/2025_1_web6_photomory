@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { getMyAlbums } from "../api/getMyAlbum";
+import { fetchMyMemoryAlbums } from "../api/myAlbumAPi";
 import Container from "../component/common/Container";
 import Calender from "../component/calender/Calender";
 import Header from "../component/common/Header";
 import AddAlbum from "../component/add/AddAlbum";
-import AllAlbumTags from "../component/tag/AllalbumTags";
 import AlbumList from "../component/album/AlbumList";
 import Footer from "../component/common/Footer";
 import privateIcon from "../assets/privateIcon.svg";
+import AllAlbumTags from "../component/tag/AllAlbumTags";
+import { normalizeMyAlbumData } from "../utils/normalizers";
 function MyAlbumPage() {
   const [myAlbums, setMyAlbums] = useState([]); //나의 앨범 상태
   const [selectedTags, setSelectedTags] = useState([]); //선택된 태그 배열 상태
@@ -30,15 +31,28 @@ function MyAlbumPage() {
 
   //초기 렌더링시 배열로 앨범과 각 사진정보 받기
   useEffect(() => {
-    const albums = getMyAlbums();
-    setMyAlbums(albums);
+    (async () => {
+      try {
+        const rawAlbums = await fetchMyMemoryAlbums();
+        const normalizedAlbums = normalizeMyAlbumData(rawAlbums); //데이터 정규화
+        setMyAlbums(normalizedAlbums);
+      } catch (error) {
+        console.log("앨범 불러오기 실패:", error);
+        setMyAlbums([]);
+      }
+    })();
   }, []);
+
+  if (!myAlbums) return <div>로딩 중...</div>;
 
   //앨범 제목만 따로 추출한 배열
   const albumTitles = myAlbums.map((album) => album.album_name);
 
   // 모든 태그 중복 없이 추출
   const allTags = Array.from(new Set(myAlbums.flatMap((album) => album.tags)));
+
+  // 전체 앨범 개수 구하기
+  const allAlbumsCount = myAlbums.length;
 
   return (
     <>
@@ -112,7 +126,7 @@ function MyAlbumPage() {
                 albums={filteredAlbums}
                 type="private"
                 basePath="/my-album"
-                allAlbumsCount={myAlbums.length}
+                allAlbumsCount={allAlbumsCount}
               />
             </div>
           </div>

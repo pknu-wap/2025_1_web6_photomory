@@ -1,32 +1,37 @@
 import React, { useState } from "react";
 import AlbumTitleList from "../album/AlbumTitleList";
-import addAlbumButton from "../../assets/addAlbumButton.svg";
 import { createGroupAlbum } from "../../api/ourAlbumApi";
+import { createMyMemoryAlbum } from "../../api/myAlbumAPi";
 import { normalizeGroupAlbum } from "../../utils/normalizers";
+import { normalizeMyAlbum } from "../../utils/normalizers";
 import "./AddAlbum.css";
 
 const MAX_ALBUM_COUNT = 7; //최대 앨범 갯수
 
 //앨범 추가 컴포넌트
 function AddAlbum({
-  type = "", //private | group
+  type = "", // "private" | "group"
   selectedGroupId, //선택된 그룹 ID
   albumTitlesByGroup, //선택 그룹 앨범명 배열
   setAlbumTitlesByGroup, //선택 그룹 앨범명 상태 변화 함수
   setGroupAlbums, //그룹 앨범 추가
   albumTitles = [], //나만의 추억에서만 쓸 앨범명 목록
   setMyAlbums, //나만의 추억  앨범 상태 변화 함수
+  handleAddTagClick, //우리의 추억 앨범 생성 시 태그 추가
 }) {
-  // 앨범 제목, 설명, 태그를 포함한 상태 객체
   const [newAlbumData, setNewAlbumData] = useState({
-    album_name: "",
-    album_description: "",
-    tags: [], //공통 태그 필드
-  });
+    album_name: "", //제목
+    album_description: "", //설명
+    tags: [], //태그 목록 (옵션)
+  }); // 앨범 생성 폼의 입력값(제목, 설명, 태그)을 저장하는 객체
 
   const [newTagInput, setNewTagInput] = useState(""); // 새 태그 입력값
 
-  // 앨범명/설명 입력 처리
+  // 타입이 "group"이면 그룹별 앨범명 배열, "private"이면 개인별 앨범명 배열 사용
+  const currentAlbumTitles =
+    type === "group" ? albumTitlesByGroup[selectedGroupId] || [] : albumTitles;
+
+  //앨범 정보 입력 헨들러
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewAlbumData((prev) => ({
@@ -56,9 +61,9 @@ function AddAlbum({
     }));
   };
 
-  // 앨범 생성 처리
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const { album_name, album_description, tags } = newAlbumData;
 
     if (!album_name || !album_description) {
@@ -86,15 +91,8 @@ function AddAlbum({
       return;
     }
 
-    const newAlbum = {
-      album_name,
-      album_description,
-      tags,
-    };
-    console.log(tags);
     try {
       if (type === "group") {
-        // 서버에 앨범 생성 요청
         const createdAlbum = await createGroupAlbum(selectedGroupId, {
           albumName: album_name,
           albumTags: tags,
@@ -104,19 +102,32 @@ function AddAlbum({
 
         const normalizedAlbum = normalizeGroupAlbum(createdAlbum);
 
+        // 태그를 태그 영역에 추가
+        handleAddTagClick(normalizedAlbum.album_tag);
+
+        //해당 그룹 앨범명 업데이트
         const updatedTitles = [
           ...(albumTitlesByGroup[selectedGroupId] || []),
           album_name,
         ];
+        //그룹별 앨범명 업데이트
         setAlbumTitlesByGroup((prev) => ({
           ...prev,
           [selectedGroupId]: updatedTitles,
         }));
+        //현재 그룹 앨범 데이터 업데이트
         setGroupAlbums((prev) => [...prev, normalizedAlbum]);
       } else if (type === "private") {
-        setMyAlbums((prev) => [...prev, newAlbum]);
+        const createdMyAlbum = await createMyMemoryAlbum({
+          myalbumName: album_name,
+          myalbumDescription: album_description,
+          mytags: tags,
+        });
+        const normalizedAlbum = normalizeMyAlbum(createdMyAlbum);
+        setMyAlbums((prev) => [...prev, normalizedAlbum]);
       }
 
+      // 초기화
       setNewAlbumData({
         album_name: "",
         album_description: "",
@@ -128,16 +139,10 @@ function AddAlbum({
     }
   };
 
-  // 현재 앨범 제목 목록
-  const currentAlbumTitles =
-    type === "group" ? albumTitlesByGroup[selectedGroupId] || [] : albumTitles;
-
   return (
     <div className="addAlbumCard">
       <div className="AddAlbumInner">
-        <h3 style={{ marginBottom: "16px" }} className="AddAlbumtitle">
-          앨범 추가
-        </h3>
+        <h3 className="AddAlbumtitle">앨범 추가</h3>
         <form onSubmit={handleSubmit}>
           <label htmlFor="albumTitle">앨범 제목</label>
           <input
@@ -195,10 +200,11 @@ function AddAlbum({
             ))}
           </div>
 
+          {/*앨범 제목 목록 컴포넌트*/}
           <AlbumTitleList albumTitles={currentAlbumTitles} />
 
           <button type="submit" className="addAlbumButton">
-            <img src={addAlbumButton} alt="addAlbumButton" />
+            앨범 만들기
           </button>
         </form>
       </div>

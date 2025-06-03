@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PaginationBar from "../common/PaginationBar";
 import "./GroupMemberGrid.css";
-
+import defaultProfileIcon from "../../assets/defaultProfileIcon.svg";
 // 그룹 멤버를 2행 4열 그리드로 렌더링하는 컴포넌트
 function GroupMemberGrid({ groupName, groupMembers = [] }) {
   const [currentPage, setCurrnetPage] = useState(1); //현재 페이지 상태태
@@ -42,7 +42,7 @@ function GroupMemberGrid({ groupName, groupMembers = [] }) {
             >
               {member ? (
                 <img
-                  src={member.user_photourl}
+                  src={member.user_photourl || defaultProfileIcon}
                   alt="user_photourl"
                   className="memberAvatar"
                 />

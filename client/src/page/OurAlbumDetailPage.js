@@ -1,6 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
-import getAlbumById from "../api/getAlbumById";
+import { useEffect, useState } from "react";
 import Header from "../component/common/Header";
 import GroupMemberGrid from "../component/group/GroupMemberGrid";
 import Container from "../component/common/Container";
@@ -9,17 +8,46 @@ import { getPhotoPeriod } from "../utils/getPhotoPeriod";
 import PhotoInfo from "../component/photo/PhotoInfo";
 import PhotoSubmit from "../component/photo/PhotoSubmit";
 import Footer from "../component/common/Footer";
+import { fetchGroupAlbumDetail, fetchGroupInfo } from "../api/ourAlbumApi";
+import { normalizeGroupAlbumDetail } from "../utils/normalizers";
 function OurAlbumDetailPage() {
+  const [photoList, setPhotoList] = useState([]); //앨범의 사진들 상태
+  const [albumData, setAlbumData] = useState(null); // 전체 정규화 앨범범 데이터 저장
+
   const { groupId, albumId } = useParams();
-  const result = getAlbumById(Number(albumId), "group", Number(groupId));
-  const { album, description, groupName, groupMembers } = result; //앨범, 앨범설명, 그룹명, 그룹멤버
 
-  const [photoList, setPhotoList] = useState(album.photos); //앨범의 사진들 상태
+  useEffect(() => {
+    (async () => {
+      try {
+        const rowAlbum = await fetchGroupAlbumDetail(albumId); //앨범 상세 데이터 불러오기
+        const rowGroup = await fetchGroupInfo(groupId); //그룹 정보 가져오기
+        const normalized = normalizeGroupAlbumDetail(rowAlbum, rowGroup);
+        setAlbumData(normalized); // 정규화된 전체 데이터 저장
+        setPhotoList(normalized.album.photos); //사젠 데이터 추출
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, [groupId, albumId]);
 
-  if (!result) {
-    return <p>앨범을 찾을 수 없습니다.</p>;
+  useEffect(() => {
+    const urlsToRevoke =
+      photoList
+        .filter((photo) => photo.photo_url?.startsWith("blob:"))
+        .map((photo) => photo.photo_url) || [];
+
+    return () => {
+      // 페이지 나갈 때 blob URL 해제
+      urlsToRevoke.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [photoList]); // mount → unmount 시점에 한 번만 실행
+
+  // 초기 상태 방어
+  if (!albumData) {
+    return <p>앨범 데이터를 불러오는 중입니다...</p>;
   }
 
+  const { album, description, groupName, groupMembers } = albumData; //앨범 정보 구조 분해
   //사진 추가 헨들러
   const handleAddPhoto = (newPhoto) => {
     setPhotoList((prev) => [newPhoto, ...prev]);
@@ -32,7 +60,7 @@ function OurAlbumDetailPage() {
 
   const albumPeriod = getPhotoPeriod(photoList); //앨범 기간
   const albumTitle = album.album_name; // 앨범이름
-  const Count = photoList.length; //사진갯수
+  const Count = photoList?.length ?? 0; //사진갯수
   return (
     <>
       <Header />
@@ -61,6 +89,7 @@ function OurAlbumDetailPage() {
               albumTitle={albumTitle}
               photoList={photoList}
               onDeltePhoto={handleDeltePhoto}
+              albumId={albumId}
             />
             <PhotoInfo
               albumTitle={albumTitle}
@@ -69,7 +98,11 @@ function OurAlbumDetailPage() {
               photoCount={Count}
             />
           </div>
-          <PhotoSubmit handleAddPhoto={handleAddPhoto} />
+          <PhotoSubmit
+            type="group"
+            albumId={albumId}
+            handleAddPhoto={handleAddPhoto}
+          />
         </div>
       </Container>
       <Footer />

@@ -46,12 +46,12 @@
 }
 
 .member {
-  width: 90px;
-  height: 32px;
+  width: 99px;
+  height: 37px;
   border-radius: 9999px;
   background: rgb(243, 244, 246);
   display: flex;
-  flex-direction: row;
+  gap: 6px;
   justify-content: end;
   align-items: center;
   padding: 4px 12px;

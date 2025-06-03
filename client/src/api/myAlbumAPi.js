@@ -1,5 +1,3 @@
-import { normalizeMyAlbumData } from "../utils/normalizers"; // 정규화 함수 불러오기
-
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 //나만의 추억 앨범 생성 api함수
@@ -10,28 +8,25 @@ export async function createMyMemoryAlbum({
 }) {
   const accessToken = localStorage.getItem("accessToken");
 
-  const bodyData = {
-    myalbumName,
-    myalbumDescription,
-    mytags,
-  };
+  const formData = new FormData();
+  formData.append("myalbumName", myalbumName);
+  formData.append("myalbumDescription", myalbumDescription);
+  formData.append("mytags", mytags); // 배열이면 문자열로
 
   try {
     const response = await fetch(`${BASE_URL}/api/my-albums`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify(bodyData),
+      body: formData,
     });
 
     if (!response.ok) {
       throw new Error(`서버 응답 오류: ${response.status}`);
     }
 
-    const result = await response.json();
-    return result;
+    return await response.json();
   } catch (error) {
     console.error("앨범 생성 실패:", error);
     throw error;
@@ -39,7 +34,7 @@ export async function createMyMemoryAlbum({
 }
 
 //나만의 추억 앨범 조회 api함수
-export async function getMyMemoryAlbums() {
+export async function fetchMyMemoryAlbums() {
   const accessToken = localStorage.getItem("accessToken");
 
   try {
@@ -55,10 +50,8 @@ export async function getMyMemoryAlbums() {
     }
 
     const result = await response.json();
-    //정규화 처리
-    const normalized = result.map(normalizeMyAlbumData);
 
-    return normalized;
+    return result;
   } catch (error) {
     console.error("앨범 조회 실패:", error);
     throw error;
