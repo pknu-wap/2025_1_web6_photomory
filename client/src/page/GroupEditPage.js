@@ -37,13 +37,15 @@ function GroupEditPage() {
 
   //친구 검색 핸들러
   const handleFriendSearch = (keyword) => {
+    console.log(keyword);
     if (keyword.trim() === "") {
       // 검색어가 없으면 전체 friends 복원
       setFilteredFriends(friends);
     } else {
       // 검색어가 있으면 필터링
       const filtered = friends.filter(
-        (friend) => friend.name.toLowerCase().includes(keyword.toLowerCase()) //keyword를 하나라도 포함한다면 배열에 추가
+        (friend) =>
+          friend.username.toLowerCase().includes(keyword.toLowerCase()) //keyword를 하나라도 포함한다면 배열에 추가
       );
       setFilteredFriends(filtered);
     }
