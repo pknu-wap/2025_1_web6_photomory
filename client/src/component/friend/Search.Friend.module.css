@@ -1,6 +1,5 @@
 .friendListContainer{
-    min-width: 230px;
-    width: 100%;
+    width: clamp(230px, auto, 470px);
     display: flex;
     flex-direction: row;
     position:relative;
@@ -30,9 +29,9 @@
     width: 48px;
     height: 48px;
     margin: 0px 10px 0px 0px;
+    border: 1px solid black;
     border-radius: 100%;
 }
-
 .name{
     margin: 0px;
     font-weight: 500;
@@ -40,7 +39,6 @@
     max-width: 150px;
     color: #6B4E71;
 }
-
 .id{
     margin: 0px;
     font-weight: 300;

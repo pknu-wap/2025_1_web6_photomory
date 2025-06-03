@@ -2,12 +2,17 @@ import { useState, useRef } from "react";
 import "./PhotoSubmit.css";
 import submitFileImage from "../../assets/submitFileImage.svg";
 import { addPhotosToMyAlbum } from "../../api/myAlbumAPi";
-function PhotoSubmit({ albumId, handleAddPhoto }) {
+import { createGroupAlbumPost } from "../../api/ourAlbumApi";
+import LoadingModal from "../../component/common/LoadingModal";
+
+function PhotoSubmit({ type, albumId, handleAddPhoto }) {
   const [newPhotoData, setNewPhotoData] = useState({
+    //추가할 사진 데이터 상태
     imgFile: null,
     photo_name: "",
     photo_makingtime: "",
   });
+  const [isLoading, setIsLoading] = useState(false); //로딩 상태
   const fileInputRef = useRef(null); // 파일 input을 직접 제어하기 위한 ref
 
   const handleChange = (e) => {
@@ -29,31 +34,43 @@ function PhotoSubmit({ albumId, handleAddPhoto }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // 로딩 시작
 
-    const formData = new FormData();
-    formData.append("photos", newPhotoData.imgFile);
-
-    //사진 메타데이터
-    const photoMeta = [
-      { name: newPhotoData.photo_name, date: newPhotoData.photo_makingtime },
-    ];
-    formData.append("photoData", JSON.stringify(photoMeta));
-
+    let result;
     try {
-      // API 호출 (albumId와 함께)
-      const result = await addPhotosToMyAlbum(albumId, formData);
+      if (type === "private") {
+        // 나만의 추억 FormData 구성 및 업로드 요청
+
+        const formData = new FormData();
+        formData.append("photos", newPhotoData.imgFile);
+        //사진 메타데이터
+        const photoMeta = [
+          {
+            name: newPhotoData.photo_name,
+            date: newPhotoData.photo_makingtime,
+          },
+        ];
+        formData.append("photoData", JSON.stringify(photoMeta));
+        result = await addPhotosToMyAlbum(albumId, formData);
+      } else {
+        // 우리의 추억 게시글 생성 API 호출
+        result = await createGroupAlbumPost(albumId, {
+          postTitle: newPhotoData.photo_name,
+          postTime: newPhotoData.photo_makingtime,
+          photoFile: newPhotoData.imgFile,
+        });
+      }
 
       if (result) {
-        console.log("서버에서 응답받은 데이터:", result);
-
-        // 로컬 렌더링용 추가
+        // 로컬 목록에 추가 (렌더링용)
         handleAddPhoto({
-          photo_id: Date.now(),
+          photo_id: result.postId,
           photo_name: newPhotoData.photo_name,
           photo_makingtime: newPhotoData.photo_makingtime,
           photo_url: URL.createObjectURL(newPhotoData.imgFile),
         });
 
+        // 입력 초기화
         resetForm();
       } else {
         alert("서버 업로드에 실패했습니다.");
@@ -61,6 +78,8 @@ function PhotoSubmit({ albumId, handleAddPhoto }) {
     } catch (error) {
       alert("서버 요청 중 오류가 발생했습니다.");
       console.error(error);
+    } finally {
+      setIsLoading(false); // 로딩 종료
     }
   };
 
@@ -78,6 +97,7 @@ function PhotoSubmit({ albumId, handleAddPhoto }) {
 
   return (
     <div className="photoSubmitContainer">
+      {isLoading && <LoadingModal message="사진 업로드 중입니다..." />}
       <h2 className="photoSubmitTitle">새 사진 업로드</h2>
       <form onSubmit={handleSubmit} className="photoSubmitForm">
         <label htmlFor="upload" className="uploadLabel">

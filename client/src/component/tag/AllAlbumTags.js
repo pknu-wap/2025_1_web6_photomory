@@ -1,4 +1,4 @@
-import "./AllalbumTags.css";
+import "./AllAlbumTags.css";
 
 function AllAlbumTags({ tags, selectedTags, onTagClick }) {
   return (

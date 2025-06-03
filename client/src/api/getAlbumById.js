@@ -1,47 +1,25 @@
-import final_group_album_data from "./final_group_album_data";
-import my_album_data_with_updated_photo from "./my_album_data_with_updated_photo_urls.json";
-import { normalizeMyAlbumData } from "../utils/normalizers";
-// import { getMyMemoryAlbums } from "./myAlbumApi";
+import { fetchMyMemoryAlbums } from "../api/myAlbumAPi"; // 개인 앨범 전체 불러오기 API
+import { normalizeMyAlbumData } from "../utils/normalizers"; // 정규화 함수
 
-// album_id + type을 받아서 앨범 찾아오는 함수
-export default function getAlbumById(album_id, type, group_id) {
-  if (!type) return null;
+// album_id를 받아서 개인 앨범 중 하나를 찾아 리턴
+export async function getMyAlbumById(album_id) {
+  try {
+    const rawAlbums = await fetchMyMemoryAlbums(); // 서버에서 전체 앨범 받아오기
+    const normalizedAlbums = normalizeMyAlbumData(rawAlbums); // 앨범 데이터 정규화화
 
-  if (type === "group") {
-    const group = final_group_album_data.find((g) => g.group_id === group_id);
-    if (!group) return null;
+    //앨범 id를 통한 특정 앨범 조회
+    const matchedAlbum = normalizedAlbums.find(
+      (album) => album.album_id === parseInt(album_id)
+    );
 
-    const album = group.albums.find((a) => a.album_id === album_id);
+    if (!matchedAlbum) return null;
 
     return {
-      album: album || null,
-      description: album?.album_description || null,
-      groupMembers: group.members,
-      groupName: group.group_name,
+      album: matchedAlbum,
+      description: matchedAlbum.album_description,
     };
+  } catch (error) {
+    console.error("개인 앨범 불러오기 실패:", error);
+    return null;
   }
-
-  if (type === "private") {
-    const normalizedAlbums =
-      my_album_data_with_updated_photo.map(normalizeMyAlbumData);
-    const myAlbum = normalizedAlbums.find((a) => a.album_id === album_id);
-    if (myAlbum) {
-      return {
-        album: myAlbum,
-        description: myAlbum.album_description,
-      };
-    }
-  }
-
-  // TODO: 서버 연동이 완료되면 아래처럼 수정 예정
-  // const allAlbums = await getMyMemoryAlbums();
-  // const myAlbum = allAlbums.find((a) => a.album_id === album_id);
-  // if (myAlbum) {
-  //   return {
-  //     album: myAlbum,
-  //     description: myAlbum.album_description,
-  //   };
-  // }
-
-  return null;
 }

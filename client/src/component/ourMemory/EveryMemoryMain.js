@@ -12,9 +12,9 @@ import twinkle from "../../assets/twinkle.svg";
 import WeeklyPopularTag from "./WeeklyPopularTag.js";
 import DailyPopularTag from "./DailyPopularTag.js";
 import DailyPopularTagModal from "./DailyPopularTagModal";
-import CommentModal from "./CommnetModal.js";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useRandomIndex } from "../../contexts/RandomIndexContext";
+
 
 async function fetchUserposts(retries = 0, maxRetries = 3) {
     let accessToken = localStorage.getItem('accessToken');
@@ -60,15 +60,13 @@ async function refreshAccessToken(refreshToken) {
             throw new Error(`Token refresh failed status: ${response.status}`);
         }
         const data = await response.json();
-        if (data.accessToken) {
-            localStorage.setItem('accessToken', data.accessToken);
-        }
         return data.accessToken;
     } catch (error) {
         console.error('Error fetching token:', error);
         return null;
     }
 }
+
 
 async function updateLikeCount(postId, retries = 0, maxRetries = 3) {
     let accessToken = localStorage.getItem('accessToken');
@@ -459,7 +457,7 @@ export default function EveryMemoryMain() {
             <div className={styles.mainContainer}>
                 {error && <p className={styles.error}>{error}</p>}
                 <p className={styles.weeklyTag}>
-                    <span className={styles.weeklyTagCamera}>📷</span>
+                    <img src={camera} alt='' className={styles.weeklyTagCamera}></img>
                     <span className={styles.weeklyTagText}>
                         주간 인기 {randomTagText ? randomTagText : "'Unknown'"} 사진 갤러리
                     </span>
@@ -478,6 +476,7 @@ export default function EveryMemoryMain() {
                         handleImageClick={handleImageClick}
                     />
                     <WeeklyPopularTag
+
                         post={[weeklyPosts[1]]}
                         handleLikeNum={handleLikeNum}
                         handleCommentClickForModal={handleCommentClickForModal}
@@ -495,7 +494,10 @@ export default function EveryMemoryMain() {
                     <span className={styles.todayTag}>오늘의 인기 사진</span>
                 </div>
                 <div className={styles.todayTagAllContainer}>
-                    <div className={styles.forModalContainer}>
+                    <div className={styles.forModalContainer}
+                        onClick={() => {
+                            handleTagClick(dailyPosts[nextPage[0]]);
+                        }}>
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeNum={handleLikeNum}

@@ -11,3 +11,87 @@
 .custom-hover-button:hover {
   background-color: rgba(0, 0, 0, 0.05); /* 살짝 어두운 배경 */
 }
+
+.modalContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  width: 436px;
+  height: 320px;
+  border-radius: 8px;
+}
+
+.modalTitle {
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 32px;
+  letter-spacing: 0;
+  margin-bottom: 24px;
+}
+
+.modalLabel {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.modalInput {
+  padding: 8px;
+  width: 100%;
+  margin-bottom: 16px;
+  border: 1px solid #e5e7eb;
+  height: 42px;
+}
+
+.modalButtonArea {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.cancelModalButton {
+  width: 81.45px;
+  height: 48px;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0);
+}
+
+.submitButton {
+  width: 125.56px;
+  height: 48px;
+  border-radius: 8px;
+  background: #000000;
+  color: #ffffff;
+  cursor: "pointer";
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+}
+
+.addGroupButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s ease;
+}
+
+.addGroupButton:hover {
+  transform: scale(1.05);
+}

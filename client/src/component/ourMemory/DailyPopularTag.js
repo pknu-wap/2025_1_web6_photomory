@@ -2,49 +2,39 @@ import styles from "./EveryMemoryMain.module.css";
 import heart from "../../assets/heart.svg";
 import comment from "../../assets/comment.svg";
 import emptyImage from "../../assets/emptyImage.svg";
-import emptyHeart from '../../assets/emptyHeart.svg'
 
 export default function DailyPopularTag({
   post,
-  handleLikeNum,
-  handleCommentClickForModal,
-  handleImageClick
+  handleLikeClick,
+  handleCommentClick,
 }) {
   return (
     <div className={styles.todayTagContainer}>
-      <img
+      <span
         className={styles.todayTagImage}
-        src={post?.photoUrl ||  emptyImage }
-        alt=""
-        onClick={handleImageClick}></img>
+        style={{ backgroundImage: `url(${post?.photo_url || { emptyImage }})` }}
+      ></span>
       <div className={styles.forFlexTodayTag1}>
         <div className={styles.forFlexTodayTag2}>
+          {/*여기 아이콘은 빼야 할 듯*/}
           <span className={styles.todayTagImageName}>
-            {post?.post_text || 'Unknown'}
+            {post.post_text}
+            {/*앨범 제목 받아오기*/}
           </span>
         </div>
         <p className={styles.todayTagExplain}>
-          {post?.post_description || 'Unknown'}
+          {post.post_description}
+          {/*설명 받기*/}
         </p>
         <div className={styles.forFlexTodayTag3}>
-          <div className={styles.heartContainer} onClick={(e) => {
-            e.stopPropagation();
-            handleLikeNum();
-          }}>
-            {post?.isLikeCountUp===false ? ( 
-              <img src={emptyHeart} alt="" className={styles.todayTagHeartIcon}/>
-            ) : (
-              <img src={heart} alt="" className={styles.todayTagHeartIcon}/>
-            )}
+          <div className={styles.heartContainer} onClick={handleLikeClick}>
+            <img src={heart} alt="" className={styles.todayTagHeartIcon}></img>
             <span className={styles.todayTagheartText}>
-              {post?.likesCount || "Unknown"}
+              {post?.likes_count || "3.2k"}
+              {/*하트 갯수 받기*/}
             </span>
           </div>
-          <div className={styles.commentContainer} 
-          onClick={(e) => {
-            e.stopPropagation();
-            handleCommentClickForModal(post);
-          }}>
+          <div className={styles.commentContainer} onClick={handleCommentClick}>
             <img
               src={comment}
               alt=""
@@ -52,7 +42,8 @@ export default function DailyPopularTag({
             ></img>
             <span className={styles.forFlextodayTagCommentText}>
               <span className={styles.todayTagCommentText}>
-                {post?.commentsCount || "Unknown"}
+                {post?.comments_count || "80"}
+                {/*댓글 갯수 받기*/}
               </span>
             </span>
           </div>

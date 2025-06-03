@@ -43,6 +43,19 @@
   align-self: flex-end;
   font-size: 14px;
   margin-right: 16px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* 마우스를 올렸을 때: 살짝 위로 */
+.albumLink:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 클릭할 때: 눌리는 효과 */
+.albumLink:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
 .albumInfo {

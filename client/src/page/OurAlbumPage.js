@@ -4,12 +4,11 @@ import Footer from "../component/common/Footer";
 import Container from "../component/common/Container";
 import Calender from "../component/calender/Calender";
 import AddAlbum from "../component/add/AddAlbum";
-import AllAlbumTags from "../component/tag/AllalbumTags";
+import AllAlbumTags from "../component/tag/AllAlbumTags";
 import CurrentGroup from "../component/group/CurrentGroup";
 import Groups from "../component/group/Groups";
 import AlbumList from "../component/album/AlbumList";
-
-import { getOurAlbumData } from "../api/ourAlbumApi"; //서버 연동 준비용
+import { getOurAlbumData } from "../api/ourAlbumApi";
 import { normalizeOurAlbumData } from "../utils/normalizers";
 
 function OurAlbumPage() {
@@ -17,15 +16,21 @@ function OurAlbumPage() {
   const [selectedGroupId, setSelectedGroupId] = useState(""); // 선택된 그룹 ID를 App에서 관리
   const [groupAlbums, setGroupAlbums] = useState([]); // 그룹별 앨범 리스트
   const [albumTitlesByGroup, setAlbumTitlesByGroup] = useState({}); //그룹ID에 대한 앨범 목록 객체
-  const [albumsByGroupId, setAlbumsByGroupId] = useState({}); //그룹 id별 앨범 데이터터
+  const [albumsByGroupId, setAlbumsByGroupId] = useState({}); //그룹 id별 앨범 데이터
   const [selectedTags, setSelectedTags] = useState([]); //선택된 태그 배열 상태
   const [currentTags, setCurrentTags] = useState([]); //현재 그룹의 태그 배열 상태
 
   //태그 선택 헨들러
   const handleTagClick = (tag) => {
     setSelectedTags((prev) =>
+      //기존 태그 선택 취소, 태그 선택
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
+  };
+
+  //태그 추가 헨들러
+  const handleAddTagClick = (tags) => {
+    setCurrentTags((prev) => Array.from(new Set([...prev, ...tags])));
   };
 
   // 새로운 그룹 추가 핸들러 (AddGroupButton에서 사용할 예정)
@@ -78,8 +83,8 @@ function OurAlbumPage() {
           setSelectedGroupId(firstGroup.group_id);
           setGroupAlbums(firstGroup.albums);
 
-          const titlesByGroup = {};
-          const albumsMap = {};
+          const titlesByGroup = {}; //그룹별 앨범명
+          const albumsMap = {}; //그룹별 앨범 데이터
 
           //그룹 id에 따른 앨범명, 앨범 정보 매핑
           for (const group of normalizedData) {
@@ -88,7 +93,6 @@ function OurAlbumPage() {
             );
             albumsMap[group.group_id] = group.albums;
           }
-
           setAlbumTitlesByGroup(titlesByGroup);
           setAlbumsByGroupId(albumsMap);
 
@@ -119,6 +123,9 @@ function OurAlbumPage() {
       setCurrentTags([]);
     }
   }, [selectedGroupId, albumsByGroupId]);
+
+  // 전체 앨범 개수 구하기
+  const allAlbumsCount = groupAlbums.length;
 
   return (
     <>
@@ -156,6 +163,7 @@ function OurAlbumPage() {
               albumTitlesByGroup={albumTitlesByGroup}
               setAlbumTitlesByGroup={setAlbumTitlesByGroup}
               setGroupAlbums={setGroupAlbums}
+              handleAddTagClick={handleAddTagClick}
             />
             <AllAlbumTags
               tags={currentTags}
@@ -184,6 +192,7 @@ function OurAlbumPage() {
                 type="group"
                 selectedGroupId={selectedGroupId}
                 basePath="/our-album"
+                allAlbumsCount={allAlbumsCount}
               />
             </div>
           </div>

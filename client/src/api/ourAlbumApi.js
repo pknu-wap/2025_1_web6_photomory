@@ -149,6 +149,9 @@ export async function createGroupAlbumPost(
 ) {
   const token = localStorage.getItem("accessToken");
 
+  const photoName = postTitle;
+  const photoMakingtime = postTime;
+
   const formData = new FormData();
   formData.append("photo", photoFile);
 
@@ -157,6 +160,8 @@ export async function createGroupAlbumPost(
     JSON.stringify({
       postTitle,
       postTime,
+      photoName,
+      photoMakingtime,
     })
   );
 
