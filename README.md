@@ -3,7 +3,9 @@
 > 친구들과 사진을 공유하고, 추억을 기록할 수 있는 그룹 기반 앨범 웹 서비스입니다.
 
 
-> 🔗 [Photomory 프론트엔드 배포 링크](https://photomory.netlify.app/)
+> 🔗 [Photomory 프론트엔드 배포 링크](https://photomory.netlify.app/)<br><br>
+>  [![Netlify Status](https://api.netlify.com/api/v1/badges/b56018c7-a139-418e-96d6-13c2d57de3fd/deploy-status)](https://app.netlify.com/projects/photomory/deploys)
+
 
 ## 🧩 주요 기능
 
