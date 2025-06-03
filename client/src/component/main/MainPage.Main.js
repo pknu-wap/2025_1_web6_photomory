@@ -274,10 +274,10 @@ function MainPageMain() {
           나만 볼 수 있는 특별한 순간을 안전하게 보관하세요
         </p>
         <div className={styles.myMemoryImageContainer}>
-          <img src={myAlbums[0]?.myphotos[0]?.myphotoUrl || image1} alt="" className={styles.myMemoryImage1} //이미지도 가꼬 와야 한다.
-          onClick={(e) => imageModalOpen(e, myAlbums[0]?.myphotos[0]?.myphotoUrl || '')}/>
-          <img src={myAlbums[1]?.myphotos[0]?.myphotoUrl || image2} alt="" className={styles.myMemoryImage2}
-          onClick={(e) => imageModalOpen(e, myAlbums[1]?.myphotos[0]?.myphotoUrl || '')}/>
+          <img src={myAlbums?.[0]?.myphotos?.[0]?.myphotoUrl || image1} alt="" className={styles.myMemoryImage1} //이미지도 가꼬 와야 한다.
+          onClick={(e) => imageModalOpen(e, myAlbums?.[0]?.myphotos?.[0]?.myphotoUrl || '')}/>
+          <img src={myAlbums?.[1]?.myphotos?.[0]?.myphotoUrl || image2} alt="" className={styles.myMemoryImage2}
+          onClick={(e) => imageModalOpen(e, myAlbums?.[1]?.myphotos?.[0]?.myphotoUrl || '')}/>
         </div>
       </div>
       <div
@@ -291,10 +291,18 @@ function MainPageMain() {
           특별한 순간을 다른 사람들과 함께 나누고 소통하세요
         </p>
         <div className={styles.ourMemoryImageContainer}>
-          <img src={ourAlbums[0]?.albums[0]?.photos[0] || image3} alt="" className={styles.ourMemoryImage1}
-          onClick={(e) => imageModalOpen(e, ourAlbums[0]?.albums[0]?.photos[0] || '')}/>
-          <img src={ourAlbums[0]?.albums[0]?.photos[1] || image4} alt="" className={styles.ourMemoryImage2}
-          onClick={(e) => imageModalOpen(e, ourAlbums[0]?.albums[1]?.photos[0] || '')}/>
+          <img 
+            src={ourAlbums?.[0]?.albums?.[0]?.photos?.[0] || image3} 
+            alt="" 
+            className={styles.ourMemoryImage1}
+            onClick={(e) => imageModalOpen(e, ourAlbums?.[0]?.albums?.[0]?.photos?.[0] || '')}
+          />
+          <img 
+            src={ourAlbums?.[0]?.albums?.[0]?.photos?.[1] || image3} 
+            alt="" 
+            className={styles.ourMemoryImage1}
+            onClick={(e) => imageModalOpen(e, ourAlbums?.[0]?.albums?.[0]?.photos?.[1] || '')}
+          />
         </div>
       </div>
       <div className={styles.weeklyMemoryTitleContainer}>
