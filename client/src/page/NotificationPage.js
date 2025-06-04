@@ -3,6 +3,7 @@ import Footer from "../component/common/Footer";
 import Header from "../component/common/Header";
 import MemoryNotificationBox from "../component/notification/MemoryNotificationBox";
 import GeneralNotificationBox from "../component/notification/GeneralNotificationBox";
+import { fetchMockMemoryNotifications } from "../api/fetchMockMemoryNotifications";
 import {
   subscribeToNotifications,
   fetchnotificationList,
@@ -16,10 +17,19 @@ function NotificationPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await fetchnotificationList(); // 알림 목록 불러오기
-        const memory = data.filter((item) => item.type === "REMIND");
+        const data = await fetchnotificationList(); // 실제 알림 목록 불러오기
+        const mockMemory = await fetchMockMemoryNotifications(); // 목데이터 가져오기
+
+        // 실제 데이터 중 REMIND만 추출
+        const realMemory = data.filter((item) => item.type === "REMIND");
+
+        // 일반 알림은 type !== REMIND
         const general = data.filter((item) => item.type !== "REMIND");
-        setMemoryNotifications(memory);
+
+        // 실제 + 목데이터 결합 (실제 데이터가 앞에 오도록)
+        const mergedMemory = [...realMemory, ...mockMemory];
+
+        setMemoryNotifications(mergedMemory);
         setGeneralNotifications(general);
       } catch (error) {
         console.error("알림 불러오기 실패:", error);

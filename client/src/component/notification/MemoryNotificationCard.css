@@ -1,5 +1,5 @@
 .memoryCard {
-  background-color: #f8f8f8;
+  background-color: #f5f0f7;
   border-radius: 12px;
   padding: 16px;
   display: flex;
@@ -7,7 +7,25 @@
   gap: 12px;
   width: 490px;
   height: 160px;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 모달이 열린 상태에서는 hover, transition 제거 */
+.modal-open.memoryCard:hover,
+.modal-open.memoryCard:active {
+  transform: none !important;
+  box-shadow: none !important;
+  cursor: default;
+}
+
+.modal-open.memoryCard {
+  transition: none !important;
+}
+
+.memoryCard:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 .memoryTime {
@@ -63,12 +81,18 @@
 .memoryButton {
   margin-top: 8px;
   align-self: flex-start;
-  background-color: #000;
-  color: #fff;
+  background-color: #7b4fff;
+  color: #ffffff;
   font-size: 13px;
   border: none;
   width: 75.53px;
   height: 28px;
   border-radius: 8px;
-  cursor: pointer;
+
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.memoryButton:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
