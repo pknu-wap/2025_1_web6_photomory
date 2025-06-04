@@ -8,27 +8,42 @@ import { getPhotoPeriod } from "../utils/getPhotoPeriod";
 import PhotoInfo from "../component/photo/PhotoInfo";
 import PhotoSubmit from "../component/photo/PhotoSubmit";
 import Footer from "../component/common/Footer";
-import { fetchGroupAlbumDetail, fetchGroupInfo } from "../api/ourAlbumApi";
+import {
+  fetchGroupAlbumDetail,
+  fetchGroupInfo,
+  deleteGroupPost,
+} from "../api/ourAlbumApi";
 import { normalizeGroupAlbumDetail } from "../utils/normalizers";
 function OurAlbumDetailPage() {
   const [photoList, setPhotoList] = useState([]); //앨범의 사진들 상태
   const [albumData, setAlbumData] = useState(null); // 전체 정규화 앨범범 데이터 저장
+  const [currentPage, setCurrentPage] = useState(1); //현재 페이지
+  const [isLastPage, setIsLastPage] = useState(false); //마지막 페이지 여부
+  const size = 4; //한 페이지 당 4개 사진
 
   const { groupId, albumId } = useParams();
 
+  //페이지 기반 전체 데이터 불러오기
   useEffect(() => {
     (async () => {
       try {
-        const rowAlbum = await fetchGroupAlbumDetail(albumId); //앨범 상세 데이터 불러오기
-        const rowGroup = await fetchGroupInfo(groupId); //그룹 정보 가져오기
-        const normalized = normalizeGroupAlbumDetail(rowAlbum, rowGroup);
+        const albumRes = await fetchGroupAlbumDetail(
+          albumId,
+          currentPage - 1,
+          size
+        );
+        const groupRes = await fetchGroupInfo(groupId);
+        const normalized = normalizeGroupAlbumDetail(albumRes, groupRes);
         setAlbumData(normalized); // 정규화된 전체 데이터 저장
         setPhotoList(normalized.album.photos); //사젠 데이터 추출
+
+        //마지막 페이지 판단: 받아온 사진 수 < size
+        setIsLastPage(normalized.album.photos.length < size);
       } catch (e) {
         console.error(e);
       }
     })();
-  }, [groupId, albumId]);
+  }, [groupId, albumId, currentPage]);
 
   useEffect(() => {
     const urlsToRevoke =
@@ -42,21 +57,31 @@ function OurAlbumDetailPage() {
     };
   }, [photoList]); // mount → unmount 시점에 한 번만 실행
 
-  // 초기 상태 방어
-  if (!albumData) {
-    return <p>앨범 데이터를 불러오는 중입니다...</p>;
-  }
-
-  const { album, description, groupName, groupMembers } = albumData; //앨범 정보 구조 분해
   //사진 추가 헨들러
   const handleAddPhoto = (newPhoto) => {
     setPhotoList((prev) => [newPhoto, ...prev]);
   };
 
   //사진 삭제 헨들러
-  const handleDeltePhoto = (photoId) => {
-    setPhotoList((prev) => prev.filter((p) => p.photo_id !== photoId));
+  const handleDeltePhoto = async (albumId, postId, photoId, photoName) => {
+    try {
+      const ok = await deleteGroupPost(albumId, postId);
+      if (ok) {
+        alert(`"${photoName}"사진을 삭제하였습니다.`);
+        setPhotoList((prev) => prev.filter((p) => p.photo_id !== photoId));
+      }
+    } catch (error) {
+      console.error("❗ 사진 삭제 중 오류:", error);
+      alert("사진 삭제에 실패했습니다.");
+    }
   };
+
+  // 초기 상태 방어
+  if (!albumData) {
+    return <p>앨범 데이터를 불러오는 중입니다...</p>;
+  }
+
+  const { album, description, groupName, groupMembers } = albumData; //앨범 정보 구조 분해
 
   const albumPeriod = getPhotoPeriod(photoList); //앨범 기간
   const albumTitle = album.album_name; // 앨범이름
@@ -90,6 +115,9 @@ function OurAlbumDetailPage() {
               photoList={photoList}
               onDeltePhoto={handleDeltePhoto}
               albumId={albumId}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              isLastPage={isLastPage}
             />
             <PhotoInfo
               albumTitle={albumTitle}

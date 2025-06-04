@@ -2,20 +2,36 @@ import { useState } from "react";
 import CommentBox from "../common/CommentBox";
 import dayjs from "dayjs";
 import PhotoModal from "./PhotoModal";
+import DirectionPagination from "../common/DirectionPagination";
 import PaginationBar from "../common/PaginationBar";
 import privateIcon from "../../assets/privateIcon.svg";
 import PhotoGrid from "./PhotoGrid";
 import "./Photos.css";
-function Photos({ type, albumId, albumTitle, photoList = [], onDeltePhoto }) {
+function Photos({
+  type,
+  albumId,
+  albumTitle,
+  photoList = [],
+  onDeltePhoto,
+  currentPage,
+  setCurrentPage,
+  isLastPage,
+}) {
   const [selectedPhoto, setSelectedPhoto] = useState(null); //선택된 이미지 상태
-  const [currentPage, setCurrentPage] = useState(1); //현재 페이지 상태
 
-  let photosPerPage; //한 페이지당  사진 갯수
+  const photosPerPage = 8; //private일때 한 페이지 당 8개의 사진
+  const totalPages =
+    type === "private" ? Math.ceil(photoList.length / photosPerPage) : 1;
+  // 현재 페이지의 사진들
+  let currentPhotos;
 
   if (type === "private") {
-    photosPerPage = 8; //개인앨범일 때 한 페이지 당 8개의 사진
+    const indexOfLastPhoto = currentPage * photosPerPage;
+    const indexOfFirstPhoto = indexOfLastPhoto - photosPerPage;
+    currentPhotos = photoList.slice(indexOfFirstPhoto, indexOfLastPhoto);
   } else {
-    photosPerPage = 4; //그룹앨범일 때 한 페이지 당 4개의 사진
+    // 그룹 앨범일 경우 서버에서 페이지별로 받아온 4개 사진을 그대로 사용
+    currentPhotos = photoList;
   }
   //모달 오픈 헨들러
   const handleOpenModal = (photo) => setSelectedPhoto({ ...photo, albumTitle }); //객체의 형태로 앨범명 추가
@@ -26,14 +42,6 @@ function Photos({ type, albumId, albumTitle, photoList = [], onDeltePhoto }) {
   const handlePageClick = (page) => {
     setCurrentPage(page);
   };
-
-  // 전체 페이지 수 계산
-  const totalPages = Math.ceil(photoList.length / photosPerPage);
-
-  // 현재 페이지의 사진들
-  const indexOfLastPhoto = currentPage * photosPerPage; //마지막앨범
-  const indexOfFirstPhoto = indexOfLastPhoto - photosPerPage; //첫번째앨범
-  const currentPhotos = photoList.slice(indexOfFirstPhoto, indexOfLastPhoto); //앨범 범위
 
   return (
     <div className="photosContainer">
@@ -91,17 +99,27 @@ function Photos({ type, albumId, albumTitle, photoList = [], onDeltePhoto }) {
 
       {/* 모달 */}
       <PhotoModal
+        albumId={albumId} //사진 삭제시 사용되는 albumId
         photo={selectedPhoto}
         onClose={handleCloseModal}
         onDelete={onDeltePhoto}
       />
 
-      {/* 페이지네이션 바 */}
-      <PaginationBar
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageClick}
-      />
+      {type === "private" ? (
+        <PaginationBar
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageClick}
+        />
+      ) : (
+        <DirectionPagination
+          currentPage={currentPage}
+          onPrev={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          onNext={() => setCurrentPage((prev) => prev + 1)}
+          isFirstPage={currentPage === 1}
+          isLastPage={isLastPage}
+        />
+      )}
     </div>
   );
 }
