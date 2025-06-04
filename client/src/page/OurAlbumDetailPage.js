@@ -17,22 +17,32 @@ import { normalizeGroupAlbumDetail } from "../utils/normalizers";
 function OurAlbumDetailPage() {
   const [photoList, setPhotoList] = useState([]); //앨범의 사진들 상태
   const [albumData, setAlbumData] = useState(null); // 전체 정규화 앨범범 데이터 저장
+  const [currentPage, setCurrentPage] = useState(1); //현재 페이지
+  const [isLastPage, setIsLastPage] = useState(false); //마지막 페이지 여부
+  const size = 4; //한 페이지 당 4개 사진
 
   const { groupId, albumId } = useParams();
 
   useEffect(() => {
     (async () => {
       try {
-        const rowAlbum = await fetchGroupAlbumDetail(albumId); //앨범 상세 데이터 불러오기
-        const rowGroup = await fetchGroupInfo(groupId); //그룹 정보 가져오기
-        const normalized = normalizeGroupAlbumDetail(rowAlbum, rowGroup);
+        const albumRes = await fetchGroupAlbumDetail(
+          albumId,
+          currentPage - 1,
+          size
+        );
+        const groupRes = await fetchGroupInfo(groupId);
+        const normalized = normalizeGroupAlbumDetail(albumRes, groupRes);
         setAlbumData(normalized); // 정규화된 전체 데이터 저장
         setPhotoList(normalized.album.photos); //사젠 데이터 추출
+
+        //마지막 페이지 판단: 받아온 사진 수 < size
+        setIsLastPage(normalized.album.photos.length < size);
       } catch (e) {
         console.error(e);
       }
     })();
-  }, [groupId, albumId]);
+  }, [groupId, albumId, currentPage]);
 
   useEffect(() => {
     const urlsToRevoke =
@@ -104,6 +114,9 @@ function OurAlbumDetailPage() {
               photoList={photoList}
               onDeltePhoto={handleDeltePhoto}
               albumId={albumId}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              isLastPage={isLastPage}
             />
             <PhotoInfo
               albumTitle={albumTitle}

@@ -115,7 +115,7 @@ export async function createGroupAlbum(
 }
 
 // 우리의 추억 앨범 상세 + 게시물 목록 조회 API
-export async function fetchGroupAlbumDetail(albumId, page = 0, size = 4) {
+export async function fetchGroupAlbumDetail(albumId, page = 0, size = 8) {
   const token = localStorage.getItem("accessToken");
 
   try {
@@ -208,7 +208,7 @@ export async function deleteGroupPost(albumId, postId) {
       throw new Error(`게시물 삭제 실패: ${response.status}`);
     }
 
-    return response.status == 204; // 성공 시 true 반환
+    return response.status === 204; // 성공 시 true 반환
   } catch (error) {
     console.error("❗ 게시물 삭제 중 오류:", error);
     throw error;
