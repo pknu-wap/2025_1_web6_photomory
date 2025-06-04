@@ -11,7 +11,7 @@ function PhotoModal({ photo, onClose, onDelete }) {
   useEffect(() => {
     if (photo) {
       const timer = setTimeout(() => setAnimate(true), 10); // DOM mount 후  10ms 후 .active 붙이기
-      return () => clearTimeout(timer);
+      return () => clearTimeout(timer); //이전 타이머 제거
     } else {
       setAnimate(false); // 닫을 땐 다시 초기화
     }
