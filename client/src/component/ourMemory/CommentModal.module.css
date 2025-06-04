@@ -138,8 +138,24 @@
 
 .uploadButton:hover {
   cursor: pointer;
-  transform: scale(1.1);
+  transform: translate(-18%, 0) scale(1.1);
 }
 .uploadButton:active{
-  transform: scale(0.95);
+  transform: scale(0.95) translate(-18%, 0);
+}
+
+.buttonContainer{
+  display: flex;
+  width: 75px;
+  height: 38px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  background-color: #0080FF;
+  margin-left: 15px;
+}
+.uploadButton{
+  width: 23px;
+  height: 20px;
+  transform: translate(-18%, 0);
 }
