@@ -19,11 +19,20 @@
 }
 
 .commentItem {
-  background-color: #f3f4f6;
+  background-color: #f5f0f7;
   padding: 6px 10px;
   border-radius: 6px;
-  margin-bottom: 4px;
+  margin: 6px 0px 4px;
   font-size: 14px;
+
+  transition: background-color 0.3s ease, transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.commentItem:hover {
+  background-color: #e0d1e7; /* 살짝 진한 보라색 */
+  transform: translateY(-3px); /* 위로 살짝 뜨게 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
 }
 
 .commentText {
