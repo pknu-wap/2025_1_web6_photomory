@@ -112,7 +112,7 @@ async function updateComment(postId, comment, retries = 0, maxRetries = 3) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
             },
-            body: JSON.stringify({ postId, userId: comment.userId, commentText: comment.commentText })
+            body: JSON.stringify({ postId, commentsText: comment.commentsText })
         });
         if (!response.ok) {
             if (response.status === 401) {
@@ -389,11 +389,11 @@ export default function EveryMemoryMain() {
                     ? {
                         ...post,
                         commentsCount: post.commentsCount + 1,
-                        comments: [...post.comments, comment]
+                        comments: [...post.comments, comment] //맞다
                     }
                     : post)
             );
-            await updateComment(modalPost.postId, comment);
+            await updateComment(modalPost.postId, comment.commentsCount);
         } catch (error) {
             console.error('Error uploading comment', error);
             setPosts(rollBackPosts);

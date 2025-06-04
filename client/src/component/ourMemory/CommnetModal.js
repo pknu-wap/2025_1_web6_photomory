@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from './CommentModal.module.css';
-import send from '../../assets/send.svg'
+import sendIcon from '../../assets/sendIcon.svg'
 
 const CommentModal = ({ isOpen, onClose, handleCommentNum, post }) => { //post 추가해야 함 지금은 안 써서 안 씀
     const [commentInput, setCommentInput]= useState('')
@@ -62,12 +62,14 @@ const CommentModal = ({ isOpen, onClose, handleCommentNum, post }) => { //post �
                         onChange={handleCommentInput}
                         onKeyPress={handleKeyPress}
                     />
-                    <img 
-                        src={send} 
-                        alt='' 
-                        className={styles.uploadButton}
-                        onClick={checkComment}
-                    />
+                    <div className={styles.buttonContainer}>
+                        <img 
+                            src={sendIcon} 
+                            alt='' 
+                            className={styles.uploadButton}
+                            onClick={checkComment}
+                        />
+                    </div>
                 </div>
             </div>
         </div>
