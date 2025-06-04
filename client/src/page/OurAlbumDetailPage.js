@@ -46,11 +46,6 @@ function OurAlbumDetailPage() {
     };
   }, [photoList]); // mount → unmount 시점에 한 번만 실행
 
-  // 초기 상태 방어
-  if (!albumData) {
-    return <p>앨범 데이터를 불러오는 중입니다...</p>;
-  }
-
   //사진 추가 헨들러
   const handleAddPhoto = (newPhoto) => {
     setPhotoList((prev) => [newPhoto, ...prev]);
@@ -69,6 +64,11 @@ function OurAlbumDetailPage() {
       alert("사진 삭제에 실패했습니다.");
     }
   };
+
+  // 초기 상태 방어
+  if (!albumData) {
+    return <p>앨범 데이터를 불러오는 중입니다...</p>;
+  }
 
   const { album, description, groupName, groupMembers } = albumData; //앨범 정보 구조 분해
 
