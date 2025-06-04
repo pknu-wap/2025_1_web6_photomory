@@ -94,14 +94,21 @@ export function normalizeGroupAlbumDetail(apiData, groupInfo) {
           photo_id: photo.photoId,
           photo_url: photo.photoUrl,
           photo_name: photo.photoName,
-          photo_makingtime: photo.photoMakingTime ?? post.makingTime, // null 보완
+          photo_makingtime: photo.photoMakingTime ?? post.makingTime,
           post_id: post.postId,
           post_text: post.postText,
+          comments: (post.comments ?? []).map((c) => ({
+            comment_id: c.commentId,
+            user_id: c.userId,
+            user_name: c.userName,
+            comment_text: c.commentsText,
+            created_at: c.createdAt,
+          })),
         }))
       ),
     },
     description: apiData.albumDescription,
-    groupName: groupInfo?.groupName ?? "", // groupInfo가 없으면 빈 문자열
+    groupName: groupInfo?.groupName ?? "",
     groupMembers:
       groupInfo?.members?.map((m) => ({
         user_id: m.userId,
