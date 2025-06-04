@@ -23,6 +23,7 @@ function OurAlbumDetailPage() {
 
   const { groupId, albumId } = useParams();
 
+  //페이지 기반 전체 데이터 불러오기
   useEffect(() => {
     (async () => {
       try {
