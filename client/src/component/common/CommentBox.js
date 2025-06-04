@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import sendIcon from "../../assets/sendIcon.svg";
 import { useAuth } from "../../contexts/AuthContext";
 import { writeComment } from "../../api/ourAlbumApi";
-function CommentBox({ initialComments, albumId, photoId }) {
+function CommentBox({ initialComments, albumId, postId }) {
   const [comment, setComment] = useState(""); //입력할 댓글
   const [comments, setComments] = useState(initialComments ?? []); //받아온 댓글들로 초기화
   const { name } = useAuth(); // 로그인한 사용자 이름 가져오기
-  console.log(initialComments);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (comment.trim() === "") return;
@@ -18,7 +18,7 @@ function CommentBox({ initialComments, albumId, photoId }) {
     };
 
     try {
-      await writeComment(albumId, photoId, comment);
+      await writeComment(albumId, postId, comment);
       setComments((prev) => [...prev, newComment]); // 성공 후 추가
       setComment(""); // 작성 후 초기화
     } catch (err) {

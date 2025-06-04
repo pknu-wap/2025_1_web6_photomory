@@ -81,7 +81,7 @@ function Photos({ type, albumId, albumTitle, photoList = [], onDeltePhoto }) {
                 <CommentBox
                   initialComments={photo.comments}
                   albumId={albumId}
-                  photoId={photo.photo_id}
+                  postId={photo.post_id}
                 />
               )}
             </div>
