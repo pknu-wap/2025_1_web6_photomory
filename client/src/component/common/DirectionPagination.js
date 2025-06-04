@@ -14,7 +14,6 @@ function DirectionPagination({
     <div
       style={{
         textAlign: "center",
-        marginTop: "16px",
         display: "flex",
         justifyContent: "center",
         gap: "16px",
