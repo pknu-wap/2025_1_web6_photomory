@@ -78,7 +78,11 @@ function Photos({ type, albumId, albumTitle, photoList = [], onDeltePhoto }) {
               </p>
               {/* group 타입일 때만 댓글 입력창 */}
               {type === "group" && (
-                <CommentBox albumId={albumId} photoId={photo.photo_id} />
+                <CommentBox
+                  initialComments={photo.comments}
+                  albumId={albumId}
+                  postId={photo.post_id}
+                />
               )}
             </div>
           </div>

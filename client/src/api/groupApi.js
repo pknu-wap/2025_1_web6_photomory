@@ -3,8 +3,8 @@ const BASE_URL = process.env.REACT_APP_API_URL;
 export async function inviteFriendToGroup(groupId, userId) {
   const accessToken = localStorage.getItem("accessToken");
 
-  // 하나의 userId를 객체 배열로 감쌈
-  const requestBody = [{ user_id: userId }];
+  // 하나의 userId를  배열로 감쌈
+  const requestBody = [userId];
 
   try {
     const response = await fetch(

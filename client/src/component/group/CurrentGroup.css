@@ -46,7 +46,7 @@
 }
 
 .member {
-  width: 99px;
+  width: auto;
   height: 37px;
   border-radius: 9999px;
   background: rgb(243, 244, 246);
