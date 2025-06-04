@@ -246,17 +246,17 @@ const FIELD_MAPPING = {
   [styles.job]: "job",
   [styles.myFieldInput]: "field",
   [styles.myEquipmentInput]: "equipment",
-  [styles.myAreaInput]: "area",
+  [styles.myAreaInput]: "user_area",
   [styles.introduction]: "introduction"
 };
 
 function ProfileMain() {
   const [profileData, setProfileData] = useState(initialProfileState);
   const [nonFriendUsers, setNonFriendUsers] = useState([]);
-  const [friendUsers, setFriendUsers] = useState([])
+  const [friendUsers, setFriendUsers] = useState([]);
   const [search, setSearch] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState([])
-  const [isEdit, setIsEdit]= useState(false)
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [isEdit, setIsEdit] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef(null);
@@ -266,73 +266,68 @@ function ProfileMain() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  
-    // 사용자 데이터 가져오기
-  useEffect(() => {
-    const fetchProfileAndUsers = async () => {
-      try {
-        // 내 프로필 데이터 가져오기
-        const myData = await getMyInfo();
-        if (myData) {
-          setProfileData({
-            id: myData.id || "Unknown",
-            name: myData.name || "Unknown",
-            job: myData.job || "Unknown",
-            field: myData.field || "Unknown",
-            equipment: myData.equipment || "Unknown",
-            area: myData.area || "Unknown",
-            introduction: myData.introduction || "Unknown",
-            profileImage: myData.user_photourl || defaultProfile
-          });
-        }
-
-        // 친구가 아닌 사용자 목록 가져오기
-        const nonFriendsList = await getNonFriendsList();
-        if (Array.isArray(nonFriendsList)) {
-          setNonFriendUsers(nonFriendsList);
-        } else {
-          throw new Error('잘못된 사용자 데이터 형식입니다.');
-        }
-
-        //친구인 사용자 목록 가져오기
-        const friendList= await getFriendsList()
-        if (Array.isArray(friendList)) {
-          setFriendUsers(friendList);
-        } else {
-          throw new Error('잘못된 사용자 데이터 형식입니다.');
-        }
-      } catch (error) {
-        console.error(error);
+  // 사용자 데이터 가져오기
+  const fetchProfileAndUsers = useCallback(async () => {
+    try {
+      // 내 프로필 데이터 가져오기
+      const myData = await getMyInfo();
+      if (myData) {
+        setProfileData({
+          user_id: myData.user_id || "Unknown",
+          name: myData.name || "Unknown",
+          job: myData.job || "Unknown",
+          field: myData.field || "Unknown",
+          equipment: myData.equipment || "Unknown",
+          user_area: myData.user_area || "Unknown",
+          introduction: myData.introduction || "Unknown",
+          user_photourl: myData.user_photourl || defaultProfile
+        });
       }
-    };
-    fetchProfileAndUsers();
+
+      // 친구가 아닌 사용자 목록 가져오기
+      const nonFriendsList = await getNonFriendsList();
+      if (Array.isArray(nonFriendsList)) {
+        setNonFriendUsers(nonFriendsList);
+        setFilteredUsers(nonFriendsList);
+      }
+
+      // 친구인 사용자 목록 가져오기
+      const friendList = await getFriendsList();
+      if (Array.isArray(friendList)) {
+        setFriendUsers(friendList);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
 
+  useEffect(() => {
+    fetchProfileAndUsers();
+  }, [fetchProfileAndUsers]);
 
+  const addFriendhandle = useCallback(async (userId) => {
+    if (!userId) return;
 
-  const addFriendhandle= async(userId)=>{ //친구 추가
-    if(!userId) return;
-    const rollBackNonFriends= [...nonFriendUsers]
-    const rollBackFriends= [...friendUsers]
-    const findMatchUser=nonFriendUsers.find((user)=>user.userId === userId)
-    const matchUser= {...findMatchUser, isFriend: true};
+    // 현재 상태 백업
+    const rollBackNonFriends = [...nonFriendUsers];
+    const rollBackFiltered = [...filteredUsers];
 
-    setNonFriendUsers((prevUsers) => //친구 아닌 곳에서 제외외
-      prevUsers.filter((user) => 
-        user.userId !== userId
-      )
-    );
-    setFriendUsers((prevUsers)=>[...prevUsers, matchUser]) //친구 추가
-    try{
-      const response = await addFriend(userId)
-      if(!response || !response.success){
-        throw new Error('친구 추가에 실패했습니다.')
+    // UI 즉시 업데이트
+    setNonFriendUsers(prev => prev.filter(user => user.userId !== userId));
+    setFilteredUsers(prev => prev.filter(user => user.userId !== userId));
+
+    try {
+      const response = await addFriend(userId);
+      if (!response) {
+        throw new Error('친구 추가에 실패했습니다.');
       }
-    } catch(error){
-      setNonFriendUsers(rollBackNonFriends)
-      setFriendUsers(rollBackFriends)
+    } catch (error) {
+      // 실패 시 롤백
+      setNonFriendUsers(rollBackNonFriends);
+      setFilteredUsers(rollBackFiltered);
+      console.error('친구 추가 실패:', error);
     }
-  }
+  }, [nonFriendUsers, filteredUsers]);
 
   const handleRemoveFriend= async(userId)=>{ //친구 제거 핸들러
     if(!userId) return;
@@ -346,10 +341,10 @@ function ProfileMain() {
         user.userId !== userId
       )
     );
-    setNonFriendUsers((prevUsers)=>[...prevUsers, matchUser]) //친구인 거에 추가가
+    setNonFriendUsers((prevUsers)=>[...prevUsers, matchUser]) //친구 아닌 거에 추가
     try{
       const response = await editFriend(userId)
-      if(!response || !response.success){
+      if(!response){
         throw new Error('친구 제거에 실패했습니다.')
       }
     } catch(error){
@@ -373,8 +368,25 @@ function ProfileMain() {
 
   // 검색 핸들러
   const handleSearch = useCallback((e) => {
-    setSearch(e.target.value);
-  }, []);
+    const searchValue = e.target.value;
+    setSearch(searchValue);
+    
+    if (searchValue) {
+      const filtered = nonFriendUsers.filter((user) =>
+        user.userName.toLowerCase().includes(searchValue.toLowerCase())
+      );
+      setFilteredUsers(filtered);
+    } else {
+      setFilteredUsers(nonFriendUsers);
+    }
+  }, [nonFriendUsers]);
+
+  useEffect(() => {
+    // 검색어가 없을 때는 전체 목록 표시
+    if(!search) {
+      setFilteredUsers(nonFriendUsers);
+    }
+  }, [search, nonFriendUsers]);
 
   // 입력 필드 변경 핸들러
   const handleInputChange = useCallback((e) => {
@@ -388,77 +400,12 @@ function ProfileMain() {
     }
   }, []);
 
-  useEffect(()=>{ //친구 검색
-    if(search){
-      const filtered=nonFriendUsers.filter((user)=>
-        user.userName.toLowerCase().includes(search.toLowerCase())
-      )
-      setFilteredUsers(filtered)
-    } else{
-      setFilteredUsers(nonFriendUsers)
-    }
-  }, [search, nonFriendUsers])
-
-  //이것도 갯수제한 두지 말고 그냥 스크롤로 해두자자
-  const numLimitedFilteredUsers= search? filteredUsers : nonFriendUsers //혹시나해서서
-
   // 친구 목록 필터링
   const friends = useMemo(() => 
     friendUsers.filter(user => user?.isFriend)
   , [friendUsers]);
 
-  const editHandle = async (e) => {
-    e.preventDefault();
-    if (e.target.value === 'save') {
-      // 저장 시에만 양 끝의 공백을 제거하고 빈 값은 'Unknown'으로 설정
-      const trimmedData = {
-        ...profileData,
-        user_name: profileData?.name?.trim() || 'Unknown',
-        user_introduction: profileData?.introduction?.trim() || 'Unknown',
-        user_job: profileData?.job?.trim() || 'Unknown',
-        user_equipment: profileData?.equipment?.trim() || 'Unknown',
-        user_field: profileData?.field?.trim() || 'Unknown',
-        user_area: profileData?.area?.trim() || 'Unknown',
-      };
-
-      setIsEdit(false);
-      try {
-        const formData = new FormData();
-        
-        // 프로필 이미지가 변경되었고 base64 형식인 경우
-        if (profileImage && profileImage.startsWith('data:image')) {
-          // base64를 Blob으로 변환
-          const response = await fetch(profileImage);
-          const blob = await response.blob();
-          formData.append('profile_photourl', blob, 'profile.jpg');
-        }
-
-        // 다른 프로필 정보 추가
-        Object.keys(trimmedData).forEach(key => {
-          if (key !== 'user_photourl') { // 이미지는 별도로 처리했으므로 제외
-            formData.append(key, trimmedData[key]);
-          }
-        });
-
-        const response = await postMyinfo(formData);
-        if (response) {
-          setProfileData(trimmedData);
-        }
-      } catch (error) {
-        console.error('Error saving profile:', error);
-      }
-    } else {
-      setIsEdit(true);
-    }
-  };
-
-  const handleImageClick = () => {
-    if (fileInputRef.current) {
-        fileInputRef.current.click();
-    }
-  };
-
-  const handleFileChange = (e) => {
+  const handleFileChange = useCallback((e) => {
     const file = e.target.files[0];
     if (file) {
         const reader = new FileReader();
@@ -468,11 +415,68 @@ function ProfileMain() {
                 setImageScale(1);
                 setImagePosition({ x: 0, y: 0 });
                 setProfileImage(event.target.result);
+                // 이미지가 선택되면 바로 profileData의 user_photourl 업데이트
+                setProfileData(prev => ({
+                    ...prev,
+                    user_photourl: event.target.result
+                }));
                 setIsEditing(true);
             };
             img.src = event.target.result;
         };
         reader.readAsDataURL(file);
+    }
+  }, []);
+
+  const editHandle = useCallback(async (e) => {
+    e.preventDefault();
+    if (e.target.value === 'save') {
+      // 저장 시에만 양 끝의 공백을 제거하고 빈 값은 'Unknown'으로 설정
+      const trimmedData = {
+        ...profileData,
+        user_name: profileData?.name?.trim() || 'Unknown',
+        user_id: profileData?.user_id || 'Unknown',
+        user_introduction: profileData?.introduction?.trim() || 'Unknown',
+        user_job: profileData?.job?.trim() || 'Unknown',
+        user_equipment: profileData?.equipment?.trim() || 'Unknown',
+        user_field: profileData?.field?.trim() || 'Unknown',
+        user_area: profileData?.user_area?.trim() || 'Unknown',
+        user_photourl: profileData?.user_photourl || defaultProfile
+      };
+      setIsEdit(false);
+      try {
+        const formData = new FormData();
+        // 프로필 이미지가 변경되었고 base64 형식인 경우
+        if (profileImage && profileImage.startsWith('data:image')) {
+          // base64를 Blob으로 변환
+          const response = await fetch(profileImage);
+          const blob = await response.blob();
+          formData.append('user_photourl', blob, 'profile.jpg');
+        }
+        // 다른 프로필 정보 추가
+        Object.keys(trimmedData).forEach(key => {
+          if (key !== 'user_photourl') { // 이미지는 별도로 처리했으므로 제외
+            formData.append(key, trimmedData[key]);
+          }
+        });
+        const response = await postMyinfo(formData); 
+        console.log(response.user_photourl)
+        if (response) {
+          setProfileData({...trimmedData, user_photourl:response.user_photourl});
+          // 프로필 저장 성공 후 데이터 새로고침
+          await fetchProfileAndUsers();
+        }
+      } catch (error) {
+        console.error('Error saving profile:', error);
+      }
+    } else {
+      setIsEdit(true);
+    }
+  }, [profileData, profileImage, fetchProfileAndUsers]);
+
+  const handleImageClick = () => {
+    if (fileInputRef.current) {
+        fileInputRef.current.click();
     }
   };
 
@@ -519,9 +523,8 @@ function ProfileMain() {
                 onMouseLeave={handleMouseUp}
                 onWheel={handleWheel}
               >
-                {profileImage ? (
                   <img
-                    src={profileImage}
+                    src={profileData.user_photourl}
                     alt="Profile"
                     className={styles.profileImage}
                     style={{
@@ -533,13 +536,11 @@ function ProfileMain() {
                       cursor: isEditing ? 'move' : 'default'
                     }}
                   />
-                ) : (
-                  <img src={defaultProfile} alt=""></img>
-                )}
                 <input
                   type="file"
                   ref={fileInputRef}
                   onChange={handleFileChange}
+                  
                   accept="image/*"
                   style={{ display: 'none' }}
                 />
@@ -574,7 +575,7 @@ function ProfileMain() {
                 placeholder="직업을 알려주세요."
                 disabled={!isEdit}
               />
-              <div className={styles.id}>ID: {profileData?.id || ''}</div>
+              <div className={styles.id}>ID: {profileData?.user_id || ''}</div>
             </div>
           </div>
           <div className={styles.forFlexSetting}>
@@ -634,7 +635,7 @@ function ProfileMain() {
               placeholder="활동 지역"
               className={styles.myAreaInput}
               onChange={handleInputChange}
-              value={profileData?.area || ''}
+              value={profileData?.user_area || ''}
               disabled={!isEdit}
             />
           </div>
@@ -652,26 +653,28 @@ function ProfileMain() {
         </div>
       </div>
 
-      <div className={styles.manageFriendContainer}> {/*애니 효과 추가하기*/}
+      <div className={styles.manageFriendContainer}>
         <p className={styles.manageFriendTop}>친구 관리</p>
         <div className={styles.forFlexFriend}>
           <div className={styles.myFriendsListContainer}>
             <p className={styles.myFriendListTop}>내 친구 목록</p>
-            {friends.length > 0 ? friends.map((user) => ( //친구가 어느 정도 이상이면 오버플로우로 스크롤할 수 있게 
-              <FriendManage
-                key={user.id}
-                userId={user.id}
-                userName={user.name}
-                userField={user.field}
-                isFriend={user.isFriend}
-                handleRemoveFriend={handleRemoveFriend}
-              />
-            )) : (
+            {friends.length > 0 ? (
+              friends.map((user) => (
+                <FriendManage
+                  key={user.userId}
+                  userId={user.userId}
+                  userName={user.userName}
+                  userField={user.field}
+                  isFriend={user.isFriend}
+                  handleRemoveFriend={handleRemoveFriend}
+                />
+              ))
+            ) : (
               <p className={styles.zeroFriend}>앗, 친구가 없어요.😓</p>
             )}
           </div>
           <div className={styles.searchFriendContainer}>
-            <p className={styles.searchMyFriendTop}>친구 검색</p> {/*아이콘 넣기 */}
+            <p className={styles.searchMyFriendTop}>친구 검색</p>
             <input
               type="text"
               className={styles.searchBar}
@@ -680,14 +683,15 @@ function ProfileMain() {
               onChange={handleSearch}
             />
             <div className={styles.forFlexFriendList}>
-              {numLimitedFilteredUsers.map(user => (
+              {filteredUsers.map(user => (
                 <SearchFriend
                   key={user.userId}
-                  userId={user.userId} 
-                  userName={user.userName} 
-                  userImage={user.Userphotourl}
+                  userId={user.userId}
+                  userName={user.userName}
+                  userImage={user.user_photourl}
                   addFriend={addFriendhandle}
-                />))}
+                />
+              ))}
             </div>
           </div>
         </div>
