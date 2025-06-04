@@ -47,7 +47,6 @@ function OurAlbumDetailPage() {
     return <p>앨범 데이터를 불러오는 중입니다...</p>;
   }
 
-  const { album, description, groupName, groupMembers } = albumData; //앨범 정보 구조 분해
   //사진 추가 헨들러
   const handleAddPhoto = (newPhoto) => {
     setPhotoList((prev) => [newPhoto, ...prev]);
@@ -57,6 +56,8 @@ function OurAlbumDetailPage() {
   const handleDeltePhoto = (photoId) => {
     setPhotoList((prev) => prev.filter((p) => p.photo_id !== photoId));
   };
+
+  const { album, description, groupName, groupMembers } = albumData; //앨범 정보 구조 분해
 
   const albumPeriod = getPhotoPeriod(photoList); //앨범 기간
   const albumTitle = album.album_name; // 앨범이름
