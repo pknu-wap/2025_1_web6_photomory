@@ -88,7 +88,8 @@ async function updateLikeCount(postId, retries = 0, maxRetries = 3) {
             }
             throw new Error(`Failed to upload count: ${response.status}`);
         }
-        return await response.json();
+        // 응답의 Content-Type 확인
+            return 'success';
     } catch (error) {
         if (error.message === 'Unauthorized' && refreshToken && retries < maxRetries) {
             accessToken = await refreshAccessToken(refreshToken);
@@ -96,7 +97,7 @@ async function updateLikeCount(postId, retries = 0, maxRetries = 3) {
                 return await updateLikeCount(postId, retries + 1, maxRetries);
             }
         }
-        console.error('Failed to upload like');
+        console.error('Failed to upload like:', error.message);
         return null;
     }
 }
@@ -365,14 +366,17 @@ export default function EveryMemoryMain() {
         try {
             setPosts((prevPosts) =>
                 prevPosts.map((post) => post.postId === postId
-                    ? post.isLikeCountUp === false
-                        ? { ...post, likesCount: post.likesCount + 1, isLikeCountUp: true }
-                        : { ...post, likesCount: post.likesCount - 1, isLikeCountUp: false }
+                    ? post.liked === false
+                        ? { ...post, likesCount: post.likesCount + 1, liked: true }
+                        : { ...post, likesCount: post.likesCount - 1, liked: false }
                     : post).sort((a, b) => b.likesCount - a.likesCount)
             );
-            await updateLikeCount(postId);
+            const response = await updateLikeCount(postId);
+            if (!response || !response==='success') {
+                throw new Error('Failed to update like count');
+            }
         } catch (error) {
-            console.error('Error uploading like count', error);
+            console.error('Error updating like count:', error.message);
             setPosts(rollBackPosts);
         }
     };
@@ -426,6 +430,7 @@ export default function EveryMemoryMain() {
     };
 
     const handleImageClick = (post) => {
+        if (!post) return;
         setIsImageModalOpen(true);
         setSelectedPostForModal(post);
     };
@@ -476,18 +481,21 @@ export default function EveryMemoryMain() {
                         handleLikeNum={handleLikeNum}
                         handleCommentClickForModal={handleCommentClickForModal}
                         handleImageClick={handleImageClick}
+                        index={1}
                     />
                     <WeeklyPopularTag
                         post={[weeklyPosts[1]]}
                         handleLikeNum={handleLikeNum}
                         handleCommentClickForModal={handleCommentClickForModal}
                         handleImageClick={handleImageClick}
+                        index={2}
                     />
                     <WeeklyPopularTag
                         post={[weeklyPosts[2]]}
                         handleLikeNum={handleLikeNum}
                         handleCommentClickForModal={handleCommentClickForModal}
                         handleImageClick={handleImageClick}
+                        index={3}
                     />
                 </div>
                 <div className={styles.todayTagTopContainer}>
