@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import styles from "./Profile.Main.module.css";
 import FriendManage from "../friend/Friend.Manage";
@@ -331,11 +331,10 @@ function ProfileMain() {
   }, [nonFriendUsers, filteredUsers]);
 
   const handleRemoveFriend= async(userId)=>{ //친구 제거 핸들러
-    if(!userId) return;
     const rollBackNonFriends= [...nonFriendUsers]
     const rollBackFriends= [...friendUsers]
     const findMatchUser=nonFriendUsers.find((user)=>user.userId === userId)
-    const matchUser= {...findMatchUser, isFriend: false};
+    const matchUser= {...findMatchUser};
 
     setFriendUsers((prevUsers) => //친구인 거에서 제거
       prevUsers.filter((user) => 
@@ -401,10 +400,7 @@ function ProfileMain() {
     }
   }, []);
 
-  // 친구 목록 필터링
-  const friends = useMemo(() => 
-    friendUsers.filter(user => user?.isFriend)
-  , [friendUsers]);
+
 
   const handleFileChange = useCallback((e) => {
     const file = e.target.files[0];
@@ -510,6 +506,7 @@ function ProfileMain() {
     setImageScale(newScale);
   };
 
+  console.log(friendUsers)
   return (
     <div className={styles.allContainer}>
       <div className={styles.myInfoContainer}>
@@ -659,14 +656,13 @@ function ProfileMain() {
         <div className={styles.forFlexFriend}>
           <div className={styles.myFriendsListContainer}>
             <p className={styles.myFriendListTop}>내 친구 목록</p>
-            {friends.length > 0 ? (
-              friends.map((user) => (
+            {friendUsers.length > 0 ? (
+              friendUsers.map((user) => (
                 <FriendManage
                   key={user.userId}
                   userId={user.userId}
                   userName={user.userName}
-                  userField={user.field}
-                  isFriend={user.isFriend}
+                  userPhotoUrl={user.userPhotoUrl}
                   handleRemoveFriend={handleRemoveFriend}
                 />
               ))
