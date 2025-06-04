@@ -2,19 +2,19 @@ import React, { useState } from "react";
 import sendIcon from "../../assets/sendIcon.svg";
 import { useAuth } from "../../contexts/AuthContext";
 import { writeComment } from "../../api/ourAlbumApi";
-function CommentBox({ albumId, photoId }) {
+function CommentBox({ initialComments, albumId, photoId }) {
   const [comment, setComment] = useState(""); //입력할 댓글
-  const [comments, setComments] = useState([]); // 댓글 리스트
+  const [comments, setComments] = useState(initialComments ?? []); //받아온 댓글들로 초기화
   const { name } = useAuth(); // 로그인한 사용자 이름 가져오기
-
+  console.log(initialComments);
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (comment.trim() === "") return;
 
     const newComment = {
-      text: comment, // 댓글
-      date: new Date(), //현재 시간 저장
-      author: name,
+      comment_text: comment, // 댓글
+      created_at: new Date(), //현재 시간 저장
+      user_name: name,
     };
 
     try {
@@ -52,9 +52,9 @@ function CommentBox({ albumId, photoId }) {
         }}
       >
         <ul style={{ paddingLeft: 0, listStyleType: "none", margin: 0 }}>
-          {comments.map((c, idx) => (
+          {comments.map((c) => (
             <li
-              key={idx}
+              key={c.comment_id}
               style={{
                 backgroundColor: "#f3f4f6",
                 padding: "6px 10px",
@@ -64,10 +64,10 @@ function CommentBox({ albumId, photoId }) {
               }}
             >
               <p style={{ marginBottom: "4px" }}>
-                {c.author} : {c.text}
+                {c.user_name} : {c.comment_text}
               </p>
               <p style={{ fontSize: "12px", color: "#888" }}>
-                {c.date.toLocaleDateString("ko-KR")}
+                {new Date(c.created_at).toLocaleDateString("ko-KR")}
               </p>
             </li>
           ))}
