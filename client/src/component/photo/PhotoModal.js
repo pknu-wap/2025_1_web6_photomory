@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import "./PhotoModal.css";
 import calenderIcon from "../../assets/calenderIcon.svg";
@@ -6,6 +6,17 @@ import modalCancelButton from "../../assets/modalCancelButton.svg";
 import discardButton from "../../assets/discardButton.svg";
 
 function PhotoModal({ photo, onClose, onDelete }) {
+  const [animate, setAnimate] = useState(false);
+
+  useEffect(() => {
+    if (photo) {
+      const timer = setTimeout(() => setAnimate(true), 10); // DOM mount 후  10ms 후 .active 붙이기
+      return () => clearTimeout(timer);
+    } else {
+      setAnimate(false); // 닫을 땐 다시 초기화
+    }
+  }, [photo]);
+
   if (!photo) return null;
   return (
     <>
@@ -18,7 +29,7 @@ function PhotoModal({ photo, onClose, onDelete }) {
       {/* 모달 본체 */}
       <div
         onClick={(e) => e.stopPropagation()} // 이벤츠 전파 막기
-        className="modalImageCard"
+        className={`modalImageCard ${animate ? "active" : ""}`}
       >
         <div style={{ display: "flex", alignItems: "flex-start" }}>
           <div style={{ position: "relative" }}>
