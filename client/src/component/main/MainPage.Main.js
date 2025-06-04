@@ -8,11 +8,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/photomory_logo.svg";
-import image1 from "../../assets/mainPageImage1.svg";
-import image2 from "../../assets/mainPageImage2.svg";
-import image3 from "../../assets/mainPageImage3.svg";
-import image4 from "../../assets/mainPageImage4.svg";
 import DailyPopularTagModal from "../ourMemory/DailyPopularTagModal"; //일간은 아니지만 그냥 쓰는 거
+import emptyImage from "../../assets/emptyImage.svg";
 import { useState, useEffect } from "react";
 import { useRandomIndex } from "../../contexts/RandomIndexContext";
 
@@ -342,7 +339,7 @@ function MainPageMain() {
         </p>
         <div className={styles.myMemoryImageContainer}>
           <img
-            src={findFirstAvailableMyPhoto(myAlbums, 0) || image1}
+            src={findFirstAvailableMyPhoto(myAlbums, 0) || emptyImage}
             alt=""
             className={styles.myMemoryImage1}
             onClick={(e) =>
@@ -363,7 +360,7 @@ function MainPageMain() {
         </p>
         <div className={styles.ourMemoryImageContainer}>
           <img 
-            src={findFirstAvailableImage(ourAlbums, 0) || image3} 
+            src={findFirstAvailableImage(ourAlbums, 0) || emptyImage} 
             alt="" 
             className={styles.ourMemoryImage1}
             onClick={(e) => imageModalOpen(e, findFirstAvailableImage(ourAlbums, 0) || '')}
