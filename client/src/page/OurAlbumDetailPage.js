@@ -34,11 +34,18 @@ function OurAlbumDetailPage() {
         );
         const groupRes = await fetchGroupInfo(groupId);
         const normalized = normalizeGroupAlbumDetail(albumRes, groupRes);
+        const fetchedPhotos = normalized.album.photos;
+
+        // 사진이 하나도 없고 1페이지보다 크면 되돌리기
+        if (fetchedPhotos.length === 0 && currentPage > 1) {
+          setCurrentPage((prev) => prev - 1);
+          return;
+        }
         setAlbumData(normalized); // 정규화된 전체 데이터 저장
         setPhotoList(normalized.album.photos); //사젠 데이터 추출
 
         //마지막 페이지 판단: 받아온 사진 수 < size
-        setIsLastPage(normalized.album.photos.length < size);
+        setIsLastPage(fetchedPhotos.length < size);
       } catch (e) {
         console.error(e);
       }
