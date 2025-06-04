@@ -62,7 +62,8 @@ function MyAlbumPage() {
           margin: "28px auto 0",
           padding: "0 40px",
           position: "relative",
-          height: "2400px",
+          minHeight: "2300px",
+          height: "100vh",
           opacity: "1",
         }}
       >
