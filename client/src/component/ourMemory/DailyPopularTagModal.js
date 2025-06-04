@@ -1,16 +1,22 @@
 import React from 'react';
 import styles from './DailyPopularTagModal.module.css';
+import emptyImage from "../../assets/emptyImage.svg";
 
-
-const DailyPopularTagModal = ({ isOpen, onClose, imageForModal, post}) => { //post 추가해야 함 지금은 안 써서 안 씀
+const DailyPopularTagModal = ({ isOpen, onClose, post }) => { 
   if (!isOpen) return null;
+  
+  const postData = post?.[0];
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}> 
-        <img className={styles.image} src={imageForModal? imageForModal : post} alt=''
-        onClick={e => e.stopPropagation()}></img>
+      <img 
+        className={styles.image} 
+        src={postData?.photoUrl || emptyImage} 
+        alt=""
+        onClick={e => e.stopPropagation()}
+      />
     </div>
-  )
+  );
 } 
 
 export default DailyPopularTagModal;
