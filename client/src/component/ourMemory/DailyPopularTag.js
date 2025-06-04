@@ -37,7 +37,7 @@ export default function DailyPopularTag({
               <img src={heart} alt="" className={styles.todayTagHeartIcon}/>
             )}
             <span className={styles.todayTagheartText}>
-              {post?.likesCount || "Unknown"}
+              {post?.likesCount || "0"}
             </span>
           </div>
           <div className={styles.commentContainer} 
@@ -52,7 +52,7 @@ export default function DailyPopularTag({
             ></img>
             <span className={styles.forFlextodayTagCommentText}>
               <span className={styles.todayTagCommentText}>
-                {post?.commentsCount || "Unknown"}
+                {post?.commentsCount || "0"}
               </span>
             </span>
           </div>
