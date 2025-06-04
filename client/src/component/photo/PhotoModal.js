@@ -5,7 +5,7 @@ import calenderIcon from "../../assets/calenderIcon.svg";
 import modalCancelButton from "../../assets/modalCancelButton.svg";
 import discardButton from "../../assets/discardButton.svg";
 
-function PhotoModal({ photo, onClose, onDelete }) {
+function PhotoModal({ albumId, photo, onClose, onDelete }) {
   const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
@@ -79,7 +79,12 @@ function PhotoModal({ photo, onClose, onDelete }) {
               >
                 <button
                   onClick={() => {
-                    onDelete(photo.photo_id);
+                    onDelete(
+                      albumId,
+                      photo.post_id,
+                      photo.photo_id,
+                      photo.photo_name
+                    );
                     onClose();
                   }}
                   className="deleteButton"

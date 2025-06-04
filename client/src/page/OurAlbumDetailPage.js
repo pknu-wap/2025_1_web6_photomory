@@ -8,7 +8,11 @@ import { getPhotoPeriod } from "../utils/getPhotoPeriod";
 import PhotoInfo from "../component/photo/PhotoInfo";
 import PhotoSubmit from "../component/photo/PhotoSubmit";
 import Footer from "../component/common/Footer";
-import { fetchGroupAlbumDetail, fetchGroupInfo } from "../api/ourAlbumApi";
+import {
+  fetchGroupAlbumDetail,
+  fetchGroupInfo,
+  deleteGroupPost,
+} from "../api/ourAlbumApi";
 import { normalizeGroupAlbumDetail } from "../utils/normalizers";
 function OurAlbumDetailPage() {
   const [photoList, setPhotoList] = useState([]); //앨범의 사진들 상태
@@ -53,8 +57,17 @@ function OurAlbumDetailPage() {
   };
 
   //사진 삭제 헨들러
-  const handleDeltePhoto = (photoId) => {
-    setPhotoList((prev) => prev.filter((p) => p.photo_id !== photoId));
+  const handleDeltePhoto = async (albumId, postId, photoId, photoName) => {
+    try {
+      const ok = await deleteGroupPost(albumId, postId);
+      if (ok) {
+        alert(`"${photoName}"사진을 삭제하였습니다.`);
+        setPhotoList((prev) => prev.filter((p) => p.photo_id !== photoId));
+      }
+    } catch (error) {
+      console.error("❗ 사진 삭제 중 오류:", error);
+      alert("사진 삭제에 실패했습니다.");
+    }
   };
 
   const { album, description, groupName, groupMembers } = albumData; //앨범 정보 구조 분해

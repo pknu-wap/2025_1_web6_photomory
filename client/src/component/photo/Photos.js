@@ -91,6 +91,7 @@ function Photos({ type, albumId, albumTitle, photoList = [], onDeltePhoto }) {
 
       {/* 모달 */}
       <PhotoModal
+        albumId={albumId} //사진 삭제시 사용되는 albumId
         photo={selectedPhoto}
         onClose={handleCloseModal}
         onDelete={onDeltePhoto}

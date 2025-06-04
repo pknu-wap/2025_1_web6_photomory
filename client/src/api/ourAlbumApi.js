@@ -137,7 +137,7 @@ export async function fetchGroupAlbumDetail(albumId, page = 0, size = 4) {
     const data = await response.json();
     return data; // { albumId, albumName, ..., posts: [...] }
   } catch (error) {
-    console.error("📛 앨범 상세 정보 요청 중 에러:", error);
+    console.error("앨범 상세 정보 요청 중 에러:", error);
     throw error;
   }
 }
@@ -185,6 +185,32 @@ export async function createGroupAlbumPost(
     return result;
   } catch (error) {
     console.error("게시글 생성 중 오류:", error);
+    throw error;
+  }
+}
+
+//우리의 추억 게시물 삭제 api함수
+export async function deleteGroupPost(albumId, postId) {
+  const accessToken = localStorage.getItem("accessToken");
+
+  try {
+    const response = await fetch(
+      `${BASE_URL}/api/our-album/album/${albumId}/post/${postId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`게시물 삭제 실패: ${response.status}`);
+    }
+
+    return response.status == 204; // 성공 시 true 반환
+  } catch (error) {
+    console.error("❗ 게시물 삭제 중 오류:", error);
     throw error;
   }
 }
