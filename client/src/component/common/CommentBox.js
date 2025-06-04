@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import sendIcon from "../../assets/sendIcon.svg";
 import { useAuth } from "../../contexts/AuthContext";
 import { writeComment } from "../../api/ourAlbumApi";
+import "./CommentBox.css";
 function CommentBox({ initialComments, albumId, postId }) {
   const [comment, setComment] = useState(""); //입력할 댓글
   const [comments, setComments] = useState(initialComments ?? []); //받아온 댓글들로 초기화
@@ -28,45 +29,16 @@ function CommentBox({ initialComments, albumId, postId }) {
   };
 
   return (
-    <div
-      style={{
-        width: "516px",
-        height: "320px",
-        backgroundColor: "#ffffff",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        padding: "12px",
-        borderRadius: "8px",
-        boxSizing: "border-box",
-        boxShadow:
-          "0px 4px 6px -4px rgba(0, 0, 0, 0.1),0px 10px 15px -3px rgba(0, 0, 0, 0.1)",
-      }}
-    >
+    <div className="commentBox">
       {/* 댓글 리스트 (스크롤 영역) */}
-      <div
-        style={{
-          flex: 1,
-          overflowY: "auto",
-          marginBottom: "12px",
-        }}
-      >
+      <div className="commentList">
         <ul style={{ paddingLeft: 0, listStyleType: "none", margin: 0 }}>
           {comments.map((c) => (
-            <li
-              key={c.comment_id}
-              style={{
-                backgroundColor: "#f3f4f6",
-                padding: "6px 10px",
-                borderRadius: "6px",
-                marginBottom: "4px",
-                fontSize: "14px",
-              }}
-            >
+            <li key={c.comment_id} className="commentItem">
               <p style={{ marginBottom: "4px" }}>
                 {c.user_name} : {c.comment_text}
               </p>
-              <p style={{ fontSize: "12px", color: "#888" }}>
+              <p className="commentDate">
                 {new Date(c.created_at).toLocaleDateString("ko-KR")}
               </p>
             </li>
@@ -75,45 +47,15 @@ function CommentBox({ initialComments, albumId, postId }) {
       </div>
 
       {/* 댓글 입력창 */}
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          borderWidth: "1px 0px 0px 0px",
-          borderStyle: "solid",
-          borderColor: "#E5E7EB",
-          paddingTop: "10px",
-          justifyContent: "space-between",
-        }}
-      >
+      <form onSubmit={handleSubmit} className="commentForm">
         <input
           type="text"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder="댓글을 입력하세요"
-          style={{
-            padding: "8px",
-            width: "400px",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            marginRight: "8px",
-          }}
+          className="commentInput"
         />
-        <button
-          type="submit"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            padding: "8px 12px",
-            width: "78px",
-            backgroundColor: "#3b82f6",
-            color: "#fff",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
+        <button type="submit" className="sendCommentButton">
           <img src={sendIcon} alt="sendIcon" />
         </button>
       </form>
