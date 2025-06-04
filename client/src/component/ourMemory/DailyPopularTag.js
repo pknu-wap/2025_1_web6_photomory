@@ -9,41 +9,43 @@ export default function DailyPopularTag({
   handleLikeNum,
   handleCommentClickForModal,
   handleImageClick
-}) {
+}){
+  const postData=post[0]
+  
   return (
     <div className={styles.todayTagContainer}>
       <img
         className={styles.todayTagImage}
-        src={post?.photoUrl ||  emptyImage }
+        src={postData?.photoUrl || emptyImage}
         alt=""
-        onClick={handleImageClick}></img>
+        onClick={() => handleImageClick(postData)}></img>
       <div className={styles.forFlexTodayTag1}>
         <div className={styles.forFlexTodayTag2}>
           <span className={styles.todayTagImageName}>
-            {post?.post_text || 'Unknown'}
+            {postData?.postText || 'Unknown'}
           </span>
         </div>
         <p className={styles.todayTagExplain}>
-          {post?.post_description || 'Unknown'}
+          {postData?.postDescription || 'Unknown'}
         </p>
         <div className={styles.forFlexTodayTag3}>
           <div className={styles.heartContainer} onClick={(e) => {
             e.stopPropagation();
-            handleLikeNum();
+            handleLikeNum(postData?.postId);
           }}>
-            {post?.isLikeCountUp===false ? ( 
+            {!postData?.liked ? ( 
               <img src={emptyHeart} alt="" className={styles.todayTagHeartIcon}/>
             ) : (
               <img src={heart} alt="" className={styles.todayTagHeartIcon}/>
             )}
             <span className={styles.todayTagheartText}>
-              {post?.likesCount || "0"}
+              {postData?.likesCount || "0"}
             </span>
           </div>
           <div className={styles.commentContainer} 
           onClick={(e) => {
             e.stopPropagation();
-            handleCommentClickForModal(post);
+            handleCommentClickForModal(postData);
           }}>
             <img
               src={comment}
@@ -52,7 +54,7 @@ export default function DailyPopularTag({
             ></img>
             <span className={styles.forFlextodayTagCommentText}>
               <span className={styles.todayTagCommentText}>
-                {post?.commentsCount || "0"}
+                {postData?.commentCount || "0"}
               </span>
             </span>
           </div>

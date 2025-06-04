@@ -134,6 +134,7 @@ const postMyinfo= async (formData, retries=0, maxRetries=3)=>{
         const response = await postMyinfo(formData, retries+1, maxRetries);
         return response
       }
+
     }
     console.error('Failed to post MyInfo')
     return null
@@ -701,3 +702,4 @@ function ProfileMain() {
 }
 
 export default ProfileMain;
+

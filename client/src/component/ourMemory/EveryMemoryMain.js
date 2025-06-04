@@ -384,19 +384,23 @@ export default function EveryMemoryMain() {
     const handleCommentNum = async (modalPost, comment) => {
         const rollBackPosts = [...posts];
         try {
+            if (!modalPost) {
+                console.error('Invalid post data:', modalPost);
+                return;
+            }
+            // Optimistically update the comment count
             setPosts((prevPosts) =>
-                prevPosts.map((post) => post.postId === modalPost.postId
-                    ? {
-                        ...post,
-                        commentsCount: post.commentsCount + 1,
-                        comments: [...post.comments, comment] //맞다
-                    }
-                    : post)
+                prevPosts.map((post) =>
+                    post.postId === modalPost.postId
+                        ? { ...post, commentCount: post.commentCount + 1 }
+                        : post
+                )
             );
-            await updateComment(modalPost.postId, comment.commentsCount);
+            
+            await updateComment(modalPost.postId, { commentsText: comment });
         } catch (error) {
-            console.error('Error uploading comment', error);
-            setPosts(rollBackPosts);
+            console.error('Failed to add comment:', error);
+            setPosts(rollBackPosts); 
         }
     };
 
@@ -435,7 +439,9 @@ export default function EveryMemoryMain() {
         setSelectedPostForModal(post);
     };
 
-    const handleCommentClickForModal = () => {
+    const handleCommentClickForModal = (post) => {
+        console.log('Opening comment modal for post:', post);
+        setSelectedPostForModal(post);
         setIsCommentModalOpen(true);
     };
 
@@ -479,21 +485,21 @@ export default function EveryMemoryMain() {
                     <WeeklyPopularTag
                         post={[weeklyPosts[0]]}
                         handleLikeNum={handleLikeNum}
-                        handleCommentClickForModal={handleCommentClickForModal}
+                        handleCommentClickForModal={() => handleCommentClickForModal(weeklyPosts[0])}
                         handleImageClick={handleImageClick}
                         index={1}
                     />
                     <WeeklyPopularTag
                         post={[weeklyPosts[1]]}
                         handleLikeNum={handleLikeNum}
-                        handleCommentClickForModal={handleCommentClickForModal}
+                        handleCommentClickForModal={() => handleCommentClickForModal(weeklyPosts[1])}
                         handleImageClick={handleImageClick}
                         index={2}
                     />
                     <WeeklyPopularTag
                         post={[weeklyPosts[2]]}
                         handleLikeNum={handleLikeNum}
-                        handleCommentClickForModal={handleCommentClickForModal}
+                        handleCommentClickForModal={() => handleCommentClickForModal(weeklyPosts[2])}
                         handleImageClick={handleImageClick}
                         index={3}
                     />
@@ -507,7 +513,7 @@ export default function EveryMemoryMain() {
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[0]]]}
                             handleLikeNum={handleLikeNum}
-                            handleCommentClickForModal={handleCommentClickForModal}
+                            handleCommentClickForModal={() => handleCommentClickForModal(dailyPosts[nextPage[0]])}
                             handleImageClick={() => { handleImageClick(dailyPosts[nextPage[0]]) }}
                         />
                     </div>
@@ -515,7 +521,7 @@ export default function EveryMemoryMain() {
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[1]]]}
                             handleLikeNum={handleLikeNum}
-                            handleCommentClickForModal={handleCommentClickForModal}
+                            handleCommentClickForModal={() => handleCommentClickForModal(dailyPosts[nextPage[1]])}
                             handleImageClick={() => { handleImageClick(dailyPosts[nextPage[1]]) }}
                         />
                     </div>
@@ -523,7 +529,7 @@ export default function EveryMemoryMain() {
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[2]]]}
                             handleLikeNum={handleLikeNum}
-                            handleCommentClickForModal={handleCommentClickForModal}
+                            handleCommentClickForModal={() => handleCommentClickForModal(dailyPosts[nextPage[2]])}
                             handleImageClick={() => { handleImageClick(dailyPosts[nextPage[2]]) }}
                         />
                     </div>
@@ -531,7 +537,7 @@ export default function EveryMemoryMain() {
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[3]]]}
                             handleLikeNum={handleLikeNum}
-                            handleCommentClickForModal={handleCommentClickForModal}
+                            handleCommentClickForModal={() => handleCommentClickForModal(dailyPosts[nextPage[3]])}
                             handleImageClick={() => { handleImageClick(dailyPosts[nextPage[3]]) }}
                         />
                     </div>
@@ -539,7 +545,7 @@ export default function EveryMemoryMain() {
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[4]]]}
                             handleLikeNum={handleLikeNum}
-                            handleCommentClickForModal={handleCommentClickForModal}
+                            handleCommentClickForModal={() => handleCommentClickForModal(dailyPosts[nextPage[4]])}
                             handleImageClick={() => { handleImageClick(dailyPosts[nextPage[4]]) }}
                         />
                     </div>
@@ -547,7 +553,7 @@ export default function EveryMemoryMain() {
                         <DailyPopularTag
                             post={[dailyPosts[nextPage[5]]]}
                             handleLikeNum={handleLikeNum}
-                            handleCommentClickForModal={handleCommentClickForModal}
+                            handleCommentClickForModal={() => handleCommentClickForModal(dailyPosts[nextPage[5]])}
                             handleImageClick={() => { handleImageClick(dailyPosts[nextPage[5]]) }}
                         />
                     </div>
@@ -639,7 +645,7 @@ export default function EveryMemoryMain() {
                             setUploadFileInfo({ postText: '', postDescription: '', location: '', tagsJson: '' });
                         }}>취소하기</button>
                     </div>
-                </div>
+                </div>commentsText
             </div>
             <DailyPopularTagModal
                 isOpen={isImageModalOpen}
@@ -649,17 +655,8 @@ export default function EveryMemoryMain() {
             <CommentModal
                 isOpen={isCommentModalOpen}
                 onClose={handleCloseCommentModal}
-                post={selectedPostForModal ? [selectedPostForModal] : []}
-                handleCommentNum={(commentText) => {
-                    if (selectedPostForModal && selectedPostForModal.postId) {
-                        handleCommentNum(selectedPostForModal, {
-                            userId: selectedPostForModal.comments.userId,
-                            userName: selectedPostForModal.comments.userName,
-                            userPhotourl: selectedPostForModal.comments.userPhotourl,
-                            commentText: commentText
-                        });
-                    }
-                }}
+                post={selectedPostForModal}
+                handleCommentNum={handleCommentNum}
             />
         </div>
     );
