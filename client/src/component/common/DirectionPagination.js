@@ -18,6 +18,7 @@ function DirectionPagination({
         display: "flex",
         justifyContent: "center",
         gap: "16px",
+        marginTop: "24px", // 위쪽 여백 (필요시 조정)
       }}
     >
       <button
@@ -35,7 +36,17 @@ function DirectionPagination({
         />
       </button>
 
-      <span style={{ lineHeight: "40px", fontWeight: "bold" }}>
+      <span
+        style={{
+          fontSize: "16px",
+          fontWeight: "600",
+          lineHeight: "1",
+          padding: "8px 16px",
+          borderRadius: "12px",
+          backgroundColor: "#f0f0f0",
+          color: "#333",
+        }}
+      >
         페이지 {currentPage}
       </span>
 
