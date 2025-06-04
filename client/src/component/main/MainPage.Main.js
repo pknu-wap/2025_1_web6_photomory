@@ -133,43 +133,35 @@ async function fetchUserMyAlbums(retries = 0, maxRetries = 3) {
 }
 
 async function updateLikeCount(postId, retries = 0, maxRetries = 3) {
-  let accessToken = localStorage.getItem("accessToken");
-  const refreshToken = localStorage.getItem("refreshToken");
-  try {
-    const response = await fetch(
-      `${process.env.REACT_APP_API_URL}/api/every/posts`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ postId }),
-      }
-    );
-    if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error("Unauthorized");
-      }
-      throw new Error("Failed to upload count:"`${response.status}`);
+    let accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/posts/every/${postId}/like`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({ postId })
+        });
+        if (!response.ok) {
+            if (response.status === 401) {
+                throw new Error('Unauthorized');
+            }
+            throw new Error(`Failed to upload count: ${response.status}`);
+        }
+        // 응답의 Content-Type 확인
+            return 'success';
+    } catch (error) {
+        if (error.message === 'Unauthorized' && refreshToken && retries < maxRetries) {
+            accessToken = await refreshAccessToken(refreshToken);
+            if (accessToken) {
+                return await updateLikeCount(postId, retries + 1, maxRetries);
+            }
+        }
+        console.error('Failed to upload like:', error.message);
+        return null;
     }
-    return await response.json();
-  } catch (error) {
-    if (
-      error.message === "Unauthorized" &&
-      refreshToken &&
-      retries < maxRetries
-    ) {
-      //리프토큰 없으면 요청 안 되게게
-      accessToken = await refreshAccessToken(refreshToken);
-      if (accessToken) {
-        const result = await fetchUserEveryPosts(retries + 1, maxRetries);
-        return result;
-      }
-    }
-    console.error("Failed to get ourAlbums");
-    return null;
-  }
 }
 async function refreshAccessToken(refreshToken) {
   try {
@@ -204,7 +196,7 @@ function MainPageMain() {
   const [randomTagText, setRandomTagText] = useState();
   const [randomPosts, setRandomPosts] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [imageForModal, setImageForModal] = useState("");
+  const [imageForModal, setImageForModal] = useState([]);
   const { randomIndex, updateRandomIndex } = useRandomIndex();
   console.log(error);
 
@@ -224,6 +216,7 @@ function MainPageMain() {
         setOurAlbums(ourAlbums);
       }
       if (myAlbums) {
+        console.log(myAlbums)
         setMyAlbums(myAlbums);
       }
 
@@ -261,32 +254,20 @@ function MainPageMain() {
     //이거 islikecountup을 기준으로 크게 두 개로 나눠야 함
     const rollBackPosts = [...posts];
     try {
-      setPosts(
-        (
-          prevPosts //낙관적 업뎃(하트 증가)
-        ) =>
-          prevPosts
-            .map((post) =>
-              post.postId === postId
-                ? post.isLikeCountUp === false
-                  ? {
-                      ...post,
-                      likesCount: post.likesCount + 1,
-                      isLikeCountUp: !post.isLikeCountUp,
-                    } //서버에서 어떤 값을 주는지 정해지면 또 수정하자..
-                  : {
-                      ...post,
-                      likesCount: post.likesCount - 1,
-                      isLikeCountUp: !post.isLikeCountUp,
-                    }
-                : post
-            )
-            .sort((a, b) => b.likesCount - a.likesCount)
-      );
-      await updateLikeCount(postId); //서버 업뎃
+        setPosts((prevPosts) =>
+            prevPosts.map((post) => post.postId === postId
+                ? post.liked === false
+                    ? { ...post, likesCount: post.likesCount + 1, liked: true }
+                    : { ...post, likesCount: post.likesCount - 1, liked: false }
+                : post).sort((a, b) => b.likesCount - a.likesCount)
+        );
+        const response = await updateLikeCount(postId);
+        if (!response || !response==='success') {
+            throw new Error('Failed to update like count');
+        }
     } catch (error) {
-      console.error("Error uploading like count", error);
-      setPosts(rollBackPosts); //낙관적 업뎃 롤백
+        console.error('Error updating like count:', error.message);
+        setPosts(rollBackPosts);
     }
   };
 
@@ -297,12 +278,53 @@ function MainPageMain() {
 
   const imageModalOpen = (e, post) => {
     setIsOpen(true);
-    setImageForModal(post?.photoUrl || "");
+    if (post?.photoUrl) {
+      // weeklyPosts의 경우 (post 객체가 photoUrl을 포함)
+      setImageForModal([post]);
+    } else {
+      // myAlbums나 ourAlbums의 경우 (URL만 전달됨)
+      setImageForModal([{ photoUrl: post }]);
+    }
     e.stopPropagation(); // 이벤트 전파 중단
   };
 
   const imageModalclose = () => {
     setIsOpen(false);
+  };
+
+  const findFirstAvailableImage = (albums, index) => {
+    if (!albums || albums.length === 0) return null;
+    // ourAlbums 배열을 직접 순회
+    for (let i = 0; i < albums.length; i++) {
+      const ourAlbum = albums[i];
+      if (ourAlbum?.albums) {
+        for (let j = 0; j < ourAlbum.albums.length; j++) {
+          const album = ourAlbum.albums[j];
+          if (album?.posts && album.posts.length > index) {
+            const post = album.posts[index];
+            if (post?.postImageUrl) {
+              return post.postImageUrl;
+            }
+          }
+        }
+      }
+    }
+    return null;
+  };
+
+  const findFirstAvailableMyPhoto = (albums, index) => {
+    if (!albums || albums.length === 0) return null;
+    // myAlbums 배열을 직접 순회
+    for (let i = 0; i < albums.length; i++) {
+      const myAlbum = albums[i];
+      if (myAlbum?.myphotos && myAlbum.myphotos.length > index) {
+        const photo = myAlbum.myphotos[index];
+        if (photo?.myphotoUrl) {
+          return photo.myphotoUrl;
+        }
+      }
+    }
+    return null;
   };
 
   return (
@@ -320,19 +342,11 @@ function MainPageMain() {
         </p>
         <div className={styles.myMemoryImageContainer}>
           <img
-            src={myAlbums?.[0]?.myphotos?.[0]?.myphotoUrl || image1}
+            src={findFirstAvailableMyPhoto(myAlbums, 0) || image1}
             alt=""
-            className={styles.myMemoryImage1} //이미지도 가꼬 와야 한다.
+            className={styles.myMemoryImage1}
             onClick={(e) =>
-              imageModalOpen(e, myAlbums?.[0]?.myphotos?.[0]?.myphotoUrl || "")
-            }
-          />
-          <img
-            src={myAlbums?.[1]?.myphotos?.[0]?.myphotoUrl || image2}
-            alt=""
-            className={styles.myMemoryImage2}
-            onClick={(e) =>
-              imageModalOpen(e, myAlbums?.[1]?.myphotos?.[0]?.myphotoUrl || "")
+              imageModalOpen(e, findFirstAvailableMyPhoto(myAlbums, 0) || "")
             }
           />
         </div>
@@ -349,16 +363,10 @@ function MainPageMain() {
         </p>
         <div className={styles.ourMemoryImageContainer}>
           <img 
-            src={ourAlbums?.[0]?.albums?.[0]?.photos?.[0] || image3} 
+            src={findFirstAvailableImage(ourAlbums, 0) || image3} 
             alt="" 
             className={styles.ourMemoryImage1}
-            onClick={(e) => imageModalOpen(e, ourAlbums?.[0]?.albums?.[0]?.photos?.[0] || '')}
-          />
-          <img 
-            src={ourAlbums?.[0]?.albums?.[0]?.photos?.[1] || image4} 
-            alt="" 
-            className={styles.ourMemoryImage1}
-            onClick={(e) => imageModalOpen(e, ourAlbums?.[0]?.albums?.[0]?.photos?.[1] || '')}
+            onClick={(e) => imageModalOpen(e, findFirstAvailableImage(ourAlbums, 0) || '')}
           />
         </div>
       </div>
@@ -395,7 +403,7 @@ function MainPageMain() {
         <div
           className={styles.weeklyMemoryLikesContainer1}
           onClick={() => {
-            handleLikeNum(weeklyPosts[0]?.postId || "");
+            handleLikeNum(weeklyPosts?.[0]?.postId || "");
           }}
         >
           <FontAwesomeIcon
@@ -405,7 +413,7 @@ function MainPageMain() {
           />
           &nbsp;
           <span className={styles.heartNum}>
-            {weeklyPosts[0]?.likesCount || "1.4k"}
+            {weeklyPosts[0]?.likesCount || "0"}
           </span>
         </div>
       </div>
@@ -438,7 +446,7 @@ function MainPageMain() {
           />
           &nbsp;
           <span className={styles.heartNum}>
-            {weeklyPosts[1]?.likesCount || "1.4k"}
+            {weeklyPosts[1]?.likesCount || "0"}
           </span>
         </div>
       </div>
@@ -471,7 +479,7 @@ function MainPageMain() {
           />
           &nbsp;
           <span className={styles.heartNum}>
-            {weeklyPosts[2]?.likesCount || "1.4k"}
+            {weeklyPosts[2]?.likesCount || "0"}
           </span>
         </div>
       </div>
@@ -494,7 +502,7 @@ function MainPageMain() {
       <DailyPopularTagModal
         isOpen={isOpen}
         onClose={imageModalclose}
-        imageForModal={imageForModal}
+        post={imageForModal}
       />
     </div>
   );
