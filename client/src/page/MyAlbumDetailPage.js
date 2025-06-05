@@ -53,6 +53,8 @@ function MyAlbumDetailPage() {
               type="private"
               albumTitle={albumTitle}
               photoList={photoList}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
               onDeltePhoto={(photo_id) =>
                 setPhotoList((prev) =>
                   prev.filter((p) => p.photo_id !== photo_id)
