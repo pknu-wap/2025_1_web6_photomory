@@ -11,7 +11,6 @@
   z-index: 10000000000;
   animation: fadeIn 0.3s ease-in-out;
 }
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -32,6 +31,7 @@
   display: flex;
   flex-direction: column;
   animation: slideIn 0.3s ease-out;
+  overflow: hidden;
 }
 
 @keyframes slideIn {
@@ -45,10 +45,10 @@
   }
 }
 
-
 .commentContainer {
   display: flex;
   flex-direction: row;
+  align-items: flex-start;
   width: 100%;
   height: fit-content;
   padding: 10px;
@@ -59,7 +59,8 @@
 
 .userImage {
   width: 30px;
-  aspect-ratio: 1/1;
+  height: 30px;
+  border-radius: 50%;
   margin-right: 10px;
   transition: transform 0.2s ease;
 }
@@ -98,6 +99,8 @@
   border-top: 1px solid #eee;
   padding-top: 16px;
   animation: slideUp 0.3s ease-out;
+  position: relative;
+  bottom: 0px;
 }
 
 @keyframes slideUp {
@@ -136,10 +139,6 @@
   transition: all 0.2s ease;
 }
 
-.uploadButton:hover {
-  cursor: pointer;
-  transform: translate(-18%, 0) scale(1.1);
-}
 .uploadButton:active{
   transform: scale(0.95) translate(-18%, 0);
 }
@@ -153,9 +152,39 @@
   border-radius: 8px;
   background-color: #0080FF;
   margin-left: 15px;
+  cursor: pointer;
+}
+.buttonContainer:hover .uploadButton{
+  transform: translate(-18%, 0) scale(1.1);
 }
 .uploadButton{
   width: 23px;
   height: 20px;
   transform: translate(-18%, 0);
+}
+
+.commentsList {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  padding-right: 8px; /* Add some padding for the scrollbar */
+}
+
+/* Style the scrollbar */
+.commentsList::-webkit-scrollbar {
+  width: 8px;
+}
+
+.commentsList::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.commentsList::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.commentsList::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

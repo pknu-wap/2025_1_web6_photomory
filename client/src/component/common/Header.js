@@ -8,7 +8,7 @@ import defaultProfileIcon from "../../assets/defaultProfileIcon.svg";
 
 function Header() {
   //로그인 여부, 사용자 이름 받기
-  const { isLogged, name } = useAuth();
+  const { userPhotoUrl, isLogged, name } = useAuth();
 
   //로그인에서 받기
   const nav = useNavigate();
@@ -71,7 +71,7 @@ function Header() {
             <>
               <div className={styles.welcomeButton}>
                 <img
-                  src={defaultProfileIcon}
+                  src={userPhotoUrl || defaultProfileIcon}
                   alt="defaultProfileIcon"
                   className={styles.image}
                 />

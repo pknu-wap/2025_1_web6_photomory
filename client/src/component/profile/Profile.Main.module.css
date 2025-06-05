@@ -304,6 +304,7 @@ body{
   font-weight: 700;
   color: #6B4E71;
   font-size: 18px;
+  margin-bottom: 25px;
 }
 .searchFriendContainer {
   width: 50%;
@@ -320,7 +321,6 @@ body{
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 10px;
 }
 .forFlexFriendList::-webkit-scrollbar {
   width: 8px;
@@ -362,7 +362,11 @@ body{
   border-radius: 12px;
 }
 
-@media (max-width: 768px) {
+
+@media (max-width: 1050px){
+  .forFlexSetting{
+    flex-direction: column;
+  }
   .myInfoContainer,
   .manageFriendContainer {
     width: 95%;
@@ -385,11 +389,6 @@ body{
     margin-left: 0px;
   }
   .forFlexFriend{
-    flex-direction: column;
-  }
-}
-@media (max-width: 1050px){
-  .forFlexSetting{
     flex-direction: column;
   }
 }
@@ -452,4 +451,3 @@ body{
 .editImageIcon:hover {
     background-color: #6B4E71;
 }
-

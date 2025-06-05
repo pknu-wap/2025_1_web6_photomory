@@ -15,7 +15,6 @@ export default function WeeklyPopularTag({
 }) 
 {
   const postData = post[0]; // 배열의 첫 번째 요소를 가져옴
-
   return (
     <div className={styles.weeklyTagContainer}>
       <img
@@ -40,7 +39,7 @@ export default function WeeklyPopularTag({
         <div className={styles.forFlexweeklyTag2}
         onClick={e => e.stopPropagation()}>
           <div className={styles.heartContainer} onClick={()=>handleLikeNum(postData?.postId)}> 
-            {postData?.isLikeCountUp===false ? ( 
+            {postData?.liked===false || !postData ? ( 
               <img src={emptyHeart} alt="" className={styles.heartIcon}></img>
             ) : (
               <img src={heart} alt="" className={styles.heartIcon} />
@@ -49,7 +48,7 @@ export default function WeeklyPopularTag({
           </div>
           <div className={styles.commentContainer} onClick={handleCommentClickForModal}>
             <img src={comment} alt="" className={styles.commentIcon}></img>
-            <p className={styles.commentNum}>{postData?.commentsCount || "0"}</p>
+            <p className={styles.commentNum}>{postData?.commentCount || "0"}</p>
           </div>
         </div>
       </div>
