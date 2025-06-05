@@ -9,6 +9,7 @@ import camera from "../../assets/camera.svg";
 import landscape from "../../assets/landscape.svg";
 import cloud from "../../assets/cloud.svg";
 import twinkle from "../../assets/twinkle.svg";
+import fireIcon from '../../assets/fireIcon.svg'
 import WeeklyPopularTag from "./WeeklyPopularTag.js";
 import DailyPopularTag from "./DailyPopularTag.js";
 import DailyPopularTagModal from "./DailyPopularTagModal";
@@ -504,8 +505,8 @@ export default function EveryMemoryMain() {
                     />
                 </div>
                 <div className={styles.todayTagTopContainer}>
-                    <img src={twinkle} alt='' className={styles.twinkleIcon}></img>
-                    <span className={styles.todayTag}>오늘의 인기 사진</span>
+                    <img src={fireIcon} alt='' className={styles.twinkleIcon}></img>
+                    <span className={styles.todayTag}>실시간 인기 사진</span>
                 </div>
                 <div className={styles.todayTagAllContainer}>
                     <div className={styles.forModalContainer}>
