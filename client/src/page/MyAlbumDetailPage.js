@@ -37,6 +37,11 @@ function MyAlbumDetailPage() {
     setPhotoList((prev) => [newPhoto, ...prev]);
   };
 
+  //사진 삭제 헨들러
+  const handleDeletePhoto = (photo_id) => {
+    setPhotoList((prev) => prev.filter((p) => p.photo_id !== photo_id));
+  };
+
   if (!album) return <div>로딩 중...</div>;
 
   const albumPeriod = getPhotoPeriod(photoList); //촬영기간
@@ -55,11 +60,7 @@ function MyAlbumDetailPage() {
               photoList={photoList}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}
-              onDeltePhoto={(photo_id) =>
-                setPhotoList((prev) =>
-                  prev.filter((p) => p.photo_id !== photo_id)
-                )
-              }
+              onDeltePhoto={handleDeletePhoto}
             />
             <PhotoInfo
               albumTitle={albumTitle}
