@@ -62,13 +62,28 @@ function PhotoSubmit({ type, albumId, handleAddPhoto }) {
       }
 
       if (result) {
-        // 로컬 목록에 추가 (렌더링용)
-        handleAddPhoto({
-          photo_id: result.postId,
-          photo_name: newPhotoData.photo_name,
-          photo_makingtime: newPhotoData.photo_makingtime,
-          photo_url: URL.createObjectURL(newPhotoData.imgFile),
-        });
+        if (type === "private") {
+          //사진 전송후 추가된 마지막 사진
+          const lastPhoto = result.myphotos?.[result.myphotos.length - 1];
+
+          if (lastPhoto) {
+            handleAddPhoto({
+              photo_id: lastPhoto.myphotoId,
+              photo_name: newPhotoData.photo_name,
+              photo_makingtime: newPhotoData.photo_makingtime,
+              photo_url: URL.createObjectURL(newPhotoData.imgFile),
+            });
+          }
+        } else {
+          // 로컬 목록에 추가 (렌더링용)
+          handleAddPhoto({
+            photo_id: result.postId,
+            photo_name: newPhotoData.photo_name,
+            photo_makingtime: newPhotoData.photo_makingtime,
+            photo_url: URL.createObjectURL(newPhotoData.imgFile),
+            post_id: result.postId,
+          });
+        }
 
         // 입력 초기화
         resetForm();

@@ -99,6 +99,7 @@ function Photos({
 
       {/* 모달 */}
       <PhotoModal
+        type={type}
         albumId={albumId} //사진 삭제시 사용되는 albumId
         photo={selectedPhoto}
         onClose={handleCloseModal}
