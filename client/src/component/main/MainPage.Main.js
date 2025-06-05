@@ -367,7 +367,7 @@ function MainPageMain() {
         </div>
       </div>
       <div className={styles.weeklyMemoryTitleContainer}>
-        <div className={styles.weeklyMemoryTitleBox}>#이번_주의_추억</div>
+        <div className={styles.weeklyMemoryTitleBox}># {randomTagText ? randomTagText : "느낌 좋은 사진"}</div>
         <div className={styles.weeklyMemoryTitleText}>
           #이번_주의_추억&nbsp;
           <span className={styles.weeklyMemoryTitleTextSmall}>
@@ -440,9 +440,9 @@ function MainPageMain() {
           }}
           >
           {weeklyPosts?.[1]?.liked === false || !weeklyPosts?.[1] ? ( 
-            <img src={emptyHeart} alt="" className={styles.weeklyMemoryLikes1}></img>
+            <img src={emptyHeart} alt="" className={styles.weeklyMemoryLikes2}></img>
           ) : (
-            <img src={heart} alt="" className={styles.weeklyMemoryLikes1} />
+            <img src={heart} alt="" className={styles.weeklyMemoryLikes2} />
           )}
           &nbsp;
           <span className={styles.heartNum}>
@@ -475,9 +475,9 @@ function MainPageMain() {
           }}
           >
           {weeklyPosts?.[2]?.liked === false || !weeklyPosts?.[2] ? ( 
-            <img src={emptyHeart} alt="" className={styles.weeklyMemoryLikes1}></img>
+            <img src={emptyHeart} alt="" className={styles.weeklyMemoryLikes3}></img>
           ) : (
-            <img src={heart} alt="" className={styles.weeklyMemoryLikes1} />
+            <img src={heart} alt="" className={styles.weeklyMemoryLikes3} />
           )}
           &nbsp;
           <span className={styles.heartNum}>

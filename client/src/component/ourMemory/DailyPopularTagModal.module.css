@@ -10,6 +10,7 @@
   justify-content: center;
   z-index: 1000;
   animation: fadeIn 0.3s ease-in-out;
+  
 }
 
 @keyframes fadeIn {
@@ -21,29 +22,9 @@
   }
 }
 
-.modalContent {
-  position: relative;
-  width: fit-content;
-  height: fit-content;
-  max-width: 1200px;
-  max-height: 800px;
-  animation: zoomIn 0.2s ease-out;
-}
-
-@keyframes zoomIn {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
 .image {
-  width: clamp(320px, 90%, 1259px);
-  height: clamp(220px, 60%, 658px);
+  width: fit-content;
+  height: 80%;
   object-fit: cover;
   border-radius: 8px;
 }
