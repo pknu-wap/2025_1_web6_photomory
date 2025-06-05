@@ -39,7 +39,7 @@ export default function WeeklyPopularTag({
         <div className={styles.forFlexweeklyTag2}
         onClick={e => e.stopPropagation()}>
           <div className={styles.heartContainer} onClick={()=>handleLikeNum(postData?.postId)}> 
-            {postData?.liked===false ? ( 
+            {postData?.liked===false || !postData ? ( 
               <img src={emptyHeart} alt="" className={styles.heartIcon}></img>
             ) : (
               <img src={heart} alt="" className={styles.heartIcon} />

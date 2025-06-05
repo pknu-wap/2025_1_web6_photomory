@@ -4,8 +4,9 @@ import {
   faUsers,
   faLock,
   faTrophy,
-  faHeart,
 } from "@fortawesome/free-solid-svg-icons";
+import emptyHeart from '../../assets/emptyHeart.svg'
+import heart from '../../assets/heart.svg'
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/photomory_logo.svg";
 import DailyPopularTagModal from "../ourMemory/DailyPopularTagModal"; //일간은 아니지만 그냥 쓰는 거
@@ -195,7 +196,7 @@ function MainPageMain() {
   const [isOpen, setIsOpen] = useState(false);
   const [imageForModal, setImageForModal] = useState([]);
   const { randomIndex, updateRandomIndex } = useRandomIndex();
-  console.log(error);
+  console.log(error)
 
   const fetchPosts = async () => {
     try {
@@ -213,7 +214,6 @@ function MainPageMain() {
         setOurAlbums(ourAlbums);
       }
       if (myAlbums) {
-        console.log(myAlbums)
         setMyAlbums(myAlbums);
       }
 
@@ -248,7 +248,6 @@ function MainPageMain() {
   }, [posts, randomIndex, updateRandomIndex]);
 
   const handleLikeNum = async (postId) => {
-    //이거 islikecountup을 기준으로 크게 두 개로 나눠야 함
     const rollBackPosts = [...posts];
     try {
         setPosts((prevPosts) =>
@@ -323,7 +322,7 @@ function MainPageMain() {
     }
     return null;
   };
-
+  
   return (
     <div className={styles.mainContainer}>
       <img src={logo} alt="PHOTOMORY" className={styles.mainLogo}></img>
@@ -382,12 +381,14 @@ function MainPageMain() {
         </div>
       </div>
       <div className={styles.weeklyMemoryContainer1}>
-        <img
-          src={weeklyPosts[0]?.photoUrl || ""}
-          alt=""
-          className={styles.weeklyMemoryImage1}
-          onClick={(e) => imageModalOpen(e, weeklyPosts[0])}
-        ></img>
+        <div className={styles.forScroll}>
+          <img
+            src={weeklyPosts[0]?.photoUrl || ""}
+            alt=""
+            className={styles.weeklyMemoryImage1}
+            onClick={(e) => imageModalOpen(e, weeklyPosts[0])}
+          ></img>
+        </div>
         <div className={styles.weeklyMemoryImageText1}>
           <FontAwesomeIcon
             icon={faTrophy}
@@ -395,19 +396,19 @@ function MainPageMain() {
             className={styles.weeklyMemoryImageTrophy1}
           />
           {randomTagText ? randomTagText : "느낌 좋은 사진"} 부문 1등!! by @
-          {weeklyPosts[0]?.userName || ""}
+          {weeklyPosts[0]?.userName || "Unknown"}
         </div>
         <div
           className={styles.weeklyMemoryLikesContainer1}
           onClick={() => {
-            handleLikeNum(weeklyPosts?.[0]?.postId || "");
+            handleLikeNum(weeklyPosts?.[0]?.postId || emptyImage);
           }}
-        >
-          <FontAwesomeIcon
-            icon={faHeart}
-            style={{ color: "#ff4646" }}
-            className={styles.weeklyMemoryLikes1}
-          />
+          >
+          {weeklyPosts?.[0]?.liked === false || !weeklyPosts?.[0] ? ( 
+            <img src={emptyHeart} alt="" className={styles.weeklyMemoryLikes1}></img>
+          ) : (
+            <img src={heart} alt="" className={styles.weeklyMemoryLikes1} />
+          )}
           &nbsp;
           <span className={styles.heartNum}>
             {weeklyPosts[0]?.likesCount || "0"}
@@ -415,12 +416,14 @@ function MainPageMain() {
         </div>
       </div>
       <div className={styles.weeklyMemoryContainer2}>
-        <img
-          src={weeklyPosts[1]?.photoUrl || ""}
-          alt=""
-          className={styles.weeklyMemoryImage2}
-          onClick={(e) => imageModalOpen(e, weeklyPosts[1])}
-        ></img>
+        <div className={styles.forScroll}>
+          <img
+            src={weeklyPosts[1]?.photoUrl || emptyImage}
+            alt=""
+            className={styles.weeklyMemoryImage2}
+            onClick={(e) => imageModalOpen(e, weeklyPosts[1])}
+          ></img>
+        </div>
         <div className={styles.weeklyMemoryImageText2}>
           <FontAwesomeIcon
             icon={faTrophy}
@@ -428,19 +431,19 @@ function MainPageMain() {
             className={styles.weeklyMemoryImageTrophy2}
           />
           {randomTagText ? randomTagText : "느낌 좋은 사진"} 부문 2등!! by @
-          {weeklyPosts[1]?.userName || ""}
+          {weeklyPosts[1]?.userName || "Unknown"}
         </div>
         <div
           className={styles.weeklyMemoryLikesContainer2}
           onClick={() => {
             handleLikeNum(weeklyPosts[1]?.postId || "");
           }}
-        >
-          <FontAwesomeIcon
-            icon={faHeart}
-            style={{ color: "#ff4646" }}
-            className={styles.weeklyMemoryLikes2}
-          />
+          >
+          {weeklyPosts?.[1]?.liked === false || !weeklyPosts?.[1] ? ( 
+            <img src={emptyHeart} alt="" className={styles.weeklyMemoryLikes1}></img>
+          ) : (
+            <img src={heart} alt="" className={styles.weeklyMemoryLikes1} />
+          )}
           &nbsp;
           <span className={styles.heartNum}>
             {weeklyPosts[1]?.likesCount || "0"}
@@ -448,12 +451,14 @@ function MainPageMain() {
         </div>
       </div>
       <div className={styles.weeklyMemoryContainer3}>
-        <img
-          src={weeklyPosts[2]?.photoUrl || ""}
-          alt=""
-          className={styles.weeklyMemoryImage3}
-          onClick={(e) => imageModalOpen(e, weeklyPosts[2])}
-        ></img>
+        <div className={styles.forScroll}>
+          <img
+            src={weeklyPosts[2]?.photoUrl || emptyImage}
+            alt=""
+            className={styles.weeklyMemoryImage3}
+            onClick={(e) => imageModalOpen(e, weeklyPosts[2])}
+          ></img>
+        </div>
         <div className={styles.weeklyMemoryImageText3}>
           <FontAwesomeIcon
             icon={faTrophy}
@@ -461,19 +466,19 @@ function MainPageMain() {
             className={styles.weeklyMemoryImageTrophy2}
           />
           {randomTagText ? randomTagText : "느낌 좋은 사진"} 부문 3등!! by @
-          {weeklyPosts[2]?.userName || ""}
+          {weeklyPosts[2]?.userName || "Unknown"}
         </div>
         <div
           className={styles.weeklyMemoryLikesContainer2}
           onClick={() => {
             handleLikeNum(weeklyPosts[2]?.postId || "");
           }}
-        >
-          <FontAwesomeIcon
-            icon={faHeart}
-            style={{ color: "#ff4646" }}
-            className={styles.weeklyMemoryLikes2}
-          />
+          >
+          {weeklyPosts?.[2]?.liked === false || !weeklyPosts?.[2] ? ( 
+            <img src={emptyHeart} alt="" className={styles.weeklyMemoryLikes1}></img>
+          ) : (
+            <img src={heart} alt="" className={styles.weeklyMemoryLikes1} />
+          )}
           &nbsp;
           <span className={styles.heartNum}>
             {weeklyPosts[2]?.likesCount || "0"}

@@ -1,4 +1,4 @@
-.mainContainer{
+.mainContainer {
     width: 80%;
     min-width: 700px;
     margin-left: 10%;
@@ -42,6 +42,7 @@
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     padding: 20px;
 }
+
 .myMemoryContainer {
     display: flex;
     border-radius: 6px;
@@ -49,46 +50,45 @@
     align-items: center;
 }
 
-.myMemoryText{
+.myMemoryText {
     margin: 5px;
     font-size: clamp(16px, 18px, 20px);
 }
 
-.myMemoryExplain{
+.myMemoryExplain {
     margin: 5px;
     font-size: clamp(12px, 14px, 16px);
 }
-.myMemoryImageContainer{
-  position: relative;
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-  border-radius: 7px;
+
+.myMemoryImageContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 7px;
 }
 
-.myMemoryImage1{
-  position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 7px;
-  transition: all 0.3s ease;
-  outline: none;
+.myMemoryImage1 {
+    width: 100%;
+    height: auto;
+    border-radius: 7px;
+    transition: all 0.3s ease;
+    outline: none;
 }
 
 .icon {
   font-size: clamp(30px, 35px, 40px);
   margin-top: 20px;
 }
+
 .ourMemoryContainer {
     border-radius: 6px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
+
 .ourMemoryText {
   margin: 5px;
   font-size: clamp(16px, 18px, 20px);
@@ -102,30 +102,22 @@
 .ourMemoryImageContainer {
   position: relative;
   width: 100%;
-  height: 200px;
-  overflow: hidden;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
   border-radius: 7px;
 }
 
-.ourMemoryImage1,
-.ourMemoryImage2 {
+.ourMemoryImage1{
   position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   width: 100%;
-  height: 100%;
+  height: auto;
   object-fit: cover;
   border-radius: 7px;
   transition: all 0.3s ease;
   outline: none;
 }
-.myMemoryImage1:hover,
-.myMemoryImage2:hover,
-.ourMemoryImage1:hover,
-.ourMemoryImage2:hover{
-  box-shadow: 5px 8px 10px 3px rgba(0, 0, 0,0.3);
-}
+
 
 .weeklyMemoryTitleContainer {
   padding: 10px 10px 10px 20px;
@@ -146,6 +138,7 @@
 .weeklyMemoryTitleText {
   font-size: clamp(25px, 27px, 29px);
 }
+
 .weeklyMemoryTitleTextSmall {
   font-size: clamp(16px, 18px, 20px);
 }
@@ -181,7 +174,65 @@
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
+.forScroll {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: 6px;
+  max-height: 600px;
+}
 
+/* Custom scrollbar styles */
+.forScroll::-webkit-scrollbar,
+.myMemoryImageContainer::-webkit-scrollbar,
+.ourMemoryImageContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.forScroll::-webkit-scrollbar-track,
+.myMemoryImageContainer::-webkit-scrollbar-track,
+.ourMemoryImageContainer::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.forScroll::-webkit-scrollbar-thumb,
+.myMemoryImageContainer::-webkit-scrollbar-thumb,
+.ourMemoryImageContainer::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.forScroll::-webkit-scrollbar-thumb:hover,
+.myMemoryImageContainer::-webkit-scrollbar-thumb:hover,
+.ourMemoryImageContainer::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.weeklyMemoryLikesContainer2,
+.weeklyMemoryLikesContainer3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.weeklyMemoryImage1,
+.weeklyMemoryImage2,
+.weeklyMemoryImage3 {
+  width: 100%;
+  height: auto;
+  border-radius: 7px;
+  margin-bottom: 5px;
+  background-color: rgb(230, 230, 230);
+  transition: all 0.3s ease;
+}
+.weeklyMemoryImage1:hover,/*프로필페이지 기반으로 해달라고 하기*/
+.weeklyMemoryImage2:hover,
+.weeklyMemoryImage3:hover,
+.myMemoryImage1:hover,
+.ourMemoryImage1:hover {
+  border-color: #8B6E91;
+}
 .weeklyMemoryLikesContainer1,
 .weeklyMemoryLikesContainer2,
 .weeklyMemoryLikesContainer3 {
@@ -194,72 +245,63 @@
   padding: 4px 7px 4px 7px;
   transition: all 0.2s ease;
 }
-.weeklyMemoryLikesContainer2,
-.weeklyMemoryLikesContainer3 {
-  margin-top: 20px;
-  margin-bottom: 10px;
-  
-}
 .weeklyMemoryLikesContainer1:hover,
 .weeklyMemoryLikesContainer2:hover,
-.weeklyMemoryLikesContainer3:hover{
+.weeklyMemoryLikesContainer3:hover {
   cursor: pointer;
 }
+
 .weeklyMemoryLikesContainer1:hover .weeklyMemoryLikes1,
 .weeklyMemoryLikesContainer2:hover .weeklyMemoryLikes2,
-.weeklyMemoryLikesContainer3:hover .weeklyMemoryLikes3{
+.weeklyMemoryLikesContainer3:hover .weeklyMemoryLikes3 {
   transform: scale(1.2) rotate(5deg);
 }
+
 .weeklyMemoryLikes1,
 .weeklyMemoryLikes2,
-.weeklyMemoryLikes3{
+.weeklyMemoryLikes3 {
     width: 20px;
     height: 20px;
     transition: all 0.2s ease;
 }
-.heartNum{
+
+.heartNum {
   display: inline-block;
   color: #EF4444;
 }
-.weeklyMemoryImage1,
-.weeklyMemoryImage2,
-.weeklyMemoryImage3 {
-  width: 100%;
-  height: 100%;
-  border-radius: 7px;
-  margin-bottom: 5px;
-  background-color: rgb(230, 230, 230);
-  transition: all 0.3s ease;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
+
 
 .weeklyMemoryImageText1 {
   font-size: clamp(20px, 22px, 24px);
   font-weight: 700;
   height: fit-content;
 }
+
 .weeklyMemoryImageTrophy1,
 .weeklyMemoryImageTrophy2,
-.weeklyMemoryImageTrophy3{
+.weeklyMemoryImageTrophy3 {
   margin-right: 5px;
 }
-.weeklyMemoryTitleTrophy{
+
+.weeklyMemoryTitleTrophy {
   margin-left: 5px;
 }
+
 .weeklyMemoryImageText2,
 .weeklyMemoryImageText3 {
   font-size: clamp(20px, 22px, 24px);
   font-weight: 700;
   margin-top: 10px;
 }
-.forFlexMorePictureContainer{
+
+.forFlexMorePictureContainer {
   width: 100%;
   display: flex;
   grid-column: 1/3;
   align-items: center;
   justify-content: center;
 }
+
 .morePictureContainer {
     padding: 7px;
     grid-column: 1/3;
@@ -271,41 +313,44 @@
     position: relative;
     background-color: black;
 }
+
 .morePicture {
     border-radius: 7px;
     padding: 5px;
     display: inline-block;
     color: white;
 }
+
 .myMemoryContainer,
 .ourMemoryContainer,
 .weeklyMemoryTitleContainer,
 .weeklyMemoryContainer1,
 .weeklyMemoryContainer2,
-.weeklyMemoryContainer3{
+.weeklyMemoryContainer3 {
     background-color: white;
 }
-.morePictureContainer:hover{
+
+.morePictureContainer:hover {
   transform: scale(1.05);
 }
+
 .myMemoryContainer:hover,
 .ourMemoryContainer:hover,
-.morePictureContainer:hover,
-.weeklyMemoryImage1:hover,
-.weeklyMemoryImage2:hover,
-.weeklyMemoryImage3:hover {
+.morePictureContainer:hover{
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0, 0, 0,0.3);
 }
+
 .myMemoryContainer:active, 
 .ourMemoryContainer:active,
 .morePictureContainer:active,
 .weeklyMemoryImage1:active,
 .weeklyMemoryImage2:active,
-.weeklyMemoryImage3:active{
+.weeklyMemoryImage3:active {
     transform: scale(0.98);
     box-shadow: rgba(100, 100, 100, 0.1) 0px 0px 15px 5px;
 }
-.morePictureTrophy{
+
+.morePictureTrophy {
   margin-right: 7.5px;
 }
