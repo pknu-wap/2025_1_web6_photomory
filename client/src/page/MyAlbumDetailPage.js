@@ -14,6 +14,7 @@ function MyAlbumDetailPage() {
   const [album, setAlbum] = useState(null); //앨범
   const [description, setDescription] = useState(""); //앨범명
   const [photoList, setPhotoList] = useState([]); //사진 배열
+  const [currentPage, setCurrentPage] = useState(1); // 페이지 상태
 
   useEffect(() => {
     (async () => {
@@ -65,7 +66,11 @@ function MyAlbumDetailPage() {
               photoCount={Count}
             />
           </div>
-          <PhotoSubmit type="private" handleAddPhoto={handleAddPhoto} />
+          <PhotoSubmit
+            type="private"
+            albumId={albumId}
+            handleAddPhoto={handleAddPhoto}
+          />
         </div>
       </Container>
       <Footer />
