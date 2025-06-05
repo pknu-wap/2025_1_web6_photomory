@@ -1,6 +1,7 @@
 import styles from './Friend.Manage.module.css'
+import defaultProfileIcon from '../../assets/defaultProfileIcon.svg'
 
-function FriendManage({ userId, userName="이름 없음", userField, handleRemoveFriend }) {
+function FriendManage({ userId, userName="이름 없음", userPhotoUrl, handleRemoveFriend }) {
     const handleRemove=()=>{
         handleRemoveFriend(userId)
     }
@@ -8,10 +9,10 @@ function FriendManage({ userId, userName="이름 없음", userField, handleRemov
         <>
             <div className={styles.myFriendItemContainer}>
                 <div className={styles.myFriendItemContainerForFlexLeft}>
-                    <div className={styles.myFieldItemImage}></div>
+                    <img src={userPhotoUrl || defaultProfileIcon} alt='' className={styles.myFieldItemImage}></img>
                     <div className={styles.myFieldInfoContainerForFlex}>
                         <p className={styles.myFieldItemName}>{userName}</p>
-                        <p className={styles.myFriendItemShortIntro}>{userField}</p>
+                        <p className={styles.myFriendItemShortIntro}>id:{userId || 'Unknown'}</p>
                     </div>
                 </div>
                 <button className={styles.myFriendItemDeleteRight}
