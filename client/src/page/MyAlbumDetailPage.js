@@ -8,6 +8,7 @@ import PhotoSubmit from "../component/photo/PhotoSubmit";
 import { getMyAlbumById } from "../api/getAlbumById";
 import Header from "../component/common/Header";
 import Footer from "../component/common/Footer";
+import { deleteMyAlbumPhoto } from "../api/myAlbumAPi";
 
 function MyAlbumDetailPage() {
   const { albumId } = useParams();
@@ -38,8 +39,16 @@ function MyAlbumDetailPage() {
   };
 
   //사진 삭제 헨들러
-  const handleDeletePhoto = (photo_id) => {
-    setPhotoList((prev) => prev.filter((p) => p.photo_id !== photo_id));
+  const handleDeletePhoto = async (photo_id) => {
+    try {
+      const ok = await deleteMyAlbumPhoto(photo_id);
+      if (ok === "사진이 삭제되었습니다.") {
+        setPhotoList((prev) => prev.filter((p) => p.photo_id !== photo_id));
+        alert("해당 사진이 삭제되었습니다.");
+      }
+    } catch (error) {
+      alert("사진 삭제 중 오류가 발생했습니다.");
+    }
   };
 
   if (!album) return <div>로딩 중...</div>;

@@ -81,6 +81,7 @@ function PhotoSubmit({ type, albumId, handleAddPhoto }) {
             photo_name: newPhotoData.photo_name,
             photo_makingtime: newPhotoData.photo_makingtime,
             photo_url: URL.createObjectURL(newPhotoData.imgFile),
+            post_id: result.postId,
           });
         }
 

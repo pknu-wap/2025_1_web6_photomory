@@ -152,12 +152,15 @@ export async function deleteMyAlbumPhoto(photoId) {
   const accessToken = localStorage.getItem("accessToken");
 
   try {
-    const response = await fetch(`/api/my-albums/photos/${photoId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await fetch(
+      `${BASE_URL}/api/my-albums/photos/${photoId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`삭제 실패: ${response.status}`);

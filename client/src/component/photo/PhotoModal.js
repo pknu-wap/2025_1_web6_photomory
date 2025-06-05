@@ -5,8 +5,20 @@ import calenderIcon from "../../assets/calenderIcon.svg";
 import modalCancelButton from "../../assets/modalCancelButton.svg";
 import discardButton from "../../assets/discardButton.svg";
 
-function PhotoModal({ albumId, photo, onClose, onDelete }) {
+function PhotoModal({ type, albumId, photo, onClose, onDelete }) {
   const [animate, setAnimate] = useState(false);
+  // 개인 앨범, 공유앨범 분기에 따른 사진 삭제 처리 헨들러
+  const handleDeleteClick = () => {
+    if (!onDelete) return;
+
+    if (type === "private") {
+      onDelete(photo.photo_id);
+    } else {
+      onDelete(albumId, photo.post_id, photo.photo_id, photo.photo_name);
+    }
+
+    onClose(); // 삭제 후 모달 닫기
+  };
 
   useEffect(() => {
     if (photo) {
@@ -77,18 +89,7 @@ function PhotoModal({ albumId, photo, onClose, onDelete }) {
                   justifyContent: "center",
                 }}
               >
-                <button
-                  onClick={() => {
-                    onDelete(
-                      albumId,
-                      photo.post_id,
-                      photo.photo_id,
-                      photo.photo_name
-                    );
-                    onClose();
-                  }}
-                  className="deleteButton"
-                >
+                <button onClick={handleDeleteClick} className="deleteButton">
                   <img src={discardButton} alt="discardButton" />
                   삭제하기
                 </button>
