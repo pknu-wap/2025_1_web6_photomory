@@ -36,7 +36,7 @@ const CommentModal = ({ isOpen, onClose, handleCommentNum, post }) => {
             checkComment();
         }
     }
-
+    
     const formatDate = () => {
         const now = new Date();
         const year = now.getFullYear(); 
@@ -44,12 +44,12 @@ const CommentModal = ({ isOpen, onClose, handleCommentNum, post }) => {
         const day = now.getDate(); 
         return `${year}.${month}.${day}`;
     };
-
+    console.log(post)
     return (
         <div className={styles.modalOverlay} onClick={onClose}>
             <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
                 <div className={styles.commentsList}>
-                    {post && post.comments ? (
+                    {post && post.comments.length>0 ? (
                         [...post.comments, ...localComments].map((commentInfo, index) => (
                             <div className={styles.commentContainer} key={index}>
                                 <img

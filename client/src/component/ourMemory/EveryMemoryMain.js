@@ -388,7 +388,6 @@ export default function EveryMemoryMain() {
                 console.error('Invalid post data:', modalPost);
                 return;
             }
-            // Optimistically update the comment count
             setPosts((prevPosts) =>
                 prevPosts.map((post) =>
                     post.postId === modalPost.postId
